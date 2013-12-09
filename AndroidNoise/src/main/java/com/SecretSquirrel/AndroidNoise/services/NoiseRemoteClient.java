@@ -2,15 +2,16 @@ package com.SecretSquirrel.AndroidNoise.services;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.ResultReceiver;
 
 // Secret Squirrel Software - Created by bswanson on 12/6/13.
 
 public class NoiseRemoteClient {
-	private Context                 mContext;
-	private ServiceResultReceiver   mReceiver;
-	private String                  mServerAddress;
+	private Context         mContext;
+	private ResultReceiver  mReceiver;
+	private String          mServerAddress;
 
-	public NoiseRemoteClient( Context context, ServiceResultReceiver receiver, String serverAddress ) {
+	public NoiseRemoteClient( Context context, String serverAddress, ResultReceiver receiver ) {
 		mContext = context;
 		mReceiver = receiver;
 		mServerAddress = serverAddress;
