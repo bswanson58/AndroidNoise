@@ -19,6 +19,9 @@
         <service
             android:name=".services.NoiseRemoteService"
             android:label="AndroidNoise:NoiseRemoteService" />
+        <service
+            android:name=".services.ServiceLocator"
+            android:label="AndroidNoise:ServiceLocator" />
 
         <activity
             android:name=".activities.ServerConnectActivity"
