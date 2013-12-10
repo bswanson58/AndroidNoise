@@ -12,10 +12,13 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.SecretSquirrel.AndroidNoise.R;
+import com.SecretSquirrel.AndroidNoise.dto.ServerInformation;
 import com.SecretSquirrel.AndroidNoise.model.ApplicationState;
 import com.SecretSquirrel.AndroidNoise.model.NoiseRemoteApplication;
 import com.SecretSquirrel.AndroidNoise.services.NoiseRemoteApi;
 import com.SecretSquirrel.AndroidNoise.services.ServiceResultReceiver;
+
+import java.util.ArrayList;
 
 public class ServerConnectActivity extends ActionBarActivity
 								   implements ServiceResultReceiver.Receiver {
@@ -58,8 +61,14 @@ public class ServerConnectActivity extends ActionBarActivity
 	@Override
 	public void onReceiveResult( int resultCode, Bundle resultData ) {
 		if( resultCode == NoiseRemoteApi.RemoteResultSuccess ) {
-			if( getApplicationState().getIsConnected()) {
+			ArrayList<ServerInformation>    serverList = resultData.getParcelableArrayList( NoiseRemoteApi.LocateServicesList );
+
+			if(( serverList != null ) &&
+			   ( serverList.size() == 1 )) {
 				launchArtistList();
+			}
+			else {
+				// Launch server selector.
 			}
 		}
 	}

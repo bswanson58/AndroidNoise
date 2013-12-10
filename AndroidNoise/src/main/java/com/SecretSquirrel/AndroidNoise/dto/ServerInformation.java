@@ -6,6 +6,9 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class ServerInformation implements Parcelable {
+	private String          mServerAddress;
+	private ServerVersion   mServerVersion;
+
 	/** Static field used to regenerate object, individually or as arrays */
 	public static final Parcelable.Creator<ServerInformation> CREATOR = new Parcelable.Creator<ServerInformation>() {
 		public ServerInformation createFromParcel(Parcel pc) {
@@ -16,7 +19,15 @@ public class ServerInformation implements Parcelable {
 		}
 	};
 
-	public ServerInformation( Parcel parcel ) {}
+	public ServerInformation( String serverAddress, ServerVersion serverVersion ) {
+		mServerAddress = serverAddress;
+		mServerVersion = serverVersion;
+
+	}
+	public ServerInformation( Parcel parcel ) {
+		mServerAddress = parcel.readString();
+		mServerVersion = parcel.readParcelable( ServerVersion.class.getClassLoader());
+	}
 
 	@Override
 	public int describeContents() {
@@ -25,6 +36,7 @@ public class ServerInformation implements Parcelable {
 
 	@Override
 	public void writeToParcel( Parcel parcel, int i ) {
-
+		parcel.writeString( mServerAddress );
+		parcel.writeParcelable( mServerVersion, i );
 	}
 }

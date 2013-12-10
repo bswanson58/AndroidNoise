@@ -53,6 +53,7 @@ public class NoiseRemoteService extends IntentService {
 			ServerVersion       version = new ServerVersion( roVersion );
 
 			resultData.putParcelable( NoiseRemoteApi.RemoteResultVersion, version );
+			resultData.putString( NoiseRemoteApi.RemoteServerAddress, serverAddress );
 			resultCode = NoiseRemoteApi.RemoteResultSuccess;
 		}
 		catch( Exception ex ) {
