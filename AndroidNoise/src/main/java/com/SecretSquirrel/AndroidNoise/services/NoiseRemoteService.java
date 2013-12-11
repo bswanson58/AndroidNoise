@@ -7,6 +7,7 @@ import android.os.ResultReceiver;
 import android.text.TextUtils;
 
 import com.SecretSquirrel.AndroidNoise.dto.ServerVersion;
+import com.SecretSquirrel.AndroidNoise.services.rto.RemoteServerRestApi;
 import com.SecretSquirrel.AndroidNoise.services.rto.RoServerVersion;
 
 import retrofit.RestAdapter;
@@ -48,7 +49,7 @@ public class NoiseRemoteService extends IntentService {
 
 		try {
 			RestAdapter         restAdapter = new RestAdapter.Builder().setServer( serverAddress ).build();
-			INoiseRestClient    service = restAdapter.create( INoiseRestClient.class );
+			RemoteServerRestApi service = restAdapter.create( RemoteServerRestApi.class );
 			RoServerVersion     roVersion = service.GetServerVersion();
 			ServerVersion       version = new ServerVersion( roVersion );
 

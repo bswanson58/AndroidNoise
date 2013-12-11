@@ -7,6 +7,7 @@ import android.os.ResultReceiver;
 import android.text.TextUtils;
 
 import com.SecretSquirrel.AndroidNoise.dto.Artist;
+import com.SecretSquirrel.AndroidNoise.services.rto.RemoteServerDataApi;
 import com.SecretSquirrel.AndroidNoise.services.rto.RoArtistListResult;
 
 import retrofit.RestAdapter;
@@ -47,7 +48,7 @@ public class NoiseDataService extends IntentService {
 
 		try {
 			RestAdapter         restAdapter = new RestAdapter.Builder().setServer( serverAddress ).build();
-			INoiseDataClient    service = restAdapter.create( INoiseDataClient.class );
+			RemoteServerDataApi service = restAdapter.create( RemoteServerDataApi.class );
 
 			RoArtistListResult  result = service.GetArtistList();
 
