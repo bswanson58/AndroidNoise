@@ -5,6 +5,6 @@ package com.SecretSquirrel.AndroidNoise.services.rto;
 import retrofit.http.GET;
 
 public interface RemoteServerDataApi {
-	@GET( "Data/artists" )
+	@GET( "/Data/artists" )
 	RoArtistListResult  GetArtistList();
 }

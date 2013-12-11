@@ -55,7 +55,7 @@ public class ServerConnectActivity extends ActionBarActivity
 	private void launchArtistList() {
 		Intent  artistListIntent = new Intent( this, ArtistListActivity.class );
 
-		startService( artistListIntent );
+		startActivity( artistListIntent );
 	}
 
 	@Override

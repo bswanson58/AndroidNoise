@@ -1,5 +1,7 @@
 package com.SecretSquirrel.AndroidNoise.activities;
 
+import android.content.Intent;
+import android.os.Handler;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -10,8 +12,19 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.SecretSquirrel.AndroidNoise.R;
+import com.SecretSquirrel.AndroidNoise.dto.Artist;
+import com.SecretSquirrel.AndroidNoise.dto.ServerInformation;
+import com.SecretSquirrel.AndroidNoise.model.ApplicationState;
+import com.SecretSquirrel.AndroidNoise.model.NoiseRemoteApplication;
+import com.SecretSquirrel.AndroidNoise.services.NoiseRemoteApi;
+import com.SecretSquirrel.AndroidNoise.services.ServiceResultReceiver;
 
-public class ArtistListActivity extends ActionBarActivity {
+import java.util.ArrayList;
+
+public class ArtistListActivity extends ActionBarActivity
+								implements ServiceResultReceiver.Receiver {
+
+	private ServiceResultReceiver   mServiceResultReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,8 +36,43 @@ public class ArtistListActivity extends ActionBarActivity {
                     .add(R.id.container, new PlaceholderFragment())
                     .commit();
         }
+
+	    initialize();
     }
 
+	private void initialize() {
+		mServiceResultReceiver = new ServiceResultReceiver( new Handler());
+		mServiceResultReceiver.setReceiver( this );
+
+		if( getApplicationState().getIsConnected()) {
+			loadArtistList();
+		}
+		else {
+			Intent serverConnectIntent = new Intent( this, ServerConnectActivity.class );
+
+			startActivity( serverConnectIntent );
+		}
+	}
+	private ApplicationState getApplicationState() {
+		NoiseRemoteApplication application = (NoiseRemoteApplication)getApplication();
+
+		return( application.getApplicationState());
+	}
+
+	private void loadArtistList() {
+		getApplicationState().getDataClient().GetArtistList( mServiceResultReceiver );
+	}
+
+	@Override
+	public void onReceiveResult( int resultCode, Bundle resultData ) {
+		if( resultCode == NoiseRemoteApi.RemoteResultSuccess ) {
+			ArrayList<Artist>    artistList = resultData.getParcelableArrayList( NoiseRemoteApi.ArtistList );
+
+			if( artistList.size() > 0 ) {
+
+			}
+		}
+	}
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

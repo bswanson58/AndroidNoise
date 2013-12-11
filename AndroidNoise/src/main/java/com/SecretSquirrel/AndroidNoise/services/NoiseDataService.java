@@ -8,7 +8,10 @@ import android.text.TextUtils;
 
 import com.SecretSquirrel.AndroidNoise.dto.Artist;
 import com.SecretSquirrel.AndroidNoise.services.rto.RemoteServerDataApi;
+import com.SecretSquirrel.AndroidNoise.services.rto.RoArtist;
 import com.SecretSquirrel.AndroidNoise.services.rto.RoArtistListResult;
+
+import java.util.ArrayList;
 
 import retrofit.RestAdapter;
 
@@ -53,14 +56,14 @@ public class NoiseDataService extends IntentService {
 			RoArtistListResult  result = service.GetArtistList();
 
 			if( result.Success ) {
-				Artist[]    artists = new Artist[result.Artists.length];
+				ArrayList<Artist> artists = new ArrayList<Artist>();
 
-				for( int index = 0; index < result.Artists.length; index++ ) {
-					artists[index] = new Artist( result.Artists[index]);
+				for( RoArtist roArtist : result.Artists ) {
+					artists.add( new Artist( roArtist ));
 				}
 
 				resultCode = NoiseRemoteApi.RemoteResultSuccess;
-				resultData.putParcelableArray( "", artists );
+				resultData.putParcelableArrayList( NoiseRemoteApi.ArtistList, artists );
 			}
 			else {
 				resultData.putString( NoiseRemoteApi.RemoteResultErrorMessage, result.ErrorMessage );

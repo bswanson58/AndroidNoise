@@ -4,9 +4,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.ResultReceiver;
 
+import com.SecretSquirrel.AndroidNoise.interfaces.INoiseData;
+
 // Secret Squirrel Software - Created by bswanson on 12/6/13.
 
-public class NoiseDataClient {
+public class NoiseDataClient implements INoiseData {
 	private Context mContext;
 	private String          mServerAddress;
 
