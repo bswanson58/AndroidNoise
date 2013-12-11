@@ -12,6 +12,10 @@ public class NoiseRemoteApi {
 	public static final int     GetServerVersion            = 1;
 	public static final String  RemoteResultVersion         = "remoteResultVersion";
 
+	// Data methods and parameter/return keys.
+	public static final int     GetArtistList               = 1;
+	public static final String  ArtistList                  = "artistList";
+
 	// Locator methods and parameter/return value keys.
 	public static final int     LocateServices              = 1;
 	public static final String  LocateServicesType          = "locateServicesType";
