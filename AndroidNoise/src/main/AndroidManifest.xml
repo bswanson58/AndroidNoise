@@ -20,6 +20,9 @@
             android:name=".services.NoiseRemoteService"
             android:label="AndroidNoise:NoiseRemoteService" />
         <service
+            android:name=".services.NoiseDataService"
+            android:label="AndroidNoise:NoiseDataService" />
+        <service
             android:name=".services.ServiceLocator"
             android:label="AndroidNoise:ServiceLocator" />
 
