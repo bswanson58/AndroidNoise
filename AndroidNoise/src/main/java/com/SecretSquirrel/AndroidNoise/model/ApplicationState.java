@@ -53,7 +53,7 @@ public class ApplicationState implements IApplicationState {
 	public void LocateServers( final ServiceResultReceiver receiver ) {
 		ServiceLocatorClient    locatorClient = new ServiceLocatorClient( mContext );
 
-		locatorClient.LocateServices( "", new ResultReceiver( null ) {
+		locatorClient.LocateServices( "_Noise._Tcp.", new ResultReceiver( null ) {
 			@Override
 			protected void onReceiveResult( int resultCode, Bundle resultData ) {
 				if( resultCode == NoiseRemoteApi.RemoteResultSuccess ) {
