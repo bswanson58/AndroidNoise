@@ -29,6 +29,14 @@ public class ServerInformation implements Parcelable {
 		mServerVersion = parcel.readParcelable( ServerVersion.class.getClassLoader());
 	}
 
+	public String getServerAddress() {
+		return( mServerAddress );
+	}
+
+	public ServerVersion getServerVersion() {
+		return( mServerVersion );
+	}
+
 	@Override
 	public int describeContents() {
 		return 0;

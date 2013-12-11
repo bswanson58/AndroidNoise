@@ -21,8 +21,9 @@ import rx.Observer;
 
 public class ApplicationState {
 	private Context                 mContext;
-	private ServerVersion           mServerVersion;
+	private ServerInformation       mCurrentServer;
 	private boolean                 mIsConnected;
+	private NoiseRemoteClient       mRemoteClient;
 
 	public ApplicationState( Context context ) {
 		mContext = context;
@@ -30,6 +31,15 @@ public class ApplicationState {
 
 	public boolean getIsConnected() {
 		return( mIsConnected );
+	}
+
+	public void SelectServer( ServerInformation server ) {
+		mCurrentServer = server;
+		mIsConnected = mCurrentServer != null;
+
+		if( server != null ) {
+			mRemoteClient = new NoiseRemoteClient( mContext, mCurrentServer.getServerAddress());
+		}
 	}
 
 	public void LocateServers( final ServiceResultReceiver receiver ) {
@@ -74,40 +84,40 @@ public class ApplicationState {
 
 			Bundle  result = new Bundle();
 
-			result.putString( NoiseRemoteApi.RemoteResultErrorMessage, throwable.getMessage() );
+			result.putString( NoiseRemoteApi.RemoteResultErrorMessage, throwable.getMessage());
 
 			mReceiver.send( NoiseRemoteApi.RemoteResultException, result );
 		}
 
 		@Override
-		public void onNext( String s ) {
+		public void onNext( String serverAddress ) {
 			mServerCount++;
 
-			NoiseRemoteClient   remoteClient = new NoiseRemoteClient( mContext, s,
-					new ResultReceiver( null ) {
-						@Override
-						protected void onReceiveResult(int resultCode, Bundle resultData) {
-							if( resultCode == NoiseRemoteApi.RemoteResultSuccess ) {
-								ServerVersion   serverVersion = resultData.getParcelable( NoiseRemoteApi.RemoteResultVersion );
-								String          serverAddress = resultData.getString( NoiseRemoteApi.RemoteServerAddress );
+			NoiseRemoteClient   remoteClient = new NoiseRemoteClient( mContext, serverAddress );
 
-								if(( serverVersion != null ) &&
-								   (!TextUtils.isEmpty( serverAddress ))) {
-									mServerInformationList.add( new ServerInformation( serverAddress, serverVersion ));
-								}
+			remoteClient.getServerVersion( new ResultReceiver( null ) {
+					@Override
+					protected void onReceiveResult(int resultCode, Bundle resultData) {
+						if( resultCode == NoiseRemoteApi.RemoteResultSuccess ) {
+							ServerVersion   serverVersion = resultData.getParcelable( NoiseRemoteApi.RemoteResultVersion );
+							String          serverAddress = resultData.getString( NoiseRemoteApi.RemoteServerAddress );
+
+							if(( serverVersion != null ) &&
+							   (!TextUtils.isEmpty( serverAddress ))) {
+								mServerInformationList.add( new ServerInformation( serverAddress, serverVersion ));
 							}
+						}
 
-							mResultCount++;
+						mResultCount++;
 
-							if( mResultCount == mServerCount ) {
-								Bundle  result = new Bundle();
+						if( mResultCount == mServerCount ) {
+							Bundle  result = new Bundle();
 
-								result.putParcelableArrayList( NoiseRemoteApi.LocateServicesList, mServerInformationList );
+							result.putParcelableArrayList( NoiseRemoteApi.LocateServicesList, mServerInformationList );
 
-								mReceiver.send( NoiseRemoteApi.RemoteResultSuccess, result );
-							}
-						}} );
-			remoteClient.getServerVersion();
+							mReceiver.send( NoiseRemoteApi.RemoteResultSuccess, result );
+						}
+					}} );
 		}
 	}
 }

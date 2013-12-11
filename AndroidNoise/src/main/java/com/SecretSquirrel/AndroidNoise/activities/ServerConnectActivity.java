@@ -65,6 +65,8 @@ public class ServerConnectActivity extends ActionBarActivity
 
 			if(( serverList != null ) &&
 			   ( serverList.size() == 1 )) {
+				getApplicationState().SelectServer( serverList.get( 0 ));
+
 				launchArtistList();
 			}
 			else {

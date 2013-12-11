@@ -8,25 +8,23 @@ import android.os.ResultReceiver;
 
 public class NoiseRemoteClient {
 	private Context         mContext;
-	private ResultReceiver  mReceiver;
 	private String          mServerAddress;
 
-	public NoiseRemoteClient( Context context, String serverAddress, ResultReceiver receiver ) {
+	public NoiseRemoteClient( Context context, String serverAddress ) {
 		mContext = context;
-		mReceiver = receiver;
 		mServerAddress = serverAddress;
 	}
 
-	public void getServerVersion() {
-		setupAndCallApi( NoiseRemoteApi.GetServerVersion );
+	public void getServerVersion( ResultReceiver receiver ) {
+		setupAndCallApi( NoiseRemoteApi.GetServerVersion, receiver );
 	}
 
-	private void setupAndCallApi( int apiCode ) {
+	private void setupAndCallApi( int apiCode, ResultReceiver resultReceiver ) {
 		Intent  intent = new Intent( mContext, NoiseRemoteService.class );
 
 		intent.putExtra( NoiseRemoteApi.RemoteServerAddress, mServerAddress );
 		intent.putExtra( NoiseRemoteApi.RemoteApiParameter, apiCode );
-		intent.putExtra( NoiseRemoteApi.RemoteCallReceiver, mReceiver );
+		intent.putExtra( NoiseRemoteApi.RemoteCallReceiver, resultReceiver );
 
 		mContext.startService( intent );
 	}
