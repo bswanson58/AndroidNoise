@@ -4,6 +4,8 @@ package com.SecretSquirrel.AndroidNoise.model;
 
 import android.app.Application;
 
+import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
+
 public class NoiseRemoteApplication extends Application {
 	private ApplicationState    mApplicationState;
 
@@ -14,7 +16,7 @@ public class NoiseRemoteApplication extends Application {
 		mApplicationState = new ApplicationState( this );
 	}
 
-	public ApplicationState getApplicationState() {
+	public IApplicationState getApplicationState() {
 		return mApplicationState;
 	}
 }

@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 
 import com.SecretSquirrel.AndroidNoise.R;
 import com.SecretSquirrel.AndroidNoise.dto.ServerInformation;
-import com.SecretSquirrel.AndroidNoise.model.ApplicationState;
+import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
 import com.SecretSquirrel.AndroidNoise.model.NoiseRemoteApplication;
 import com.SecretSquirrel.AndroidNoise.services.NoiseRemoteApi;
 import com.SecretSquirrel.AndroidNoise.services.ServiceResultReceiver;
@@ -46,7 +46,7 @@ public class ServerConnectActivity extends ActionBarActivity
 	    }
     }
 
-	private ApplicationState getApplicationState() {
+	private IApplicationState getApplicationState() {
 		NoiseRemoteApplication  application = (NoiseRemoteApplication)getApplication();
 
 		return( application.getApplicationState());

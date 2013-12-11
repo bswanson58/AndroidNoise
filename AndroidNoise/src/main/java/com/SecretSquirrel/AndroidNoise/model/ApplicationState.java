@@ -10,6 +10,7 @@ import android.util.Log;
 
 import com.SecretSquirrel.AndroidNoise.dto.ServerInformation;
 import com.SecretSquirrel.AndroidNoise.dto.ServerVersion;
+import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseData;
 import com.SecretSquirrel.AndroidNoise.services.NoiseDataClient;
 import com.SecretSquirrel.AndroidNoise.services.NoiseRemoteApi;
@@ -21,7 +22,7 @@ import java.util.ArrayList;
 
 import rx.Observer;
 
-public class ApplicationState {
+public class ApplicationState implements IApplicationState {
 	private Context                 mContext;
 	private ServerInformation       mCurrentServer;
 	private boolean                 mIsConnected;
@@ -32,7 +33,8 @@ public class ApplicationState {
 	}
 
 	public boolean getIsConnected() {
-		return( mIsConnected );
+		return(( mIsConnected ) &&
+			   ( mCurrentServer != null ));
 	}
 
 	public INoiseData getDataClient() {
