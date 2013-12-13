@@ -23,6 +23,8 @@ import com.SecretSquirrel.AndroidNoise.services.NoiseRemoteApi;
 import com.SecretSquirrel.AndroidNoise.services.ServiceResultReceiver;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class ArtistListActivity extends ActionBarActivity
 								implements ServiceResultReceiver.Receiver {
@@ -81,6 +83,13 @@ public class ArtistListActivity extends ActionBarActivity
 			ArrayList<Artist> artistList = resultData.getParcelableArrayList( NoiseRemoteApi.ArtistList );
 			mArtistList.clear();
 			mArtistList.addAll( artistList );
+
+			Collections.sort( mArtistList, new Comparator<Artist>() {
+				public int compare( Artist artist1, Artist artist2 ) {
+					return( artist1.Name.compareToIgnoreCase( artist2.Name ));
+				}
+			} );
+
 			mArtistListAdapter.notifyDataSetChanged();
 		}
 	}
@@ -115,6 +124,7 @@ public class ArtistListActivity extends ActionBarActivity
 
 	private class ArtistAdapter extends ArrayAdapter<Artist> {
 		private Context             mContext;
+		private LayoutInflater      mLayoutInflater;
 		private ArrayList<Artist>   mArtistList;
 
 		private class ViewHolder {
@@ -122,9 +132,11 @@ public class ArtistListActivity extends ActionBarActivity
 		}
 
 		public ArtistAdapter( Context context, ArrayList<Artist> artistList ) {
-			super( context, R.id.artist_list_item, artistList );
+			super( context, R.layout.artist_list_item, artistList );
 			mContext = context;
 			mArtistList = artistList;
+
+			mLayoutInflater = (LayoutInflater)mContext.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
 		}
 
 		@Override
@@ -133,10 +145,7 @@ public class ArtistListActivity extends ActionBarActivity
 			ViewHolder  views = null;
 
 			if( convertView == null ) {
-				LayoutInflater inflater = (LayoutInflater)mContext
-						.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
-
-				retValue = inflater.inflate( R.layout.artist_list_item, parent, false );
+				retValue = mLayoutInflater.inflate( R.layout.artist_list_item, parent, false );
 
 				views = new ViewHolder();
 				views.NameTextView = (TextView)retValue.findViewById( R.id.artist_list_item_name );
