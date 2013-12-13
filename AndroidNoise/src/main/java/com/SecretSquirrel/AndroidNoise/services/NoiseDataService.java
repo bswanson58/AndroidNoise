@@ -68,8 +68,6 @@ public class NoiseDataService extends IntentService {
 			else {
 				resultData.putString( NoiseRemoteApi.RemoteResultErrorMessage, result.ErrorMessage );
 			}
-
-			receiver.send( resultCode, resultData );
 		}
 		catch( Exception ex ) {
 			resultData.putString( NoiseRemoteApi.RemoteResultErrorMessage, ex.getMessage());

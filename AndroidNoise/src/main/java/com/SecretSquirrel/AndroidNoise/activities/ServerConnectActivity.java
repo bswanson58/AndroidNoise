@@ -26,10 +26,20 @@ public class ServerConnectActivity extends ActionBarActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView( R.layout.activity_server_connect);
+        super.onCreate( savedInstanceState );
 
-        if (savedInstanceState == null) {
+	    // from: http://stackoverflow.com/questions/16283079/re-launch-of-activity-on-home-button-but-only-the-first-time?rq=1
+	    if (!isTaskRoot()) {
+		    // Android launched another instance of the root activity into an existing task
+		    //  so just quietly finish and go away, dropping the user back into the activity
+		    //  at the top of the stack (ie: the last state of this task)
+		    finish();
+		    return;
+	    }
+
+        setContentView( R.layout.activity_server_connect );
+
+        if( savedInstanceState == null ) {
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.container, new PlaceholderFragment())
                     .commit();
