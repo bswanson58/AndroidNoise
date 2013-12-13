@@ -1,5 +1,6 @@
 package com.SecretSquirrel.AndroidNoise.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.support.v7.app.ActionBarActivity;
@@ -10,6 +11,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.TextView;
 
 import com.SecretSquirrel.AndroidNoise.R;
 import com.SecretSquirrel.AndroidNoise.dto.Artist;
@@ -24,24 +28,32 @@ public class ArtistListActivity extends ActionBarActivity
 								implements ServiceResultReceiver.Receiver {
 
 	private ServiceResultReceiver   mServiceResultReceiver;
+	private ListView                mArtistListView;
+	private ArrayList<Artist>       mArtistList;
+	private ArtistAdapter           mArtistListAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView( R.layout.activity_artist_list);
 
-        if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new PlaceholderFragment())
-                    .commit();
-        }
+        //if (savedInstanceState == null) {
+        //    getSupportFragmentManager().beginTransaction()
+        //            .add(R.id.container, new PlaceholderFragment())
+        //            .commit();
+        //}
 
 	    initialize();
     }
 
 	private void initialize() {
+		mArtistList = new ArrayList<Artist>();
 		mServiceResultReceiver = new ServiceResultReceiver( new Handler());
 		mServiceResultReceiver.setReceiver( this );
+
+		mArtistListAdapter = new ArtistAdapter( this, mArtistList );
+		getArtistListView().setAdapter( mArtistListAdapter );
 
 		if( getApplicationState().getIsConnected()) {
 			loadArtistList();
@@ -52,6 +64,7 @@ public class ArtistListActivity extends ActionBarActivity
 			startActivity( serverConnectIntent );
 		}
 	}
+
 	private IApplicationState getApplicationState() {
 		NoiseRemoteApplication application = (NoiseRemoteApplication)getApplication();
 
@@ -65,12 +78,19 @@ public class ArtistListActivity extends ActionBarActivity
 	@Override
 	public void onReceiveResult( int resultCode, Bundle resultData ) {
 		if( resultCode == NoiseRemoteApi.RemoteResultSuccess ) {
-			ArrayList<Artist>    artistList = resultData.getParcelableArrayList( NoiseRemoteApi.ArtistList );
-
-			if( artistList.size() > 0 ) {
-
-			}
+			ArrayList<Artist> artistList = resultData.getParcelableArrayList( NoiseRemoteApi.ArtistList );
+			mArtistList.clear();
+			mArtistList.addAll( artistList );
+			mArtistListAdapter.notifyDataSetChanged();
 		}
+	}
+
+	private ListView getArtistListView() {
+		if( mArtistListView == null ) {
+			mArtistListView = (ListView)findViewById( R.id.ArtistListView );
+		}
+
+		return( mArtistListView );
 	}
 
     @Override
@@ -92,6 +112,37 @@ public class ArtistListActivity extends ActionBarActivity
         }
         return super.onOptionsItemSelected(item);
     }
+
+	private class ArtistAdapter extends ArrayAdapter<Artist> {
+		private Context             mContext;
+		private ArrayList<Artist>   mArtistList;
+
+		public ArtistAdapter( Context context, ArrayList<Artist> artistList ) {
+			super( context, R.id.artist_list_item, artistList );
+			mContext = context;
+			mArtistList = artistList;
+		}
+
+		@Override
+		public View getView( int position, View convertView, ViewGroup parent ) {
+			View    retValue = convertView;
+
+			if( convertView == null ) {
+				LayoutInflater inflater = (LayoutInflater)mContext
+						.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+				retValue = inflater.inflate( R.layout.artist_list_item, parent, false );
+			}
+
+			if( position < mArtistList.size()) {
+				TextView textView = (TextView) retValue.findViewById( R.id.artist_list_item_name );
+				Artist      artist = mArtistList.get( position );
+
+				textView.setText( artist.Name );
+			}
+
+			return( retValue );
+		}
+	}
 
     /**
      * A placeholder fragment containing a simple view.
