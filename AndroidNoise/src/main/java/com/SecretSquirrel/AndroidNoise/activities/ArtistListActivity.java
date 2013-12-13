@@ -117,6 +117,10 @@ public class ArtistListActivity extends ActionBarActivity
 		private Context             mContext;
 		private ArrayList<Artist>   mArtistList;
 
+		private class ViewHolder {
+			public TextView NameTextView;
+		}
+
 		public ArtistAdapter( Context context, ArrayList<Artist> artistList ) {
 			super( context, R.id.artist_list_item, artistList );
 			mContext = context;
@@ -125,19 +129,29 @@ public class ArtistListActivity extends ActionBarActivity
 
 		@Override
 		public View getView( int position, View convertView, ViewGroup parent ) {
-			View    retValue = convertView;
+			View        retValue = convertView;
+			ViewHolder  views = null;
 
 			if( convertView == null ) {
 				LayoutInflater inflater = (LayoutInflater)mContext
 						.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+
 				retValue = inflater.inflate( R.layout.artist_list_item, parent, false );
+
+				views = new ViewHolder();
+				views.NameTextView = (TextView)retValue.findViewById( R.id.artist_list_item_name );
+
+				retValue.setTag( views );
+			}
+			else {
+				views = (ViewHolder)retValue.getTag();
 			}
 
-			if( position < mArtistList.size()) {
-				TextView textView = (TextView) retValue.findViewById( R.id.artist_list_item_name );
+			if(( views != null ) &&
+			   ( position < mArtistList.size())) {
 				Artist      artist = mArtistList.get( position );
 
-				textView.setText( artist.Name );
+				views.NameTextView.setText( artist.Name );
 			}
 
 			return( retValue );
