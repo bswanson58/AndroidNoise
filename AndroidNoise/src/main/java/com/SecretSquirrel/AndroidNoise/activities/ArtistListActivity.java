@@ -128,7 +128,9 @@ public class ArtistListActivity extends ActionBarActivity
 		private ArrayList<Artist>   mArtistList;
 
 		private class ViewHolder {
-			public TextView NameTextView;
+			public TextView     NameTextView;
+			public TextView     AlbumCountTextView;
+			public TextView     GenreTextView;
 		}
 
 		public ArtistAdapter( Context context, ArrayList<Artist> artistList ) {
@@ -149,6 +151,8 @@ public class ArtistListActivity extends ActionBarActivity
 
 				views = new ViewHolder();
 				views.NameTextView = (TextView)retValue.findViewById( R.id.artist_list_item_name );
+				views.AlbumCountTextView = (TextView)retValue.findViewById( R.id.artist_list_item_albumCount );
+				views.GenreTextView = (TextView)retValue.findViewById( R.id.artist_list_item_genre );
 
 				retValue.setTag( views );
 			}
@@ -161,6 +165,8 @@ public class ArtistListActivity extends ActionBarActivity
 				Artist      artist = mArtistList.get( position );
 
 				views.NameTextView.setText( artist.Name );
+				views.AlbumCountTextView.setText( "Albums: " + artist.AlbumCount );
+				views.GenreTextView.setText( artist.Genre );
 			}
 
 			return( retValue );

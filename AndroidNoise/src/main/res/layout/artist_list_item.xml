@@ -1,12 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="vertical"
               android:layout_width="match_parent"
-              android:layout_height="match_parent">
+              android:layout_height="match_parent"
+              android:padding="@dimen/list_item_padding">
 <TextView
     android:id="@+id/artist_list_item_name"
-    android:layout_height="fill_parent"
+    android:layout_height="wrap_content"
     android:layout_width="fill_parent"
-    android:textSize="18pt"/>
-</LinearLayout>
+    android:textSize="@dimen/list_item_title_textSize"
+    android:layout_alignParentLeft="true"
+    android:layout_alignParentTop="true"
+    android:text="The Rolling Stones"
+    android:gravity="left|top"
+    android:textColor="#0078ff"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Albums: 37"
+        android:id="@+id/artist_list_item_albumCount"
+        android:gravity="bottom|left"
+        android:layout_below="@+id/artist_list_item_name"
+        android:layout_alignParentLeft="true"
+        android:textSize="@dimen/list_item_subtitle_textSize"
+        android:layout_marginLeft="5pt"
+        android:textColor="#003cff"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="classic rock"
+        android:id="@+id/artist_list_item_genre"
+        android:gravity="bottom|right"
+        android:layout_below="@+id/artist_list_item_name"
+        android:layout_alignParentRight="true"
+        android:textSize="@dimen/list_item_subtitle_textSize"
+        android:layout_marginRight="3pt"
+        android:textColor="#003CFF"/>
+</RelativeLayout>
