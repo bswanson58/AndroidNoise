@@ -1,5 +1,6 @@
 package com.SecretSquirrel.AndroidNoise.activities;
 
+import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
@@ -11,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -65,6 +67,23 @@ public class ArtistListActivity extends ActionBarActivity
 
 			startActivity( serverConnectIntent );
 		}
+
+		getArtistListView().setOnItemClickListener( new AdapterView.OnItemClickListener() {
+			@Override
+			public void onItemClick( AdapterView<?> adapterView, View view, int i, long l ) {
+				Artist  artist = mArtistList.get( i );
+
+				if( artist != null ) {
+					selectArtist( artist );
+				}
+			}
+		} );
+	}
+
+	private void selectArtist( Artist artist ) {
+		Intent  launchIntent = new Intent( this, ArtistActivity.class );
+
+		startActivity( launchIntent );
 	}
 
 	private IApplicationState getApplicationState() {

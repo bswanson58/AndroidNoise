@@ -7,5 +7,6 @@
     <string name="connect_to_server">Connecting to The Noise Music System</string>
     <string name="title_activity_artist_list">Artists</string>
     <string name="hello_world">Hello world!</string>
+    <string name="title_activity_artist">Artist</string>
 
 </resources>
