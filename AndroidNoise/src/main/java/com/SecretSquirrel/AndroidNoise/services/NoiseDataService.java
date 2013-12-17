@@ -10,6 +10,7 @@ import com.SecretSquirrel.AndroidNoise.dto.Album;
 import com.SecretSquirrel.AndroidNoise.dto.Artist;
 import com.SecretSquirrel.AndroidNoise.dto.Track;
 import com.SecretSquirrel.AndroidNoise.services.rto.RemoteServerDataApi;
+import com.SecretSquirrel.AndroidNoise.services.rto.RemoteServerRestApi;
 import com.SecretSquirrel.AndroidNoise.services.rto.RoAlbum;
 import com.SecretSquirrel.AndroidNoise.services.rto.RoAlbumListResult;
 import com.SecretSquirrel.AndroidNoise.services.rto.RoArtist;
@@ -64,13 +65,11 @@ public class NoiseDataService extends IntentService {
 	}
 
 	private void getArtistList( String serverAddress, ResultReceiver receiver ) {
-		Bundle  resultData = new Bundle();
+		Bundle  resultData = buildResultBundle( NoiseRemoteApi.GetArtistList );
 		int     resultCode = NoiseRemoteApi.RemoteResultError;
 
 		try {
-			RestAdapter         restAdapter = new RestAdapter.Builder().setServer( serverAddress ).build();
-			RemoteServerDataApi service = restAdapter.create( RemoteServerDataApi.class );
-
+			RemoteServerDataApi service = buildDataService( serverAddress );
 			RoArtistListResult  result = service.GetArtistList();
 
 			if( result.Success ) {
@@ -96,14 +95,12 @@ public class NoiseDataService extends IntentService {
 	}
 
 	private void getAlbumList( long forArtist, String serverAddress, ResultReceiver receiver ) {
-		Bundle  resultData = new Bundle();
+		Bundle  resultData = buildResultBundle( NoiseRemoteApi.GetAlbumList );
 		int     resultCode = NoiseRemoteApi.RemoteResultError;
 
 		try {
-			RestAdapter         restAdapter = new RestAdapter.Builder().setServer( serverAddress ).build();
-			RemoteServerDataApi service = restAdapter.create( RemoteServerDataApi.class );
-
-			RoAlbumListResult result = service.GetAlbumList( forArtist );
+			RemoteServerDataApi service = buildDataService( serverAddress );
+			RoAlbumListResult   result = service.GetAlbumList( forArtist );
 
 			if( result.Success ) {
 				ArrayList<Album> albums = new ArrayList<Album>();
@@ -128,14 +125,12 @@ public class NoiseDataService extends IntentService {
 	}
 
 	private void getTrackList( long forAlbum, String serverAddress, ResultReceiver receiver ) {
-		Bundle  resultData = new Bundle();
+		Bundle  resultData = buildResultBundle( NoiseRemoteApi.GetTrackList );
 		int     resultCode = NoiseRemoteApi.RemoteResultError;
 
 		try {
-			RestAdapter         restAdapter = new RestAdapter.Builder().setServer( serverAddress ).build();
-			RemoteServerDataApi service = restAdapter.create( RemoteServerDataApi.class );
-
-			RoTrackListResult result = service.GetTrackList( forAlbum );
+			RemoteServerDataApi service = buildDataService( serverAddress );
+			RoTrackListResult   result = service.GetTrackList( forAlbum );
 
 			if( result.Success ) {
 				ArrayList<Track> tracks = new ArrayList<Track>();
@@ -157,5 +152,20 @@ public class NoiseDataService extends IntentService {
 		}
 
 		receiver.send( resultCode, resultData );
+	}
+
+	private Bundle buildResultBundle( int apiCode ) {
+		Bundle  retValue = new Bundle();
+
+		retValue.putInt( NoiseRemoteApi.RemoteApiParameter, apiCode );
+
+		return( retValue );
+	}
+
+	private RemoteServerDataApi buildDataService( String serverAddress ) {
+		RestAdapter         restAdapter = new RestAdapter.Builder().setServer( serverAddress ).build();
+		RemoteServerDataApi service = restAdapter.create( RemoteServerDataApi.class );
+
+		return( service );
 	}
 }

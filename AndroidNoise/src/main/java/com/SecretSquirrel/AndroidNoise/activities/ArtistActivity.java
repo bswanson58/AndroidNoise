@@ -88,10 +88,16 @@ public class ArtistActivity extends ActionBarActivity
 	public void onReceiveResult( int resultCode, Bundle resultData ) {
 		if( resultCode == NoiseRemoteApi.RemoteResultSuccess ) {
 			FragmentManager     fm = getSupportFragmentManager();
-			AlbumListFragment   albumListFragment = (AlbumListFragment)fm.findFragmentById( R.id.fragment_album_list );
-			ArrayList<Album>    albumList = resultData.getParcelableArrayList( NoiseRemoteApi.AlbumList );
+			int                 callCode = resultData.getInt( NoiseRemoteApi.RemoteApiParameter );
 
-			albumListFragment.setAlbumList( albumList );
+			switch( callCode ) {
+				case NoiseRemoteApi.GetAlbumList:
+					AlbumListFragment   albumListFragment = (AlbumListFragment)fm.findFragmentById( R.id.fragment_album_list );
+					ArrayList<Album>    albumList = resultData.getParcelableArrayList( NoiseRemoteApi.AlbumList );
+
+					albumListFragment.setAlbumList( albumList );
+					break;
+			}
 		}
 	}
 }
