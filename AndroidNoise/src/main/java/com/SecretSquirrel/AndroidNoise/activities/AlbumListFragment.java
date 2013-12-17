@@ -16,6 +16,8 @@ import com.SecretSquirrel.AndroidNoise.R;
 import com.SecretSquirrel.AndroidNoise.dto.Album;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class AlbumListFragment extends Fragment {
 	private ListView            mAlbumListView;
@@ -41,6 +43,19 @@ public class AlbumListFragment extends Fragment {
 		return( myView );
 	}
 
+	public void setAlbumList( ArrayList<Album> albumList ) {
+		mAlbumList.clear();
+		mAlbumList.addAll( albumList );
+
+		Collections.sort( mAlbumList, new Comparator<Album>() {
+			public int compare( Album album1, Album album2 ) {
+				return( album1.Name.compareToIgnoreCase( album2.Name ));
+			}
+		} );
+
+		mAlbumListAdapter.notifyDataSetChanged();
+	}
+
 	private class AlbumAdapter extends ArrayAdapter<Album> {
 		private Context             mContext;
 		private LayoutInflater      mLayoutInflater;
@@ -64,7 +79,7 @@ public class AlbumListFragment extends Fragment {
 			ViewHolder  views = null;
 
 			if( convertView == null ) {
-				retValue = mLayoutInflater.inflate( R.layout.artist_list_item, parent, false );
+				retValue = mLayoutInflater.inflate( R.layout.album_list_item, parent, false );
 
 				views = new ViewHolder();
 				views.NameTextView = (TextView)retValue.findViewById( R.id.album_list_item_name );

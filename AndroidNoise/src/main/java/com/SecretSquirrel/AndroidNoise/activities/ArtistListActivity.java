@@ -9,9 +9,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v4.app.FragmentManager;
 
 import com.SecretSquirrel.AndroidNoise.R;
-import com.SecretSquirrel.AndroidNoise.dto.Album;
 import com.SecretSquirrel.AndroidNoise.dto.Artist;
-import com.SecretSquirrel.AndroidNoise.dto.Track;
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
 import com.SecretSquirrel.AndroidNoise.interfaces.IViewListener;
 import com.SecretSquirrel.AndroidNoise.interfaces.OnItemSelectedListener;
@@ -51,6 +49,7 @@ public class ArtistListActivity extends ActionBarActivity
 			    super.OnArtistSelected( artist );
 			    Intent  launchIntent = new Intent( ArtistListActivity.this, ArtistActivity.class );
 
+			    getApplicationState().setCurrentArtist( artist );
 			    startActivity( launchIntent );
 		    }
 	    };

@@ -4,14 +4,15 @@ package com.SecretSquirrel.AndroidNoise.services.rto;
 
 import retrofit.http.GET;
 import retrofit.http.Path;
+import retrofit.http.Query;
 
 public interface RemoteServerDataApi {
 	@GET( "/Data/artists" )
 	RoArtistListResult  GetArtistList();
 
-	@GET( "/Data/albums?artist={artistId}" )
-	RoAlbumListResult   GetAlbumList( @Path("artistId") long forArtist );
+	@GET( "/Data/albums" )
+	RoAlbumListResult   GetAlbumList( @Query("artist") long forArtist );
 
-	@GET( "/Data/tracks?album={albumId}" )
-	RoTrackListResult   GetTrackList( @Path("albumId")  long forAlbum );
+	@GET( "/Data/tracks" )
+	RoTrackListResult   GetTrackList( @Query("album")  long forAlbum );
 }

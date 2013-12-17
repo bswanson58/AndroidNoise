@@ -28,7 +28,7 @@ public class Album implements Parcelable {
 	};
 
 	public Album( RoAlbum fromAlbum ) {
-		AlbumId = fromAlbum.AlbumId;
+		AlbumId = fromAlbum.DbId;
 		ArtistId = fromAlbum.ArtistId;
 		Name = fromAlbum.Name;
 		TrackCount = fromAlbum.TrackCount;

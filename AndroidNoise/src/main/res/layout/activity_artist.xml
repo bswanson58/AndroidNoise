@@ -11,7 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:name="com.SecretSquirrel.AndroidNoise.activities.ArtistInfoFragment"
-        android:id="@+id/fragment_artistInfo"
+        android:id="@+id/fragment_artist_info"
         tools:layout="@layout/fragment_artist_info"
         android:layout_weight="1"/>
 
@@ -19,7 +19,7 @@
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:name="com.SecretSquirrel.AndroidNoise.activities.AlbumListFragment"
-        android:id="@+id/fragment_albumList"
+        android:id="@+id/fragment_album_list"
         tools:layout="@layout/fragment_album_list"
         android:layout_weight="1"/>
 </LinearLayout>

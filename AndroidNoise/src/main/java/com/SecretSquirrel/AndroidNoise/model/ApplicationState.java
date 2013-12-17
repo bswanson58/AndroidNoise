@@ -8,6 +8,8 @@ import android.os.ResultReceiver;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.SecretSquirrel.AndroidNoise.dto.Album;
+import com.SecretSquirrel.AndroidNoise.dto.Artist;
 import com.SecretSquirrel.AndroidNoise.dto.ServerInformation;
 import com.SecretSquirrel.AndroidNoise.dto.ServerVersion;
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
@@ -28,6 +30,8 @@ public class ApplicationState implements IApplicationState {
 	private Context                 mContext;
 	private ServerInformation       mCurrentServer;
 	private boolean                 mIsConnected;
+	private Artist                  mCurrentArtist;
+	private Album                   mCurrentAlbum;
 	private NoiseDataClient         mDataClient;
 	private NoiseQueueClient        mQueueClient;
 
@@ -46,6 +50,26 @@ public class ApplicationState implements IApplicationState {
 
 	public INoiseQueue getQueueClient() {
 		return( mQueueClient );
+	}
+
+	@Override
+	public Artist getCurrentArtist() {
+		return( mCurrentArtist );
+	}
+
+	@Override
+	public void setCurrentArtist( Artist artist ) {
+		mCurrentArtist = artist;
+	}
+
+	@Override
+	public Album getCurrentAlbum() {
+		return( mCurrentAlbum );
+	}
+
+	@Override
+	public void setCurrentAlbum( Album album ) {
+		mCurrentAlbum = album;
 	}
 
 	public void SelectServer( ServerInformation server ) {

@@ -29,7 +29,7 @@ public class Track implements Parcelable {
 	};
 
 	public Track( RoTrack fromTrack ) {
-		TrackId = fromTrack.TrackId;
+		TrackId = fromTrack.DbId;
 		AlbumId = fromTrack.AlbumId;
 		ArtistId = fromTrack.ArtistId;
 		Name = fromTrack.Name;

@@ -27,7 +27,7 @@ public class Artist implements Parcelable {
 	};
 
 	public Artist( RoArtist fromArtist ) {
-		ArtistId = fromArtist.ArtistId;
+		ArtistId = fromArtist.DbId;
 		Name = fromArtist.Name;
 		AlbumCount = fromArtist.AlbumCount;
 		Rating = fromArtist.Rating;
