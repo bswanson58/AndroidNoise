@@ -18,16 +18,34 @@ public class NoiseDataClient implements INoiseData {
 	}
 
 	public void GetArtistList( ResultReceiver receiver ) {
-		setupAndCallApi( NoiseRemoteApi.GetArtistList, receiver );
+		mContext.startService( setupApi( NoiseRemoteApi.GetArtistList, receiver ));
 	}
 
-	private void setupAndCallApi( int apiCode, ResultReceiver resultReceiver ) {
+	@Override
+	public void GetAlbumList( long forArtist, ResultReceiver receiver ) {
+		Intent  intent = setupApi( NoiseRemoteApi.GetAlbumList, receiver );
+
+		intent.putExtra( NoiseRemoteApi.ArtistId, forArtist );
+
+		mContext.startService( intent );
+	}
+
+	@Override
+	public void GetTrackList( long forAlbum, ResultReceiver receiver ) {
+		Intent  intent = setupApi( NoiseRemoteApi.GetTrackList, receiver );
+
+		intent.putExtra( NoiseRemoteApi.AlbumId, forAlbum );
+
+		mContext.startService( intent );
+	}
+
+	private Intent setupApi( int apiCode, ResultReceiver resultReceiver ) {
 		Intent intent = new Intent( mContext, NoiseDataService.class );
 
 		intent.putExtra( NoiseRemoteApi.RemoteServerAddress, mServerAddress );
 		intent.putExtra( NoiseRemoteApi.RemoteApiParameter, apiCode );
 		intent.putExtra( NoiseRemoteApi.RemoteCallReceiver, resultReceiver );
 
-		mContext.startService( intent );
+		return( intent );
 	}
 }

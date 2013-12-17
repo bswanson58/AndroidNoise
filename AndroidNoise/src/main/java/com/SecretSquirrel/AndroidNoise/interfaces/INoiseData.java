@@ -5,5 +5,7 @@ package com.SecretSquirrel.AndroidNoise.interfaces;
 import android.os.ResultReceiver;
 
 public interface INoiseData {
-	public void     GetArtistList( ResultReceiver receiver );
+	public  void    GetArtistList( ResultReceiver receiver );
+	public  void    GetAlbumList( long forArtist, ResultReceiver receiver );
+	public  void    GetTrackList( long forAlbum, ResultReceiver receiver );
 }

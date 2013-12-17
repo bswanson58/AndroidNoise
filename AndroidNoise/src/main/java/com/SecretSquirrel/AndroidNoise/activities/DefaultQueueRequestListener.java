@@ -16,11 +16,15 @@ public class DefaultQueueRequestListener implements OnQueueRequestListener {
 
 	@Override
 	public void PlayAlbum( Album album ) {
-		mApplicationState.getQueueClient().EnqueueAlbum( 0 );
+		if( album != null ) {
+			mApplicationState.getQueueClient().EnqueueAlbum( album.AlbumId );
+		}
 	}
 
 	@Override
 	public void PlayTrack( Track track ) {
-		mApplicationState.getQueueClient().EnqueueTrack( 0 );
+		if( track != null ) {
+			mApplicationState.getQueueClient().EnqueueTrack( track.TrackId );
+		}
 	}
 }

@@ -5,6 +5,7 @@ package com.SecretSquirrel.AndroidNoise.services.rto;
 import android.os.Parcelable;
 
 public class RoArtist {
+	public long     ArtistId;
 	public String   Name;
 	public int      AlbumCount;
 	public int      Rating;

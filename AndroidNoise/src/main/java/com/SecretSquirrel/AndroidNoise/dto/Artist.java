@@ -9,6 +9,7 @@ import com.SecretSquirrel.AndroidNoise.services.rto.RoServerVersion;
 // Secret Squirrel Software - Created by bswanson on 12/6/13.
 
 public class Artist implements Parcelable {
+	public long     ArtistId;
 	public String   Name;
 	public int      AlbumCount;
 	public int      Rating;
@@ -26,6 +27,7 @@ public class Artist implements Parcelable {
 	};
 
 	public Artist( RoArtist fromArtist ) {
+		ArtistId = fromArtist.ArtistId;
 		Name = fromArtist.Name;
 		AlbumCount = fromArtist.AlbumCount;
 		Rating = fromArtist.Rating;
@@ -34,6 +36,7 @@ public class Artist implements Parcelable {
 	}
 
 	public Artist( Parcel parcel ) {
+		ArtistId = parcel.readLong();
 		Name = parcel.readString();
 		AlbumCount = parcel.readInt();
 		Rating = parcel.readInt();
@@ -48,6 +51,7 @@ public class Artist implements Parcelable {
 
 	@Override
 	public void writeToParcel( Parcel parcel, int i ) {
+		parcel.writeLong( ArtistId );
 		parcel.writeString( Name );
 		parcel.writeInt( AlbumCount );
 		parcel.writeInt( Rating );
