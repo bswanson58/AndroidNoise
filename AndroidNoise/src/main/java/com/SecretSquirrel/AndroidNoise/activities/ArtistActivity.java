@@ -6,13 +6,24 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.SecretSquirrel.AndroidNoise.R;
+import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
+import com.SecretSquirrel.AndroidNoise.interfaces.IViewListener;
+import com.SecretSquirrel.AndroidNoise.interfaces.OnItemSelectedListener;
+import com.SecretSquirrel.AndroidNoise.interfaces.OnQueueRequestListener;
+import com.SecretSquirrel.AndroidNoise.model.NoiseRemoteApplication;
 
-public class ArtistActivity extends ActionBarActivity {
+public class ArtistActivity extends ActionBarActivity
+							implements IViewListener {
+	private OnItemSelectedListener  mOnItemSelectedListener;
+	private OnQueueRequestListener  mOnQueueRequestListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_artist);
+
+	    mOnItemSelectedListener = new DefaultItemSelectedListener();
+	    mOnQueueRequestListener = new DefaultQueueRequestListener( getApplicationState());
     }
 
 
@@ -35,4 +46,20 @@ public class ArtistActivity extends ActionBarActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
+	private IApplicationState getApplicationState() {
+		NoiseRemoteApplication application = (NoiseRemoteApplication)getApplication();
+
+		return( application.getApplicationState());
+	}
+
+	@Override
+	public OnItemSelectedListener getItemSelectedListener() {
+		return( mOnItemSelectedListener );
+	}
+
+	@Override
+	public OnQueueRequestListener getQueueRequestListener() {
+		return( mOnQueueRequestListener );
+	}
 }

@@ -13,7 +13,9 @@ import com.SecretSquirrel.AndroidNoise.dto.Album;
 import com.SecretSquirrel.AndroidNoise.dto.Artist;
 import com.SecretSquirrel.AndroidNoise.dto.Track;
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
+import com.SecretSquirrel.AndroidNoise.interfaces.IViewListener;
 import com.SecretSquirrel.AndroidNoise.interfaces.OnItemSelectedListener;
+import com.SecretSquirrel.AndroidNoise.interfaces.OnQueueRequestListener;
 import com.SecretSquirrel.AndroidNoise.model.NoiseRemoteApplication;
 import com.SecretSquirrel.AndroidNoise.services.NoiseRemoteApi;
 import com.SecretSquirrel.AndroidNoise.services.ServiceResultReceiver;
@@ -21,10 +23,11 @@ import com.SecretSquirrel.AndroidNoise.services.ServiceResultReceiver;
 import java.util.ArrayList;
 
 public class ArtistListActivity extends ActionBarActivity
-								implements ServiceResultReceiver.Receiver,
-								OnItemSelectedListener {
+								implements ServiceResultReceiver.Receiver, IViewListener {
 
 	private ServiceResultReceiver   mServiceResultReceiver;
+	private OnItemSelectedListener  mItemSelectedListener;
+	private OnQueueRequestListener  mQueueRequestListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +43,17 @@ public class ArtistListActivity extends ActionBarActivity
 
 	    mServiceResultReceiver = new ServiceResultReceiver( new Handler());
 	    mServiceResultReceiver.setReceiver( this );
+
+	    mQueueRequestListener = new DefaultQueueRequestListener( getApplicationState());
+	    mItemSelectedListener = new DefaultItemSelectedListener() {
+		    @Override
+		    public void OnArtistSelected( Artist artist ) {
+			    super.OnArtistSelected( artist );
+			    Intent  launchIntent = new Intent( ArtistListActivity.this, ArtistActivity.class );
+
+			    startActivity( launchIntent );
+		    }
+	    };
 
 	    if( getApplicationState().getIsConnected()) {
 		    loadArtistList();
@@ -92,15 +106,12 @@ public class ArtistListActivity extends ActionBarActivity
     }
 
 	@Override
-	public void OnArtistSelected( Artist artist ) {
-		Intent  launchIntent = new Intent( this, ArtistActivity.class );
-
-		startActivity( launchIntent );
+	public OnItemSelectedListener getItemSelectedListener() {
+		return( mItemSelectedListener );
 	}
 
 	@Override
-	public void OnAlbumSelected( Album album ) { }
-
-	@Override
-	public void OnTrackSelected( Track track ) { }
+	public OnQueueRequestListener getQueueRequestListener() {
+		return( mQueueRequestListener );
+	}
 }
