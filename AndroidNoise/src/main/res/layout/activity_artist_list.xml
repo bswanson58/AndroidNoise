@@ -10,10 +10,12 @@
         android:layout_height="fill_parent"
         android:layout_width="fill_parent">
 
-        <ListView
-            android:id="@+id/ArtistListView"
-            android:layout_height="fill_parent"
-            android:layout_width="fill_parent"/>
+        <fragment
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:name="com.SecretSquirrel.AndroidNoise.activities.ArtistListFragment"
+            android:id="@+id/fragment_artist_list"
+            tools:layout="@layout/fragment_artist_list"/>
     </RelativeLayout>
 
     </FrameLayout>
