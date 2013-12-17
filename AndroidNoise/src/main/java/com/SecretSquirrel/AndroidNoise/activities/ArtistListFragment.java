@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.SecretSquirrel.AndroidNoise.R;
 import com.SecretSquirrel.AndroidNoise.dto.Artist;
+import com.SecretSquirrel.AndroidNoise.interfaces.OnItemSelectedListener;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -68,7 +69,9 @@ public class ArtistListFragment extends Fragment {
 	}
 
 	private void selectArtist( Artist artist ) {
+		OnItemSelectedListener  listener = (OnItemSelectedListener)getActivity();
 
+		listener.OnArtistSelected( artist );
 	}
 
 	private class ArtistAdapter extends ArrayAdapter<Artist> {

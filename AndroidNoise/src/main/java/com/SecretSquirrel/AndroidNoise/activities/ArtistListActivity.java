@@ -9,8 +9,11 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v4.app.FragmentManager;
 
 import com.SecretSquirrel.AndroidNoise.R;
+import com.SecretSquirrel.AndroidNoise.dto.Album;
 import com.SecretSquirrel.AndroidNoise.dto.Artist;
+import com.SecretSquirrel.AndroidNoise.dto.Track;
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
+import com.SecretSquirrel.AndroidNoise.interfaces.OnItemSelectedListener;
 import com.SecretSquirrel.AndroidNoise.model.NoiseRemoteApplication;
 import com.SecretSquirrel.AndroidNoise.services.NoiseRemoteApi;
 import com.SecretSquirrel.AndroidNoise.services.ServiceResultReceiver;
@@ -18,7 +21,8 @@ import com.SecretSquirrel.AndroidNoise.services.ServiceResultReceiver;
 import java.util.ArrayList;
 
 public class ArtistListActivity extends ActionBarActivity
-								implements ServiceResultReceiver.Receiver {
+								implements ServiceResultReceiver.Receiver,
+								OnItemSelectedListener {
 
 	private ServiceResultReceiver   mServiceResultReceiver;
 
@@ -46,12 +50,6 @@ public class ArtistListActivity extends ActionBarActivity
 		    startActivity( serverConnectIntent );
 	    }
     }
-
-	private void selectArtist( Artist artist ) {
-		Intent  launchIntent = new Intent( this, ArtistActivity.class );
-
-		startActivity( launchIntent );
-	}
 
 	private IApplicationState getApplicationState() {
 		NoiseRemoteApplication application = (NoiseRemoteApplication)getApplication();
@@ -92,4 +90,17 @@ public class ArtistListActivity extends ActionBarActivity
         }
         return super.onOptionsItemSelected(item);
     }
+
+	@Override
+	public void OnArtistSelected( Artist artist ) {
+		Intent  launchIntent = new Intent( this, ArtistActivity.class );
+
+		startActivity( launchIntent );
+	}
+
+	@Override
+	public void OnAlbumSelected( Album album ) { }
+
+	@Override
+	public void OnTrackSelected( Track track ) { }
 }
