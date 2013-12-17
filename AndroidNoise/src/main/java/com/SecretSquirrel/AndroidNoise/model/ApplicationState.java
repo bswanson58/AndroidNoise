@@ -12,7 +12,9 @@ import com.SecretSquirrel.AndroidNoise.dto.ServerInformation;
 import com.SecretSquirrel.AndroidNoise.dto.ServerVersion;
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseData;
+import com.SecretSquirrel.AndroidNoise.interfaces.INoiseQueue;
 import com.SecretSquirrel.AndroidNoise.services.NoiseDataClient;
+import com.SecretSquirrel.AndroidNoise.services.NoiseQueueClient;
 import com.SecretSquirrel.AndroidNoise.services.NoiseRemoteApi;
 import com.SecretSquirrel.AndroidNoise.services.NoiseRemoteClient;
 import com.SecretSquirrel.AndroidNoise.services.ServiceLocatorClient;
@@ -27,6 +29,7 @@ public class ApplicationState implements IApplicationState {
 	private ServerInformation       mCurrentServer;
 	private boolean                 mIsConnected;
 	private NoiseDataClient         mDataClient;
+	private NoiseQueueClient        mQueueClient;
 
 	public ApplicationState( Context context ) {
 		mContext = context;
@@ -41,12 +44,17 @@ public class ApplicationState implements IApplicationState {
 		return( mDataClient );
 	}
 
+	public INoiseQueue getQueueClient() {
+		return( mQueueClient );
+	}
+
 	public void SelectServer( ServerInformation server ) {
 		mCurrentServer = server;
 		mIsConnected = mCurrentServer != null;
 
 		if( server != null ) {
 			mDataClient = new NoiseDataClient( mContext, mCurrentServer.getServerAddress());
+			mQueueClient = new NoiseQueueClient( mContext, mCurrentServer.getServerAddress());
 		}
 	}
 
