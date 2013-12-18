@@ -8,12 +8,14 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.SecretSquirrel.AndroidNoise.R;
 import com.SecretSquirrel.AndroidNoise.dto.Album;
+import com.SecretSquirrel.AndroidNoise.interfaces.IViewListener;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -39,6 +41,18 @@ public class AlbumListFragment extends Fragment {
 		mAlbumListAdapter = new AlbumAdapter( getActivity(), mAlbumList );
 		mAlbumListView.setAdapter( mAlbumListAdapter );
 
+		mAlbumListView.setOnItemClickListener( new AdapterView.OnItemClickListener() {
+			@Override
+			public void onItemClick( AdapterView<?> adapterView, View view, int i, long l ) {
+				Album album = mAlbumList.get( i );
+
+				if( album != null ) {
+					IViewListener listener = (IViewListener)getActivity();
+
+					listener.getItemSelectedListener().OnAlbumSelected( album );
+				}
+			}
+		} );
 
 		return( myView );
 	}

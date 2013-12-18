@@ -1,6 +1,5 @@
 package com.SecretSquirrel.AndroidNoise.activities;
 
-import android.content.Intent;
 import android.os.Handler;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBarActivity;
@@ -10,7 +9,7 @@ import android.view.MenuItem;
 
 import com.SecretSquirrel.AndroidNoise.R;
 import com.SecretSquirrel.AndroidNoise.dto.Album;
-import com.SecretSquirrel.AndroidNoise.dto.Artist;
+import com.SecretSquirrel.AndroidNoise.dto.Track;
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
 import com.SecretSquirrel.AndroidNoise.interfaces.IViewListener;
 import com.SecretSquirrel.AndroidNoise.interfaces.OnItemSelectedListener;
@@ -21,38 +20,34 @@ import com.SecretSquirrel.AndroidNoise.services.ServiceResultReceiver;
 
 import java.util.ArrayList;
 
-public class ArtistActivity extends ActionBarActivity
-							implements ServiceResultReceiver.Receiver,
-									   IViewListener {
+public class AlbumActivity extends ActionBarActivity
+						   implements ServiceResultReceiver.Receiver, IViewListener{
 	private OnItemSelectedListener  mItemSelectedListener;
 	private OnQueueRequestListener  mQueueRequestListener;
 	private ServiceResultReceiver   mReceiver;
-	private Artist                  mCurrentArtist;
+	private Album                   mCurrentAlbum;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_artist);
+        setContentView( R.layout.activity_album);
 
 	    mQueueRequestListener = new DefaultQueueRequestListener( getApplicationState());
-	    mItemSelectedListener = new DefaultItemSelectedListener() {
-		    @Override
-		    public void OnAlbumSelected( Album album ) {
-			    super.OnAlbumSelected( album );
-			    Intent launchIntent = new Intent( ArtistActivity.this, AlbumActivity.class );
+	    mItemSelectedListener = new DefaultItemSelectedListener();
 
-			    getApplicationState().setCurrentAlbum( album );
-			    startActivity( launchIntent );
-		    }
-	    };
+        //if (savedInstanceState == null) {
+        //    getSupportFragmentManager().beginTransaction()
+        //            .add(R.id.container, new PlaceholderFragment())
+        //            .commit();
+        //}
 
 	    mReceiver = new ServiceResultReceiver( new Handler());
 	    mReceiver.setReceiver( this );
 
-	    mCurrentArtist = getApplicationState().getCurrentArtist();
-		if( mCurrentArtist != null ) {
-			getApplicationState().getDataClient().GetAlbumList( mCurrentArtist.ArtistId, mReceiver );
-		}
+	    mCurrentAlbum = getApplicationState().getCurrentAlbum();
+	    if( mCurrentAlbum != null ) {
+		    getApplicationState().getDataClient().GetTrackList( mCurrentAlbum.AlbumId, mReceiver );
+	    }
     }
 
 
@@ -60,7 +55,7 @@ public class ArtistActivity extends ActionBarActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.artist, menu);
+        getMenuInflater().inflate(R.menu.album, menu);
         return true;
     }
 
@@ -95,15 +90,15 @@ public class ArtistActivity extends ActionBarActivity
 	@Override
 	public void onReceiveResult( int resultCode, Bundle resultData ) {
 		if( resultCode == NoiseRemoteApi.RemoteResultSuccess ) {
-			FragmentManager     fm = getSupportFragmentManager();
-			int                 callCode = resultData.getInt( NoiseRemoteApi.RemoteApiParameter );
+			FragmentManager fm = getSupportFragmentManager();
+			int             callCode = resultData.getInt( NoiseRemoteApi.RemoteApiParameter );
 
 			switch( callCode ) {
-				case NoiseRemoteApi.GetAlbumList:
-					AlbumListFragment   albumListFragment = (AlbumListFragment)fm.findFragmentById( R.id.fragment_album_list );
-					ArrayList<Album>    albumList = resultData.getParcelableArrayList( NoiseRemoteApi.AlbumList );
+				case NoiseRemoteApi.GetTrackList:
+					TrackListFragment   trackListFragment = (TrackListFragment)fm.findFragmentById( R.id.fragment_track_list );
+					ArrayList<Track>    trackList = resultData.getParcelableArrayList( NoiseRemoteApi.TrackList );
 
-					albumListFragment.setAlbumList( albumList );
+					trackListFragment.setTrackList( trackList );
 					break;
 			}
 		}
