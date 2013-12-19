@@ -42,7 +42,7 @@ public class ArtistListActivity extends ActionBarActivity
 	    mServiceResultReceiver = new ServiceResultReceiver( new Handler());
 	    mServiceResultReceiver.setReceiver( this );
 
-	    mQueueRequestListener = new DefaultQueueRequestListener( getApplicationState());
+	    mQueueRequestListener = new DefaultQueueRequestListener( this, getApplicationState());
 	    mItemSelectedListener = new DefaultItemSelectedListener() {
 		    @Override
 		    public void OnArtistSelected( Artist artist ) {

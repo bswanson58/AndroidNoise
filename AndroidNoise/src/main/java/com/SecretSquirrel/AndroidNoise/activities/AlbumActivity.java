@@ -32,7 +32,7 @@ public class AlbumActivity extends ActionBarActivity
         super.onCreate(savedInstanceState);
         setContentView( R.layout.activity_album);
 
-	    mQueueRequestListener = new DefaultQueueRequestListener( getApplicationState());
+	    mQueueRequestListener = new DefaultQueueRequestListener( this, getApplicationState());
 	    mItemSelectedListener = new DefaultItemSelectedListener();
 
         //if (savedInstanceState == null) {

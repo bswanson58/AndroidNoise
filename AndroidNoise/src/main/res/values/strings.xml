@@ -8,6 +8,6 @@
     <string name="title_activity_artist_list">Artists</string>
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_artist">Artist</string>
-    <string name="title_activity_album">Album</string>
+    <string name="title_activity_album">Album</string><string name="play_button_text">Play</string>
 
 </resources>

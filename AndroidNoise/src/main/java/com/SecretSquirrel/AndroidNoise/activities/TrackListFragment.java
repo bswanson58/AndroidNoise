@@ -9,11 +9,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.SecretSquirrel.AndroidNoise.R;
 import com.SecretSquirrel.AndroidNoise.dto.Track;
+import com.SecretSquirrel.AndroidNoise.interfaces.IViewListener;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -60,6 +62,7 @@ public class TrackListFragment extends Fragment {
 		private ArrayList<Track>    mTrackList;
 
 		private class ViewHolder {
+			public Button   PlayButton;
 			public TextView NameTextView;
 		}
 
@@ -82,6 +85,17 @@ public class TrackListFragment extends Fragment {
 				views = new ViewHolder();
 				views.NameTextView = (TextView)retValue.findViewById( R.id.track_list_item_name );
 
+				views.PlayButton = (Button) retValue.findViewById( R.id.play_button );
+				views.PlayButton.setOnClickListener( new View.OnClickListener() {
+					@Override
+					public void onClick( View view ) {
+						IViewListener listener = (IViewListener)getActivity();
+						Track           track = (Track)view.getTag();
+
+						listener.getQueueRequestListener().PlayTrack( track );
+					}
+				} );
+
 				retValue.setTag( views );
 			}
 			else {
@@ -92,6 +106,7 @@ public class TrackListFragment extends Fragment {
 			   ( position < mTrackList.size())) {
 				Track track = mTrackList.get( position );
 
+				views.PlayButton.setTag( track );
 				views.NameTextView.setText( track.Name );
 			}
 

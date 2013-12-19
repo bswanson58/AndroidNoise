@@ -34,7 +34,7 @@ public class ArtistActivity extends ActionBarActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_artist);
 
-	    mQueueRequestListener = new DefaultQueueRequestListener( getApplicationState());
+	    mQueueRequestListener = new DefaultQueueRequestListener( this, getApplicationState());
 	    mItemSelectedListener = new DefaultItemSelectedListener() {
 		    @Override
 		    public void OnAlbumSelected( Album album ) {

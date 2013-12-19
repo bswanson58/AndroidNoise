@@ -6,4 +6,14 @@ package com.SecretSquirrel.AndroidNoise.services.rto;
 public class BaseServerResult {
 	public boolean  Success;
 	public String   ErrorMessage;
+
+	public BaseServerResult() {
+		Success = true;
+		ErrorMessage = "";
+	}
+
+	public BaseServerResult( BaseServerResult clone ) {
+		Success = clone.Success;
+		ErrorMessage = clone.ErrorMessage;
+	}
 }

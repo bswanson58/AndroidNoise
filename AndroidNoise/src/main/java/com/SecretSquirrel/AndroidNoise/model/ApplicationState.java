@@ -78,7 +78,7 @@ public class ApplicationState implements IApplicationState {
 
 		if( server != null ) {
 			mDataClient = new NoiseDataClient( mContext, mCurrentServer.getServerAddress());
-			mQueueClient = new NoiseQueueClient( mContext, mCurrentServer.getServerAddress());
+			mQueueClient = new NoiseQueueClient( mCurrentServer.getServerAddress());
 		}
 	}
 
