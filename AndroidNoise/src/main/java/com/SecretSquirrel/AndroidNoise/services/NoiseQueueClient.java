@@ -2,6 +2,8 @@ package com.SecretSquirrel.AndroidNoise.services;
 
 // Secret Squirrel Software - Created by bswanson on 12/17/13.
 
+import android.util.Log;
+
 import com.SecretSquirrel.AndroidNoise.dto.Album;
 import com.SecretSquirrel.AndroidNoise.dto.QueuedAlbumResult;
 import com.SecretSquirrel.AndroidNoise.dto.QueuedTrackResult;
@@ -19,6 +21,8 @@ import rx.subscriptions.Subscriptions;
 import rx.util.functions.Action1;
 
 public class NoiseQueueClient implements INoiseQueue {
+	private static final String     TAG = NoiseQueueClient.class.getName();
+
 	private String                  mServerAddress;
 	private RemoteServerQueueApi    mService;
 
@@ -27,10 +31,22 @@ public class NoiseQueueClient implements INoiseQueue {
 	}
 
 	@Override
-	public void EnqueueTrack( Track track, Action1<QueuedTrackResult> resultAction ) {
-		EnqueueTrack( track )
+	public Subscription EnqueueTrack( Track track, Action1<QueuedTrackResult> resultAction ) {
+		return( EnqueueTrack( track )
 				.observeOn( AndroidSchedulers.mainThread())
-				.subscribe( resultAction );
+				.subscribe( resultAction, new Action1<Throwable>() {
+					@Override
+					public void call( Throwable throwable ) {
+						Log.e( TAG, "Default EnqueueTrack exception handler", throwable );
+					}
+				} ));
+	}
+
+	@Override
+	public Subscription EnqueueTrack( Track track, Action1<QueuedTrackResult> resultAction, Action1<Throwable> errorAction  ) {
+		return( EnqueueTrack( track )
+				.observeOn( AndroidSchedulers.mainThread())
+				.subscribe( resultAction, errorAction ));
 	}
 
 	@Override
@@ -42,7 +58,7 @@ public class NoiseQueueClient implements INoiseQueue {
 					observer.onNext( new QueuedTrackResult( track, getService().EnqueueTrack( track.TrackId )));
 					observer.onCompleted();
 				} catch( Exception e ) {
-					observer.onError(e);
+					observer.onError( e );
 				}
 
 				return Subscriptions.empty();
@@ -51,10 +67,22 @@ public class NoiseQueueClient implements INoiseQueue {
 	}
 
 	@Override
-	public void EnqueueAlbum( Album album, Action1<QueuedAlbumResult> resultAction ) {
-		EnqueueAlbum( album )
+	public Subscription EnqueueAlbum( Album album, Action1<QueuedAlbumResult> resultAction ) {
+		return( EnqueueAlbum( album )
 				.observeOn( AndroidSchedulers.mainThread())
-				.subscribe( resultAction );
+				.subscribe( resultAction, new Action1<Throwable>() {
+					@Override
+					public void call( Throwable throwable ) {
+						Log.e( TAG, "Default EnqueueAlbum exception handler", throwable );
+					}
+				} ));
+	}
+
+	@Override
+	public Subscription EnqueueAlbum( Album album, Action1<QueuedAlbumResult> resultAction, Action1<Throwable> errorAction ) {
+		return( EnqueueAlbum( album )
+				.observeOn( AndroidSchedulers.mainThread())
+				.subscribe( resultAction, errorAction ));
 	}
 
 	@Override
@@ -66,7 +94,7 @@ public class NoiseQueueClient implements INoiseQueue {
 					observer.onNext( new QueuedAlbumResult( album, getService().EnqueueAlbum( album.AlbumId )));
 					observer.onCompleted();
 				} catch( Exception e ) {
-					observer.onError(e);
+					observer.onError( e );
 				}
 
 				return Subscriptions.empty();
