@@ -10,6 +10,8 @@ import android.os.Bundle;
 import android.os.ResultReceiver;
 import android.util.Log;
 
+import com.SecretSquirrel.AndroidNoise.support.Constants;
+
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -71,8 +73,10 @@ public class ServiceLocator extends IntentService {
 			javax.jmdns.ServiceInfo[] services = mDiscoveryService.list( ofType );
 
 			mDiscoveryService.close();
-		} catch( IOException e ) {
-			e.printStackTrace();
+		} catch( IOException ex ) {
+			if( Constants.LOG_ERROR ) {
+				Log.w( TAG, "locateServices", ex );
+			}
 		}
 		finally {
 			if( mWiFiLock != null ) {
@@ -97,8 +101,10 @@ public class ServiceLocator extends IntentService {
 			int intaddr = wifiinfo.getIpAddress();
 			byte[] byteaddr = new byte[] { (byte) (intaddr & 0xff), (byte) (intaddr >> 8 & 0xff), (byte) (intaddr >> 16 & 0xff), (byte) (intaddr >> 24 & 0xff) };
 			result = InetAddress.getByAddress(byteaddr);
-		} catch (UnknownHostException ex) {
-			Log.w( "ServiceLocator", String.format("getDeviceIpAddress Error: %s", ex.getMessage()));
+		} catch( UnknownHostException ex ) {
+			if( Constants.LOG_ERROR ) {
+				Log.w( TAG, "getDeviceIpAddress", ex );
+			}
 		}
 
 		return result;

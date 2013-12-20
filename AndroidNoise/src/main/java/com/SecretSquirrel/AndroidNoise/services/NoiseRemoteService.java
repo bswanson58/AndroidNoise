@@ -5,16 +5,19 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.ResultReceiver;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.SecretSquirrel.AndroidNoise.dto.ServerVersion;
 import com.SecretSquirrel.AndroidNoise.services.rto.RemoteServerRestApi;
 import com.SecretSquirrel.AndroidNoise.services.rto.RoServerVersion;
+import com.SecretSquirrel.AndroidNoise.support.Constants;
 
 import retrofit.RestAdapter;
 
 // Secret Squirrel Software - Created by bswanson on 12/6/13.
 
 public class NoiseRemoteService extends IntentService {
+	private static final String     TAG = NoiseRemoteService.class.getName();
 
 	public NoiseRemoteService() {
 		super( "NoiseRemoteService" );
@@ -61,6 +64,10 @@ public class NoiseRemoteService extends IntentService {
 		catch( Exception ex ) {
 			resultData.putString( NoiseRemoteApi.RemoteResultErrorMessage, ex.getMessage());
 			resultCode = NoiseRemoteApi.RemoteResultException;
+
+			if( Constants.LOG_ERROR ) {
+				Log.w( TAG, "getServerVersion", ex );
+			}
 		}
 
 		receiver.send( resultCode, resultData );

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.ResultReceiver;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.SecretSquirrel.AndroidNoise.dto.Album;
 import com.SecretSquirrel.AndroidNoise.dto.Artist;
@@ -17,6 +18,7 @@ import com.SecretSquirrel.AndroidNoise.services.rto.RoArtist;
 import com.SecretSquirrel.AndroidNoise.services.rto.RoArtistListResult;
 import com.SecretSquirrel.AndroidNoise.services.rto.RoTrack;
 import com.SecretSquirrel.AndroidNoise.services.rto.RoTrackListResult;
+import com.SecretSquirrel.AndroidNoise.support.Constants;
 
 import java.util.ArrayList;
 
@@ -25,6 +27,8 @@ import retrofit.RestAdapter;
 // Secret Squirrel Software - Created by bswanson on 12/6/13.
 
 public class NoiseDataService extends IntentService {
+	private static final String     TAG = NoiseDataService.class.getName();
+
 	public NoiseDataService() {
 		super( "NoiseDataService" );
 	}
@@ -89,6 +93,10 @@ public class NoiseDataService extends IntentService {
 		catch( Exception ex ) {
 			resultData.putString( NoiseRemoteApi.RemoteResultErrorMessage, ex.getMessage());
 			resultCode = NoiseRemoteApi.RemoteResultException;
+
+			if( Constants.LOG_ERROR ) {
+				Log.w( TAG, "getArtistList", ex );
+			}
 		}
 
 		receiver.send( resultCode, resultData );
@@ -119,6 +127,10 @@ public class NoiseDataService extends IntentService {
 		catch( Exception ex ) {
 			resultData.putString( NoiseRemoteApi.RemoteResultErrorMessage, ex.getMessage());
 			resultCode = NoiseRemoteApi.RemoteResultException;
+
+			if( Constants.LOG_ERROR ) {
+				Log.w( TAG, "getAlbumList", ex );
+			}
 		}
 
 		receiver.send( resultCode, resultData );
@@ -149,6 +161,10 @@ public class NoiseDataService extends IntentService {
 		catch( Exception ex ) {
 			resultData.putString( NoiseRemoteApi.RemoteResultErrorMessage, ex.getMessage());
 			resultCode = NoiseRemoteApi.RemoteResultException;
+
+			if( Constants.LOG_ERROR ) {
+				Log.w( TAG, "getTrackList", ex );
+			}
 		}
 
 		receiver.send( resultCode, resultData );

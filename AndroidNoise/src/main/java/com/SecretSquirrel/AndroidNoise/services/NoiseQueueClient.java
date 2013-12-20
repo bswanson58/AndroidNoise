@@ -10,6 +10,7 @@ import com.SecretSquirrel.AndroidNoise.dto.QueuedTrackResult;
 import com.SecretSquirrel.AndroidNoise.dto.Track;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseQueue;
 import com.SecretSquirrel.AndroidNoise.services.rto.RemoteServerQueueApi;
+import com.SecretSquirrel.AndroidNoise.support.Constants;
 
 import retrofit.RestAdapter;
 import rx.Observable;
@@ -37,7 +38,9 @@ public class NoiseQueueClient implements INoiseQueue {
 				.subscribe( resultAction, new Action1<Throwable>() {
 					@Override
 					public void call( Throwable throwable ) {
-						Log.e( TAG, "Default EnqueueTrack exception handler", throwable );
+					if( Constants.LOG_ERROR ) {
+						Log.w( TAG, "Default EnqueueTrack exception handler", throwable );
+					}
 					}
 				} ));
 	}
@@ -51,7 +54,7 @@ public class NoiseQueueClient implements INoiseQueue {
 
 	@Override
 	public Observable<QueuedTrackResult> EnqueueTrack( final Track track ) {
-		return Observable.create(new Observable.OnSubscribeFunc<QueuedTrackResult>() {
+		return Observable.create( new Observable.OnSubscribeFunc<QueuedTrackResult>() {
 			@Override
 			public Subscription onSubscribe( Observer<? super QueuedTrackResult> observer ) {
 				try {
@@ -73,7 +76,9 @@ public class NoiseQueueClient implements INoiseQueue {
 				.subscribe( resultAction, new Action1<Throwable>() {
 					@Override
 					public void call( Throwable throwable ) {
-						Log.e( TAG, "Default EnqueueAlbum exception handler", throwable );
+					if( Constants.LOG_ERROR ) {
+						Log.w( TAG, "Default EnqueueAlbum exception handler", throwable );
+					}
 					}
 				} ));
 	}
@@ -87,7 +92,7 @@ public class NoiseQueueClient implements INoiseQueue {
 
 	@Override
 	public Observable<QueuedAlbumResult> EnqueueAlbum( final Album album ) {
-		return Observable.create(new Observable.OnSubscribeFunc<QueuedAlbumResult>() {
+		return Observable.create( new Observable.OnSubscribeFunc<QueuedAlbumResult>() {
 			@Override
 			public Subscription onSubscribe( Observer<? super QueuedAlbumResult> observer) {
 				try {
