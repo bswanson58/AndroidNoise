@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -76,6 +77,7 @@ public class AlbumListFragment extends Fragment {
 		private ArrayList<Album>    mAlbumList;
 
 		private class ViewHolder {
+			public Button       PlayButton;
 			public TextView     NameTextView;
 		}
 
@@ -97,6 +99,20 @@ public class AlbumListFragment extends Fragment {
 
 				views = new ViewHolder();
 				views.NameTextView = (TextView)retValue.findViewById( R.id.album_list_item_name );
+				views.PlayButton = (Button)retValue.findViewById( R.id.play_button );
+
+				views.PlayButton.setOnClickListener( new View.OnClickListener() {
+					@Override
+					public void onClick( View view ) {
+						Album   album = (Album)view.getTag();
+
+						if( album != null ) {
+							IViewListener listener = (IViewListener)getActivity();
+
+							listener.getQueueRequestListener().PlayAlbum( album );
+						}
+					}
+				} );
 
 				retValue.setTag( views );
 			}
@@ -109,6 +125,7 @@ public class AlbumListFragment extends Fragment {
 				Album      album = mAlbumList.get( position );
 
 				views.NameTextView.setText( album.Name );
+				views.PlayButton.setTag( album );
 			}
 
 			return( retValue );

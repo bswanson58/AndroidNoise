@@ -89,10 +89,13 @@ public class TrackListFragment extends Fragment {
 				views.PlayButton.setOnClickListener( new View.OnClickListener() {
 					@Override
 					public void onClick( View view ) {
-						IViewListener listener = (IViewListener)getActivity();
-						Track           track = (Track)view.getTag();
+						Track   track = (Track)view.getTag();
 
-						listener.getQueueRequestListener().PlayTrack( track );
+						if( track != null ) {
+							IViewListener listener = (IViewListener)getActivity();
+
+							listener.getQueueRequestListener().PlayTrack( track );
+						}
 					}
 				} );
 
