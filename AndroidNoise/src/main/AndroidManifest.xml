@@ -40,15 +40,17 @@
         </activity>
         <activity
             android:name="com.SecretSquirrel.AndroidNoise.activities.ArtistListActivity"
-            android:label="@string/title_activity_artist_list" >
+            android:label="@string/title_activity_artist_list">
         </activity>
         <activity
             android:name="com.SecretSquirrel.AndroidNoise.activities.ArtistActivity"
-            android:label="@string/title_activity_artist" >
+            android:label="@string/title_activity_artist"
+            android:parentActivityName="com.SecretSquirrel.AndroidNoise.activities.ArtistListActivity">
         </activity>
         <activity
             android:name="com.SecretSquirrel.AndroidNoise.activities.AlbumActivity"
-            android:label="@string/title_activity_album" >
+            android:label="@string/title_activity_album"
+            android:parentActivityName="com.SecretSquirrel.AndroidNoise.activities.ArtistActivity">
         </activity>
     </application>
 
