@@ -6,7 +6,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +18,6 @@ import com.SecretSquirrel.AndroidNoise.R;
 import com.SecretSquirrel.AndroidNoise.dto.Album;
 import com.SecretSquirrel.AndroidNoise.dto.Track;
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
-import com.SecretSquirrel.AndroidNoise.interfaces.IViewListener;
 import com.SecretSquirrel.AndroidNoise.model.NoiseRemoteApplication;
 import com.SecretSquirrel.AndroidNoise.services.NoiseRemoteApi;
 import com.SecretSquirrel.AndroidNoise.services.ServiceResultReceiver;
@@ -61,6 +59,7 @@ public class TrackListFragment extends Fragment
 
 		return( myView );
 	}
+
 	@Override
 	public void onReceiveResult( int resultCode, Bundle resultData ) {
 		if( resultCode == NoiseRemoteApi.RemoteResultSuccess ) {
@@ -131,9 +130,9 @@ public class TrackListFragment extends Fragment
 						Track   track = (Track)view.getTag();
 
 						if( track != null ) {
-							IViewListener listener = (IViewListener)getActivity();
+							//IViewListener listener = (IViewListener)getActivity();
 
-							listener.getQueueRequestListener().PlayTrack( track );
+							//listener.getQueueRequestListener().PlayTrack( track );
 						}
 					}
 				} );

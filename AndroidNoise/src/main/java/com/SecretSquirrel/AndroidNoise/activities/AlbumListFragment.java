@@ -6,7 +6,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +20,6 @@ import com.SecretSquirrel.AndroidNoise.dto.Album;
 import com.SecretSquirrel.AndroidNoise.dto.Artist;
 import com.SecretSquirrel.AndroidNoise.events.EventAlbumSelected;
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
-import com.SecretSquirrel.AndroidNoise.interfaces.IViewListener;
 import com.SecretSquirrel.AndroidNoise.model.NoiseRemoteApplication;
 import com.SecretSquirrel.AndroidNoise.services.NoiseRemoteApi;
 import com.SecretSquirrel.AndroidNoise.services.ServiceResultReceiver;
@@ -146,9 +144,9 @@ public class AlbumListFragment extends Fragment
 						Album   album = (Album)view.getTag();
 
 						if( album != null ) {
-							IViewListener listener = (IViewListener)getActivity();
+							//IViewListener listener = (IViewListener)getActivity();
 
-							listener.getQueueRequestListener().PlayAlbum( album );
+							//listener.getQueueRequestListener().PlayAlbum( album );
 						}
 					}
 				} );
