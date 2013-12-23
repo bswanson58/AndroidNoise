@@ -3,13 +3,9 @@ package com.SecretSquirrel.AndroidNoise.activities;
 import android.content.Intent;
 import android.os.Handler;
 import android.support.v7.app.ActionBarActivity;
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
 
 import com.SecretSquirrel.AndroidNoise.R;
 import com.SecretSquirrel.AndroidNoise.dto.ServerInformation;
@@ -38,12 +34,6 @@ public class ServerConnectActivity extends ActionBarActivity
 	    }
 
         setContentView( R.layout.activity_server_connect );
-
-        if( savedInstanceState == null ) {
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new PlaceholderFragment())
-                    .commit();
-        }
 
 	    if( getApplicationState().getIsConnected()) {
 		    launchArtistList();
@@ -104,21 +94,4 @@ public class ServerConnectActivity extends ActionBarActivity
         }
         return super.onOptionsItemSelected(item);
     }
-
-    /**
-     * A placeholder fragment containing a simple view.
-     */
-    public static class PlaceholderFragment extends Fragment {
-
-        public PlaceholderFragment() {
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_server_connect, container, false);
-            return rootView;
-        }
-    }
-
 }
