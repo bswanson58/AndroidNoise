@@ -34,9 +34,12 @@ public class ApplicationState implements IApplicationState {
 	private Album                   mCurrentAlbum;
 	private NoiseDataClient         mDataClient;
 	private NoiseQueueClient        mQueueClient;
+	private QueueRequestHandler     mQueueRequestHandler;
 
 	public ApplicationState( Context context ) {
 		mContext = context;
+
+		mQueueRequestHandler = new QueueRequestHandler( mContext, this );
 	}
 
 	public boolean getIsConnected() {

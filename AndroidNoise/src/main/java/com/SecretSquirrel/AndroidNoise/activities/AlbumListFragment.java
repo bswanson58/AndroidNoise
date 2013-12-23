@@ -19,6 +19,7 @@ import com.SecretSquirrel.AndroidNoise.R;
 import com.SecretSquirrel.AndroidNoise.dto.Album;
 import com.SecretSquirrel.AndroidNoise.dto.Artist;
 import com.SecretSquirrel.AndroidNoise.events.EventAlbumSelected;
+import com.SecretSquirrel.AndroidNoise.events.EventPlayAlbum;
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
 import com.SecretSquirrel.AndroidNoise.model.NoiseRemoteApplication;
 import com.SecretSquirrel.AndroidNoise.services.NoiseRemoteApi;
@@ -144,9 +145,7 @@ public class AlbumListFragment extends Fragment
 						Album   album = (Album)view.getTag();
 
 						if( album != null ) {
-							//IViewListener listener = (IViewListener)getActivity();
-
-							//listener.getQueueRequestListener().PlayAlbum( album );
+							EventBus.getDefault().post( new EventPlayAlbum( album ));
 						}
 					}
 				} );

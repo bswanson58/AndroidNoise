@@ -1,6 +1,6 @@
-package com.SecretSquirrel.AndroidNoise.activities;
+package com.SecretSquirrel.AndroidNoise.model;
 
-// Secret Squirrel Software - Created by bswanson on 12/17/13.
+// Secret Squirrel Software - Created by bswanson on 12/23/13.
 
 import android.content.Context;
 import android.widget.Toast;
@@ -9,17 +9,38 @@ import com.SecretSquirrel.AndroidNoise.dto.Album;
 import com.SecretSquirrel.AndroidNoise.dto.QueuedAlbumResult;
 import com.SecretSquirrel.AndroidNoise.dto.QueuedTrackResult;
 import com.SecretSquirrel.AndroidNoise.dto.Track;
+import com.SecretSquirrel.AndroidNoise.events.EventPlayAlbum;
+import com.SecretSquirrel.AndroidNoise.events.EventPlayTrack;
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
 
+import de.greenrobot.event.EventBus;
 import rx.util.functions.Action1;
 
-public class DefaultQueueRequestListener {
-	private Context             mContext;
-	private IApplicationState   mApplicationState;
+public class QueueRequestHandler {
+	private Context mContext;
+	private IApplicationState mApplicationState;
 
-	public DefaultQueueRequestListener( Context context, IApplicationState applicationState ) {
+	public QueueRequestHandler( Context context, IApplicationState applicationState ) {
 		mContext = context;
 		mApplicationState = applicationState;
+
+		EventBus.getDefault().register( this );
+	}
+
+	public void onEvent( EventPlayAlbum args ) {
+		Album album = args.getAlbum();
+
+		if( album != null ) {
+			PlayAlbum( album );
+		}
+	}
+
+	public void onEvent( EventPlayTrack args ) {
+		Track track = args.getTrack();
+
+		if( track != null ) {
+			PlayTrack( track );
+		}
 	}
 
 	public void PlayAlbum( Album album ) {

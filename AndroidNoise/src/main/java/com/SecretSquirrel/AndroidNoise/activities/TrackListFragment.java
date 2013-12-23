@@ -17,6 +17,7 @@ import android.widget.TextView;
 import com.SecretSquirrel.AndroidNoise.R;
 import com.SecretSquirrel.AndroidNoise.dto.Album;
 import com.SecretSquirrel.AndroidNoise.dto.Track;
+import com.SecretSquirrel.AndroidNoise.events.EventPlayTrack;
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
 import com.SecretSquirrel.AndroidNoise.model.NoiseRemoteApplication;
 import com.SecretSquirrel.AndroidNoise.services.NoiseRemoteApi;
@@ -25,6 +26,8 @@ import com.SecretSquirrel.AndroidNoise.services.ServiceResultReceiver;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+
+import de.greenrobot.event.EventBus;
 
 public class TrackListFragment extends Fragment
 							   implements ServiceResultReceiver.Receiver {
@@ -130,9 +133,7 @@ public class TrackListFragment extends Fragment
 						Track   track = (Track)view.getTag();
 
 						if( track != null ) {
-							//IViewListener listener = (IViewListener)getActivity();
-
-							//listener.getQueueRequestListener().PlayTrack( track );
+							EventBus.getDefault().post( new EventPlayTrack( track ));
 						}
 					}
 				} );
