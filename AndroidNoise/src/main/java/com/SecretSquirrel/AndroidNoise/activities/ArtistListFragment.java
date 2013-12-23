@@ -4,6 +4,7 @@ package com.SecretSquirrel.AndroidNoise.activities;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,17 +16,22 @@ import android.widget.TextView;
 
 import com.SecretSquirrel.AndroidNoise.R;
 import com.SecretSquirrel.AndroidNoise.dto.Artist;
+import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
 import com.SecretSquirrel.AndroidNoise.interfaces.IViewListener;
-import com.SecretSquirrel.AndroidNoise.interfaces.OnItemSelectedListener;
+import com.SecretSquirrel.AndroidNoise.model.NoiseRemoteApplication;
+import com.SecretSquirrel.AndroidNoise.services.NoiseRemoteApi;
+import com.SecretSquirrel.AndroidNoise.services.ServiceResultReceiver;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-public class ArtistListFragment extends Fragment {
-	private ListView            mArtistListView;
-	private ArrayList<Artist>   mArtistList;
-	private ArtistAdapter       mArtistListAdapter;
+public class ArtistListFragment extends Fragment
+								implements ServiceResultReceiver.Receiver {
+	private ServiceResultReceiver   mServiceResultReceiver;
+	private ListView                mArtistListView;
+	private ArrayList<Artist>       mArtistList;
+	private ArtistAdapter           mArtistListAdapter;
 
 	@Override
 	public void onCreate( Bundle savedInstanceState ) {
@@ -33,6 +39,9 @@ public class ArtistListFragment extends Fragment {
 
 		mArtistList = new ArrayList<Artist>();
 		mArtistListAdapter = new ArtistAdapter( getActivity(), mArtistList );
+
+		mServiceResultReceiver = new ServiceResultReceiver( new Handler());
+		mServiceResultReceiver.setReceiver( this );
 	}
 
 	@Override
@@ -53,7 +62,20 @@ public class ArtistListFragment extends Fragment {
 			}
 		} );
 
+		if( getApplicationState().getIsConnected()) {
+			getApplicationState().getDataClient().GetArtistList( mServiceResultReceiver );
+		}
+
 		return( myView );
+	}
+
+	@Override
+	public void onReceiveResult( int resultCode, Bundle resultData ) {
+		if( resultCode == NoiseRemoteApi.RemoteResultSuccess ) {
+			ArrayList<Artist>   artistList = resultData.getParcelableArrayList( NoiseRemoteApi.ArtistList );
+
+			setArtistList( artistList );
+		}
 	}
 
 	public void setArtistList( ArrayList<Artist> artistList ) {
@@ -70,9 +92,15 @@ public class ArtistListFragment extends Fragment {
 	}
 
 	private void selectArtist( Artist artist ) {
-		IViewListener listener = (IViewListener)getActivity();
+		//IViewListener listener = (IViewListener)getActivity();
 
-		listener.getItemSelectedListener().OnArtistSelected( artist );
+		//listener.getItemSelectedListener().OnArtistSelected( artist );
+	}
+
+	private IApplicationState getApplicationState() {
+		NoiseRemoteApplication application = (NoiseRemoteApplication)getActivity().getApplication();
+
+		return( application.getApplicationState());
 	}
 
 	private class ArtistAdapter extends ArrayAdapter<Artist> {
