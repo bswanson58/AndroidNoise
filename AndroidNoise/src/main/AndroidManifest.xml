@@ -30,8 +30,8 @@
             android:label="AndroidNoise:ServiceLocator" />
 
         <activity
-            android:name="com.SecretSquirrel.AndroidNoise.activities.ServerConnectActivity"
-            android:label="@string/title_activity_server_connect" >
+            android:name="com.SecretSquirrel.AndroidNoise.activities.ShellActivity"
+            android:label="@string/title_activity_shell" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -39,18 +39,22 @@
             </intent-filter>
         </activity>
         <activity
+            android:name="com.SecretSquirrel.AndroidNoise.activities.ServerConnectActivity"
+            android:label="@string/title_activity_server_connect" >
+        </activity>
+        <activity
             android:name="com.SecretSquirrel.AndroidNoise.activities.ArtistListActivity"
-            android:label="@string/title_activity_artist_list">
+            android:label="@string/title_activity_artist_list" >
         </activity>
         <activity
             android:name="com.SecretSquirrel.AndroidNoise.activities.ArtistActivity"
             android:label="@string/title_activity_artist"
-            android:parentActivityName="com.SecretSquirrel.AndroidNoise.activities.ArtistListActivity">
+            android:parentActivityName="com.SecretSquirrel.AndroidNoise.activities.ArtistListActivity" >
         </activity>
         <activity
             android:name="com.SecretSquirrel.AndroidNoise.activities.AlbumActivity"
             android:label="@string/title_activity_album"
-            android:parentActivityName="com.SecretSquirrel.AndroidNoise.activities.ArtistActivity">
+            android:parentActivityName="com.SecretSquirrel.AndroidNoise.activities.ArtistActivity" >
         </activity>
     </application>
 
