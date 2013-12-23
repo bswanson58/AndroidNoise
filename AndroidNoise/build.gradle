@@ -28,4 +28,5 @@ dependencies {
     compile 'com.google.code.gson:gson:2.2.4'
     compile 'com.netflix.rxjava:rxjava-android:0.14.9'
     compile 'javax.jmdns:jmdns:3.4.1@jar'
+    compile 'de.greenrobot:eventbus:2.2.0@jar'
 }

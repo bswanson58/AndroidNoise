@@ -15,6 +15,9 @@ import android.support.v4.widget.DrawerLayout;
 import android.widget.TextView;
 
 import com.SecretSquirrel.AndroidNoise.R;
+import com.SecretSquirrel.AndroidNoise.events.EventServerSelected;
+
+import de.greenrobot.event.EventBus;
 
 public class ShellActivity extends ActionBarActivity
 						   implements NavigationDrawerFragment.NavigationDrawerCallbacks {
@@ -45,6 +48,15 @@ public class ShellActivity extends ActionBarActivity
 
 		// Set up the drawer.
 		mNavigationDrawerFragment.setUp( R.id.navigation_drawer, (DrawerLayout) findViewById( R.id.drawer_layout ));
+
+		EventBus    bus = EventBus.getDefault();
+		EventBus.getDefault().register( this );
+	}
+
+	public void onEvent( EventServerSelected args ) {
+		FragmentManager fragmentManager = getSupportFragmentManager();
+
+		fragmentManager.beginTransaction().replace( R.id.container, new ShellLibraryFragment()).commit();
 	}
 
 	@Override
