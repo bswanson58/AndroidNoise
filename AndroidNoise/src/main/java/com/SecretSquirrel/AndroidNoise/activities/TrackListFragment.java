@@ -4,7 +4,9 @@ package com.SecretSquirrel.AndroidNoise.activities;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,23 +16,34 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.SecretSquirrel.AndroidNoise.R;
+import com.SecretSquirrel.AndroidNoise.dto.Album;
 import com.SecretSquirrel.AndroidNoise.dto.Track;
+import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
 import com.SecretSquirrel.AndroidNoise.interfaces.IViewListener;
+import com.SecretSquirrel.AndroidNoise.model.NoiseRemoteApplication;
+import com.SecretSquirrel.AndroidNoise.services.NoiseRemoteApi;
+import com.SecretSquirrel.AndroidNoise.services.ServiceResultReceiver;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-public class TrackListFragment extends Fragment {
-	private ListView            mTrackListView;
-	private ArrayList<Track>    mTrackList;
-	private TrackAdapter        mTrackListAdapter;
+public class TrackListFragment extends Fragment
+							   implements ServiceResultReceiver.Receiver {
+	private ListView                mTrackListView;
+	private ArrayList<Track>        mTrackList;
+	private TrackAdapter            mTrackListAdapter;
+	private ServiceResultReceiver   mReceiver;
+	private Album                   mCurrentAlbum;
 
 	@Override
 	public void onCreate( Bundle savedInstanceState ) {
 		super.onCreate( savedInstanceState );
 
 		mTrackList = new ArrayList<Track>();
+
+		mReceiver = new ServiceResultReceiver( new Handler());
+		mReceiver.setReceiver( this );
 	}
 
 	@Override
@@ -41,8 +54,28 @@ public class TrackListFragment extends Fragment {
 		mTrackListAdapter = new TrackAdapter( getActivity(), mTrackList );
 		mTrackListView.setAdapter( mTrackListAdapter );
 
+		mCurrentAlbum = getApplicationState().getCurrentAlbum();
+		if( mCurrentAlbum != null ) {
+			getApplicationState().getDataClient().GetTrackList( mCurrentAlbum.AlbumId, mReceiver );
+		}
+
 		return( myView );
 	}
+	@Override
+	public void onReceiveResult( int resultCode, Bundle resultData ) {
+		if( resultCode == NoiseRemoteApi.RemoteResultSuccess ) {
+			int callCode = resultData.getInt( NoiseRemoteApi.RemoteApiParameter );
+
+			switch( callCode ) {
+				case NoiseRemoteApi.GetTrackList:
+					ArrayList<Track>    trackList = resultData.getParcelableArrayList( NoiseRemoteApi.TrackList );
+
+					setTrackList( trackList );
+					break;
+			}
+		}
+	}
+
 	public void setTrackList( ArrayList<Track> trackList ) {
 		mTrackList.clear();
 		mTrackList.addAll( trackList );
@@ -54,6 +87,12 @@ public class TrackListFragment extends Fragment {
 		} );
 
 		mTrackListAdapter.notifyDataSetChanged();
+	}
+
+	private IApplicationState getApplicationState() {
+		NoiseRemoteApplication application = (NoiseRemoteApplication)getActivity().getApplication();
+
+		return( application.getApplicationState());
 	}
 
 	private class TrackAdapter extends ArrayAdapter<Track> {

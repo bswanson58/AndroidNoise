@@ -19,6 +19,7 @@ import android.widget.TextView;
 import com.SecretSquirrel.AndroidNoise.R;
 import com.SecretSquirrel.AndroidNoise.dto.Album;
 import com.SecretSquirrel.AndroidNoise.dto.Artist;
+import com.SecretSquirrel.AndroidNoise.events.EventAlbumSelected;
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
 import com.SecretSquirrel.AndroidNoise.interfaces.IViewListener;
 import com.SecretSquirrel.AndroidNoise.model.NoiseRemoteApplication;
@@ -28,6 +29,8 @@ import com.SecretSquirrel.AndroidNoise.services.ServiceResultReceiver;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+
+import de.greenrobot.event.EventBus;
 
 public class AlbumListFragment extends Fragment
 							   implements ServiceResultReceiver.Receiver {
@@ -60,9 +63,7 @@ public class AlbumListFragment extends Fragment
 				Album album = mAlbumList.get( i );
 
 				if( album != null ) {
-					IViewListener listener = (IViewListener)getActivity();
-
-					listener.getItemSelectedListener().OnAlbumSelected( album );
+					EventBus.getDefault().post( new EventAlbumSelected( album ));
 				}
 			}
 		} );

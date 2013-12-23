@@ -11,7 +11,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.SecretSquirrel.AndroidNoise.R;
+import com.SecretSquirrel.AndroidNoise.dto.Album;
 import com.SecretSquirrel.AndroidNoise.dto.Artist;
+import com.SecretSquirrel.AndroidNoise.events.EventAlbumSelected;
 import com.SecretSquirrel.AndroidNoise.events.EventArtistSelected;
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
 import com.SecretSquirrel.AndroidNoise.model.NoiseRemoteApplication;
@@ -41,6 +43,17 @@ public class ShellLibraryFragment extends Fragment {
 			ArtistFragment  fragment = new ArtistFragment();
 
 			getApplicationState().setCurrentArtist( artist );
+			getFragmentManager().beginTransaction().replace( R.id.LibraryShellFrame, fragment ).commit();
+		}
+	}
+
+	public void onEvent( EventAlbumSelected args ) {
+		Album   album = args.getAlbum();
+
+		if( album != null ) {
+			AlbumFragment   fragment = new AlbumFragment();
+
+			getApplicationState().setCurrentAlbum( album );
 			getFragmentManager().beginTransaction().replace( R.id.LibraryShellFrame, fragment ).commit();
 		}
 	}

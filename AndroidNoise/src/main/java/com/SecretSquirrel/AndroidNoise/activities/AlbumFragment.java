@@ -12,17 +12,17 @@ import android.view.ViewGroup;
 
 import com.SecretSquirrel.AndroidNoise.R;
 
-public class ArtistFragment extends Fragment {
+public class AlbumFragment extends Fragment {
 	@Override
 	public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState ) {
-		View                myView = inflater.inflate( R.layout.fragment_artist_shell, container, false );
+		View                myView = inflater.inflate( R.layout.fragment_album_shell, container, false );
 		FragmentManager     fragmentManager = getFragmentManager();
 		FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-		ArtistInfoFragment  artistInfoFragment = new ArtistInfoFragment();
-		AlbumListFragment   albumListFragment = new AlbumListFragment();
+		AlbumInfoFragment   albumInfoFragment = new AlbumInfoFragment();
+		TrackListFragment   trackListFragment = new TrackListFragment();
 
-		fragmentTransaction.add( R.id.frame_artist_info, artistInfoFragment );
-		fragmentTransaction.add( R.id.frame_album_list, albumListFragment );
+		fragmentTransaction.add( R.id.frame_album_info, albumInfoFragment );
+		fragmentTransaction.add( R.id.frame_track_list, trackListFragment );
 		fragmentTransaction.commit();
 
 		return( myView );
