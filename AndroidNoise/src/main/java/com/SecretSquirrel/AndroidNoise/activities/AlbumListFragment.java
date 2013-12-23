@@ -4,7 +4,9 @@ package com.SecretSquirrel.AndroidNoise.activities;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,22 +18,32 @@ import android.widget.TextView;
 
 import com.SecretSquirrel.AndroidNoise.R;
 import com.SecretSquirrel.AndroidNoise.dto.Album;
+import com.SecretSquirrel.AndroidNoise.dto.Artist;
+import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
 import com.SecretSquirrel.AndroidNoise.interfaces.IViewListener;
+import com.SecretSquirrel.AndroidNoise.model.NoiseRemoteApplication;
+import com.SecretSquirrel.AndroidNoise.services.NoiseRemoteApi;
+import com.SecretSquirrel.AndroidNoise.services.ServiceResultReceiver;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-public class AlbumListFragment extends Fragment {
-	private ListView            mAlbumListView;
-	private ArrayList<Album>    mAlbumList;
-	private AlbumAdapter        mAlbumListAdapter;
+public class AlbumListFragment extends Fragment
+							   implements ServiceResultReceiver.Receiver {
+	private ServiceResultReceiver   mReceiver;
+	private Artist                  mCurrentArtist;
+	private ListView                mAlbumListView;
+	private ArrayList<Album>        mAlbumList;
+	private AlbumAdapter            mAlbumListAdapter;
 
 	@Override
 	public void onCreate( Bundle savedInstanceState ) {
 		super.onCreate( savedInstanceState );
 
 		mAlbumList = new ArrayList<Album>();
+		mReceiver = new ServiceResultReceiver( new Handler());
+		mReceiver.setReceiver( this );
 	}
 
 	@Override
@@ -55,7 +67,27 @@ public class AlbumListFragment extends Fragment {
 			}
 		} );
 
+		mCurrentArtist = getApplicationState().getCurrentArtist();
+		if( mCurrentArtist != null ) {
+			getApplicationState().getDataClient().GetAlbumList( mCurrentArtist.ArtistId, mReceiver );
+		}
+
 		return( myView );
+	}
+
+	@Override
+	public void onReceiveResult( int resultCode, Bundle resultData ) {
+		if( resultCode == NoiseRemoteApi.RemoteResultSuccess ) {
+			int callCode = resultData.getInt( NoiseRemoteApi.RemoteApiParameter );
+
+			switch( callCode ) {
+				case NoiseRemoteApi.GetAlbumList:
+					ArrayList<Album>    albumList = resultData.getParcelableArrayList( NoiseRemoteApi.AlbumList );
+
+					setAlbumList( albumList );
+					break;
+			}
+		}
 	}
 
 	public void setAlbumList( ArrayList<Album> albumList ) {
@@ -69,6 +101,12 @@ public class AlbumListFragment extends Fragment {
 		} );
 
 		mAlbumListAdapter.notifyDataSetChanged();
+	}
+
+	private IApplicationState getApplicationState() {
+		NoiseRemoteApplication application = (NoiseRemoteApplication)getActivity().getApplication();
+
+		return( application.getApplicationState());
 	}
 
 	private class AlbumAdapter extends ArrayAdapter<Album> {

@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.SecretSquirrel.AndroidNoise.R;
 import com.SecretSquirrel.AndroidNoise.dto.Artist;
+import com.SecretSquirrel.AndroidNoise.events.EventArtistSelected;
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
 import com.SecretSquirrel.AndroidNoise.interfaces.IViewListener;
 import com.SecretSquirrel.AndroidNoise.model.NoiseRemoteApplication;
@@ -25,6 +26,8 @@ import com.SecretSquirrel.AndroidNoise.services.ServiceResultReceiver;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+
+import de.greenrobot.event.EventBus;
 
 public class ArtistListFragment extends Fragment
 								implements ServiceResultReceiver.Receiver {
@@ -92,9 +95,9 @@ public class ArtistListFragment extends Fragment
 	}
 
 	private void selectArtist( Artist artist ) {
-		//IViewListener listener = (IViewListener)getActivity();
-
-		//listener.getItemSelectedListener().OnArtistSelected( artist );
+		if( artist != null ) {
+			EventBus.getDefault().post( new EventArtistSelected( artist ));
+		}
 	}
 
 	private IApplicationState getApplicationState() {
