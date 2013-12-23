@@ -58,9 +58,9 @@ public class ArtistListActivity extends ActionBarActivity
 		    loadArtistList();
 	    }
 	    else {
-		    Intent serverConnectIntent = new Intent( this, ServerConnectActivity.class );
+		    //Intent serverConnectIntent = new Intent( this, ServerConnectActivity.class );
 
-		    startActivity( serverConnectIntent );
+		    //startActivity( serverConnectIntent );
 	    }
     }
 

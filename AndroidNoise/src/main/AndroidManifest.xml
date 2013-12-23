@@ -39,10 +39,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.SecretSquirrel.AndroidNoise.activities.ServerConnectActivity"
-            android:label="@string/title_activity_server_connect" >
-        </activity>
-        <activity
             android:name="com.SecretSquirrel.AndroidNoise.activities.ArtistListActivity"
             android:label="@string/title_activity_artist_list" >
         </activity>
