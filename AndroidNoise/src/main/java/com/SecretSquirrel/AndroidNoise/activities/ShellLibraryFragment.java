@@ -21,11 +21,15 @@ import com.SecretSquirrel.AndroidNoise.model.NoiseRemoteApplication;
 import de.greenrobot.event.EventBus;
 
 public class ShellLibraryFragment extends Fragment {
+	private FragmentManager     mFragmentManager;
+
 	@Override
 	public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState ) {
 		View                myView = inflater.inflate( R.layout.fragment_library_shell, container, false );
-		FragmentManager     fragmentManager = getFragmentManager();
-		FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+		mFragmentManager = getFragmentManager();
+
+		FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
 		ArtistListFragment  fragment = new ArtistListFragment();
 
 		fragmentTransaction.add( R.id.LibraryShellFrame, fragment );
@@ -40,10 +44,13 @@ public class ShellLibraryFragment extends Fragment {
 		Artist artist = args.getArtist();
 
 		if( artist != null ) {
-			ArtistFragment  fragment = new ArtistFragment();
-
 			getApplicationState().setCurrentArtist( artist );
-			getFragmentManager().beginTransaction().replace( R.id.LibraryShellFrame, fragment ).commit();
+
+			ArtistFragment      fragment = new ArtistFragment();
+			FragmentTransaction transaction = mFragmentManager.beginTransaction().replace( R.id.LibraryShellFrame, fragment );
+
+			transaction.addToBackStack( "artistFragment" );
+			transaction.commit();
 		}
 	}
 
@@ -51,10 +58,13 @@ public class ShellLibraryFragment extends Fragment {
 		Album   album = args.getAlbum();
 
 		if( album != null ) {
-			AlbumFragment   fragment = new AlbumFragment();
-
 			getApplicationState().setCurrentAlbum( album );
-			getFragmentManager().beginTransaction().replace( R.id.LibraryShellFrame, fragment ).commit();
+
+			AlbumFragment       fragment = new AlbumFragment();
+			FragmentTransaction transaction = mFragmentManager.beginTransaction().replace( R.id.LibraryShellFrame, fragment );
+
+			transaction.addToBackStack( "albumFragment" );
+			transaction.commit();
 		}
 	}
 
