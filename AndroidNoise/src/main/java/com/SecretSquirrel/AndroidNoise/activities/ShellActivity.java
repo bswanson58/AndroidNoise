@@ -21,12 +21,11 @@ import de.greenrobot.event.EventBus;
 
 public class ShellActivity extends ActionBarActivity
 						   implements NavigationDrawerFragment.NavigationDrawerCallbacks {
-
 	// Fragment managing the behaviors, interactions and presentation of the navigation drawer.
 	private NavigationDrawerFragment mNavigationDrawerFragment;
 
 	// Used to store the last screen title. For use in {@link #restoreActionBar()}.
-	private CharSequence mTitle;
+	private CharSequence    mTitle;
 
 	@Override
 	protected void onCreate( Bundle savedInstanceState ) {
@@ -49,14 +48,11 @@ public class ShellActivity extends ActionBarActivity
 		// Set up the drawer.
 		mNavigationDrawerFragment.setUp( R.id.navigation_drawer, (DrawerLayout) findViewById( R.id.drawer_layout ));
 
-		EventBus    bus = EventBus.getDefault();
 		EventBus.getDefault().register( this );
 	}
 
 	public void onEvent( EventServerSelected args ) {
-		FragmentManager fragmentManager = getSupportFragmentManager();
-
-		fragmentManager.beginTransaction().replace( R.id.container, new ShellLibraryFragment()).commit();
+		mNavigationDrawerFragment.selectItem( 1 );
 	}
 
 	@Override
@@ -78,7 +74,6 @@ public class ShellActivity extends ActionBarActivity
 				fragmentManager.beginTransaction().replace( R.id.container, new ShellQueueFragment()).commit();
 				break;
 		}
-		//fragmentManager.beginTransaction().replace( R.id.container, PlaceholderFragment.newInstance( position + 1 )).commit();
 	}
 
 	public void onSectionAttached( int number ) {

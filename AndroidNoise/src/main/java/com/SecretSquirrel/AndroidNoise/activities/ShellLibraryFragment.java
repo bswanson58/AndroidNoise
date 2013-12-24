@@ -24,20 +24,41 @@ public class ShellLibraryFragment extends Fragment {
 	private FragmentManager     mFragmentManager;
 
 	@Override
-	public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState ) {
-		View                myView = inflater.inflate( R.layout.fragment_library_shell, container, false );
+	public void onCreate( Bundle savedInstanceState ) {
+		super.onCreate( savedInstanceState );
 
 		mFragmentManager = getFragmentManager();
+	}
 
-		FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
-		ArtistListFragment  fragment = new ArtistListFragment();
+	@Override
+	public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState ) {
+		View                myView = inflater.inflate( R.layout.fragment_library_shell, container, false );
+		ArtistListFragment  fragment = null;
 
-		fragmentTransaction.add( R.id.LibraryShellFrame, fragment );
-		fragmentTransaction.commit();
+		if( savedInstanceState != null ) {
+			fragment = (ArtistListFragment)mFragmentManager.findFragmentByTag( "artistListFragment" );
+		}
+		if( fragment == null ) {
+			fragment = new ArtistListFragment();
 
-		EventBus.getDefault().register( this );
+			mFragmentManager.beginTransaction().add( R.id.LibraryShellFrame, fragment, "artistListFragment" ).commit();
+		}
 
 		return( myView );
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+
+		EventBus.getDefault().register( this );
+	}
+
+	@Override
+	public void onPause() {
+		super.onPause();
+
+		EventBus.getDefault().unregister( this );
 	}
 
 	public void onEvent( EventArtistSelected args ) {

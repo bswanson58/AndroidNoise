@@ -72,6 +72,13 @@ public class ArtistListFragment extends Fragment
 	}
 
 	@Override
+	public void onPause() {
+		super.onPause();
+
+		mServiceResultReceiver.clearReceiver();
+	}
+
+	@Override
 	public void onReceiveResult( int resultCode, Bundle resultData ) {
 		if( resultCode == NoiseRemoteApi.RemoteResultSuccess ) {
 			ArrayList<Artist>   artistList = resultData.getParcelableArrayList( NoiseRemoteApi.ArtistList );
