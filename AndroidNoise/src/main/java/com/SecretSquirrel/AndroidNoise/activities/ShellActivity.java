@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.SecretSquirrel.AndroidNoise.R;
 import com.SecretSquirrel.AndroidNoise.events.EventServerSelected;
+import com.SecretSquirrel.AndroidNoise.support.Constants;
 
 import de.greenrobot.event.EventBus;
 
@@ -38,6 +39,10 @@ public class ShellActivity extends ActionBarActivity
 			//  at the top of the stack (ie: the last state of this task)
 			finish();
 			return;
+		}
+
+		if( Constants.LOG_DEBUG ) {
+			getFragmentManager().enableDebugLogging( true );
 		}
 
 		setContentView( R.layout.activity_shell );
