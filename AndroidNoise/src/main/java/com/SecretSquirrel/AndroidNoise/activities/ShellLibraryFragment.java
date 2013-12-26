@@ -111,7 +111,9 @@ public class ShellLibraryFragment extends Fragment {
 			mCurrentArtist = artist.ArtistId;
 
 			ArtistFragment      fragment = ArtistFragment.newInstance( mCurrentArtist );
-			FragmentTransaction transaction = mFragmentManager.beginTransaction().replace( R.id.LibraryShellFrame, fragment );
+			FragmentTransaction transaction = mFragmentManager.beginTransaction()
+					.setCustomAnimations( android.R.anim.fade_in, android.R.anim.fade_out )
+					.replace( R.id.LibraryShellFrame, fragment );
 
 			transaction.addToBackStack( "artistFragment" );
 			transaction.commit();
@@ -126,7 +128,9 @@ public class ShellLibraryFragment extends Fragment {
 			mCurrentAlbum = album.AlbumId;
 
 			AlbumFragment       fragment = AlbumFragment.newInstance( mCurrentAlbum );
-			FragmentTransaction transaction = mFragmentManager.beginTransaction().replace( R.id.LibraryShellFrame, fragment );
+			FragmentTransaction transaction = mFragmentManager.beginTransaction()
+					.setCustomAnimations( android.R.anim.fade_in, android.R.anim.fade_out )
+					.replace( R.id.LibraryShellFrame, fragment );
 
 			transaction.addToBackStack( "albumFragment" );
 			transaction.commit();
