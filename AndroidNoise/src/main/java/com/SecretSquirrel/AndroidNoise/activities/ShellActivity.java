@@ -17,6 +17,10 @@ import android.widget.TextView;
 import com.SecretSquirrel.AndroidNoise.R;
 import com.SecretSquirrel.AndroidNoise.events.EventServerSelected;
 import com.SecretSquirrel.AndroidNoise.support.Constants;
+import com.SecretSquirrel.AndroidNoise.ui.NavigationDrawerAdapter;
+import com.SecretSquirrel.AndroidNoise.ui.NavigationDrawerConfiguration;
+import com.SecretSquirrel.AndroidNoise.ui.NavigationDrawerItem;
+import com.SecretSquirrel.AndroidNoise.ui.NavigationMenuItem;
 
 import de.greenrobot.event.EventBus;
 
@@ -41,23 +45,38 @@ public class ShellActivity extends ActionBarActivity
 			return;
 		}
 
-		if( Constants.LOG_DEBUG ) {
-			getFragmentManager().enableDebugLogging( true );
-		}
-
 		setContentView( R.layout.activity_shell );
 
 		mNavigationDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById( R.id.navigation_drawer );
-		mTitle = getTitle();
+		mNavigationDrawerFragment.setConfiguration( getNavigationDrawerConfiguration());
 
-		// Set up the drawer.
-		mNavigationDrawerFragment.setUp( R.id.navigation_drawer, (DrawerLayout) findViewById( R.id.drawer_layout ));
+		mTitle = getTitle();
 
 		EventBus.getDefault().register( this );
 	}
 
+	private NavigationDrawerConfiguration getNavigationDrawerConfiguration() {
+		NavigationDrawerConfiguration   retValue = new NavigationDrawerConfiguration();
+		NavigationDrawerItem[]          menu = new NavigationDrawerItem[] {
+				NavigationMenuItem.create( 101, getString( R.string.title_library_section ), "", true, this ),
+				NavigationMenuItem.create( 102, getString( R.string.title_favorites_section ), "", true, this ),
+				NavigationMenuItem.create( 103, getString( R.string.title_queue_section ), "", true, this ),
+				NavigationMenuItem.create( 104, getString( R.string.title_server_section ), "", true, this )};
+
+		retValue.setMainLayout( R.layout.activity_shell );
+		retValue.setDrawerLayoutId( R.id.drawer_layout );
+		retValue.setLeftDrawerId( R.id.navigation_drawer );
+		retValue.setNavItems( menu );
+		retValue.setDrawerShadow( R.drawable.drawer_shadow );
+		retValue.setDrawerOpenDesc( R.string.navigation_drawer_open );
+		retValue.setDrawerCloseDesc( R.string.navigation_drawer_close );
+		retValue.setBaseAdapter( new NavigationDrawerAdapter( this, R.layout.navigation_drawer_item, menu ));
+
+		return( retValue );
+	}
+
 	public void onEvent( EventServerSelected args ) {
-		mNavigationDrawerFragment.selectItem( 1 );
+		mNavigationDrawerFragment.selectId( 101 );
 	}
 
 	@Override
@@ -66,34 +85,18 @@ public class ShellActivity extends ActionBarActivity
 		FragmentManager fragmentManager = getSupportFragmentManager();
 
 		switch( position ) {
-			case 0:
+			case 104:
 				fragmentManager.beginTransaction().replace( R.id.container, new ShellServerFragment()).commit();
 				break;
-			case 1:
+			case 101:
 				fragmentManager.beginTransaction().replace( R.id.container, new ShellLibraryFragment()).commit();
 				break;
-			case 2:
+			case 102:
 				fragmentManager.beginTransaction().replace( R.id.container, new ShellFavoritesFragment()).commit();
 				break;
-			case 3:
+			case 103:
 				fragmentManager.beginTransaction().replace( R.id.container, new ShellQueueFragment()).commit();
 				break;
-		}
-	}
-
-	public void onSectionAttached( int number ) {
-		switch( number ) {
-			case 1:
-				mTitle = getString( R.string.title_server_section );
-				break;
-			case 2:
-				mTitle = getString( R.string.title_library_section );
-				break;
-			case 3:
-				mTitle = getString( R.string.title_favorites_section );
-				break;
-			case 4:
-				mTitle = getString( R.string.title_queue_section );
 		}
 	}
 
@@ -107,7 +110,7 @@ public class ShellActivity extends ActionBarActivity
 
 	@Override
 	public boolean onCreateOptionsMenu( Menu menu ) {
-		if( !mNavigationDrawerFragment.isDrawerOpen() ) {
+		if(!mNavigationDrawerFragment.isDrawerOpen()) {
 			// Only show items in the action bar relevant to this screen
 			// if the drawer is not showing. Otherwise, let the drawer
 			// decide what to show in the action bar.
@@ -123,7 +126,7 @@ public class ShellActivity extends ActionBarActivity
 		// Handle action bar item clicks here. The action bar will
 		// automatically handle clicks on the Home/Up button, so long
 		// as you specify a parent activity in AndroidManifest.xml.
-		switch( item.getItemId() ) {
+		switch( item.getItemId()) {
 			case R.id.action_settings:
 				return true;
 		}
