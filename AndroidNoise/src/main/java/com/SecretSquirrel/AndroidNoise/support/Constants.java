@@ -5,4 +5,6 @@ package com.SecretSquirrel.AndroidNoise.support;
 public class Constants {
 	public static final boolean     LOG_ERROR = true;
 	public static final boolean     LOG_DEBUG = true;
+
+	public static final long        NULL_ID = -1L;
 }

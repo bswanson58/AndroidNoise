@@ -21,27 +21,60 @@ import com.SecretSquirrel.AndroidNoise.model.NoiseRemoteApplication;
 import de.greenrobot.event.EventBus;
 
 public class ShellLibraryFragment extends Fragment {
+	private static final String LIBRARY_STATE               = "ShellLibraryFragment_LibraryState";
+	private static final int    LIBRARY_STATE_ARTIST_LIST   = 0;
+	private static final int    LIBRARY_STATE_ARTIST        = 1;
+	private static final int    LIBRARY_STATE_ALBUM         = 2;
+
+	private static final String LIBRARY_CURRENT_ARTIST      = "ShellLibraryFragment_CurrentArtist";
+	private static final String LIBRARY_CURRENT_ALBUM      = "ShellLibraryFragment_CurrentAlbum";
+
 	private FragmentManager     mFragmentManager;
+	private int                 mCurrentState;
+	private long                mCurrentArtist;
+	private long                mCurrentAlbum;
 
 	@Override
 	public void onCreate( Bundle savedInstanceState ) {
 		super.onCreate( savedInstanceState );
 
 		mFragmentManager = getFragmentManager();
+
+		mCurrentState = LIBRARY_STATE_ARTIST_LIST;
+		mCurrentArtist = 0;
+		mCurrentAlbum = 0;
 	}
 
 	@Override
 	public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState ) {
 		View                myView = inflater.inflate( R.layout.fragment_library_shell, container, false );
-		ArtistListFragment  fragment = null;
+		Fragment            fragment = null;
 
 		if( savedInstanceState != null ) {
-			fragment = (ArtistListFragment)mFragmentManager.findFragmentByTag( "artistListFragment" );
-		}
-		if( fragment == null ) {
-			fragment = new ArtistListFragment();
+			mCurrentState = savedInstanceState.getInt( LIBRARY_STATE, LIBRARY_STATE_ARTIST_LIST );
+			mCurrentArtist = savedInstanceState.getLong( LIBRARY_CURRENT_ARTIST, 0 );
+			mCurrentAlbum = savedInstanceState.getLong( LIBRARY_CURRENT_ALBUM, 0 );
 
-			mFragmentManager.beginTransaction().add( R.id.LibraryShellFrame, fragment, "artistListFragment" ).commit();
+			switch( mCurrentState ) {
+				case LIBRARY_STATE_ARTIST_LIST:
+					fragment = ArtistListFragment.newInstance();
+					break;
+
+				case LIBRARY_STATE_ARTIST:
+					fragment = ArtistFragment.newInstance( mCurrentArtist );
+					break;
+
+				case LIBRARY_STATE_ALBUM:
+					fragment = AlbumFragment.newInstance( mCurrentAlbum );
+					break;
+			}
+		}
+		else {
+			fragment = ArtistListFragment.newInstance();
+		}
+
+		if( fragment != null ) {
+			mFragmentManager.beginTransaction().replace( R.id.LibraryShellFrame, fragment, "artistListFragment" ).commit();
 		}
 
 		return( myView );
@@ -61,13 +94,23 @@ public class ShellLibraryFragment extends Fragment {
 		EventBus.getDefault().unregister( this );
 	}
 
+	@Override
+	public void onSaveInstanceState( Bundle outState ) {
+		super.onSaveInstanceState( outState );
+
+		outState.putInt( LIBRARY_STATE, mCurrentState );
+		outState.putLong( LIBRARY_CURRENT_ARTIST, mCurrentArtist );
+		outState.putLong( LIBRARY_CURRENT_ALBUM, mCurrentAlbum );
+	}
+
 	public void onEvent( EventArtistSelected args ) {
 		Artist artist = args.getArtist();
 
 		if( artist != null ) {
 			getApplicationState().setCurrentArtist( artist );
+			mCurrentArtist = artist.ArtistId;
 
-			ArtistFragment      fragment = new ArtistFragment();
+			ArtistFragment      fragment = ArtistFragment.newInstance( mCurrentArtist );
 			FragmentTransaction transaction = mFragmentManager.beginTransaction().replace( R.id.LibraryShellFrame, fragment );
 
 			transaction.addToBackStack( "artistFragment" );
@@ -80,8 +123,9 @@ public class ShellLibraryFragment extends Fragment {
 
 		if( album != null ) {
 			getApplicationState().setCurrentAlbum( album );
+			mCurrentAlbum = album.AlbumId;
 
-			AlbumFragment       fragment = new AlbumFragment();
+			AlbumFragment       fragment = AlbumFragment.newInstance( mCurrentAlbum );
 			FragmentTransaction transaction = mFragmentManager.beginTransaction().replace( R.id.LibraryShellFrame, fragment );
 
 			transaction.addToBackStack( "albumFragment" );

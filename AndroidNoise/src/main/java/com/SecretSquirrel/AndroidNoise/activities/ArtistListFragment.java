@@ -35,6 +35,10 @@ public class ArtistListFragment extends Fragment
 	private ArrayList<Artist>       mArtistList;
 	private ArtistAdapter           mArtistListAdapter;
 
+	public static ArtistListFragment newInstance() {
+		return( new ArtistListFragment());
+	}
+
 	@Override
 	public void onCreate( Bundle savedInstanceState ) {
 		super.onCreate( savedInstanceState );

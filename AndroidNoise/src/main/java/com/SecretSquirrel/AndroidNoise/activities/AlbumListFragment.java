@@ -6,6 +6,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +25,7 @@ import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
 import com.SecretSquirrel.AndroidNoise.model.NoiseRemoteApplication;
 import com.SecretSquirrel.AndroidNoise.services.NoiseRemoteApi;
 import com.SecretSquirrel.AndroidNoise.services.ServiceResultReceiver;
+import com.SecretSquirrel.AndroidNoise.support.Constants;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,11 +35,28 @@ import de.greenrobot.event.EventBus;
 
 public class AlbumListFragment extends Fragment
 							   implements ServiceResultReceiver.Receiver {
+	private static final String     TAG = AlbumListFragment.class.getName();
+	private static final String     ARTIST_KEY   = "AlbumListFragment_ArtistId";
+
 	private ServiceResultReceiver   mReceiver;
-	private Artist                  mCurrentArtist;
+	private long                    mCurrentArtist;
 	private ListView                mAlbumListView;
 	private ArrayList<Album>        mAlbumList;
 	private AlbumAdapter            mAlbumListAdapter;
+
+	public static AlbumListFragment newInstance( long artistId ) {
+		AlbumListFragment   fragment = new AlbumListFragment();
+		Bundle              args = new Bundle();
+
+		args.putLong( ARTIST_KEY, artistId );
+		fragment.setArguments( args );
+
+		return( fragment );
+	}
+
+	public AlbumListFragment() {
+		mCurrentArtist = Constants.NULL_ID;
+	}
 
 	@Override
 	public void onCreate( Bundle savedInstanceState ) {
@@ -67,12 +86,43 @@ public class AlbumListFragment extends Fragment
 			}
 		} );
 
-		mCurrentArtist = getApplicationState().getCurrentArtist();
-		if( mCurrentArtist != null ) {
-			getApplicationState().getDataClient().GetAlbumList( mCurrentArtist.ArtistId, mReceiver );
+		if( savedInstanceState != null ) {
+			mCurrentArtist = savedInstanceState.getLong( ARTIST_KEY );
+		}
+		else {
+			Bundle  args = getArguments();
+
+			if( args != null ) {
+				mCurrentArtist = args.getLong( ARTIST_KEY, Constants.NULL_ID );
+			}
+		}
+
+		if( mCurrentArtist != Constants.NULL_ID ) {
+			getApplicationState().getDataClient().GetAlbumList( mCurrentArtist, mReceiver );
+		}
+		else {
+			if( Constants.LOG_ERROR ) {
+				Log.e( TAG, "The current artist could not be determined." );
+			}
 		}
 
 		return( myView );
+	}
+
+	@Override
+	public void onSaveInstanceState( Bundle outState ) {
+		super.onSaveInstanceState( outState );
+
+		outState.putLong( ARTIST_KEY, mCurrentArtist );
+	}
+
+	@Override
+	public void onDestroyView() {
+		super.onDestroyView();
+
+		if( mReceiver != null ) {
+			mReceiver.clearReceiver();
+		}
 	}
 
 	@Override
@@ -90,7 +140,7 @@ public class AlbumListFragment extends Fragment
 		}
 	}
 
-	public void setAlbumList( ArrayList<Album> albumList ) {
+	private void setAlbumList( ArrayList<Album> albumList ) {
 		mAlbumList.clear();
 		mAlbumList.addAll( albumList );
 

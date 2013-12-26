@@ -41,18 +41,18 @@ public class NavigationDrawerFragment extends Fragment {
 	private static final String PREF_USER_LEARNED_DRAWER = "navigation_drawer_learned";
 
 	// A pointer to the current callbacks instance (the Activity).
-	private NavigationDrawerCallbacks mCallbacks;
+	private NavigationDrawerCallbacks   mCallbacks;
 
 	// Helper component that ties the action bar to the navigation drawer.
-	private ActionBarDrawerToggle mDrawerToggle;
+	private ActionBarDrawerToggle       mDrawerToggle;
 
-	private DrawerLayout mDrawerLayout;
-	private ListView mDrawerListView;
-	private View mFragmentContainerView;
+	private DrawerLayout                mDrawerLayout;
+	private ListView                    mDrawerListView;
+	private View                        mFragmentContainerView;
 
-	private int     mCurrentSelectedPosition = 0;
-	private boolean mFromSavedInstanceState;
-	private boolean mUserLearnedDrawer;
+	private int                         mCurrentSelectedPosition = 0;
+	private boolean                     mFromSavedInstanceState;
+	private boolean                     mUserLearnedDrawer;
 
 	public NavigationDrawerFragment() {
 	}
@@ -96,6 +96,7 @@ public class NavigationDrawerFragment extends Fragment {
 						getString( R.string.title_queue_section ),
 				}));
 		mDrawerListView.setItemChecked( mCurrentSelectedPosition, true );
+
 		return mDrawerListView;
 	}
 
@@ -201,18 +202,21 @@ public class NavigationDrawerFragment extends Fragment {
 	@Override
 	public void onDetach() {
 		super.onDetach();
+
 		mCallbacks = null;
 	}
 
 	@Override
 	public void onSaveInstanceState( Bundle outState ) {
 		super.onSaveInstanceState( outState );
+
 		outState.putInt( STATE_SELECTED_POSITION, mCurrentSelectedPosition );
 	}
 
 	@Override
 	public void onConfigurationChanged( Configuration newConfig ) {
 		super.onConfigurationChanged( newConfig );
+
 		// Forward the new configuration the drawer toggle component.
 		mDrawerToggle.onConfigurationChanged( newConfig );
 	}
@@ -221,16 +225,17 @@ public class NavigationDrawerFragment extends Fragment {
 	public void onCreateOptionsMenu( Menu menu, MenuInflater inflater ) {
 		// If the drawer is open, show the global app actions in the action bar. See also
 		// showGlobalContextActionBar, which controls the top-left area of the action bar.
-		if( mDrawerLayout != null && isDrawerOpen() ) {
+		if( mDrawerLayout != null && isDrawerOpen()) {
 			inflater.inflate( R.menu.global, menu );
 			showGlobalContextActionBar();
 		}
+
 		super.onCreateOptionsMenu( menu, inflater );
 	}
 
 	@Override
 	public boolean onOptionsItemSelected( MenuItem item ) {
-		if( mDrawerToggle.onOptionsItemSelected( item ) ) {
+		if( mDrawerToggle.onOptionsItemSelected( item )) {
 			return true;
 		}
 

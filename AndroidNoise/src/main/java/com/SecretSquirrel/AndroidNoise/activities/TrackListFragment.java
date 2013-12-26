@@ -6,6 +6,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,7 @@ import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
 import com.SecretSquirrel.AndroidNoise.model.NoiseRemoteApplication;
 import com.SecretSquirrel.AndroidNoise.services.NoiseRemoteApi;
 import com.SecretSquirrel.AndroidNoise.services.ServiceResultReceiver;
+import com.SecretSquirrel.AndroidNoise.support.Constants;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -31,11 +33,28 @@ import de.greenrobot.event.EventBus;
 
 public class TrackListFragment extends Fragment
 							   implements ServiceResultReceiver.Receiver {
+	private static final String     TAG = TrackListFragment.class.getName();
+	private static final String     ALBUM_KEY = "TrackListFragment_AlbumId";
+
 	private ListView                mTrackListView;
 	private ArrayList<Track>        mTrackList;
 	private TrackAdapter            mTrackListAdapter;
 	private ServiceResultReceiver   mReceiver;
-	private Album                   mCurrentAlbum;
+	private long                    mCurrentAlbum;
+
+	public static TrackListFragment newInstance( long albumId ) {
+		TrackListFragment   fragment = new TrackListFragment();
+		Bundle              args = new Bundle();
+
+		args.putLong( ALBUM_KEY, albumId );
+		fragment.setArguments( args );
+
+		return( fragment );
+	}
+
+	public TrackListFragment() {
+		mCurrentAlbum = Constants.NULL_ID;
+	}
 
 	@Override
 	public void onCreate( Bundle savedInstanceState ) {
@@ -55,12 +74,43 @@ public class TrackListFragment extends Fragment
 		mTrackListAdapter = new TrackAdapter( getActivity(), mTrackList );
 		mTrackListView.setAdapter( mTrackListAdapter );
 
-		mCurrentAlbum = getApplicationState().getCurrentAlbum();
-		if( mCurrentAlbum != null ) {
-			getApplicationState().getDataClient().GetTrackList( mCurrentAlbum.AlbumId, mReceiver );
+		if( savedInstanceState != null ) {
+			mCurrentAlbum = savedInstanceState.getLong( ALBUM_KEY, Constants.NULL_ID );
+		}
+		else {
+			Bundle  args = getArguments();
+
+			if( args != null ) {
+				mCurrentAlbum = args.getLong( ALBUM_KEY, Constants.NULL_ID );
+			}
+		}
+
+		if( mCurrentAlbum != Constants.NULL_ID ) {
+			getApplicationState().getDataClient().GetTrackList( mCurrentAlbum, mReceiver );
+		}
+		else {
+			if( Constants.LOG_ERROR ) {
+				Log.e( TAG, "The current album could not be determined. " );
+			}
 		}
 
 		return( myView );
+	}
+
+	@Override
+	public void onSaveInstanceState( Bundle outState ) {
+		super.onSaveInstanceState( outState );
+
+		outState.putLong( ALBUM_KEY, mCurrentAlbum );
+	}
+
+	@Override
+	public void onDestroyView() {
+		super.onDestroyView();
+
+		if( mReceiver != null ) {
+			mReceiver.clearReceiver();
+		}
 	}
 
 	@Override
@@ -78,7 +128,7 @@ public class TrackListFragment extends Fragment
 		}
 	}
 
-	public void setTrackList( ArrayList<Track> trackList ) {
+	private void setTrackList( ArrayList<Track> trackList ) {
 		mTrackList.clear();
 		mTrackList.addAll( trackList );
 
