@@ -1,22 +1,14 @@
 package com.SecretSquirrel.AndroidNoise.activities;
 
-import android.app.Activity;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.support.v4.widget.DrawerLayout;
-import android.widget.TextView;
 
 import com.SecretSquirrel.AndroidNoise.R;
 import com.SecretSquirrel.AndroidNoise.events.EventServerSelected;
-import com.SecretSquirrel.AndroidNoise.support.Constants;
 import com.SecretSquirrel.AndroidNoise.ui.NavigationDrawerAdapter;
 import com.SecretSquirrel.AndroidNoise.ui.NavigationDrawerConfiguration;
 import com.SecretSquirrel.AndroidNoise.ui.NavigationDrawerItem;
@@ -28,9 +20,6 @@ public class ShellActivity extends ActionBarActivity
 						   implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 	// Fragment managing the behaviors, interactions and presentation of the navigation drawer.
 	private NavigationDrawerFragment mNavigationDrawerFragment;
-
-	// Used to store the last screen title. For use in {@link #restoreActionBar()}.
-	private CharSequence    mTitle;
 
 	@Override
 	protected void onCreate( Bundle savedInstanceState ) {
@@ -49,8 +38,6 @@ public class ShellActivity extends ActionBarActivity
 
 		mNavigationDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById( R.id.navigation_drawer );
 		mNavigationDrawerFragment.setConfiguration( getNavigationDrawerConfiguration());
-
-		mTitle = getTitle();
 
 		EventBus.getDefault().register( this );
 	}
@@ -105,7 +92,7 @@ public class ShellActivity extends ActionBarActivity
 
 		actionBar.setNavigationMode( ActionBar.NAVIGATION_MODE_STANDARD );
 		actionBar.setDisplayShowTitleEnabled( true );
-		actionBar.setTitle( mTitle );
+		actionBar.setTitle( mNavigationDrawerFragment.getTitle());
 	}
 
 	@Override
