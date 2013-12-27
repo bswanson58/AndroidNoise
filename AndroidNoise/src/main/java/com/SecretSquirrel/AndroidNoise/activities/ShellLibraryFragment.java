@@ -38,7 +38,7 @@ public class ShellLibraryFragment extends Fragment {
 	public void onCreate( Bundle savedInstanceState ) {
 		super.onCreate( savedInstanceState );
 
-		mFragmentManager = getFragmentManager();
+		mFragmentManager = getChildFragmentManager();
 
 		mCurrentState = LIBRARY_STATE_ARTIST_LIST;
 		mCurrentArtist = 0;
@@ -47,8 +47,7 @@ public class ShellLibraryFragment extends Fragment {
 
 	@Override
 	public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState ) {
-		View                myView = inflater.inflate( R.layout.fragment_library_shell, container, false );
-		Fragment            fragment = null;
+		Fragment    fragment = null;
 
 		if( savedInstanceState != null ) {
 			mCurrentState = savedInstanceState.getInt( LIBRARY_STATE, LIBRARY_STATE_ARTIST_LIST );
@@ -77,7 +76,7 @@ public class ShellLibraryFragment extends Fragment {
 			mFragmentManager.beginTransaction().replace( R.id.LibraryShellFrame, fragment, "artistListFragment" ).commit();
 		}
 
-		return( myView );
+		return( inflater.inflate( R.layout.fragment_library_shell, container, false ));
 	}
 
 	@Override
