@@ -18,8 +18,13 @@ import de.greenrobot.event.EventBus;
 
 public class ShellActivity extends ActionBarActivity
 						   implements NavigationDrawerFragment.NavigationDrawerCallbacks {
+	private final int   LIBRARY_ITEM_ID     = 101;
+	private final int   FAVORITES_ITEM_ID   = 102;
+	private final int   QUEUE_ITEM_ID       = 103;
+	private final int   SERVERS_ITEM_ID     = 104;
+
 	// Fragment managing the behaviors, interactions and presentation of the navigation drawer.
-	private NavigationDrawerFragment mNavigationDrawerFragment;
+	private NavigationDrawerFragment    mNavigationDrawerFragment;
 
 	@Override
 	protected void onCreate( Bundle savedInstanceState ) {
@@ -45,17 +50,17 @@ public class ShellActivity extends ActionBarActivity
 	@Override
 	protected void onDestroy() {
 		EventBus.getDefault().unregister( this );
-		
+
 		super.onDestroy();
 	}
 
 	private NavigationDrawerConfiguration getNavigationDrawerConfiguration() {
 		NavigationDrawerConfiguration   retValue = new NavigationDrawerConfiguration();
 		NavigationDrawerItem[]          menu = new NavigationDrawerItem[] {
-				NavigationMenuItem.create( 101, getString( R.string.title_library_section ), "", true, this ),
-				NavigationMenuItem.create( 102, getString( R.string.title_favorites_section ), "", true, this ),
-				NavigationMenuItem.create( 103, getString( R.string.title_queue_section ), "", true, this ),
-				NavigationMenuItem.create( 104, getString( R.string.title_server_section ), "", true, this )};
+				NavigationMenuItem.create( LIBRARY_ITEM_ID, getString( R.string.title_library_section ), "", true, this ),
+				NavigationMenuItem.create( FAVORITES_ITEM_ID, getString( R.string.title_favorites_section ), "", true, this ),
+				NavigationMenuItem.create( QUEUE_ITEM_ID, getString( R.string.title_queue_section ), "", true, this ),
+				NavigationMenuItem.create( SERVERS_ITEM_ID, getString( R.string.title_server_section ), "", true, this )};
 
 		retValue.setMainLayout( R.layout.activity_shell );
 		retValue.setDrawerLayoutId( R.id.drawer_layout );
@@ -74,21 +79,21 @@ public class ShellActivity extends ActionBarActivity
 	}
 
 	@Override
-	public void onNavigationDrawerItemSelected( int position ) {
+	public void onNavigationDrawerItemSelected( int itemId ) {
 		// update the main content by replacing fragments
 		FragmentManager fragmentManager = getSupportFragmentManager();
 
-		switch( position ) {
-			case 104:
+		switch( itemId ) {
+			case SERVERS_ITEM_ID:
 				fragmentManager.beginTransaction().replace( R.id.container, new ShellServerFragment()).commit();
 				break;
-			case 101:
+			case LIBRARY_ITEM_ID:
 				fragmentManager.beginTransaction().replace( R.id.container, new ShellLibraryFragment()).commit();
 				break;
-			case 102:
+			case FAVORITES_ITEM_ID:
 				fragmentManager.beginTransaction().replace( R.id.container, new ShellFavoritesFragment()).commit();
 				break;
-			case 103:
+			case QUEUE_ITEM_ID:
 				fragmentManager.beginTransaction().replace( R.id.container, new ShellQueueFragment()).commit();
 				break;
 		}

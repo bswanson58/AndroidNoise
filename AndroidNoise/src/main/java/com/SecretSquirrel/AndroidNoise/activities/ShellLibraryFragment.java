@@ -52,8 +52,8 @@ public class ShellLibraryFragment extends Fragment {
 
 		if( savedInstanceState != null ) {
 			mCurrentState = savedInstanceState.getInt( LIBRARY_STATE, LIBRARY_STATE_ARTIST_LIST );
-			mCurrentArtist = savedInstanceState.getLong( LIBRARY_CURRENT_ARTIST, 0 );
-			mCurrentAlbum = savedInstanceState.getLong( LIBRARY_CURRENT_ALBUM, 0 );
+			mCurrentArtist = savedInstanceState.getLong( LIBRARY_CURRENT_ARTIST, Constants.NULL_ID );
+			mCurrentAlbum = savedInstanceState.getLong( LIBRARY_CURRENT_ALBUM, Constants.NULL_ID );
 
 			switch( mCurrentState ) {
 				case LIBRARY_STATE_ARTIST_LIST:
