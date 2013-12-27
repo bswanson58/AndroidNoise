@@ -185,8 +185,11 @@ public class NavigationDrawerFragment extends Fragment {
 	}
 
 	public void selectId( int id ) {
-		for( NavigationDrawerItem item : mConfiguration.getNavItems()) {
+		for( int index = 0; index < mConfiguration.getNavItems().length; index++ ) {
+			NavigationDrawerItem    item = mConfiguration.getNavItems()[index];
+
 			if( item.getId() == id ) {
+				mCurrentSelectedPosition = index;
 				selectItem( item );
 
 				break;

@@ -17,6 +17,7 @@ import com.SecretSquirrel.AndroidNoise.events.EventAlbumSelected;
 import com.SecretSquirrel.AndroidNoise.events.EventArtistSelected;
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
 import com.SecretSquirrel.AndroidNoise.model.NoiseRemoteApplication;
+import com.SecretSquirrel.AndroidNoise.support.Constants;
 
 import de.greenrobot.event.EventBus;
 
@@ -41,8 +42,8 @@ public class ShellLibraryFragment extends Fragment {
 		mFragmentManager = getChildFragmentManager();
 
 		mCurrentState = LIBRARY_STATE_ARTIST_LIST;
-		mCurrentArtist = 0;
-		mCurrentAlbum = 0;
+		mCurrentArtist = Constants.NULL_ID;
+		mCurrentAlbum = Constants.NULL_ID;
 	}
 
 	@Override
@@ -70,6 +71,8 @@ public class ShellLibraryFragment extends Fragment {
 		}
 		else {
 			fragment = ArtistListFragment.newInstance();
+
+			mCurrentState = LIBRARY_STATE_ARTIST_LIST;
 		}
 
 		if( fragment != null ) {
@@ -107,6 +110,7 @@ public class ShellLibraryFragment extends Fragment {
 
 		if( artist != null ) {
 			getApplicationState().setCurrentArtist( artist );
+			mCurrentState = LIBRARY_STATE_ARTIST;
 			mCurrentArtist = artist.ArtistId;
 
 			ArtistFragment      fragment = ArtistFragment.newInstance( mCurrentArtist );
@@ -124,6 +128,7 @@ public class ShellLibraryFragment extends Fragment {
 
 		if( album != null ) {
 			getApplicationState().setCurrentAlbum( album );
+			mCurrentState = LIBRARY_STATE_ALBUM;
 			mCurrentAlbum = album.AlbumId;
 
 			AlbumFragment       fragment = AlbumFragment.newInstance( mCurrentAlbum );
