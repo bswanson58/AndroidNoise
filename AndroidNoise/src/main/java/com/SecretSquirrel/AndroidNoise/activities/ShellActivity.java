@@ -42,6 +42,13 @@ public class ShellActivity extends ActionBarActivity
 		EventBus.getDefault().register( this );
 	}
 
+	@Override
+	protected void onDestroy() {
+		EventBus.getDefault().unregister( this );
+		
+		super.onDestroy();
+	}
+
 	private NavigationDrawerConfiguration getNavigationDrawerConfiguration() {
 		NavigationDrawerConfiguration   retValue = new NavigationDrawerConfiguration();
 		NavigationDrawerItem[]          menu = new NavigationDrawerItem[] {
