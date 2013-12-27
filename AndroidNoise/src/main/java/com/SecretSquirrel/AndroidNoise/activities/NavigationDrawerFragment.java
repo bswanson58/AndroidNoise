@@ -42,18 +42,18 @@ public class NavigationDrawerFragment extends Fragment {
 	private static final String PREF_USER_LEARNED_DRAWER = "navigation_drawer_learned";
 
 	// A pointer to the current callbacks instance (the Activity).
-	private NavigationDrawerCallbacks   mCallbacks;
+	private NavigationDrawerCallbacks       mCallbacks;
 
 	// Helper component that ties the action bar to the navigation drawer.
-	private ActionBarDrawerToggle       mDrawerToggle;
+	private ActionBarDrawerToggle           mDrawerToggle;
 
-	private DrawerLayout                mDrawerLayout;
-	private ListView                    mDrawerListView;
-	private View                        mFragmentContainerView;
+	private DrawerLayout                    mDrawerLayout;
+	private ListView                        mDrawerListView;
+	private View                            mFragmentContainerView;
 
-	private int                         mCurrentSelectedPosition = 0;
-	private boolean                     mFromSavedInstanceState;
-	private boolean                     mUserLearnedDrawer;
+	private int                             mCurrentSelectedPosition = 0;
+	private boolean                         mFromSavedInstanceState;
+	private boolean                         mUserLearnedDrawer;
 
 	private CharSequence                    mDrawerTitle;
 	private CharSequence                    mTitle;
@@ -105,9 +105,8 @@ public class NavigationDrawerFragment extends Fragment {
 		mDrawerListView.setAdapter( mConfiguration.getBaseAdapter());
 		mDrawerListView.setItemChecked( mCurrentSelectedPosition, true );
 
-		ActionBar actionBar = getActionBar();
-		actionBar.setDisplayHomeAsUpEnabled( true );
-		actionBar.setHomeButtonEnabled( true );
+		getActionBar().setDisplayHomeAsUpEnabled( true );
+		getActionBar().setHomeButtonEnabled( true );
 
 		// ActionBarDrawerToggle ties together the the proper interactions
 		// between the navigation drawer and the action bar app icon.
@@ -207,9 +206,13 @@ public class NavigationDrawerFragment extends Fragment {
 		}
 	}
 
-	public void setTitle(CharSequence title) {
+	public void setTitle( CharSequence title ) {
 		mTitle = title;
 		getActionBar().setTitle( mTitle );
+	}
+
+	public CharSequence getTitle() {
+		return( mTitle );
 	}
 
 	@Override
@@ -278,7 +281,8 @@ public class NavigationDrawerFragment extends Fragment {
 	 * 'context', rather than just what's in the current screen.
 	 */
 	private void showGlobalContextActionBar() {
-		ActionBar actionBar = getActionBar();
+		ActionBar   actionBar = getActionBar();
+
 		actionBar.setDisplayShowTitleEnabled( true );
 		actionBar.setNavigationMode( ActionBar.NAVIGATION_MODE_STANDARD );
 		actionBar.setTitle( R.string.app_name );
