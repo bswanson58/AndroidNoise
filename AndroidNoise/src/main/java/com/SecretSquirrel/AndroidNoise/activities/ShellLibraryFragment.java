@@ -15,20 +15,18 @@ import com.SecretSquirrel.AndroidNoise.dto.Album;
 import com.SecretSquirrel.AndroidNoise.dto.Artist;
 import com.SecretSquirrel.AndroidNoise.events.EventAlbumSelected;
 import com.SecretSquirrel.AndroidNoise.events.EventArtistSelected;
-import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
-import com.SecretSquirrel.AndroidNoise.model.NoiseRemoteApplication;
 import com.SecretSquirrel.AndroidNoise.support.Constants;
 
 import de.greenrobot.event.EventBus;
 
 public class ShellLibraryFragment extends Fragment {
 	private static final String LIBRARY_STATE               = "ShellLibraryFragment_LibraryState";
-	private static final int    LIBRARY_STATE_ARTIST_LIST   = 0;
-	private static final int    LIBRARY_STATE_ARTIST        = 1;
-	private static final int    LIBRARY_STATE_ALBUM         = 2;
+	private static final int    LIBRARY_STATE_ARTIST_LIST   = 1;
+	private static final int    LIBRARY_STATE_ARTIST        = 2;
+	private static final int    LIBRARY_STATE_ALBUM         = 3;
 
 	private static final String LIBRARY_CURRENT_ARTIST      = "ShellLibraryFragment_CurrentArtist";
-	private static final String LIBRARY_CURRENT_ALBUM      = "ShellLibraryFragment_CurrentAlbum";
+	private static final String LIBRARY_CURRENT_ALBUM       = "ShellLibraryFragment_CurrentAlbum";
 
 	private FragmentManager     mFragmentManager;
 	private int                 mCurrentState;
@@ -111,7 +109,6 @@ public class ShellLibraryFragment extends Fragment {
 		Artist artist = args.getArtist();
 
 		if( artist != null ) {
-			getApplicationState().setCurrentArtist( artist );
 			mCurrentState = LIBRARY_STATE_ARTIST;
 			mCurrentArtist = artist.ArtistId;
 
@@ -130,7 +127,6 @@ public class ShellLibraryFragment extends Fragment {
 		Album   album = args.getAlbum();
 
 		if( album != null ) {
-			getApplicationState().setCurrentAlbum( album );
 			mCurrentState = LIBRARY_STATE_ALBUM;
 			mCurrentAlbum = album.AlbumId;
 
@@ -142,11 +138,5 @@ public class ShellLibraryFragment extends Fragment {
 			transaction.addToBackStack( "albumFragment" );
 			transaction.commit();
 		}
-	}
-
-	private IApplicationState getApplicationState() {
-		NoiseRemoteApplication application = (NoiseRemoteApplication)getActivity().getApplication();
-
-		return( application.getApplicationState());
 	}
 }

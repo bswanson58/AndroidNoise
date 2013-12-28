@@ -14,11 +14,4 @@ public interface IApplicationState {
 
 	public  INoiseData  getDataClient();
 	public  INoiseQueue getQueueClient();
-
-	public  Artist      getCurrentArtist();
-	public  void        setCurrentArtist( Artist artist );
-
-	public  Album       getCurrentAlbum();
-	public  void        setCurrentAlbum( Album album );
-
 }

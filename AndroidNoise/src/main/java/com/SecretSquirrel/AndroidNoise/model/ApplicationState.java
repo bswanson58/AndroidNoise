@@ -55,26 +55,6 @@ public class ApplicationState implements IApplicationState {
 		return( mQueueClient );
 	}
 
-	@Override
-	public Artist getCurrentArtist() {
-		return( mCurrentArtist );
-	}
-
-	@Override
-	public void setCurrentArtist( Artist artist ) {
-		mCurrentArtist = artist;
-	}
-
-	@Override
-	public Album getCurrentAlbum() {
-		return( mCurrentAlbum );
-	}
-
-	@Override
-	public void setCurrentAlbum( Album album ) {
-		mCurrentAlbum = album;
-	}
-
 	public void SelectServer( ServerInformation server ) {
 		mCurrentServer = server;
 		mIsConnected = mCurrentServer != null;
