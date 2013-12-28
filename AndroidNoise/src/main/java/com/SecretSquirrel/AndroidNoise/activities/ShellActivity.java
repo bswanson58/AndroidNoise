@@ -47,9 +47,6 @@ public class ShellActivity extends ActionBarActivity
 		if( savedInstanceState == null ) {
 			mNavigationDrawerFragment.selectId( SERVERS_ITEM_ID );
 		}
-		else {
-			restoreActionBar();
-		}
 
 		EventBus.getDefault().register( this );
 	}
@@ -69,10 +66,12 @@ public class ShellActivity extends ActionBarActivity
 				NavigationMenuItem.create( QUEUE_ITEM_ID, getString( R.string.title_queue_section ), "", true, this ),
 				NavigationMenuItem.create( SERVERS_ITEM_ID, getString( R.string.title_server_section ), "", true, this )};
 
-		retValue.setMainLayout( R.layout.activity_shell );
+		retValue.setApplicationNameId( R.string.app_name );
+		retValue.setGlobalMenuId( R.menu.global );
+		retValue.setNavigationDrawerId( R.id.navigation_drawer );
+		retValue.setNavigationItems( menu );
 		retValue.setDrawerLayoutId( R.id.drawer_layout );
-		retValue.setLeftDrawerId( R.id.navigation_drawer );
-		retValue.setNavItems( menu );
+		retValue.setDrawerIconId( R.drawable.ic_drawer );
 		retValue.setDrawerShadow( R.drawable.drawer_shadow );
 		retValue.setDrawerOpenDesc( R.string.navigation_drawer_open );
 		retValue.setDrawerCloseDesc( R.string.navigation_drawer_close );
@@ -82,7 +81,7 @@ public class ShellActivity extends ActionBarActivity
 	}
 
 	public void onEvent( EventServerSelected args ) {
-		mNavigationDrawerFragment.selectId( 101 );
+		mNavigationDrawerFragment.selectId( LIBRARY_ITEM_ID );
 	}
 
 	@Override

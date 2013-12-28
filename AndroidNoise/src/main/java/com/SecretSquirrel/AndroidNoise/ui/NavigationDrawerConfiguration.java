@@ -5,22 +5,24 @@ package com.SecretSquirrel.AndroidNoise.ui;
 import android.widget.BaseAdapter;
 
 public class NavigationDrawerConfiguration {
-	private int                     mMainLayout;
 	private int                     mDrawerShadow;
 	private int                     mDrawerLayoutId;
-	private int                     mLeftDrawerId;
+	private int                     mNavigationDrawerId;
+	private int                     mDrawerIconId;
+	private int                     mApplicationNameId;
+	private int                     mGlobalMenuId;
 	private int[]                   mActionMenuItemsToHideWhenDrawerOpen;
 	private NavigationDrawerItem[]  mNavigationItems;
 	private int                     mDrawerOpenDescription;
 	private int                     mDrawerCloseDescription;
 	private BaseAdapter             mBaseAdapter;
 
-	public int getMainLayout() {
-		return( mMainLayout );
+	public int getGlobalMenuId() {
+		return( mGlobalMenuId );
 	}
 
-	public void setMainLayout( int mainLayout ) {
-		mMainLayout = mainLayout;
+	public void setGlobalMenuId( int globalMenuId ) {
+		mGlobalMenuId = globalMenuId;
 	}
 
 	public int getDrawerShadow() {
@@ -39,12 +41,28 @@ public class NavigationDrawerConfiguration {
 		mDrawerLayoutId = drawerLayoutId;
 	}
 
-	public int getLeftDrawerId() {
-		return( mLeftDrawerId );
+	public int getNavigationDrawerId() {
+		return(mNavigationDrawerId);
 	}
 
-	public void setLeftDrawerId( int leftDrawerId ) {
-		mLeftDrawerId = leftDrawerId;
+	public void setNavigationDrawerId( int leftDrawerId ) {
+		mNavigationDrawerId = leftDrawerId;
+	}
+
+	public int getDrawerIconId() {
+		return( mDrawerIconId );
+	}
+
+	public void setDrawerIconId( int drawerIconId ) {
+		mDrawerIconId = drawerIconId;
+	}
+
+	public int getApplicationNameId() {
+		return( mApplicationNameId );
+	}
+
+	public void setApplicationNameId( int applicationNameId ) {
+		mApplicationNameId = applicationNameId;
 	}
 
 	public int[] getActionMenuItemsToHideWhenDrawerOpen() {
@@ -55,11 +73,11 @@ public class NavigationDrawerConfiguration {
 		mActionMenuItemsToHideWhenDrawerOpen = actionMenuItemsToHideWhenDrawerOpen;
 	}
 
-	public NavigationDrawerItem[] getNavItems() {
+	public NavigationDrawerItem[] getNavigationItems() {
 		return( mNavigationItems );
 	}
 
-	public void setNavItems( NavigationDrawerItem[] navItems ) {
+	public void setNavigationItems( NavigationDrawerItem[] navItems ) {
 		mNavigationItems = navItems;
 	}
 
