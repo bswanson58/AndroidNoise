@@ -80,6 +80,7 @@ public class ShellActivity extends ActionBarActivity
 		return( retValue );
 	}
 
+	@SuppressWarnings( "unused" )
 	public void onEvent( EventServerSelected args ) {
 		mNavigationDrawerFragment.selectId( LIBRARY_ITEM_ID );
 	}

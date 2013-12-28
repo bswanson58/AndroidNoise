@@ -106,6 +106,7 @@ public class ShellLibraryFragment extends Fragment {
 		outState.putLong( LIBRARY_CURRENT_ALBUM, mCurrentAlbum );
 	}
 
+	@SuppressWarnings( "unused" )
 	public void onEvent( EventArtistSelected args ) {
 		Artist artist = args.getArtist();
 
@@ -124,6 +125,7 @@ public class ShellLibraryFragment extends Fragment {
 		}
 	}
 
+	@SuppressWarnings( "unused" )
 	public void onEvent( EventAlbumSelected args ) {
 		Album   album = args.getAlbum();
 
