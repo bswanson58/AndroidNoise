@@ -21,6 +21,8 @@ public class NoiseRemoteApi {
 	public static final int     GetTrackList                = 3;
 	public static final String  AlbumId                     = "albumId";
 	public static final String  TrackList                   = "trackList";
+	public static final int     GetFavoritesList            = 4;
+	public static final String  FavoritesList               = "favoritesList";
 
 	// Locator methods and parameter/return value keys.
 	public static final int     LocateServices              = 1;

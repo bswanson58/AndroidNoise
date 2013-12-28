@@ -6,12 +6,15 @@ import android.content.Context;
 import android.widget.Toast;
 
 import com.SecretSquirrel.AndroidNoise.dto.Album;
+import com.SecretSquirrel.AndroidNoise.dto.Favorite;
 import com.SecretSquirrel.AndroidNoise.dto.QueuedAlbumResult;
 import com.SecretSquirrel.AndroidNoise.dto.QueuedTrackResult;
 import com.SecretSquirrel.AndroidNoise.dto.Track;
 import com.SecretSquirrel.AndroidNoise.events.EventPlayAlbum;
+import com.SecretSquirrel.AndroidNoise.events.EventPlayFavorite;
 import com.SecretSquirrel.AndroidNoise.events.EventPlayTrack;
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
+import com.SecretSquirrel.AndroidNoise.support.Constants;
 
 import de.greenrobot.event.EventBus;
 import rx.util.functions.Action1;
@@ -27,6 +30,7 @@ public class QueueRequestHandler {
 		EventBus.getDefault().register( this );
 	}
 
+	@SuppressWarnings( "unused" )
 	public void onEvent( EventPlayAlbum args ) {
 		Album album = args.getAlbum();
 
@@ -35,11 +39,21 @@ public class QueueRequestHandler {
 		}
 	}
 
+	@SuppressWarnings( "unused" )
 	public void onEvent( EventPlayTrack args ) {
 		Track track = args.getTrack();
 
 		if( track != null ) {
 			PlayTrack( track );
+		}
+	}
+
+	@SuppressWarnings( "unused" )
+	public void onEvent( EventPlayFavorite args ) {
+		Favorite    favorite = args.getFavorite();
+
+		if( favorite != null ) {
+			PlayFavorite( favorite );
 		}
 	}
 
@@ -72,6 +86,17 @@ public class QueueRequestHandler {
 					}
 				}
 			} );
+		}
+	}
+
+	private void PlayFavorite( Favorite favorite ) {
+		if( favorite != null ) {
+			if( favorite.TrackId != Constants.NULL_ID ) {
+				PlayTrack( new Track( favorite ));
+			}
+			else if( favorite.AlbumId != Constants.NULL_ID ) {
+				PlayAlbum( new Album( favorite ));
+			}
 		}
 	}
 }

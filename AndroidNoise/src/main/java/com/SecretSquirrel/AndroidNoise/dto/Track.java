@@ -40,6 +40,14 @@ public class Track implements Parcelable {
 		IsFavorite = fromTrack.IsFavorite;
 	}
 
+	public Track( Favorite favorite ) {
+		TrackId = favorite.TrackId;
+		AlbumId = favorite.AlbumId;
+		ArtistId = favorite.ArtistId;
+		Name = favorite.Track;
+		IsFavorite = true;
+	}
+
 	public Track( Parcel parcel ) {
 		TrackId = parcel.readLong();
 		AlbumId = parcel.readLong();

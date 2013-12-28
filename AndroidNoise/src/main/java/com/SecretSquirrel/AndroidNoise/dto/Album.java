@@ -38,6 +38,13 @@ public class Album implements Parcelable {
 		IsFavorite = fromAlbum.IsFavorite;
 	}
 
+	public Album( Favorite favorite ) {
+		AlbumId = favorite.AlbumId;
+		ArtistId = favorite.ArtistId;
+		Name = favorite.Album;
+		IsFavorite = true;
+	}
+
 	public Album( Parcel parcel ) {
 		AlbumId = parcel.readLong();
 		ArtistId = parcel.readLong();

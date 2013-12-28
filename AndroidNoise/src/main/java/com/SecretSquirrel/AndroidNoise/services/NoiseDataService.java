@@ -9,13 +9,15 @@ import android.util.Log;
 
 import com.SecretSquirrel.AndroidNoise.dto.Album;
 import com.SecretSquirrel.AndroidNoise.dto.Artist;
+import com.SecretSquirrel.AndroidNoise.dto.Favorite;
 import com.SecretSquirrel.AndroidNoise.dto.Track;
 import com.SecretSquirrel.AndroidNoise.services.rto.RemoteServerDataApi;
-import com.SecretSquirrel.AndroidNoise.services.rto.RemoteServerRestApi;
 import com.SecretSquirrel.AndroidNoise.services.rto.RoAlbum;
 import com.SecretSquirrel.AndroidNoise.services.rto.RoAlbumListResult;
 import com.SecretSquirrel.AndroidNoise.services.rto.RoArtist;
 import com.SecretSquirrel.AndroidNoise.services.rto.RoArtistListResult;
+import com.SecretSquirrel.AndroidNoise.services.rto.RoFavorite;
+import com.SecretSquirrel.AndroidNoise.services.rto.RoFavoritesListResult;
 import com.SecretSquirrel.AndroidNoise.services.rto.RoTrack;
 import com.SecretSquirrel.AndroidNoise.services.rto.RoTrackListResult;
 import com.SecretSquirrel.AndroidNoise.support.Constants;
@@ -57,6 +59,9 @@ public class NoiseDataService extends IntentService {
 
 						getTrackList( forAlbum, serverAddress, receiver );
 						break;
+
+					case NoiseRemoteApi.GetFavoritesList:
+						getFavoritesList( serverAddress, receiver );
 				}
 			}
 			else {
@@ -170,6 +175,40 @@ public class NoiseDataService extends IntentService {
 		receiver.send( resultCode, resultData );
 	}
 
+	private void getFavoritesList( String serverAddress, ResultReceiver receiver ) {
+		Bundle  resultData = buildResultBundle( NoiseRemoteApi.GetFavoritesList );
+		int     resultCode = NoiseRemoteApi.RemoteResultError;
+
+		try {
+			RemoteServerDataApi     service = buildDataService( serverAddress );
+			RoFavoritesListResult   result = service.GetFavoritesList();
+
+			if( result.Success ) {
+				ArrayList<Favorite> favorites = new ArrayList<Favorite>();
+
+				for( RoFavorite roFavorite : result.Favorites ) {
+					favorites.add( new Favorite( roFavorite ) );
+				}
+
+				resultCode = NoiseRemoteApi.RemoteResultSuccess;
+				resultData.putParcelableArrayList( NoiseRemoteApi.FavoritesList, favorites );
+			}
+			else {
+				resultData.putString( NoiseRemoteApi.RemoteResultErrorMessage, result.ErrorMessage );
+			}
+		}
+		catch( Exception ex ) {
+			resultData.putString( NoiseRemoteApi.RemoteResultErrorMessage, ex.getMessage());
+			resultCode = NoiseRemoteApi.RemoteResultException;
+
+			if( Constants.LOG_ERROR ) {
+				Log.w( TAG, "getFavoritesList", ex );
+			}
+		}
+
+		receiver.send( resultCode, resultData );
+	}
+
 	private Bundle buildResultBundle( int apiCode ) {
 		Bundle  retValue = new Bundle();
 
@@ -179,9 +218,8 @@ public class NoiseDataService extends IntentService {
 	}
 
 	private RemoteServerDataApi buildDataService( String serverAddress ) {
-		RestAdapter         restAdapter = new RestAdapter.Builder().setServer( serverAddress ).build();
-		RemoteServerDataApi service = restAdapter.create( RemoteServerDataApi.class );
+		RestAdapter restAdapter = new RestAdapter.Builder().setServer( serverAddress ).build();
 
-		return( service );
+		return( restAdapter.create( RemoteServerDataApi.class ));
 	}
 }
