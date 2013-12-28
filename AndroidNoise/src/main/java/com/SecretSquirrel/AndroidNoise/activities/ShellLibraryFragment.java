@@ -98,7 +98,8 @@ public class ShellLibraryFragment extends Fragment {
 
 	@Override
 	public void onSaveInstanceState( Bundle outState ) {
-		super.onSaveInstanceState( outState );
+		// Do not save the current fragment - which the base class method will do.
+		//super.onSaveInstanceState( outState );
 
 		outState.putInt( LIBRARY_STATE, mCurrentState );
 		outState.putLong( LIBRARY_CURRENT_ARTIST, mCurrentArtist );

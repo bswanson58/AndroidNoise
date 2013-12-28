@@ -31,6 +31,11 @@ import com.SecretSquirrel.AndroidNoise.ui.NavigationDrawerItem;
  * design guidelines</a> for a complete explanation of the behaviors implemented here.
  */
 public class NavigationDrawerFragment extends Fragment {
+	// Callback interface that all activities using this fragment must implement.
+	public static interface NavigationDrawerCallbacks {
+		// Called when an item in the navigation drawer is selected.
+		void onNavigationDrawerItemSelected( int position );
+	}
 
 	// Remember the position of the selected item.
 	private static final String STATE_SELECTED_POSITION = "selected_navigation_drawer_position";
@@ -160,7 +165,8 @@ public class NavigationDrawerFragment extends Fragment {
 		mDrawerLayout.setDrawerListener( mDrawerToggle );
 
 		// Select either the default item (0) or the last selected item.
-		selectPosition( mCurrentSelectedPosition );
+		mDrawerListView.setItemChecked( mCurrentSelectedPosition, true );
+		mTitle = mConfiguration.getNavItems()[mCurrentSelectedPosition].getLabel();
 	}
 
 	public boolean isDrawerOpen() {
@@ -293,15 +299,5 @@ public class NavigationDrawerFragment extends Fragment {
 
 	private ActionBar getActionBar() {
 		return ((ActionBarActivity) getActivity()).getSupportActionBar();
-	}
-
-	/**
-	 * Callbacks interface that all activities using this fragment must implement.
-	 */
-	public static interface NavigationDrawerCallbacks {
-		/**
-		 * Called when an item in the navigation drawer is selected.
-		 */
-		void onNavigationDrawerItemSelected( int position );
 	}
 }

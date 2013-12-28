@@ -44,6 +44,13 @@ public class ShellActivity extends ActionBarActivity
 		mNavigationDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById( R.id.navigation_drawer );
 		mNavigationDrawerFragment.setConfiguration( getNavigationDrawerConfiguration());
 
+		if( savedInstanceState == null ) {
+			mNavigationDrawerFragment.selectId( SERVERS_ITEM_ID );
+		}
+		else {
+			restoreActionBar();
+		}
+
 		EventBus.getDefault().register( this );
 	}
 
