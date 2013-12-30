@@ -17,9 +17,11 @@ public class ShellQueueFragment extends Fragment {
 	public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState ) {
 		FragmentManager         fragmentManager = getFragmentManager();
 		FragmentTransaction     fragmentTransaction = fragmentManager.beginTransaction();
-		QueueListFragment       fragment = QueueListFragment.newInstance();
+		QueueListFragment       queueFragment = QueueListFragment.newInstance();
+		TransportFragment       transportFragment = TransportFragment.newInstance();
 
-		fragmentTransaction.add( R.id.QueueShellFrame, fragment );
+		fragmentTransaction.add( R.id.queue_list_frame, queueFragment );
+		fragmentTransaction.add( R.id.transport_commands_frame, transportFragment );
 		fragmentTransaction.commit();
 
 		return( inflater.inflate( R.layout.fragment_queue_shell, container, false ));

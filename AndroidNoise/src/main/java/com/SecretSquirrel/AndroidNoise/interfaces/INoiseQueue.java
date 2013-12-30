@@ -7,13 +7,17 @@ import com.SecretSquirrel.AndroidNoise.dto.PlayQueueListResult;
 import com.SecretSquirrel.AndroidNoise.dto.QueuedAlbumResult;
 import com.SecretSquirrel.AndroidNoise.dto.QueuedTrackResult;
 import com.SecretSquirrel.AndroidNoise.dto.Track;
-import com.SecretSquirrel.AndroidNoise.services.rto.RoPlayQueueListResult;
+import com.SecretSquirrel.AndroidNoise.services.rto.BaseServerResult;
 
 import rx.Observable;
 import rx.Subscription;
 import rx.util.functions.Action1;
 
 public interface INoiseQueue {
+	public enum TransportCommand {
+		Play, Stop, Pause, PlayNext, PlayPrevious, Repeat
+	}
+
 	public  Subscription                    EnqueueTrack( Track track, Action1<QueuedTrackResult> result );
 	public  Subscription                    EnqueueTrack( Track track, Action1<QueuedTrackResult> result, Action1<Throwable> errorAction );
 	public  Observable<QueuedTrackResult>   EnqueueTrack( final Track track );
@@ -24,4 +28,6 @@ public interface INoiseQueue {
 
 	public  Subscription                    GetQueuedTrackList( Action1<PlayQueueListResult> resultAction, Action1<Throwable> errorAction );
 	public  Observable<PlayQueueListResult> GetQueuedTrackList();
+
+	public  Observable<BaseServerResult>    ExecuteTransportCommand( TransportCommand command );
 }

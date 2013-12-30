@@ -10,8 +10,11 @@ import com.SecretSquirrel.AndroidNoise.dto.QueuedAlbumResult;
 import com.SecretSquirrel.AndroidNoise.dto.QueuedTrackResult;
 import com.SecretSquirrel.AndroidNoise.dto.Track;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseQueue;
+import com.SecretSquirrel.AndroidNoise.services.rto.BaseServerResult;
 import com.SecretSquirrel.AndroidNoise.services.rto.RemoteServerQueueApi;
 import com.SecretSquirrel.AndroidNoise.support.Constants;
+
+import java.util.EnumMap;
 
 import retrofit.RestAdapter;
 import rx.Observable;
@@ -25,11 +28,21 @@ import rx.util.functions.Action1;
 public class NoiseQueueClient implements INoiseQueue {
 	private static final String     TAG = NoiseQueueClient.class.getName();
 
-	private String                  mServerAddress;
-	private RemoteServerQueueApi    mService;
+	private final String                                mServerAddress;
+	private RemoteServerQueueApi                        mService;
+	public  final EnumMap<TransportCommand, Integer>    mTransportCommands;
 
 	public NoiseQueueClient( String serverAddress ) {
 		mServerAddress = serverAddress;
+
+		mTransportCommands = new EnumMap<TransportCommand, Integer>( TransportCommand.class );
+
+		mTransportCommands.put( TransportCommand.Play, 1 );
+		mTransportCommands.put( TransportCommand.Stop, 2 );
+		mTransportCommands.put( TransportCommand.Pause, 3 );
+		mTransportCommands.put( TransportCommand.PlayNext, 4 );
+		mTransportCommands.put( TransportCommand.PlayPrevious, 5 );
+		mTransportCommands.put( TransportCommand.Repeat, 6 );
 	}
 
 	@Override
@@ -122,6 +135,24 @@ public class NoiseQueueClient implements INoiseQueue {
 			public Subscription onSubscribe( Observer<? super PlayQueueListResult> observer ) {
 				try {
 					observer.onNext( new PlayQueueListResult( getService().GetQueuedTrackList()));
+					observer.onCompleted();
+				}
+				catch( Exception ex ) {
+					observer.onError( ex );
+				}
+
+				return( Subscriptions.empty());
+			}
+		} )).subscribeOn( Schedulers.threadPoolForIO());
+	}
+
+	@Override
+	public Observable<BaseServerResult> ExecuteTransportCommand( final TransportCommand command ) {
+		return( Observable.create( new Observable.OnSubscribeFunc<BaseServerResult>() {
+			@Override
+			public Subscription onSubscribe( Observer<? super BaseServerResult> observer ) {
+				try {
+					observer.onNext( new BaseServerResult( getService().ExecuteTransportCommand( mTransportCommands.get( command ))));
 					observer.onCompleted();
 				}
 				catch( Exception ex ) {

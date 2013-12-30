@@ -14,4 +14,7 @@ public interface RemoteServerQueueApi {
 
 	@GET( "/Queue/queueList" )
 	public RoPlayQueueListResult GetQueuedTrackList();
+
+	@GET( "/Queue/transportCommand" )
+	public BaseServerResult     ExecuteTransportCommand( @Query( "command") int command );
 }
