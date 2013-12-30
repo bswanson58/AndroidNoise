@@ -15,9 +15,12 @@
     <string name="title_library_section">Library</string>
     <string name="title_favorites_section">Favorites</string>
     <string name="title_queue_section">Now Playing</string>
+    <string name="title_search_section">Search</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="action_example">Example action</string>
     <string name="text_available_servers">Available Noise Systems:</string>
+    <string name="search_results_title">Search Results</string>
+    <string name="search_button_title">Search</string>
 
 </resources>
