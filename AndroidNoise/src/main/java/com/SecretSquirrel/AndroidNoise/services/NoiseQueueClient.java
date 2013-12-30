@@ -9,6 +9,7 @@ import com.SecretSquirrel.AndroidNoise.dto.QueuedAlbumResult;
 import com.SecretSquirrel.AndroidNoise.dto.QueuedTrackResult;
 import com.SecretSquirrel.AndroidNoise.dto.Track;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseQueue;
+import com.SecretSquirrel.AndroidNoise.services.rto.PlayQueueListResult;
 import com.SecretSquirrel.AndroidNoise.services.rto.RemoteServerQueueApi;
 import com.SecretSquirrel.AndroidNoise.support.Constants;
 
@@ -105,6 +106,31 @@ public class NoiseQueueClient implements INoiseQueue {
 				return Subscriptions.empty();
 			}
 		}).subscribeOn( Schedulers.threadPoolForIO());
+	}
+
+	@Override
+	public Subscription GetQueuedTrackList( Action1<PlayQueueListResult> resultAction, Action1<Throwable> errorAction ) {
+		return( GetQueuedTrackList()
+					.observeOn( AndroidSchedulers.mainThread())
+					.subscribe( resultAction, errorAction ));
+	}
+
+	@Override
+	public Observable<PlayQueueListResult> GetQueuedTrackList() {
+		return( Observable.create( new Observable.OnSubscribeFunc<PlayQueueListResult>() {
+			@Override
+			public Subscription onSubscribe( Observer<? super PlayQueueListResult> observer ) {
+				try {
+					observer.onNext( getService().GetQueuedTrackList());
+					observer.onCompleted();
+				}
+				catch( Exception ex ) {
+					observer.onError( ex );
+				}
+
+				return( Subscriptions.empty());
+			}
+		} )).subscribeOn( Schedulers.threadPoolForIO());
 	}
 
 	private RemoteServerQueueApi getService() {

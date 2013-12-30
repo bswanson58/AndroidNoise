@@ -11,4 +11,7 @@ public interface RemoteServerQueueApi {
 
 	@GET( "/Queue/enqueueAlbum" )
 	public  BaseServerResult    EnqueueAlbum( @Query( "album" )long albumId );
+
+	@GET( "/Queue/queueList" )
+	public  PlayQueueListResult GetQueuedTrackList();
 }

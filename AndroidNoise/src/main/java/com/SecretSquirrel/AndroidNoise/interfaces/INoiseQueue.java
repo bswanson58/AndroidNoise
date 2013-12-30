@@ -6,6 +6,7 @@ import com.SecretSquirrel.AndroidNoise.dto.Album;
 import com.SecretSquirrel.AndroidNoise.dto.QueuedAlbumResult;
 import com.SecretSquirrel.AndroidNoise.dto.QueuedTrackResult;
 import com.SecretSquirrel.AndroidNoise.dto.Track;
+import com.SecretSquirrel.AndroidNoise.services.rto.PlayQueueListResult;
 
 import rx.Observable;
 import rx.Subscription;
@@ -19,4 +20,7 @@ public interface INoiseQueue {
 	public  Subscription                    EnqueueAlbum( Album album, Action1<QueuedAlbumResult> resultAction );
 	public  Subscription                    EnqueueAlbum( Album album, Action1<QueuedAlbumResult> result, Action1<Throwable> errorAction );
 	public  Observable<QueuedAlbumResult>   EnqueueAlbum( final Album album );
+
+	public  Subscription                    GetQueuedTrackList( Action1<PlayQueueListResult> resultAction, Action1<Throwable> errorAction );
+	public  Observable<PlayQueueListResult> GetQueuedTrackList();
 }
