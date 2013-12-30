@@ -3,10 +3,11 @@ package com.SecretSquirrel.AndroidNoise.interfaces;
 // Secret Squirrel Software - Created by bswanson on 12/17/13.
 
 import com.SecretSquirrel.AndroidNoise.dto.Album;
+import com.SecretSquirrel.AndroidNoise.dto.PlayQueueListResult;
 import com.SecretSquirrel.AndroidNoise.dto.QueuedAlbumResult;
 import com.SecretSquirrel.AndroidNoise.dto.QueuedTrackResult;
 import com.SecretSquirrel.AndroidNoise.dto.Track;
-import com.SecretSquirrel.AndroidNoise.services.rto.PlayQueueListResult;
+import com.SecretSquirrel.AndroidNoise.services.rto.RoPlayQueueListResult;
 
 import rx.Observable;
 import rx.Subscription;

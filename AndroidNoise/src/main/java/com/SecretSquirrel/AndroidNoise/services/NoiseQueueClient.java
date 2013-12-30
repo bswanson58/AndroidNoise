@@ -5,11 +5,11 @@ package com.SecretSquirrel.AndroidNoise.services;
 import android.util.Log;
 
 import com.SecretSquirrel.AndroidNoise.dto.Album;
+import com.SecretSquirrel.AndroidNoise.dto.PlayQueueListResult;
 import com.SecretSquirrel.AndroidNoise.dto.QueuedAlbumResult;
 import com.SecretSquirrel.AndroidNoise.dto.QueuedTrackResult;
 import com.SecretSquirrel.AndroidNoise.dto.Track;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseQueue;
-import com.SecretSquirrel.AndroidNoise.services.rto.PlayQueueListResult;
 import com.SecretSquirrel.AndroidNoise.services.rto.RemoteServerQueueApi;
 import com.SecretSquirrel.AndroidNoise.support.Constants;
 
@@ -121,7 +121,7 @@ public class NoiseQueueClient implements INoiseQueue {
 			@Override
 			public Subscription onSubscribe( Observer<? super PlayQueueListResult> observer ) {
 				try {
-					observer.onNext( getService().GetQueuedTrackList());
+					observer.onNext( new PlayQueueListResult( getService().GetQueuedTrackList()));
 					observer.onCompleted();
 				}
 				catch( Exception ex ) {
