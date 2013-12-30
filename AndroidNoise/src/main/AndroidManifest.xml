@@ -5,7 +5,7 @@
     android:versionName="1.0" >
 
     <uses-sdk
-        android:minSdkVersion="7"
+        android:minSdkVersion="8"
         android:targetSdkVersion="19" />
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -37,20 +37,6 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-        <activity
-            android:name="com.SecretSquirrel.AndroidNoise.activities.ArtistListActivity"
-            android:label="@string/title_activity_artist_list" >
-        </activity>
-        <activity
-            android:name="com.SecretSquirrel.AndroidNoise.activities.ArtistActivity"
-            android:label="@string/title_activity_artist"
-            android:parentActivityName="com.SecretSquirrel.AndroidNoise.activities.ArtistListActivity" >
-        </activity>
-        <activity
-            android:name="com.SecretSquirrel.AndroidNoise.activities.AlbumActivity"
-            android:label="@string/title_activity_album"
-            android:parentActivityName="com.SecretSquirrel.AndroidNoise.activities.ArtistActivity" >
         </activity>
     </application>
 

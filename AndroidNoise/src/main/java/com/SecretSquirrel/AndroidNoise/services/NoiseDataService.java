@@ -8,13 +8,17 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.SecretSquirrel.AndroidNoise.dto.Album;
+import com.SecretSquirrel.AndroidNoise.dto.AlbumInfo;
 import com.SecretSquirrel.AndroidNoise.dto.Artist;
+import com.SecretSquirrel.AndroidNoise.dto.ArtistInfo;
 import com.SecretSquirrel.AndroidNoise.dto.Favorite;
 import com.SecretSquirrel.AndroidNoise.dto.Track;
 import com.SecretSquirrel.AndroidNoise.services.rto.RemoteServerDataApi;
 import com.SecretSquirrel.AndroidNoise.services.rto.RoAlbum;
+import com.SecretSquirrel.AndroidNoise.services.rto.RoAlbumInfoResult;
 import com.SecretSquirrel.AndroidNoise.services.rto.RoAlbumListResult;
 import com.SecretSquirrel.AndroidNoise.services.rto.RoArtist;
+import com.SecretSquirrel.AndroidNoise.services.rto.RoArtistInfoResult;
 import com.SecretSquirrel.AndroidNoise.services.rto.RoArtistListResult;
 import com.SecretSquirrel.AndroidNoise.services.rto.RoFavorite;
 import com.SecretSquirrel.AndroidNoise.services.rto.RoFavoritesListResult;
@@ -62,6 +66,18 @@ public class NoiseDataService extends IntentService {
 
 					case NoiseRemoteApi.GetFavoritesList:
 						getFavoritesList( serverAddress, receiver );
+						break;
+
+					case NoiseRemoteApi.GetArtistInfo:
+						forArtist = intent.getLongExtra( NoiseRemoteApi.ArtistId, 0 );
+
+						getArtistInfo( forArtist, serverAddress, receiver );
+						break;
+
+					case NoiseRemoteApi.GetAlbumInfo:
+						forAlbum = intent.getLongExtra( NoiseRemoteApi.AlbumId, 0 );
+
+						getAlbumInfo( forAlbum, serverAddress, receiver );
 				}
 			}
 			else {
@@ -203,6 +219,62 @@ public class NoiseDataService extends IntentService {
 
 			if( Constants.LOG_ERROR ) {
 				Log.w( TAG, "getFavoritesList", ex );
+			}
+		}
+
+		receiver.send( resultCode, resultData );
+	}
+
+	private void getArtistInfo( long forArtist, String serverAddress, ResultReceiver receiver ) {
+		Bundle  resultData = buildResultBundle( NoiseRemoteApi.GetArtistInfo );
+		int     resultCode = NoiseRemoteApi.RemoteResultError;
+
+		try {
+			RemoteServerDataApi     service = buildDataService( serverAddress );
+			RoArtistInfoResult      result = service.GetArtistInfo( forArtist );
+
+			if( result.Success ) {
+				resultCode = NoiseRemoteApi.RemoteResultSuccess;
+				resultData.putParcelable( NoiseRemoteApi.ArtistInfo, new ArtistInfo( result.ArtistInfo ));
+			}
+			else {
+				resultData.putString( NoiseRemoteApi.RemoteResultErrorMessage, result.ErrorMessage );
+			}
+		}
+		catch( Exception ex ) {
+			resultData.putString( NoiseRemoteApi.RemoteResultErrorMessage, ex.getMessage());
+			resultCode = NoiseRemoteApi.RemoteResultException;
+
+			if( Constants.LOG_ERROR ) {
+				Log.w( TAG, "getArtistInfo", ex );
+			}
+		}
+
+		receiver.send( resultCode, resultData );
+	}
+
+	private void getAlbumInfo( long forAlbum, String serverAddress, ResultReceiver receiver ) {
+		Bundle  resultData = buildResultBundle( NoiseRemoteApi.GetAlbumInfo );
+		int     resultCode = NoiseRemoteApi.RemoteResultError;
+
+		try {
+			RemoteServerDataApi     service = buildDataService( serverAddress );
+			RoAlbumInfoResult       result = service.GetAlbumInfo( forAlbum );
+
+			if( result.Success ) {
+				resultCode = NoiseRemoteApi.RemoteResultSuccess;
+				resultData.putParcelable( NoiseRemoteApi.AlbumInfo, new AlbumInfo( result.AlbumInfo ));
+			}
+			else {
+				resultData.putString( NoiseRemoteApi.RemoteResultErrorMessage, result.ErrorMessage );
+			}
+		}
+		catch( Exception ex ) {
+			resultData.putString( NoiseRemoteApi.RemoteResultErrorMessage, ex.getMessage());
+			resultCode = NoiseRemoteApi.RemoteResultException;
+
+			if( Constants.LOG_ERROR ) {
+				Log.w( TAG, "getAlbumInfo", ex );
 			}
 		}
 

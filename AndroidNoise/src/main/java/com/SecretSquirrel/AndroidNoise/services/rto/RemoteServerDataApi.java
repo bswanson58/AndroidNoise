@@ -9,8 +9,14 @@ public interface RemoteServerDataApi {
 	@GET( "/Data/artists" )
 	RoArtistListResult      GetArtistList();
 
+	@GET( "/Data/artist" )
+	RoArtistInfoResult      GetArtistInfo( @Query( "artist" ) long forArtist );
+
 	@GET( "/Data/albums" )
 	RoAlbumListResult       GetAlbumList( @Query("artist") long forArtist );
+
+	@GET( "/Data/album" )
+	RoAlbumInfoResult       GetAlbumInfo( @Query( "album" ) long forAlbum );
 
 	@GET( "/Data/tracks" )
 	RoTrackListResult       GetTrackList( @Query("album")  long forAlbum );
