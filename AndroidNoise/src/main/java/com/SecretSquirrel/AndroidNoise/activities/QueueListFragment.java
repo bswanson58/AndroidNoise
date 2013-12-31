@@ -3,7 +3,6 @@ package com.SecretSquirrel.AndroidNoise.activities;
 // Secret Squirrel Software - Created by bswanson on 12/30/13.
 
 import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
@@ -18,7 +17,6 @@ import android.widget.TextView;
 import com.SecretSquirrel.AndroidNoise.R;
 import com.SecretSquirrel.AndroidNoise.dto.PlayQueueListResult;
 import com.SecretSquirrel.AndroidNoise.dto.PlayQueueTrack;
-import com.SecretSquirrel.AndroidNoise.events.EventServerQueueChanged;
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
 import com.SecretSquirrel.AndroidNoise.model.NoiseRemoteApplication;
 import com.SecretSquirrel.AndroidNoise.nanoHttpd.NanoHTTPD;
@@ -29,13 +27,8 @@ import com.SecretSquirrel.AndroidNoise.support.NetworkUtility;
 
 import java.util.ArrayList;
 
-import de.greenrobot.event.EventBus;
-import rx.Observable;
-import rx.Observer;
 import rx.Subscription;
 import rx.android.observables.AndroidObservable;
-import rx.concurrency.Schedulers;
-import rx.subscriptions.Subscriptions;
 import rx.util.functions.Action1;
 
 public class QueueListFragment extends Fragment  {
@@ -75,8 +68,6 @@ public class QueueListFragment extends Fragment  {
 			subscribeToEvents();
 		}
 
-		EventBus.getDefault().register( this );
-
 		return( myView );
 	}
 
@@ -84,7 +75,6 @@ public class QueueListFragment extends Fragment  {
 	public void onPause() {
 		super.onPause();
 
-		EventBus.getDefault().unregister( this );
 		revokeEvents();
 
 		mEventHost.stop();
@@ -95,14 +85,8 @@ public class QueueListFragment extends Fragment  {
 		}
 	}
 
-	@SuppressWarnings( "unused" )
-	public void onEvent( EventServerQueueChanged args ) {
-		requestQueueList();
-	}
-
 	private void subscribeToEvents() {
-		mLocalAddress = String.format( "http://%s:%d", NetworkUtility.getLocalAddress(), EVENT_PORT );
-		mEventHost = new ServerEventHost( EVENT_PORT );
+		configureEventHost();
 
 		try {
 			mEventRequestSubscription = AndroidObservable.fromFragment( this,
@@ -172,7 +156,7 @@ public class QueueListFragment extends Fragment  {
 				);
 	}
 
-	public void setQueueList( ArrayList<PlayQueueTrack> queueList ) {
+	private void setQueueList( ArrayList<PlayQueueTrack> queueList ) {
 		mQueueList.clear();
 		mQueueList.addAll( queueList );
 		mQueueListAdapter.notifyDataSetChanged();
@@ -187,6 +171,25 @@ public class QueueListFragment extends Fragment  {
 		NoiseRemoteApplication application = (NoiseRemoteApplication)getActivity().getApplication();
 
 		return( application.getApplicationState());
+	}
+
+	private void configureEventHost() {
+		mLocalAddress = String.format( "http://%s:%d", NetworkUtility.getLocalAddress(), EVENT_PORT );
+		mEventHost = new ServerEventHost( EVENT_PORT );
+
+		mEventHost.AddResponder( new ServerEventHost.UriResponder() {
+			@Override
+			public boolean shouldServe( NanoHTTPD.IHTTPSession session ) {
+				return (session.getUri().startsWith( "/eventInQueue" ));
+			}
+
+			@Override
+			public NanoHTTPD.Response serve( NanoHTTPD.IHTTPSession session ) {
+				requestQueueList();
+
+				return( new NanoHTTPD.Response( "OK" ));
+			}
+		} );
 	}
 
 	private class QueueAdapter extends ArrayAdapter<PlayQueueTrack> {

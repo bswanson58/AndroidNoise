@@ -5,17 +5,30 @@ package com.SecretSquirrel.AndroidNoise.services;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.SecretSquirrel.AndroidNoise.events.EventServerQueueChanged;
 import com.SecretSquirrel.AndroidNoise.nanoHttpd.NanoHTTPD;
 import com.SecretSquirrel.AndroidNoise.support.Constants;
 
-import de.greenrobot.event.EventBus;
+import java.util.ArrayList;
 
 public class ServerEventHost extends NanoHTTPD {
 	private static final String     TAG = ServerEventHost.class.getName();
 
+	public interface UriResponder {
+		boolean     shouldServe( IHTTPSession session );
+
+		Response    serve( IHTTPSession session );
+	}
+
+	private ArrayList<UriResponder> mResponders;
+
 	public ServerEventHost( int port ) {
 		super( port );
+
+		mResponders = new ArrayList<UriResponder>();
+	}
+
+	public void AddResponder( UriResponder responder ) {
+		mResponders.add( responder );
 	}
 
 	@Override
@@ -27,7 +40,7 @@ public class ServerEventHost extends NanoHTTPD {
 
 				return "Executed";
 			}
-		}.execute( null );
+		}.execute();
 
 	}
 
@@ -44,12 +57,16 @@ public class ServerEventHost extends NanoHTTPD {
 
 	@Override
 	public Response serve( IHTTPSession session ) {
-		String  uri = session.getUri();
+		Response    retValue = new Response( "Unhandled request: " + session.getUri());
 
-		if( uri.contains( "/eventInQueue" )) {
-			EventBus.getDefault().post( new EventServerQueueChanged());
+		for( UriResponder responder : mResponders ) {
+			if( responder.shouldServe( session )) {
+				retValue = responder.serve( session );
+
+				break;
+			}
 		}
 
-		return( new Response( "Queue event received." ));
+		return( retValue );
 	}
 }
