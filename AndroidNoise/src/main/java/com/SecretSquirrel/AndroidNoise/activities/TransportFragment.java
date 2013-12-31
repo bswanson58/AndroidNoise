@@ -16,6 +16,7 @@ import com.SecretSquirrel.AndroidNoise.interfaces.INoiseQueue;
 import com.SecretSquirrel.AndroidNoise.model.NoiseRemoteApplication;
 import com.SecretSquirrel.AndroidNoise.services.rto.BaseServerResult;
 
+import rx.android.observables.AndroidObservable;
 import rx.util.functions.Action1;
 
 public class TransportFragment extends Fragment {
@@ -75,12 +76,13 @@ public class TransportFragment extends Fragment {
 	}
 
 	private void ExecuteCommand( INoiseQueue.TransportCommand command ) {
-		getApplicationState().getQueueClient().ExecuteTransportCommand( command ).subscribe( new Action1<BaseServerResult>() {
+		AndroidObservable.fromFragment( this, getApplicationState().getQueueClient().ExecuteTransportCommand( command ))
+				.subscribe( new Action1<BaseServerResult>() {
 			@Override
 			public void call( BaseServerResult serverResult ) {
-				if(!serverResult.Success ) {
-					Log.e( TAG, "The transport command was not executed: " + serverResult.ErrorMessage );
-				}
+					if(!serverResult.Success ) {
+						Log.e( TAG, "The transport command was not executed: " + serverResult.ErrorMessage );
+					}
 			}
 		} );
 	}
