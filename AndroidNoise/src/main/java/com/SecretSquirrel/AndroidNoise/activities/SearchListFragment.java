@@ -6,6 +6,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 
 import com.SecretSquirrel.AndroidNoise.R;
 import com.SecretSquirrel.AndroidNoise.dto.SearchResultItem;
+import com.SecretSquirrel.AndroidNoise.events.EventSearchRequest;
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
 import com.SecretSquirrel.AndroidNoise.model.NoiseRemoteApplication;
 import com.SecretSquirrel.AndroidNoise.services.NoiseRemoteApi;
@@ -23,6 +25,8 @@ import com.SecretSquirrel.AndroidNoise.services.ServiceResultReceiver;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+
+import de.greenrobot.event.EventBus;
 
 public class SearchListFragment extends Fragment
 								implements ServiceResultReceiver.Receiver {
@@ -43,6 +47,8 @@ public class SearchListFragment extends Fragment
 
 		mServiceResultReceiver = new ServiceResultReceiver( new Handler());
 		mServiceResultReceiver.setReceiver( this );
+
+		EventBus.getDefault().register( this );
 	}
 
 	@Override
@@ -56,10 +62,11 @@ public class SearchListFragment extends Fragment
 	}
 
 	@Override
-	public void onPause() {
-		super.onPause();
+	public void onDestroy() {
+		super.onDestroy();
 
 		mServiceResultReceiver.clearReceiver();
+		EventBus.getDefault().unregister( this );
 	}
 
 	@Override
@@ -68,6 +75,17 @@ public class SearchListFragment extends Fragment
 //			ArrayList<SearchResultItem>   resultList = resultData.getParcelableArrayList( NoiseRemoteApi.ArtistList );
 
 //			setResultList( resultList );
+		}
+	}
+
+
+	@SuppressWarnings( "unused" )
+	public void onEvent( EventSearchRequest args ) {
+		mResultList.clear();
+		mSearchListAdapter.notifyDataSetChanged();
+
+		if(!TextUtils.isEmpty( args.getSearchTerm())) {
+			
 		}
 	}
 

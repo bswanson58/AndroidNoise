@@ -12,6 +12,9 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.SecretSquirrel.AndroidNoise.R;
+import com.SecretSquirrel.AndroidNoise.events.EventSearchRequest;
+
+import de.greenrobot.event.EventBus;
 
 public class SearchQueryFragment extends Fragment {
 	private EditText    mSearchText;
@@ -47,7 +50,7 @@ public class SearchQueryFragment extends Fragment {
 		String  searchText = mSearchText.getText().toString();
 
 		if(!TextUtils.isEmpty( searchText )) {
-
+			EventBus.getDefault().post( new EventSearchRequest( searchText ));
 		}
 	}
 }
