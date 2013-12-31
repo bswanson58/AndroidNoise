@@ -110,7 +110,7 @@ public class QueueListFragment extends Fragment  {
 					.subscribe( new Action1<BaseServerResult>() {
 						            @Override
 						            public void call( BaseServerResult serverResult ) {
-							            onEventsRequested();
+							            mEventHost.start();
 						            }
 					            }, new Action1<Throwable>() {
 						            @Override
@@ -127,51 +127,6 @@ public class QueueListFragment extends Fragment  {
 				Log.e( TAG, "subscribeToEvents", ex );
 			}
 		}
-	}
-
-	private void onEventsRequested() {
-		try {
-			Subscription    rx = Observable.create( new Observable.OnSubscribeFunc<Object>() {
-				@Override
-				public Subscription onSubscribe( Observer<? super Object> observer ) {
-					try {
-						observer.onNext( startHost());
-						observer.onCompleted();
-					}
-					catch( Exception ex ) {
-						observer.onError( ex );
-					}
-
-					return( Subscriptions.empty());
-				}
-			} ).subscribeOn( Schedulers.threadPoolForIO()).subscribe( new Action1<Object>() {
-				@Override
-				public void call( Object o ) {
-
-				}
-			} );
-
-			if( mEventRequestSubscription != null ) {
-				mEventRequestSubscription.unsubscribe();
-				mEventRequestSubscription = null;
-			}
-		}
-		catch( Exception ex ) {
-			if( Constants.LOG_ERROR ) {
-				Log.e( TAG, "Starting event host", ex );
-			}
-		}
-	}
-
-	private Object startHost() {
-		try {
-			mEventHost.start();
-		}
-		catch( Exception ex ) {
-
-		}
-
-		return( true );
 	}
 
 	private void revokeEvents() {
