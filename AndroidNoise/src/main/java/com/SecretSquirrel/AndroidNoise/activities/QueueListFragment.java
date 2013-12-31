@@ -3,6 +3,7 @@ package com.SecretSquirrel.AndroidNoise.activities;
 // Secret Squirrel Software - Created by bswanson on 12/30/13.
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
@@ -17,8 +18,10 @@ import android.widget.TextView;
 import com.SecretSquirrel.AndroidNoise.R;
 import com.SecretSquirrel.AndroidNoise.dto.PlayQueueListResult;
 import com.SecretSquirrel.AndroidNoise.dto.PlayQueueTrack;
+import com.SecretSquirrel.AndroidNoise.events.EventServerQueueChanged;
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
 import com.SecretSquirrel.AndroidNoise.model.NoiseRemoteApplication;
+import com.SecretSquirrel.AndroidNoise.nanoHttpd.NanoHTTPD;
 import com.SecretSquirrel.AndroidNoise.services.ServerEventHost;
 import com.SecretSquirrel.AndroidNoise.services.rto.BaseServerResult;
 import com.SecretSquirrel.AndroidNoise.support.Constants;
@@ -26,8 +29,13 @@ import com.SecretSquirrel.AndroidNoise.support.NetworkUtility;
 
 import java.util.ArrayList;
 
+import de.greenrobot.event.EventBus;
+import rx.Observable;
+import rx.Observer;
 import rx.Subscription;
 import rx.android.observables.AndroidObservable;
+import rx.concurrency.Schedulers;
+import rx.subscriptions.Subscriptions;
 import rx.util.functions.Action1;
 
 public class QueueListFragment extends Fragment  {
@@ -67,6 +75,8 @@ public class QueueListFragment extends Fragment  {
 			subscribeToEvents();
 		}
 
+		EventBus.getDefault().register( this );
+
 		return( myView );
 	}
 
@@ -74,6 +84,7 @@ public class QueueListFragment extends Fragment  {
 	public void onPause() {
 		super.onPause();
 
+		EventBus.getDefault().unregister( this );
 		revokeEvents();
 
 		mEventHost.stop();
@@ -84,8 +95,13 @@ public class QueueListFragment extends Fragment  {
 		}
 	}
 
+	@SuppressWarnings( "unused" )
+	public void onEvent( EventServerQueueChanged args ) {
+		requestQueueList();
+	}
+
 	private void subscribeToEvents() {
-		mLocalAddress = String.format( "http://%s:%d", NetworkUtility.getIPAddress( true ), EVENT_PORT );
+		mLocalAddress = String.format( "http://%s:%d", NetworkUtility.getLocalAddress(), EVENT_PORT );
 		mEventHost = new ServerEventHost( EVENT_PORT );
 
 		try {
@@ -115,7 +131,25 @@ public class QueueListFragment extends Fragment  {
 
 	private void onEventsRequested() {
 		try {
-			mEventHost.start();
+			Subscription    rx = Observable.create( new Observable.OnSubscribeFunc<Object>() {
+				@Override
+				public Subscription onSubscribe( Observer<? super Object> observer ) {
+					try {
+						observer.onNext( startHost());
+						observer.onCompleted();
+					}
+					catch( Exception ex ) {
+						observer.onError( ex );
+					}
+
+					return( Subscriptions.empty());
+				}
+			} ).subscribeOn( Schedulers.threadPoolForIO()).subscribe( new Action1<Object>() {
+				@Override
+				public void call( Object o ) {
+
+				}
+			} );
 
 			if( mEventRequestSubscription != null ) {
 				mEventRequestSubscription.unsubscribe();
@@ -127,6 +161,17 @@ public class QueueListFragment extends Fragment  {
 				Log.e( TAG, "Starting event host", ex );
 			}
 		}
+	}
+
+	private Object startHost() {
+		try {
+			mEventHost.start();
+		}
+		catch( Exception ex ) {
+
+		}
+
+		return( true );
 	}
 
 	private void revokeEvents() {
