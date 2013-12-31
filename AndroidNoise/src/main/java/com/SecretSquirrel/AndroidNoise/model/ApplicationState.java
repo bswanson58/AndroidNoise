@@ -8,17 +8,17 @@ import android.os.ResultReceiver;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.SecretSquirrel.AndroidNoise.dto.Album;
-import com.SecretSquirrel.AndroidNoise.dto.Artist;
 import com.SecretSquirrel.AndroidNoise.dto.ServerInformation;
 import com.SecretSquirrel.AndroidNoise.dto.ServerVersion;
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseData;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseQueue;
+import com.SecretSquirrel.AndroidNoise.interfaces.INoiseSearch;
 import com.SecretSquirrel.AndroidNoise.services.NoiseDataClient;
 import com.SecretSquirrel.AndroidNoise.services.NoiseQueueClient;
 import com.SecretSquirrel.AndroidNoise.services.NoiseRemoteApi;
 import com.SecretSquirrel.AndroidNoise.services.NoiseRemoteClient;
+import com.SecretSquirrel.AndroidNoise.services.NoiseSearchClient;
 import com.SecretSquirrel.AndroidNoise.services.ServiceLocatorClient;
 import com.SecretSquirrel.AndroidNoise.services.ServiceResultReceiver;
 
@@ -30,10 +30,9 @@ public class ApplicationState implements IApplicationState {
 	private Context                 mContext;
 	private ServerInformation       mCurrentServer;
 	private boolean                 mIsConnected;
-	private Artist                  mCurrentArtist;
-	private Album                   mCurrentAlbum;
 	private NoiseDataClient         mDataClient;
 	private NoiseQueueClient        mQueueClient;
+	private NoiseSearchClient       mSearchClient;
 	private QueueRequestHandler     mQueueRequestHandler;
 
 	public ApplicationState( Context context ) {
@@ -55,6 +54,10 @@ public class ApplicationState implements IApplicationState {
 		return( mQueueClient );
 	}
 
+	public INoiseSearch getSearchClient() {
+		return( mSearchClient );
+	}
+
 	public void SelectServer( ServerInformation server ) {
 		mCurrentServer = server;
 		mIsConnected = mCurrentServer != null;
@@ -62,6 +65,7 @@ public class ApplicationState implements IApplicationState {
 		if( server != null ) {
 			mDataClient = new NoiseDataClient( mContext, mCurrentServer.getServerAddress());
 			mQueueClient = new NoiseQueueClient( mCurrentServer.getServerAddress());
+			mSearchClient = new NoiseSearchClient( mCurrentServer.getServerAddress());
 		}
 	}
 

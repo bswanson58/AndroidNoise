@@ -4,9 +4,9 @@ package com.SecretSquirrel.AndroidNoise.activities;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,25 +15,29 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.SecretSquirrel.AndroidNoise.R;
+import com.SecretSquirrel.AndroidNoise.dto.SearchResult;
 import com.SecretSquirrel.AndroidNoise.dto.SearchResultItem;
 import com.SecretSquirrel.AndroidNoise.events.EventSearchRequest;
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
 import com.SecretSquirrel.AndroidNoise.model.NoiseRemoteApplication;
-import com.SecretSquirrel.AndroidNoise.services.NoiseRemoteApi;
-import com.SecretSquirrel.AndroidNoise.services.ServiceResultReceiver;
+import com.SecretSquirrel.AndroidNoise.support.Constants;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
 import de.greenrobot.event.EventBus;
+import rx.Subscription;
+import rx.android.observables.AndroidObservable;
+import rx.util.functions.Action1;
 
-public class SearchListFragment extends Fragment
-								implements ServiceResultReceiver.Receiver {
-	private ServiceResultReceiver       mServiceResultReceiver;
+public class SearchListFragment extends Fragment {
+	private final String                TAG = SearchListFragment.class.getName();
+
 	private ListView                    mSearchListView;
 	private ArrayList<SearchResultItem> mResultList;
 	private SearchResultAdapter         mSearchListAdapter;
+	private Subscription                mSearchSubscription;
 
 	public static SearchListFragment newInstance() {
 		return( new SearchListFragment());
@@ -44,9 +48,6 @@ public class SearchListFragment extends Fragment
 
 		mResultList = new ArrayList<SearchResultItem>();
 		mSearchListAdapter = new SearchResultAdapter( getActivity(), mResultList );
-
-		mServiceResultReceiver = new ServiceResultReceiver( new Handler());
-		mServiceResultReceiver.setReceiver( this );
 
 		EventBus.getDefault().register( this );
 	}
@@ -65,19 +66,16 @@ public class SearchListFragment extends Fragment
 	public void onDestroy() {
 		super.onDestroy();
 
-		mServiceResultReceiver.clearReceiver();
+		clearSubscription();
 		EventBus.getDefault().unregister( this );
 	}
 
-	@Override
-	public void onReceiveResult( int resultCode, Bundle resultData ) {
-		if( resultCode == NoiseRemoteApi.RemoteResultSuccess ) {
-//			ArrayList<SearchResultItem>   resultList = resultData.getParcelableArrayList( NoiseRemoteApi.ArtistList );
-
-//			setResultList( resultList );
+	private void clearSubscription() {
+		if( mSearchSubscription != null ) {
+			mSearchSubscription.unsubscribe();
+			mSearchSubscription = null;
 		}
 	}
-
 
 	@SuppressWarnings( "unused" )
 	public void onEvent( EventSearchRequest args ) {
@@ -85,7 +83,23 @@ public class SearchListFragment extends Fragment
 		mSearchListAdapter.notifyDataSetChanged();
 
 		if(!TextUtils.isEmpty( args.getSearchTerm())) {
-			
+			clearSubscription();
+
+			mSearchSubscription = AndroidObservable.fromFragment( this, getApplicationState().getSearchClient().Search( args.getSearchTerm()))
+					.subscribe( new Action1<SearchResult>() {
+							@Override
+							public void call( SearchResult searchResult ) {
+								setResultList( searchResult.getResults());
+							}
+						},
+						new Action1<Throwable>() {
+							@Override
+							public void call( Throwable throwable ) {
+								if( Constants.LOG_ERROR ) {
+									Log.e( TAG, "SearchListFragment:search failed", throwable );
+								}
+							}
+						});
 		}
 	}
 
@@ -100,6 +114,7 @@ public class SearchListFragment extends Fragment
 		} );
 
 		mSearchListAdapter.notifyDataSetChanged();
+		clearSubscription();
 	}
 
 	private IApplicationState getApplicationState() {
