@@ -12,6 +12,7 @@ public interface IApplicationState {
 	public  void            LocateServers( final ServiceResultReceiver receiver );
 	public  void            SelectServer( ServerInformation server );
 
+	public  INoiseServer    getNoiseClient();
 	public  INoiseData      getDataClient();
 	public  INoiseQueue     getQueueClient();
 	public  INoiseSearch    getSearchClient();

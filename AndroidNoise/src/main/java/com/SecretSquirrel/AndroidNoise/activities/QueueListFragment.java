@@ -5,6 +5,8 @@ package com.SecretSquirrel.AndroidNoise.activities;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,17 +19,28 @@ import com.SecretSquirrel.AndroidNoise.dto.PlayQueueListResult;
 import com.SecretSquirrel.AndroidNoise.dto.PlayQueueTrack;
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
 import com.SecretSquirrel.AndroidNoise.model.NoiseRemoteApplication;
+import com.SecretSquirrel.AndroidNoise.services.ServerEventHost;
+import com.SecretSquirrel.AndroidNoise.services.rto.BaseServerResult;
+import com.SecretSquirrel.AndroidNoise.support.Constants;
+import com.SecretSquirrel.AndroidNoise.support.NetworkUtility;
 
 import java.util.ArrayList;
 
 import rx.Subscription;
+import rx.android.observables.AndroidObservable;
 import rx.util.functions.Action1;
 
 public class QueueListFragment extends Fragment  {
+	private static final String TAG         = QueueListFragment.class.getName();
+	private static final int    EVENT_PORT  = 6502;
+
 	private ListView                    mQueueListView;
 	private ArrayList<PlayQueueTrack>   mQueueList;
 	private QueueAdapter                mQueueListAdapter;
 	private Subscription                mQueueSubscription;
+	private Subscription                mEventRequestSubscription;
+	private String                      mLocalAddress;
+	private ServerEventHost             mEventHost;
 
 	public static QueueListFragment newInstance() {
 		return( new QueueListFragment());
@@ -49,17 +62,9 @@ public class QueueListFragment extends Fragment  {
 		mQueueListView.setAdapter( mQueueListAdapter );
 
 		if( getApplicationState().getIsConnected()) {
-			mQueueSubscription = getApplicationState().getQueueClient().GetQueuedTrackList( new Action1<PlayQueueListResult>() {
-				@Override
-				public void call( PlayQueueListResult playQueueListResult ) {
-					setQueueList( playQueueListResult.getTracks());
-				}
-			}, new Action1<Throwable>() {
-               @Override
-               public void call( Throwable throwable ) {
+			requestQueueList();
 
-               }
-           } );
+			subscribeToEvents();
 		}
 
 		return( myView );
@@ -69,15 +74,113 @@ public class QueueListFragment extends Fragment  {
 	public void onPause() {
 		super.onPause();
 
+		revokeEvents();
+
+		mEventHost.stop();
+
 		if( mQueueSubscription != null ) {
 			mQueueSubscription.unsubscribe();
+			mQueueSubscription = null;
 		}
+	}
+
+	private void subscribeToEvents() {
+		mLocalAddress = String.format( "http://%s:%d", NetworkUtility.getIPAddress( true ), EVENT_PORT );
+		mEventHost = new ServerEventHost( EVENT_PORT );
+
+		try {
+			mEventRequestSubscription = AndroidObservable.fromFragment( this,
+				getApplicationState().getNoiseClient().requestEvents( mLocalAddress ))
+					.subscribe( new Action1<BaseServerResult>() {
+						            @Override
+						            public void call( BaseServerResult serverResult ) {
+							            onEventsRequested();
+						            }
+					            }, new Action1<Throwable>() {
+						            @Override
+						            public void call( Throwable throwable ) {
+							            if( Constants.LOG_ERROR ) {
+								            Log.e( TAG, "Subscribing to Noise events", throwable );
+							            }
+						            }
+					            }
+					);
+		}
+		catch( Exception ex ) {
+			if( Constants.LOG_ERROR ) {
+				Log.e( TAG, "subscribeToEvents", ex );
+			}
+		}
+	}
+
+	private void onEventsRequested() {
+		try {
+			mEventHost.start();
+
+			if( mEventRequestSubscription != null ) {
+				mEventRequestSubscription.unsubscribe();
+				mEventRequestSubscription = null;
+			}
+		}
+		catch( Exception ex ) {
+			if( Constants.LOG_ERROR ) {
+				Log.e( TAG, "Starting event host", ex );
+			}
+		}
+	}
+
+	private void revokeEvents() {
+		if(!TextUtils.isEmpty( mLocalAddress )) {
+			mEventRequestSubscription = AndroidObservable.fromFragment( this,
+					getApplicationState().getNoiseClient().revokeEvents( mLocalAddress ))
+					.subscribe( new Action1<BaseServerResult>() {
+						            @Override
+						            public void call( BaseServerResult serverResult ) {
+
+						            }
+					            }, new Action1<Throwable>() {
+						            @Override
+						            public void call( Throwable throwable ) {
+							            if( Constants.LOG_ERROR ) {
+								            Log.e( TAG, "Subscribing to Noise events", throwable );
+							            }
+						            }
+					            } );
+		}
+	}
+
+	private void requestQueueList() {
+		if( mQueueSubscription != null ) {
+			mQueueSubscription.unsubscribe();
+			mQueueSubscription = null;
+		}
+
+		mQueueSubscription = getApplicationState().getQueueClient()
+				.GetQueuedTrackList( new Action1<PlayQueueListResult>() {
+					                     @Override
+					                     public void call( PlayQueueListResult playQueueListResult ) {
+						                     setQueueList( playQueueListResult.getTracks() );
+					                     }
+				                     }, new Action1<Throwable>() {
+					                     @Override
+					                     public void call( Throwable throwable ) {
+						                     if( Constants.LOG_ERROR ) {
+							                     Log.e( TAG, "GetQueuedTrackList", throwable );
+						                     }
+					                     }
+				                     }
+				);
 	}
 
 	public void setQueueList( ArrayList<PlayQueueTrack> queueList ) {
 		mQueueList.clear();
 		mQueueList.addAll( queueList );
 		mQueueListAdapter.notifyDataSetChanged();
+
+		if( mQueueSubscription != null ) {
+			mQueueSubscription.unsubscribe();
+			mQueueSubscription = null;
+		}
 	}
 
 	private IApplicationState getApplicationState() {
