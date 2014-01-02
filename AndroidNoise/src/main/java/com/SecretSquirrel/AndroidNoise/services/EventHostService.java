@@ -25,13 +25,15 @@ import rx.Subscription;
 import rx.util.functions.Action1;
 
 public class EventHostService extends Service {
-	private static final String TAG                         = EventHostService.class.getName();
+	private static final String TAG                             = EventHostService.class.getName();
 
-	private static final int    EVENT_PORT                  = 6502;
+	private static final int    EVENT_PORT                      = 6502;
 
-	public static final int     EVENTS_REGISTER_CLIENT      = 1;
-	public static final int     EVENTS_UNREGISTER_CLIENT    = 2;
-	public static final int     EVENTS_QUEUE_CHANGED        = 3;
+	public static final int     SERVER_EVENT_REGISTER_CLIENT    = 1;
+	public static final int     SERVER_EVENT_UNREGISTER_CLIENT  = 2;
+
+	public static final int     SERVER_EVENT_QUEUE_CHANGED      = 3;
+	public static final int     SERVER_EVENT_TRANSPORT_CHANGED  = 4;
 
 	private ServerEventHost             mEventHost;
 	private final ArrayList<Messenger>  mClients;
@@ -44,11 +46,11 @@ public class EventHostService extends Service {
 		@Override
 		public void handleMessage( Message msg ) {
 			switch( msg.what ) {
-				case EVENTS_REGISTER_CLIENT:
+				case SERVER_EVENT_REGISTER_CLIENT:
 					addClient( msg.replyTo );
 					break;
 
-				case EVENTS_UNREGISTER_CLIENT:
+				case SERVER_EVENT_UNREGISTER_CLIENT:
 					removeClient( msg.replyTo );
 					break;
 
@@ -109,13 +111,17 @@ public class EventHostService extends Service {
 	}
 
 	private void addClient( Messenger client ) {
-		mClients.add( client );
+		if(!mClients.contains( client )) {
+			mClients.add( client );
+		}
 
 		startEventHost();
 	}
 
 	private void removeClient( Messenger client ) {
-		mClients.remove( client );
+		if( mClients.contains( client )) {
+			mClients.remove( client );
+		}
 
 		if( mClients.size() == 0 ) {
 			stopEventHost();
@@ -180,7 +186,21 @@ public class EventHostService extends Service {
 
 			@Override
 			public NanoHTTPD.Response serve( NanoHTTPD.IHTTPSession session ) {
-				publishMessage( EVENTS_QUEUE_CHANGED );
+				publishMessage( SERVER_EVENT_QUEUE_CHANGED );
+
+				return( new NanoHTTPD.Response( "OK" ));
+			}
+		} );
+
+		mEventHost.AddResponder( new ServerEventHost.UriResponder() {
+			@Override
+			public boolean shouldServe( NanoHTTPD.IHTTPSession session ) {
+				return (session.getUri().startsWith( "/eventInTransport" ));
+			}
+
+			@Override
+			public NanoHTTPD.Response serve( NanoHTTPD.IHTTPSession session ) {
+				publishMessage( SERVER_EVENT_TRANSPORT_CHANGED );
 
 				return( new NanoHTTPD.Response( "OK" ));
 			}

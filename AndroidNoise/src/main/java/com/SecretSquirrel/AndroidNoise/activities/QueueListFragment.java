@@ -53,7 +53,7 @@ public class QueueListFragment extends Fragment  {
 			mService = new Messenger( service );
 
 			try {
-				Message message = Message.obtain( null, EventHostService.EVENTS_REGISTER_CLIENT );
+				Message message = Message.obtain( null, EventHostService.SERVER_EVENT_REGISTER_CLIENT );
 
 				message.replyTo = mMessenger;
 				mService.send( message );
@@ -74,7 +74,7 @@ public class QueueListFragment extends Fragment  {
 		@Override
 		public void handleMessage( Message message ) {
 			switch( message.what ) {
-				case EventHostService.EVENTS_QUEUE_CHANGED:
+				case EventHostService.SERVER_EVENT_QUEUE_CHANGED:
 					requestQueueList();
 					break;
 
@@ -136,7 +136,7 @@ public class QueueListFragment extends Fragment  {
 		if( mIsBound ) {
 			if( mService != null ) {
 				try {
-					Message message = Message.obtain( null, EventHostService.EVENTS_UNREGISTER_CLIENT );
+					Message message = Message.obtain( null, EventHostService.SERVER_EVENT_UNREGISTER_CLIENT );
 
 					message.replyTo = mMessenger;
 					mService.send( message );
