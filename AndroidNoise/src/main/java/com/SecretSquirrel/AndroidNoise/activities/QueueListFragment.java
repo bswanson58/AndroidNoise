@@ -2,10 +2,16 @@ package com.SecretSquirrel.AndroidNoise.activities;
 
 // Secret Squirrel Software - Created by bswanson on 12/30/13.
 
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.IBinder;
+import android.os.Message;
+import android.os.Messenger;
+import android.os.RemoteException;
 import android.support.v4.app.Fragment;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,32 +25,63 @@ import com.SecretSquirrel.AndroidNoise.dto.PlayQueueListResult;
 import com.SecretSquirrel.AndroidNoise.dto.PlayQueueTrack;
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
 import com.SecretSquirrel.AndroidNoise.model.NoiseRemoteApplication;
-import com.SecretSquirrel.AndroidNoise.nanoHttpd.NanoHTTPD;
-import com.SecretSquirrel.AndroidNoise.services.ServerEventHost;
-import com.SecretSquirrel.AndroidNoise.services.rto.BaseServerResult;
+import com.SecretSquirrel.AndroidNoise.services.EventHostService;
 import com.SecretSquirrel.AndroidNoise.support.Constants;
-import com.SecretSquirrel.AndroidNoise.support.NetworkUtility;
 
 import java.util.ArrayList;
 
 import rx.Subscription;
-import rx.android.observables.AndroidObservable;
 import rx.util.functions.Action1;
 
 public class QueueListFragment extends Fragment  {
-	private static final String TAG         = QueueListFragment.class.getName();
-	private static final int    EVENT_PORT  = 6502;
+	private static final String TAG     = QueueListFragment.class.getName();
 
 	private ListView                    mQueueListView;
 	private ArrayList<PlayQueueTrack>   mQueueList;
 	private QueueAdapter                mQueueListAdapter;
 	private Subscription                mQueueSubscription;
-	private Subscription                mEventRequestSubscription;
-	private String                      mLocalAddress;
-	private ServerEventHost             mEventHost;
+	private Messenger                   mMessenger;
+	private Messenger                   mService;
+	private boolean                     mIsBound;
 
 	public static QueueListFragment newInstance() {
 		return( new QueueListFragment());
+	}
+
+	private ServiceConnection mConnection = new ServiceConnection() {
+		public void onServiceConnected( ComponentName className, IBinder service ) {
+			mService = new Messenger( service );
+
+			try {
+				Message message = Message.obtain( null, EventHostService.EVENTS_REGISTER_CLIENT );
+
+				message.replyTo = mMessenger;
+				mService.send( message );
+			} catch( RemoteException ex ) {
+				if( Constants.LOG_ERROR ) {
+					Log.e( TAG, "Sending register client.", ex );
+				}
+			}
+		}
+
+		public void onServiceDisconnected( ComponentName className ) {
+			// This is called when the connection with the service has been unexpectedly disconnected - process crashed.
+			mService = null;
+		}
+	};
+
+	private class IncomingHandler extends Handler {
+		@Override
+		public void handleMessage( Message message ) {
+			switch( message.what ) {
+				case EventHostService.EVENTS_QUEUE_CHANGED:
+					requestQueueList();
+					break;
+
+				default:
+					super.handleMessage( message );
+			}
+		}
 	}
 
 	@Override
@@ -53,6 +90,7 @@ public class QueueListFragment extends Fragment  {
 
 		mQueueList = new ArrayList<PlayQueueTrack>();
 		mQueueListAdapter = new QueueAdapter( getActivity(), mQueueList );
+		mMessenger = new Messenger( new IncomingHandler());
 	}
 
 	@Override
@@ -63,9 +101,9 @@ public class QueueListFragment extends Fragment  {
 		mQueueListView.setAdapter( mQueueListAdapter );
 
 		if( getApplicationState().getIsConnected()) {
-			requestQueueList();
+			bindToEventService();
 
-			subscribeToEvents();
+			requestQueueList();
 		}
 
 		return( myView );
@@ -75,61 +113,43 @@ public class QueueListFragment extends Fragment  {
 	public void onPause() {
 		super.onPause();
 
-		revokeEvents();
-
-		mEventHost.stop();
-
 		if( mQueueSubscription != null ) {
 			mQueueSubscription.unsubscribe();
 			mQueueSubscription = null;
 		}
 	}
 
-	private void subscribeToEvents() {
-		configureEventHost();
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
 
-		try {
-			mEventRequestSubscription = AndroidObservable.fromFragment( this,
-				getApplicationState().getNoiseClient().requestEvents( mLocalAddress ))
-					.subscribe( new Action1<BaseServerResult>() {
-						            @Override
-						            public void call( BaseServerResult serverResult ) {
-							            mEventHost.start();
-						            }
-					            }, new Action1<Throwable>() {
-						            @Override
-						            public void call( Throwable throwable ) {
-							            if( Constants.LOG_ERROR ) {
-								            Log.e( TAG, "Subscribing to Noise events", throwable );
-							            }
-						            }
-					            }
-					);
-		}
-		catch( Exception ex ) {
-			if( Constants.LOG_ERROR ) {
-				Log.e( TAG, "subscribeToEvents", ex );
-			}
-		}
+		unbindEventService();
 	}
 
-	private void revokeEvents() {
-		if(!TextUtils.isEmpty( mLocalAddress )) {
-			mEventRequestSubscription = AndroidObservable.fromFragment( this,
-					getApplicationState().getNoiseClient().revokeEvents( mLocalAddress ))
-					.subscribe( new Action1<BaseServerResult>() {
-						            @Override
-						            public void call( BaseServerResult serverResult ) {
+	private void bindToEventService() {
+		getApplicationState().registerForEvents( mConnection );
 
-						            }
-					            }, new Action1<Throwable>() {
-						            @Override
-						            public void call( Throwable throwable ) {
-							            if( Constants.LOG_ERROR ) {
-								            Log.e( TAG, "Subscribing to Noise events", throwable );
-							            }
-						            }
-					            } );
+		mIsBound = true;
+	}
+
+	private void unbindEventService() {
+		if( mIsBound ) {
+			if( mService != null ) {
+				try {
+					Message message = Message.obtain( null, EventHostService.EVENTS_UNREGISTER_CLIENT );
+
+					message.replyTo = mMessenger;
+					mService.send( message );
+				} catch( RemoteException ex ) {
+					if( Constants.LOG_ERROR ) {
+						Log.e( TAG, "unbindEventService", ex );
+					}
+				}
+			}
+
+			// Detach our existing connection.
+			getApplicationState().unregisterFromEvents( mConnection );
+			mIsBound = false;
 		}
 	}
 
@@ -168,28 +188,14 @@ public class QueueListFragment extends Fragment  {
 	}
 
 	private IApplicationState getApplicationState() {
-		NoiseRemoteApplication application = (NoiseRemoteApplication)getActivity().getApplication();
+		IApplicationState       retValue = null;
+		NoiseRemoteApplication  application = (NoiseRemoteApplication)getActivity().getApplication();
 
-		return( application.getApplicationState());
-	}
+		if( application != null ) {
+			retValue = application.getApplicationState();
+		}
 
-	private void configureEventHost() {
-		mLocalAddress = String.format( "http://%s:%d", NetworkUtility.getLocalAddress(), EVENT_PORT );
-		mEventHost = new ServerEventHost( EVENT_PORT );
-
-		mEventHost.AddResponder( new ServerEventHost.UriResponder() {
-			@Override
-			public boolean shouldServe( NanoHTTPD.IHTTPSession session ) {
-				return (session.getUri().startsWith( "/eventInQueue" ));
-			}
-
-			@Override
-			public NanoHTTPD.Response serve( NanoHTTPD.IHTTPSession session ) {
-				requestQueueList();
-
-				return( new NanoHTTPD.Response( "OK" ));
-			}
-		} );
+		return( retValue );
 	}
 
 	private class QueueAdapter extends ArrayAdapter<PlayQueueTrack> {

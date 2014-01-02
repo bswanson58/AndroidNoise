@@ -3,7 +3,10 @@ package com.SecretSquirrel.AndroidNoise.model;
 // Secret Squirrel Software - Created by bswanson on 12/9/13.
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.Messenger;
 import android.os.ResultReceiver;
 import android.text.TextUtils;
 import android.util.Log;
@@ -15,6 +18,7 @@ import com.SecretSquirrel.AndroidNoise.interfaces.INoiseData;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseQueue;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseSearch;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseServer;
+import com.SecretSquirrel.AndroidNoise.services.EventHostService;
 import com.SecretSquirrel.AndroidNoise.services.NoiseDataClient;
 import com.SecretSquirrel.AndroidNoise.services.NoiseQueueClient;
 import com.SecretSquirrel.AndroidNoise.services.NoiseRemoteApi;
@@ -74,6 +78,16 @@ public class ApplicationState implements IApplicationState {
 			mQueueClient = new NoiseQueueClient( mCurrentServer.getServerAddress());
 			mSearchClient = new NoiseSearchClient( mCurrentServer.getServerAddress());
 		}
+	}
+
+	@Override
+	public void registerForEvents( ServiceConnection client ) {
+		mContext.bindService( new Intent( mContext, EventHostService.class ), client, Context.BIND_AUTO_CREATE );
+	}
+
+	@Override
+	public void unregisterFromEvents( ServiceConnection client ) {
+		mContext.unbindService( client );
 	}
 
 	public void LocateServers( final ServiceResultReceiver receiver ) {

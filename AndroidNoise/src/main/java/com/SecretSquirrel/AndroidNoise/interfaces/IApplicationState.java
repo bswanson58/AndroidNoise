@@ -2,8 +2,7 @@ package com.SecretSquirrel.AndroidNoise.interfaces;
 
 // Secret Squirrel Software - Created by bswanson on 12/11/13.
 
-import com.SecretSquirrel.AndroidNoise.dto.Album;
-import com.SecretSquirrel.AndroidNoise.dto.Artist;
+import android.content.ServiceConnection;
 import com.SecretSquirrel.AndroidNoise.dto.ServerInformation;
 import com.SecretSquirrel.AndroidNoise.services.ServiceResultReceiver;
 
@@ -16,4 +15,7 @@ public interface IApplicationState {
 	public  INoiseData      getDataClient();
 	public  INoiseQueue     getQueueClient();
 	public  INoiseSearch    getSearchClient();
+
+	public  void            registerForEvents( ServiceConnection client );
+	public  void            unregisterFromEvents( ServiceConnection client );
 }
