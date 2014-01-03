@@ -13,17 +13,21 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.SecretSquirrel.AndroidNoise.R;
 import com.SecretSquirrel.AndroidNoise.dto.ServerInformation;
+import com.SecretSquirrel.AndroidNoise.dto.ServerVersion;
 import com.SecretSquirrel.AndroidNoise.events.EventServerSelected;
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
 import com.SecretSquirrel.AndroidNoise.model.NoiseRemoteApplication;
 import com.SecretSquirrel.AndroidNoise.services.NoiseRemoteApi;
+import com.SecretSquirrel.AndroidNoise.services.ServiceLocatorObservable;
 import com.SecretSquirrel.AndroidNoise.services.ServiceResultReceiver;
+import com.SecretSquirrel.AndroidNoise.services.rto.RoServerVersion;
 import com.SecretSquirrel.AndroidNoise.support.NetworkUtility;
 import com.SecretSquirrel.AndroidNoise.support.ThreadExecutor;
 
@@ -37,16 +41,23 @@ import javax.jmdns.ServiceEvent;
 import javax.jmdns.ServiceInfo;
 
 import de.greenrobot.event.EventBus;
+import rx.Observable;
+import rx.Subscription;
+import rx.android.concurrency.AndroidSchedulers;
+import rx.concurrency.Schedulers;
+import rx.util.functions.Action1;
 
 public class ServerListFragment extends Fragment
-								implements ServiceResultReceiver.Receiver, javax.jmdns.ServiceListener {
+								implements ServiceResultReceiver.Receiver { //}, javax.jmdns.ServiceListener {
 	private static final String             TAG = ServerListFragment.class.getName();
 
 	private ArrayList<ServerInformation>    mServerList;
 	private ListView                        mServerListView;
-	//private ServerAdapter                   mServerListAdapter;
-	private ServiceInfoAdapter              mServerListAdapter;
+	private ServerAdapter                   mServerListAdapter;
+	//private ServiceInfoAdapter              mServerListAdapter;
 	private ServiceResultReceiver           mServiceResultReceiver;
+	private ServiceLocatorObservable        mServiceLocator;
+	private Observable<String>              mLocatorObservable;
 
 	public final static String              NOISE_TYPE = "_Noise._Tcp.local.";
 	public final static String              HOSTNAME = "NoiseRemote";
@@ -59,13 +70,22 @@ public class ServerListFragment extends Fragment
 		super.onCreate( savedInstanceState );
 
 		mServerList = new ArrayList<ServerInformation>();
-		//mServerListAdapter = new ServerAdapter( getActivity(), mServerList );
-		mServerListAdapter = new ServiceInfoAdapter( getActivity());
+		mServerListAdapter = new ServerAdapter( getActivity(), mServerList );
+		//mServerListAdapter = new ServiceInfoAdapter( getActivity());
 		mServiceResultReceiver = new ServiceResultReceiver( new Handler());
 		mServiceResultReceiver.setReceiver( this );
 
-		//getApplicationState().LocateServers( mServiceResultReceiver );
-		ThreadExecutor.runTask( new Runnable() {
+		mServiceLocator = new ServiceLocatorObservable( NOISE_TYPE, HOSTNAME );
+		mLocatorObservable = mServiceLocator.start( getActivity());
+		mLocatorObservable.observeOn( AndroidSchedulers.mainThread()).subscribe( new Action1<String>() {
+			@Override
+			public void call( String s ) {
+				mServerList.add( new ServerInformation( s, new ServerVersion( new RoServerVersion())));
+				mServerListAdapter.notifyDataSetChanged();
+			}
+		} );
+//		getApplicationState().LocateServers( mServiceResultReceiver );
+/*		ThreadExecutor.runTask( new Runnable() {
 
 			public void run() {
 				try {
@@ -75,7 +95,7 @@ public class ServerListFragment extends Fragment
 					Log.d( TAG, String.format( "onCreate Error: %s", e.getMessage()));
 				}
 			}
-		} );
+		} );*/
 	}
 
 	@Override
@@ -98,7 +118,7 @@ public class ServerListFragment extends Fragment
 
 		return( myView );
 	}
-
+/*
 	protected void startProbe() throws Exception {
 		getActivity().runOnUiThread( new Runnable() {
 
@@ -188,7 +208,7 @@ public class ServerListFragment extends Fragment
 			}
 		}
 	};
-
+*/
 	@Override
 	public void onReceiveResult( int resultCode, Bundle resultData ) {
 		if( resultCode == NoiseRemoteApi.RemoteResultSuccess ) {
@@ -321,18 +341,6 @@ public class ServerListFragment extends Fragment
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-/*
 	private class ServerAdapter extends ArrayAdapter<ServerInformation> {
 		private Context                         mContext;
 		private LayoutInflater                  mLayoutInflater;
@@ -359,7 +367,7 @@ public class ServerListFragment extends Fragment
 				retValue = mLayoutInflater.inflate( R.layout.server_list_item, parent, false );
 
 				views = new ViewHolder();
-				views.NameTextView = (TextView)retValue.findViewById( R.id.server_list_item_name );
+				views.NameTextView = (TextView) retValue.findViewById( R.id.server_list_item_name );
 
 				retValue.setTag( views );
 			}
@@ -376,5 +384,5 @@ public class ServerListFragment extends Fragment
 
 			return( retValue );
 		}
-	} */
+	}
 }
