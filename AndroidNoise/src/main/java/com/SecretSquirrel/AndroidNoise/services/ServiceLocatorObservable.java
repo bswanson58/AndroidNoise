@@ -5,6 +5,7 @@ import android.net.wifi.WifiManager;
 import android.util.Log;
 
 import com.SecretSquirrel.AndroidNoise.services.rto.ServiceInformation;
+import com.SecretSquirrel.AndroidNoise.support.Constants;
 import com.SecretSquirrel.AndroidNoise.support.NetworkUtility;
 import com.SecretSquirrel.AndroidNoise.support.ThreadExecutor;
 
@@ -68,7 +69,9 @@ public class ServiceLocatorObservable implements javax.jmdns.ServiceListener {
 				WifiManager wifiManager = (WifiManager) context.getSystemService( Context.WIFI_SERVICE );
 				InetAddress address = NetworkUtility.getWirelessIpAddress( wifiManager );
 
-				Log.d( TAG, String.format( "Local address is: %s", address.toString()));
+				if( Constants.LOG_DEBUG ) {
+					Log.d( TAG, String.format( "Local address is: %s", address.toString()));
+				}
 
 				mLock = wifiManager.createMulticastLock( String.format( "%s lock", mHostName ));
 				mLock.setReferenceCounted( true );
@@ -98,8 +101,10 @@ public class ServiceLocatorObservable implements javax.jmdns.ServiceListener {
 						mZeroConfig = null;
 					}
 				}
-				catch( IOException e ) {
-					Log.d( TAG, String.format( "ZeroConf Error: %s", e.getMessage() ) );
+				catch( IOException ex ) {
+					if( Constants.LOG_ERROR ) {
+						Log.e( TAG, String.format( "ZeroConf error on close: %s", ex ));
+					}
 				}
 				}
 			} );
@@ -112,19 +117,25 @@ public class ServiceLocatorObservable implements javax.jmdns.ServiceListener {
 	}
 
 	public void serviceAdded( ServiceEvent event ) {
-		Log.w( TAG, String.format( "Service Added (event=\n%s\n)", event.toString()));
+		if( Constants.LOG_DEBUG ) {
+			Log.w( TAG, String.format( "Service Added (event=\n%s\n)", event.toString()));
+		}
 
 		publishEvent( ServiceInformation.ServiceState.ServiceAdded, event.getName());
 	}
 
 	public void serviceRemoved( ServiceEvent event ) {
-		Log.w( TAG, String.format( "Service Removed( event=\n%s\n)", event.toString()));
+		if( Constants.LOG_DEBUG ) {
+			Log.w( TAG, String.format( "Service Removed( event=\n%s\n)", event.toString()));
+		}
 
 		publishEvent( ServiceInformation.ServiceState.ServiceDeleted, event.getName() );
 	}
 
 	public void serviceResolved( ServiceEvent event ) {
-		Log.w( TAG, String.format( "Service Resolved (event=\n%s\n)", event.toString()));
+		if( Constants.LOG_DEBUG ) {
+			Log.w( TAG, String.format( "Service Resolved (event=\n%s\n)", event.toString()));
+		}
 
 		publishEvent( ServiceInformation.ServiceState.ServiceResolved, event.getName());
 	}
