@@ -5,8 +5,12 @@ package com.SecretSquirrel.AndroidNoise.dto;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.SecretSquirrel.AndroidNoise.services.rto.ServiceInformation;
+
 public class ServerInformation implements Parcelable {
 	private String          mServerAddress;
+	private String          mHostName;
+	private String          mServerName;
 	private ServerVersion   mServerVersion;
 
 	/** Static field used to regenerate object, individually or as arrays */
@@ -22,15 +26,33 @@ public class ServerInformation implements Parcelable {
 	public ServerInformation( String serverAddress, ServerVersion serverVersion ) {
 		mServerAddress = serverAddress;
 		mServerVersion = serverVersion;
-
 	}
+
 	public ServerInformation( Parcel parcel ) {
 		mServerAddress = parcel.readString();
 		mServerVersion = parcel.readParcelable( ServerVersion.class.getClassLoader());
 	}
 
+	public ServerInformation( ServiceInformation serviceInformation, ServerVersion version ) {
+		if( serviceInformation != null ) {
+			mServerAddress = serviceInformation.getHostAddress();
+			mServerName = serviceInformation.getName();
+			mHostName = serviceInformation.getHostName();
+		}
+
+		mServerVersion = version;
+	}
+
+	public String getHostName() {
+		return( mHostName );
+	}
+
 	public String getServerAddress() {
 		return( mServerAddress );
+	}
+
+	public String getServerName() {
+		return( mServerName );
 	}
 
 	public ServerVersion getServerVersion() {
