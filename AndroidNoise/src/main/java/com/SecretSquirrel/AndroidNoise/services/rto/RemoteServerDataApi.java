@@ -6,21 +6,21 @@ import retrofit.http.GET;
 import retrofit.http.Query;
 
 public interface RemoteServerDataApi {
-	@GET( "/Data/artists" )
+	@GET( "/Noise/Data/artists" )
 	RoArtistListResult      GetArtistList();
 
-	@GET( "/Data/artist" )
+	@GET( "/Noise/Data/artist" )
 	RoArtistInfoResult      GetArtistInfo( @Query( "artist" ) long forArtist );
 
-	@GET( "/Data/albums" )
+	@GET( "/Noise/Data/albums" )
 	RoAlbumListResult       GetAlbumList( @Query("artist") long forArtist );
 
-	@GET( "/Data/album" )
+	@GET( "/Noise/Data/album" )
 	RoAlbumInfoResult       GetAlbumInfo( @Query( "album" ) long forAlbum );
 
-	@GET( "/Data/tracks" )
+	@GET( "/Noise/Data/tracks" )
 	RoTrackListResult       GetTrackList( @Query("album")  long forAlbum );
 
-	@GET( "/Data/favorites" )
+	@GET( "/Noise/Data/favorites" )
 	RoFavoritesListResult GetFavoritesList();
 }

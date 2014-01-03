@@ -6,12 +6,12 @@ import retrofit.http.GET;
 import retrofit.http.Query;
 
 public interface RemoteServerRestApi {
-	@GET( "/serverVersion" )
+	@GET( "/Noise/serverVersion" )
 	RoServerVersion     GetServerVersion();
 
-	@GET( "/requestEvents" )
+	@GET( "/Noise/requestEvents" )
 	BaseServerResult    RequestEvents( @Query( "address" ) String address );
 
-	@GET( "/revokeEvents" )
+	@GET( "/Noise/revokeEvents" )
 	BaseServerResult    RevokeEvents( @Query( "address" ) String address );
 }

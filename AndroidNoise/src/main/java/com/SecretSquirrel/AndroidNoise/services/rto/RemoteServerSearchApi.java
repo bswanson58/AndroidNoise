@@ -6,6 +6,6 @@ import retrofit.http.GET;
 import retrofit.http.Query;
 
 public interface RemoteServerSearchApi {
-	@GET( "/Search/search" )
+	@GET( "/Noise/Search/search" )
 	RoSearchResult      Search( @Query( "text" ) String searchTerms );
 }
