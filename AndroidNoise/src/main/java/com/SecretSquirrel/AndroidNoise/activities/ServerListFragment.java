@@ -18,29 +18,18 @@ import com.SecretSquirrel.AndroidNoise.dto.ServerInformation;
 import com.SecretSquirrel.AndroidNoise.events.EventServerSelected;
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
 import com.SecretSquirrel.AndroidNoise.model.NoiseRemoteApplication;
-import com.SecretSquirrel.AndroidNoise.services.ServiceLocatorObservable;
-import com.SecretSquirrel.AndroidNoise.services.ServiceResultReceiver;
-import com.SecretSquirrel.AndroidNoise.services.rto.ServiceInformation;
 
 import java.util.ArrayList;
 
 import de.greenrobot.event.EventBus;
-import rx.Observable;
+import rx.Subscription;
 import rx.android.concurrency.AndroidSchedulers;
 import rx.util.functions.Action1;
 
 public class ServerListFragment extends Fragment {
-	private static final String             TAG = ServerListFragment.class.getName();
-
 	private ArrayList<ServerInformation>    mServerList;
-	private ListView                        mServerListView;
 	private ServerAdapter                   mServerListAdapter;
-	private ServiceResultReceiver           mServiceResultReceiver;
-	private ServiceLocatorObservable        mServiceLocator;
-	private Observable<ServiceInformation>  mLocatorObservable;
-
-	public final static String              NOISE_TYPE = "_Noise._Tcp.local.";
-	public final static String              HOSTNAME = "NoiseRemote";
+	private Subscription                    mLocatorSubscription;
 
 	@Override
 	public void onCreate( Bundle savedInstanceState ) {
@@ -49,24 +38,23 @@ public class ServerListFragment extends Fragment {
 		mServerList = new ArrayList<ServerInformation>();
 		mServerListAdapter = new ServerAdapter( getActivity(), mServerList );
 
-		mServiceLocator = new ServiceLocatorObservable( NOISE_TYPE, HOSTNAME );
-		mLocatorObservable = mServiceLocator.start( getActivity());
-		mLocatorObservable.observeOn( AndroidSchedulers.mainThread()).subscribe( new Action1<ServiceInformation>() {
-			@Override
-			public void call( ServiceInformation s ) {
-				onServiceInformation( s );
-			}
-		} );
+		mLocatorSubscription = getApplicationState().locateServers().observeOn( AndroidSchedulers.mainThread())
+			.subscribe( new Action1<ServerInformation>() {
+							@Override
+							public void call( ServerInformation s ) {
+								onServerInformation( s );
+							}
+						} );
 	}
 
 	@Override
 	public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState ) {
 		View    myView = inflater.inflate( R.layout.fragment_server_list, container, false );
 
-		mServerListView = (ListView) myView.findViewById( R.id.ServerListView );
-		mServerListView.setAdapter( mServerListAdapter );
+		ListView serverListView = (ListView) myView.findViewById( R.id.ServerListView );
 
-		mServerListView.setOnItemClickListener( new AdapterView.OnItemClickListener() {
+		serverListView.setAdapter( mServerListAdapter );
+		serverListView.setOnItemClickListener( new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick( AdapterView<?> adapterView, View view, int i, long l ) {
 				ServerInformation serverInformation = mServerList.get( i );
@@ -80,14 +68,23 @@ public class ServerListFragment extends Fragment {
 		return( myView );
 	}
 
-	private void onServiceInformation( ServiceInformation serviceInformation ) {
-		switch( serviceInformation.getServiceState()) {
+	@Override
+	public void onPause() {
+		super.onPause();
+
+		if( mLocatorSubscription != null ) {
+			mLocatorSubscription.unsubscribe();
+			mLocatorSubscription = null;
+		}
+	}
+
+	private void onServerInformation( ServerInformation serverInformation ) {
+		switch( serverInformation.getServiceState()) {
 			case ServiceResolved:
-				ServerInformation   serverInfo = new ServerInformation( serviceInformation, null );
-				boolean             exists = false;
+				boolean     exists = false;
 
 				for( ServerInformation si : mServerList ) {
-					if( si.getServerAddress().equals( serverInfo.getServerAddress())) {
+					if( si.getServerAddress().equals( serverInformation.getServerAddress() )) {
 						exists = true;
 
 						break;
@@ -95,12 +92,20 @@ public class ServerListFragment extends Fragment {
 				}
 
 				if(!exists ) {
-					mServerList.add( serverInfo );
+					mServerList.add( serverInformation );
 					mServerListAdapter.notifyDataSetChanged();
 				}
 				break;
 
 			case ServiceDeleted:
+				for( ServerInformation si : mServerList ) {
+					if( si.getServerAddress().equals( serverInformation.getServerAddress())) {
+						mServerList.remove( si );
+
+						mServerListAdapter.notifyDataSetChanged();
+						break;
+					}
+				}
 				break;
 		}
 	}

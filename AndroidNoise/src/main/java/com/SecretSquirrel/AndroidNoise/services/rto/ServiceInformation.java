@@ -23,10 +23,6 @@ public class ServiceInformation {
 		return( mServiceState );
 	}
 
-	public ServiceInfo getServiceInformation() {
-		return( mServiceInfo );
-	}
-
 	public String getName() {
 		String  retValue = "";
 

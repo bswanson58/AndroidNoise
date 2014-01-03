@@ -23,14 +23,14 @@ import rx.concurrency.Schedulers;
 // Created by BSwanson on 1/2/14.
 
 public class ServiceLocatorObservable implements javax.jmdns.ServiceListener {
-	private final static String         TAG = ServiceLocatorObservable.class.getName();
+	private final static String                     TAG = ServiceLocatorObservable.class.getName();
 
 	private final String                            mServiceType;
 	private final String                            mHostName;
 	private Subscription                            mSubscription;
 	private Observer<? super ServiceInformation>    mObserver;
 	private JmDNS                                   mZeroConfig;
-	private WifiManager.MulticastLock               mLock;
+	private static WifiManager.MulticastLock        mLock;
 
 	public ServiceLocatorObservable( String forServiceType, String hostName ) {
 		mServiceType = forServiceType;
@@ -41,7 +41,10 @@ public class ServiceLocatorObservable implements javax.jmdns.ServiceListener {
 		mSubscription = new Subscription() {
 			@Override
 			public void unsubscribe() {
-				mObserver.onCompleted();
+				if( mObserver != null ) {
+					mObserver.onCompleted();
+					mObserver = null;
+				}
 
 				stopProbe();
 			}
@@ -50,9 +53,9 @@ public class ServiceLocatorObservable implements javax.jmdns.ServiceListener {
 		return( Observable.create( new Observable.OnSubscribeFunc<ServiceInformation>() {
 			@Override
 			public Subscription onSubscribe( Observer<? super ServiceInformation> observer ) {
-				startProbe( context );
-
 				mObserver = observer;
+
+				startProbe( context );
 
 				return( mSubscription );
 			}
@@ -60,48 +63,52 @@ public class ServiceLocatorObservable implements javax.jmdns.ServiceListener {
 	}
 
 	private void startProbe( Context context ) {
-		try {
-			WifiManager wifiManager = (WifiManager) context.getSystemService( Context.WIFI_SERVICE );
-			InetAddress address = NetworkUtility.getWirelessIpAddress( wifiManager );
+		if( mLock == null ) {
+			try {
+				WifiManager wifiManager = (WifiManager) context.getSystemService( Context.WIFI_SERVICE );
+				InetAddress address = NetworkUtility.getWirelessIpAddress( wifiManager );
 
-			Log.d( TAG, String.format( "Local address is: %s", address.toString()));
+				Log.d( TAG, String.format( "Local address is: %s", address.toString()));
 
-			mLock = wifiManager.createMulticastLock( String.format( "%s lock", mHostName ));
-			mLock.setReferenceCounted( true );
-			mLock.acquire();
+				mLock = wifiManager.createMulticastLock( String.format( "%s lock", mHostName ));
+				mLock.setReferenceCounted( true );
+				mLock.acquire();
 
-			mZeroConfig = JmDNS.create( address, mHostName );
-			mZeroConfig.addServiceListener( mServiceType, this );
-		}
-		catch( Exception ex ) {
-			mObserver.onError( ex );
+				mZeroConfig = JmDNS.create( address, mHostName );
+				mZeroConfig.addServiceListener( mServiceType, this );
+			}
+			catch( Exception ex ) {
+				mObserver.onError( ex );
 
-			stopProbe();
+				stopProbe();
+			}
 		}
 	}
 
 	private void stopProbe() {
-		mZeroConfig.removeServiceListener( mServiceType, this );
+		if( mZeroConfig != null ) {
+			mZeroConfig.removeServiceListener( mServiceType, this );
 
-		ThreadExecutor.runTask( new Runnable() {
-			@Override
-			public void run() {
+			ThreadExecutor.runTask( new Runnable() {
+				@Override
+				public void run() {
 				try {
-					mZeroConfig.close();
-					mZeroConfig = null;
+					if( mZeroConfig != null ) {
+						mZeroConfig.close();
+						mZeroConfig = null;
+					}
 				}
 				catch( IOException e ) {
 					Log.d( TAG, String.format( "ZeroConf Error: %s", e.getMessage() ) );
 				}
-			}
-		} );
+				}
+			} );
+		}
 
 		if( mLock != null ) {
 			mLock.release();
 			mLock = null;
 		}
-
-		mObserver = null;
 	}
 
 	public void serviceAdded( ServiceEvent event ) {
