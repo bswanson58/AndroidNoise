@@ -81,8 +81,6 @@ public class ApplicationState implements IApplicationState {
 	}
 
 	public Observable<ServerInformation> locateServers() {
-		ServiceLocator  locator = new ServiceLocator();
-
-		return( locator.startServiceLocator( mContext ));
+		return( ServiceLocator.createServiceLocator( mContext ));
 	}
 }

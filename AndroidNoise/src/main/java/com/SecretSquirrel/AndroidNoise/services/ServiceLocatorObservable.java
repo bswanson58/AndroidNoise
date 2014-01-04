@@ -26,19 +26,25 @@ import rx.concurrency.Schedulers;
 public class ServiceLocatorObservable implements javax.jmdns.ServiceListener {
 	private final static String                     TAG = ServiceLocatorObservable.class.getName();
 
-	private final String                            mServiceType;
-	private final String                            mHostName;
+	private String                                  mServiceType;
+	private String                                  mHostName;
 	private Subscription                            mSubscription;
 	private Observer<? super ServiceInformation>    mObserver;
 	private JmDNS                                   mZeroConfig;
 	private static WifiManager.MulticastLock        mLock;
 
-	public ServiceLocatorObservable( String forServiceType, String hostName ) {
-		mServiceType = forServiceType;
-		mHostName = hostName;
+	public static Observable<ServiceInformation> createServiceLocator(  Context context, String forServiceType, String hostName ) {
+		ServiceLocatorObservable    locator = new ServiceLocatorObservable();
+
+		return( locator.start( context, forServiceType, hostName ));
 	}
 
-	public Observable<ServiceInformation> start( final Context context ) {
+	protected ServiceLocatorObservable() { }
+
+	public Observable<ServiceInformation> start( final Context context, String forServiceType, String hostName ) {
+		mServiceType = forServiceType;
+		mHostName = hostName;
+
 		mSubscription = new Subscription() {
 			@Override
 			public void unsubscribe() {

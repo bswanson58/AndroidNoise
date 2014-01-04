@@ -5,6 +5,7 @@ package com.SecretSquirrel.AndroidNoise.activities;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,7 @@ import com.SecretSquirrel.AndroidNoise.dto.ServerInformation;
 import com.SecretSquirrel.AndroidNoise.events.EventServerSelected;
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
 import com.SecretSquirrel.AndroidNoise.model.NoiseRemoteApplication;
+import com.SecretSquirrel.AndroidNoise.support.Constants;
 
 import java.util.ArrayList;
 
@@ -27,6 +29,8 @@ import rx.android.concurrency.AndroidSchedulers;
 import rx.util.functions.Action1;
 
 public class ServerListFragment extends Fragment {
+	private static final String             TAG = ServerListFragment.class.getName();
+
 	private ArrayList<ServerInformation>    mServerList;
 	private ServerAdapter                   mServerListAdapter;
 	private Subscription                    mLocatorSubscription;
@@ -38,13 +42,22 @@ public class ServerListFragment extends Fragment {
 		mServerList = new ArrayList<ServerInformation>();
 		mServerListAdapter = new ServerAdapter( getActivity(), mServerList );
 
-		mLocatorSubscription = getApplicationState().locateServers().observeOn( AndroidSchedulers.mainThread())
+		mLocatorSubscription = getApplicationState().locateServers()
+			.observeOn( AndroidSchedulers.mainThread() )
 			.subscribe( new Action1<ServerInformation>() {
 							@Override
 							public void call( ServerInformation s ) {
 								onServerInformation( s );
 							}
-						} );
+						},
+						new Action1<Throwable>() {
+							@Override
+							public void call( Throwable throwable ) {
+								if( Constants.LOG_ERROR ) {
+									Log.e( TAG, "LocateServers returned error", throwable );
+								}
+							}
+						});
 	}
 
 	@Override
