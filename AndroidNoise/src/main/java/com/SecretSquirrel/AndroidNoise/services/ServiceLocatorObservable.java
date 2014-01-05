@@ -58,15 +58,20 @@ public class ServiceLocatorObservable implements javax.jmdns.ServiceListener {
 		};
 
 		return( Observable.create( new Observable.OnSubscribeFunc<ServiceInformation>() {
-			@Override
-			public Subscription onSubscribe( Observer<? super ServiceInformation> observer ) {
-				mObserver = observer;
+				@Override
+				public Subscription onSubscribe( Observer<? super ServiceInformation> observer ) {
+					if( mLock == null ) {
+						mObserver = observer;
 
-				startProbe( context );
+						startProbe( context );
+					}
+					else {
+						observer.onError( new Exception( "Only one subscription may be made to an active service locator" ));
+					}
 
-				return( mSubscription );
-			}
-		} ).subscribeOn( Schedulers.threadPoolForIO()));
+					return( mSubscription );
+				}
+			} ).subscribeOn( Schedulers.threadPoolForIO()));
 	}
 
 	private void startProbe( Context context ) {
