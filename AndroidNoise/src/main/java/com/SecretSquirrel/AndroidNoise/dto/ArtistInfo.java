@@ -37,8 +37,11 @@ public class ArtistInfo implements Parcelable {
 		mTopAlbums = roArtistInfo.TopAlbums;
 		mSimilarArtists = roArtistInfo.SimilarArtists;
 
-		byte[] decodedString = Base64.decode( roArtistInfo.ArtistImage, Base64.DEFAULT );
-		mArtistImage = BitmapFactory.decodeByteArray( decodedString, 0, decodedString.length );
+		if( roArtistInfo.ArtistImage != null ) {
+			byte[] decodedString = Base64.decode( roArtistInfo.ArtistImage, Base64.DEFAULT );
+
+			mArtistImage = BitmapFactory.decodeByteArray( decodedString, 0, decodedString.length );
+		}
 	}
 
 	public ArtistInfo( Parcel parcel ) {

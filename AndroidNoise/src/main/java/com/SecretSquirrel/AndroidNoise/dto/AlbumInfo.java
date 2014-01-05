@@ -32,8 +32,11 @@ public class AlbumInfo implements Parcelable {
 	public AlbumInfo( RoAlbumInfo roAlbumInfo ) {
 		mAlbumId = roAlbumInfo.AlbumId;
 
-		byte[] decodedString = Base64.decode( roAlbumInfo.AlbumCover, Base64.DEFAULT );
-		mAlbumCover = BitmapFactory.decodeByteArray( decodedString, 0, decodedString.length );
+		if( roAlbumInfo.AlbumCover != null ) {
+			byte[] decodedString = Base64.decode( roAlbumInfo.AlbumCover, Base64.DEFAULT );
+
+			mAlbumCover = BitmapFactory.decodeByteArray( decodedString, 0, decodedString.length );
+		}
 	}
 
 	public Bitmap getAlbumCover() {
