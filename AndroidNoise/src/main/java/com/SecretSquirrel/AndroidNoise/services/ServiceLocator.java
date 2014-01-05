@@ -20,11 +20,6 @@ public class ServiceLocator {
 	public final static String                  NOISE_TYPE = "_Noise._Tcp.local.";
 	public final static String                  HOSTNAME = "NoiseRemote";
 
-	private Observer<? super ServerInformation> mObserver;
-	private Subscription                        mSubscription;
-	private Subscription                        mLocatorSubscription;
-	private Context                             mContext;
-
 	public static Observable<ServerInformation> createServiceLocator( final Context context ) {
 		ServiceLocator  locator = new ServiceLocator();
 
@@ -34,52 +29,43 @@ public class ServiceLocator {
 	protected ServiceLocator() { }
 
 	private Observable<ServerInformation> createLocator( final Context context ) {
-		mContext = context;
-
-		mSubscription = new Subscription() {
-			@Override
-			public void unsubscribe() {
-				if( mLocatorSubscription != null ) {
-					mLocatorSubscription.unsubscribe();
-					mLocatorSubscription = null;
-				}
-
-				if( mObserver != null ) {
-					mObserver.onCompleted();
-					mObserver = null;
-				}
-			}
-		};
-
 		return( Observable.create( new Observable.OnSubscribeFunc<ServerInformation>() {
 			@Override
-			public Subscription onSubscribe( Observer<? super ServerInformation> observer ) {
-				mObserver = observer;
+			public Subscription onSubscribe( final Observer<? super ServerInformation> observer ) {
+				final Subscription locatorSubscription = ServiceLocatorObservable
+						.createServiceLocator( context, NOISE_TYPE, HOSTNAME )
+							.subscribe( new Action1<ServiceInformation>() {
+	                                @Override
+	                                public void call( ServiceInformation s ) {
+	                                    // Only return results on services Resolved or Deleted.
+	                                    if( s.getServiceState() != ServiceInformation.ServiceState.ServiceAdded ) {
+	                                        onServiceInformation( s, observer, context );
+	                                    }
+	                                }
+	                            }, new Action1<Throwable>() {
+									@Override
+									public void call( Throwable throwable ) {
+										observer.onError( throwable );
+									}
+								}
+						);
 
-				mLocatorSubscription = ServiceLocatorObservable.createServiceLocator( mContext, NOISE_TYPE, HOSTNAME )
-					.subscribe( new Action1<ServiceInformation>() {
+				return( new Subscription() {
 					@Override
-					public void call( ServiceInformation s ) {
-								// Only return results on services Resolved or Deleted.
-								if( s.getServiceState() != ServiceInformation.ServiceState.ServiceAdded ) {
-									onServiceInformation( s );
-								}
-								}
-							},
-							new Action1<Throwable>() {
-		                     @Override
-		                     public void call( Throwable throwable ) {
-		                         mObserver.onError( throwable );
-		                     }
-		                 } );
+					public void unsubscribe() {
+						locatorSubscription.unsubscribe();
 
-				return( mSubscription );
+						observer.onCompleted();
+					}
+				});
 			}
 		} )).subscribeOn( Schedulers.threadPoolForIO());
 	}
 
-	private void onServiceInformation( final ServiceInformation serviceInformation ) {
-		NoiseRemoteClient   remoteClient = new NoiseRemoteClient( mContext, serviceInformation.getHostAddress());
+	private static void onServiceInformation( final ServiceInformation serviceInformation,
+	                                          final Observer<? super ServerInformation> observer,
+	                                          final Context context ) {
+		NoiseRemoteClient   remoteClient = new NoiseRemoteClient( context, serviceInformation.getHostAddress());
 
 		remoteClient.getServerVersion( new ResultReceiver( null ) {
 			@Override
@@ -88,7 +74,7 @@ public class ServiceLocator {
 					ServerVersion   serverVersion = resultData.getParcelable( NoiseRemoteApi.RemoteResultVersion );
 
 					if( serverVersion != null ) {
-						mObserver.onNext( new ServerInformation( serviceInformation, serverVersion ) );
+						observer.onNext( new ServerInformation( serviceInformation, serverVersion ));
 					}
 				}
 			}} );
