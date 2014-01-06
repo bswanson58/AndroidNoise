@@ -42,6 +42,7 @@ public class SearchListFragment extends Fragment {
 	public static SearchListFragment newInstance() {
 		return( new SearchListFragment());
 	}
+
 	@Override
 	public void onCreate( Bundle savedInstanceState ) {
 		super.onCreate( savedInstanceState );

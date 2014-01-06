@@ -4,8 +4,6 @@ package com.SecretSquirrel.AndroidNoise.activities;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,7 +26,6 @@ public class ShellLibraryFragment extends Fragment {
 	private static final String LIBRARY_CURRENT_ARTIST      = "ShellLibraryFragment_CurrentArtist";
 	private static final String LIBRARY_CURRENT_ALBUM       = "ShellLibraryFragment_CurrentAlbum";
 
-	private FragmentManager     mFragmentManager;
 	private int                 mCurrentState;
 	private long                mCurrentArtist;
 	private long                mCurrentAlbum;
@@ -36,8 +33,6 @@ public class ShellLibraryFragment extends Fragment {
 	@Override
 	public void onCreate( Bundle savedInstanceState ) {
 		super.onCreate( savedInstanceState );
-
-		mFragmentManager = getChildFragmentManager();
 
 		mCurrentState = LIBRARY_STATE_ARTIST_LIST;
 		mCurrentArtist = Constants.NULL_ID;
@@ -74,7 +69,10 @@ public class ShellLibraryFragment extends Fragment {
 		}
 
 		if( fragment != null ) {
-			mFragmentManager.beginTransaction().replace( R.id.LibraryShellFrame, fragment, "artistListFragment" ).commit();
+			getChildFragmentManager()
+					.beginTransaction()
+					.replace( R.id.LibraryShellFrame, fragment )
+					.commit();
 		}
 
 		return( inflater.inflate( R.layout.fragment_library_shell, container, false ));
@@ -112,13 +110,12 @@ public class ShellLibraryFragment extends Fragment {
 			mCurrentState = LIBRARY_STATE_ARTIST;
 			mCurrentArtist = artist.ArtistId;
 
-			ArtistFragment      fragment = ArtistFragment.newInstance( mCurrentArtist );
-			FragmentTransaction transaction = mFragmentManager.beginTransaction()
+			getChildFragmentManager()
+					.beginTransaction()
 					.setCustomAnimations( android.R.anim.fade_in, android.R.anim.fade_out )
-					.replace( R.id.LibraryShellFrame, fragment );
-
-			transaction.addToBackStack( "artistFragment" );
-			transaction.commit();
+					.replace( R.id.LibraryShellFrame, ArtistFragment.newInstance( mCurrentArtist ))
+					.addToBackStack( null )
+					.commit();
 		}
 	}
 
@@ -130,13 +127,12 @@ public class ShellLibraryFragment extends Fragment {
 			mCurrentState = LIBRARY_STATE_ALBUM;
 			mCurrentAlbum = album.AlbumId;
 
-			AlbumFragment       fragment = AlbumFragment.newInstance( mCurrentAlbum );
-			FragmentTransaction transaction = mFragmentManager.beginTransaction()
+			getChildFragmentManager()
+					.beginTransaction()
 					.setCustomAnimations( android.R.anim.fade_in, android.R.anim.fade_out )
-					.replace( R.id.LibraryShellFrame, fragment );
-
-			transaction.addToBackStack( "albumFragment" );
-			transaction.commit();
+					.replace( R.id.LibraryShellFrame, AlbumFragment.newInstance( mCurrentAlbum ))
+					.addToBackStack( null )
+					.commit();
 		}
 	}
 }

@@ -35,6 +35,10 @@ public class ServerListFragment extends Fragment {
 	private ServerAdapter                   mServerListAdapter;
 	private Subscription                    mLocatorSubscription;
 
+	public static ServerListFragment newInstance() {
+		return( new ServerListFragment());
+	}
+
 	@Override
 	public void onCreate( Bundle savedInstanceState ) {
 		super.onCreate( savedInstanceState );
@@ -83,12 +87,12 @@ public class ServerListFragment extends Fragment {
 
 	@Override
 	public void onPause() {
-		super.onPause();
-
 		if( mLocatorSubscription != null ) {
 			mLocatorSubscription.unsubscribe();
 			mLocatorSubscription = null;
 		}
+
+		super.onPause();
 	}
 
 	private void onServerInformation( ServerInformation serverInformation ) {

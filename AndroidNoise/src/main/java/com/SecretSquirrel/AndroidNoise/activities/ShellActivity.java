@@ -1,5 +1,6 @@
 package com.SecretSquirrel.AndroidNoise.activities;
 
+import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.FragmentManager;
@@ -90,24 +91,33 @@ public class ShellActivity extends ActionBarActivity
 	@Override
 	public void onNavigationDrawerItemSelected( int itemId ) {
 		// update the main content by replacing fragments
-		FragmentManager fragmentManager = getSupportFragmentManager();
+		Fragment    fragment = null;
 
 		switch( itemId ) {
 			case SERVERS_ITEM_ID:
-				fragmentManager.beginTransaction().replace( R.id.container, new ShellServerFragment()).commit();
+				fragment = new ShellServerFragment();
 				break;
 			case LIBRARY_ITEM_ID:
-				fragmentManager.beginTransaction().replace( R.id.container, new ShellLibraryFragment()).commit();
+				fragment = new ShellLibraryFragment();
 				break;
 			case FAVORITES_ITEM_ID:
-				fragmentManager.beginTransaction().replace( R.id.container, new ShellFavoritesFragment()).commit();
+				fragment = new ShellFavoritesFragment();
 				break;
 			case QUEUE_ITEM_ID:
-				fragmentManager.beginTransaction().replace( R.id.container, new ShellQueueFragment()).commit();
+				fragment = new ShellQueueFragment();
 				break;
 			case SEARCH_ITEM_ID:
-				fragmentManager.beginTransaction().replace( R.id.container, new ShellSearchFragment()).commit();
+				fragment = new ShellSearchFragment();
 				break;
+		}
+
+		if( fragment != null ) {
+			FragmentManager fragmentManager = getSupportFragmentManager();
+
+			fragmentManager.beginTransaction()
+					.replace( R.id.container, fragment )
+					.addToBackStack( null )
+					.commit();
 		}
 	}
 
