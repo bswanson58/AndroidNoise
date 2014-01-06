@@ -27,6 +27,7 @@ public class ShellActivity extends ActionBarActivity
 
 	// Fragment managing the behaviors, interactions and presentation of the navigation drawer.
 	private NavigationDrawerFragment    mNavigationDrawerFragment;
+	private Fragment                    mCurrentChildFragment;
 
 	@Override
 	protected void onCreate( Bundle savedInstanceState ) {
@@ -83,6 +84,22 @@ public class ShellActivity extends ActionBarActivity
 		return( retValue );
 	}
 
+	@Override
+	public void onBackPressed() {
+		// extend back pressed to the current child fragment stack.
+		if( mCurrentChildFragment != null ){
+			if( mCurrentChildFragment.getChildFragmentManager().getBackStackEntryCount() > 0 ) {
+				mCurrentChildFragment.getChildFragmentManager().popBackStack();
+			}
+			else {
+				super.onBackPressed();
+			}
+		}
+		else {
+			super.onBackPressed();
+		}
+	}
+
 	@SuppressWarnings( "unused" )
 	public void onEvent( EventServerSelected args ) {
 		mNavigationDrawerFragment.selectId( LIBRARY_ITEM_ID );
@@ -118,6 +135,8 @@ public class ShellActivity extends ActionBarActivity
 					.replace( R.id.container, fragment )
 					.addToBackStack( null )
 					.commit();
+
+			mCurrentChildFragment = fragment;
 		}
 	}
 
