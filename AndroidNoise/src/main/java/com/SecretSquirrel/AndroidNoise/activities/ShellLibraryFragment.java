@@ -37,35 +37,31 @@ public class ShellLibraryFragment extends Fragment {
 		mCurrentState = LIBRARY_STATE_ARTIST_LIST;
 		mCurrentArtist = Constants.NULL_ID;
 		mCurrentAlbum = Constants.NULL_ID;
-	}
-
-	@Override
-	public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState ) {
-		Fragment    fragment = null;
 
 		if( savedInstanceState != null ) {
 			mCurrentState = savedInstanceState.getInt( LIBRARY_STATE, LIBRARY_STATE_ARTIST_LIST );
 			mCurrentArtist = savedInstanceState.getLong( LIBRARY_CURRENT_ARTIST, Constants.NULL_ID );
 			mCurrentAlbum = savedInstanceState.getLong( LIBRARY_CURRENT_ALBUM, Constants.NULL_ID );
 
-			switch( mCurrentState ) {
-				case LIBRARY_STATE_ARTIST_LIST:
-					fragment = ArtistListFragment.newInstance();
-					break;
-
-				case LIBRARY_STATE_ARTIST:
-					fragment = ArtistFragment.newInstance( mCurrentArtist );
-					break;
-
-				case LIBRARY_STATE_ALBUM:
-					fragment = AlbumFragment.newInstance( mCurrentAlbum );
-					break;
-			}
 		}
-		else {
-			fragment = ArtistListFragment.newInstance();
+	}
 
-			mCurrentState = LIBRARY_STATE_ARTIST_LIST;
+	@Override
+	public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState ) {
+		Fragment    fragment = null;
+
+		switch( mCurrentState ) {
+			case LIBRARY_STATE_ARTIST_LIST:
+				fragment = ArtistListFragment.newInstance();
+				break;
+
+			case LIBRARY_STATE_ARTIST:
+				fragment = ArtistFragment.newInstance( mCurrentArtist );
+				break;
+
+			case LIBRARY_STATE_ALBUM:
+				fragment = AlbumFragment.newInstance( mCurrentAlbum );
+				break;
 		}
 
 		if( fragment != null ) {
