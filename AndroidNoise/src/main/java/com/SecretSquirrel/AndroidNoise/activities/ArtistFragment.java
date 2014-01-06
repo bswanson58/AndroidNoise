@@ -4,8 +4,6 @@ package com.SecretSquirrel.AndroidNoise.activities;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -50,14 +48,11 @@ public class ArtistFragment extends Fragment {
 		}
 
 		if( mCurrentArtist != Constants.NULL_ID ) {
-			FragmentManager     fragmentManager = getFragmentManager();
-			FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-			ArtistInfoFragment  artistInfoFragment =  ArtistInfoFragment.newInstance( mCurrentArtist );
-			AlbumListFragment   albumListFragment = AlbumListFragment.newInstance( mCurrentArtist );
-
-			fragmentTransaction.add( R.id.frame_artist_info, artistInfoFragment );
-			fragmentTransaction.add( R.id.frame_album_list, albumListFragment );
-			fragmentTransaction.commit();
+			getChildFragmentManager()
+					.beginTransaction()
+					.replace( R.id.frame_artist_info, ArtistInfoFragment.newInstance( mCurrentArtist ))
+					.replace( R.id.frame_album_list, AlbumListFragment.newInstance( mCurrentArtist ))
+					.commit();
 		}
 		else {
 			if( Constants.LOG_ERROR ) {
