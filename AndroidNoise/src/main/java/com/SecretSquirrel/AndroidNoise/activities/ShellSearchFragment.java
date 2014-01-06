@@ -10,7 +10,15 @@ import android.view.ViewGroup;
 
 import com.SecretSquirrel.AndroidNoise.R;
 
-public class ShellSearchFragment extends Fragment {
+public class ShellSearchFragment extends BaseShellFragment {
+	public static ShellSearchFragment newInstance( int fragmentId ) {
+		return( new ShellSearchFragment( fragmentId ));
+	}
+
+	protected ShellSearchFragment( int fragmentId ) {
+		super( fragmentId );
+	}
+
 	@Override
 	public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState ) {
 		getChildFragmentManager()

@@ -1,6 +1,5 @@
 package com.SecretSquirrel.AndroidNoise.activities;
 
-import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.FragmentManager;
@@ -27,7 +26,7 @@ public class ShellActivity extends ActionBarActivity
 
 	// Fragment managing the behaviors, interactions and presentation of the navigation drawer.
 	private NavigationDrawerFragment    mNavigationDrawerFragment;
-	private Fragment                    mCurrentChildFragment;
+	private BaseShellFragment           mCurrentChildFragment;
 
 	@Override
 	protected void onCreate( Bundle savedInstanceState ) {
@@ -99,7 +98,10 @@ public class ShellActivity extends ActionBarActivity
 			super.onBackPressed();
 		}
 
-		mCurrentChildFragment = getSupportFragmentManager().findFragmentById( R.id.container );
+		mCurrentChildFragment = (BaseShellFragment) getSupportFragmentManager().findFragmentById( R.id.container );
+		if( mCurrentChildFragment != null ) {
+			mNavigationDrawerFragment.syncWithFragment( mCurrentChildFragment.getFragmentId());
+		}
 	}
 
 	@SuppressWarnings( "unused" )
@@ -110,23 +112,23 @@ public class ShellActivity extends ActionBarActivity
 	@Override
 	public void onNavigationDrawerItemSelected( int itemId ) {
 		// update the main content by replacing fragments
-		Fragment    fragment = null;
+		BaseShellFragment   fragment = null;
 
 		switch( itemId ) {
 			case SERVERS_ITEM_ID:
-				fragment = new ShellServerFragment();
+				fragment = ShellServerFragment.newInstance( SERVERS_ITEM_ID );
 				break;
 			case LIBRARY_ITEM_ID:
-				fragment = new ShellLibraryFragment();
+				fragment = ShellLibraryFragment.newInstance( LIBRARY_ITEM_ID );
 				break;
 			case FAVORITES_ITEM_ID:
-				fragment = new ShellFavoritesFragment();
+				fragment = ShellFavoritesFragment.newInstance( FAVORITES_ITEM_ID );
 				break;
 			case QUEUE_ITEM_ID:
-				fragment = new ShellQueueFragment();
+				fragment = ShellQueueFragment.newInstance( QUEUE_ITEM_ID );
 				break;
 			case SEARCH_ITEM_ID:
-				fragment = new ShellSearchFragment();
+				fragment = ShellSearchFragment.newInstance( SEARCH_ITEM_ID );
 				break;
 		}
 

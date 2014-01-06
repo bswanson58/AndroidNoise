@@ -178,6 +178,25 @@ public class NavigationDrawerFragment extends Fragment {
 			   ( mDrawerLayout.isDrawerOpen( mFragmentContainerView )));
 	}
 
+	public void syncWithFragment( int fragmentId ) {
+		for( int index = 0; index < mConfiguration.getNavigationItems().length; index++ ) {
+			NavigationDrawerItem    item = mConfiguration.getNavigationItems()[index];
+
+			if( item.getId() == fragmentId ) {
+				mCurrentSelectedPosition = index;
+
+				if( mDrawerListView != null ) {
+					mDrawerListView.setItemChecked( mCurrentSelectedPosition, true );
+				}
+
+				if( item.updateActionBarTitle()) {
+					setTitle( item.getLabel());
+				}
+				break;
+			}
+		}
+	}
+
 	private void selectPosition( int position ) {
 		NavigationDrawerItem selectedItem = mConfiguration.getNavigationItems()[position];
 

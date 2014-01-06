@@ -17,7 +17,7 @@ import com.SecretSquirrel.AndroidNoise.support.Constants;
 
 import de.greenrobot.event.EventBus;
 
-public class ShellLibraryFragment extends Fragment {
+public class ShellLibraryFragment extends BaseShellFragment {
 	private static final String LIBRARY_STATE               = "ShellLibraryFragment_LibraryState";
 	private static final int    LIBRARY_STATE_ARTIST_LIST   = 1;
 	private static final int    LIBRARY_STATE_ARTIST        = 2;
@@ -29,6 +29,14 @@ public class ShellLibraryFragment extends Fragment {
 	private int                 mCurrentState;
 	private long                mCurrentArtist;
 	private long                mCurrentAlbum;
+
+	public static ShellLibraryFragment newInstance( int fragmentId ) {
+		return( new ShellLibraryFragment( fragmentId ));
+	}
+
+	protected ShellLibraryFragment( int fragmentId ) {
+		super( fragmentId );
+	}
 
 	@Override
 	public void onCreate( Bundle savedInstanceState ) {

@@ -10,7 +10,15 @@ import android.view.ViewGroup;
 
 import com.SecretSquirrel.AndroidNoise.R;
 
-public class ShellFavoritesFragment extends Fragment {
+public class ShellFavoritesFragment extends BaseShellFragment {
+	public static ShellFavoritesFragment newInstance( int fragmentId ) {
+		return( new ShellFavoritesFragment( fragmentId ));
+	}
+
+	protected ShellFavoritesFragment( int fragmentId ) {
+		super( fragmentId );
+	}
+
 	@Override
 	public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState ) {
 		getChildFragmentManager()

@@ -10,7 +10,15 @@ import android.view.ViewGroup;
 
 import com.SecretSquirrel.AndroidNoise.R;
 
-public class ShellServerFragment extends Fragment {
+public class ShellServerFragment extends BaseShellFragment {
+	public static ShellServerFragment newInstance( int fragmentId ) {
+		return( new ShellServerFragment( fragmentId ));
+	}
+
+	protected ShellServerFragment( int fragmentId ) {
+		super( fragmentId );
+	}
+
 	@Override
 	public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState ) {
 		getChildFragmentManager()

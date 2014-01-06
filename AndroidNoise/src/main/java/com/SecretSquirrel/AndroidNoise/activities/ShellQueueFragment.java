@@ -10,7 +10,15 @@ import android.view.ViewGroup;
 
 import com.SecretSquirrel.AndroidNoise.R;
 
-public class ShellQueueFragment extends Fragment {
+public class ShellQueueFragment extends BaseShellFragment {
+	public static ShellQueueFragment newInstance( int fragmentId ) {
+		return( new ShellQueueFragment( fragmentId ));
+	}
+
+	protected ShellQueueFragment( int fragmentId ) {
+		super( fragmentId );
+	}
+
 	@Override
 	public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState ) {
 		getChildFragmentManager()
