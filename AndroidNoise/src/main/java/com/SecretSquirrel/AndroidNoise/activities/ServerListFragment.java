@@ -68,19 +68,21 @@ public class ServerListFragment extends Fragment {
 	public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState ) {
 		View    myView = inflater.inflate( R.layout.fragment_server_list, container, false );
 
-		ListView serverListView = (ListView) myView.findViewById( R.id.ServerListView );
+		if( myView != null ) {
+			ListView    serverListView = (ListView) myView.findViewById( R.id.ServerListView );
 
-		serverListView.setAdapter( mServerListAdapter );
-		serverListView.setOnItemClickListener( new AdapterView.OnItemClickListener() {
-			@Override
-			public void onItemClick( AdapterView<?> adapterView, View view, int i, long l ) {
-				ServerInformation serverInformation = mServerList.get( i );
+			serverListView.setAdapter( mServerListAdapter );
+			serverListView.setOnItemClickListener( new AdapterView.OnItemClickListener() {
+				@Override
+				public void onItemClick( AdapterView<?> adapterView, View view, int i, long l ) {
+					ServerInformation serverInformation = mServerList.get( i );
 
-				if( serverInformation != null ) {
-					selectServer( serverInformation );
+					if( serverInformation != null ) {
+						selectServer( serverInformation );
+					}
 				}
-			}
-		} );
+			} );
+		}
 
 		return( myView );
 	}
@@ -161,15 +163,18 @@ public class ServerListFragment extends Fragment {
 		@Override
 		public View getView( int position, View convertView, ViewGroup parent ) {
 			View        retValue = convertView;
-			ViewHolder  views = null;
+			ViewHolder  views;
 
 			if( convertView == null ) {
 				retValue = mLayoutInflater.inflate( R.layout.server_list_item, parent, false );
 
 				views = new ViewHolder();
-				views.NameTextView = (TextView) retValue.findViewById( R.id.server_list_item_name );
 
-				retValue.setTag( views );
+				if( retValue != null ) {
+					views.NameTextView = (TextView) retValue.findViewById( R.id.server_list_item_name );
+
+					retValue.setTag( views );
+				}
 			}
 			else {
 				views = (ViewHolder)retValue.getTag();
