@@ -98,6 +98,8 @@ public class ShellActivity extends ActionBarActivity
 		else {
 			super.onBackPressed();
 		}
+
+		mCurrentChildFragment = getSupportFragmentManager().findFragmentById( R.id.container );
 	}
 
 	@SuppressWarnings( "unused" )
