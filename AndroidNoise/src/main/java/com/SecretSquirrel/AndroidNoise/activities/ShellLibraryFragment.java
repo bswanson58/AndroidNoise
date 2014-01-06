@@ -19,6 +19,7 @@ import de.greenrobot.event.EventBus;
 
 public class ShellLibraryFragment extends BaseShellFragment {
 	private static final String LIBRARY_STATE               = "ShellLibraryFragment_LibraryState";
+	private static final int    LIBRARY_STATE_NONE          = 0;
 	private static final int    LIBRARY_STATE_ARTIST_LIST   = 1;
 	private static final int    LIBRARY_STATE_ARTIST        = 2;
 	private static final int    LIBRARY_STATE_ALBUM         = 3;
@@ -27,6 +28,7 @@ public class ShellLibraryFragment extends BaseShellFragment {
 	private static final String LIBRARY_CURRENT_ALBUM       = "ShellLibraryFragment_CurrentAlbum";
 
 	private int                 mCurrentState;
+	private int                 mFragmentToCreate;
 	private long                mCurrentArtist;
 	private long                mCurrentAlbum;
 
@@ -50,15 +52,17 @@ public class ShellLibraryFragment extends BaseShellFragment {
 			mCurrentState = savedInstanceState.getInt( LIBRARY_STATE, LIBRARY_STATE_ARTIST_LIST );
 			mCurrentArtist = savedInstanceState.getLong( LIBRARY_CURRENT_ARTIST, Constants.NULL_ID );
 			mCurrentAlbum = savedInstanceState.getLong( LIBRARY_CURRENT_ALBUM, Constants.NULL_ID );
-
 		}
+
+		// Only create the child fragment if we are being created.
+		mFragmentToCreate = mCurrentState;
 	}
 
 	@Override
 	public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState ) {
 		Fragment    fragment = null;
 
-		switch( mCurrentState ) {
+		switch( mFragmentToCreate ) {
 			case LIBRARY_STATE_ARTIST_LIST:
 				fragment = ArtistListFragment.newInstance();
 				break;
@@ -77,6 +81,8 @@ public class ShellLibraryFragment extends BaseShellFragment {
 					.beginTransaction()
 					.replace( R.id.LibraryShellFrame, fragment )
 					.commit();
+
+			mFragmentToCreate = LIBRARY_STATE_NONE;
 		}
 
 		return( inflater.inflate( R.layout.fragment_library_shell, container, false ));
@@ -99,7 +105,7 @@ public class ShellLibraryFragment extends BaseShellFragment {
 	@Override
 	public void onSaveInstanceState( Bundle outState ) {
 		// Do not save the current fragment - which the base class method will do.
-		//super.onSaveInstanceState( outState );
+		// super.onSaveInstanceState( outState );
 
 		outState.putInt( LIBRARY_STATE, mCurrentState );
 		outState.putLong( LIBRARY_CURRENT_ARTIST, mCurrentArtist );
