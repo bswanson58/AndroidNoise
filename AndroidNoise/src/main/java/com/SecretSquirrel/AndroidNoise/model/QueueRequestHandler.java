@@ -79,10 +79,10 @@ public class QueueRequestHandler {
 				@Override
 				public void call( QueuedTrackResult queuedTrackResult ) {
 					if( queuedTrackResult.Success ) {
-						Toast.makeText( mContext, "Track '" + queuedTrackResult.getTrack().Name + "' was queued!", Toast.LENGTH_SHORT ).show();
+						Toast.makeText( mContext, "Track '" + queuedTrackResult.getTrack().getName() + "' was queued!", Toast.LENGTH_SHORT ).show();
 					}
 					else {
-						Toast.makeText( mContext, "An error occurred while queuing album '" + queuedTrackResult.getTrack().Name + "'", Toast.LENGTH_LONG ).show();
+						Toast.makeText( mContext, "An error occurred while queuing album '" + queuedTrackResult.getTrack().getName() + "'", Toast.LENGTH_LONG ).show();
 					}
 				}
 			} );

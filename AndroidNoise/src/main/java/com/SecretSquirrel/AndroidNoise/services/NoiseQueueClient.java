@@ -72,7 +72,7 @@ public class NoiseQueueClient implements INoiseQueue {
 			@Override
 			public Subscription onSubscribe( Observer<? super QueuedTrackResult> observer ) {
 				try {
-					observer.onNext( new QueuedTrackResult( track, getService().EnqueueTrack( track.TrackId )));
+					observer.onNext( new QueuedTrackResult( track, getService().EnqueueTrack( track.getTrackId())));
 					observer.onCompleted();
 				} catch( Exception e ) {
 					observer.onError( e );

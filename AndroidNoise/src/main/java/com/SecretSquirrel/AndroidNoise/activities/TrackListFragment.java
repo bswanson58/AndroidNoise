@@ -16,7 +16,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.SecretSquirrel.AndroidNoise.R;
-import com.SecretSquirrel.AndroidNoise.dto.Album;
 import com.SecretSquirrel.AndroidNoise.dto.Track;
 import com.SecretSquirrel.AndroidNoise.events.EventPlayTrack;
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
@@ -36,7 +35,6 @@ public class TrackListFragment extends Fragment
 	private static final String     TAG = TrackListFragment.class.getName();
 	private static final String     ALBUM_KEY = "TrackListFragment_AlbumId";
 
-	private ListView                mTrackListView;
 	private ArrayList<Track>        mTrackList;
 	private TrackAdapter            mTrackListAdapter;
 	private ServiceResultReceiver   mReceiver;
@@ -61,6 +59,7 @@ public class TrackListFragment extends Fragment
 		super.onCreate( savedInstanceState );
 
 		mTrackList = new ArrayList<Track>();
+		mTrackListAdapter = new TrackAdapter( getActivity(), mTrackList );
 
 		mReceiver = new ServiceResultReceiver( new Handler());
 		mReceiver.setReceiver( this );
@@ -70,9 +69,11 @@ public class TrackListFragment extends Fragment
 	public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState ) {
 		View    myView = inflater.inflate( R.layout.fragment_track_list, container, false );
 
-		mTrackListView = (ListView)myView.findViewById( R.id.TrackListView );
-		mTrackListAdapter = new TrackAdapter( getActivity(), mTrackList );
-		mTrackListView.setAdapter( mTrackListAdapter );
+		if( myView != null ) {
+			ListView    trackListView = (ListView)myView.findViewById( R.id.TrackListView );
+
+			trackListView.setAdapter( mTrackListAdapter );
+		}
 
 		if( savedInstanceState != null ) {
 			mCurrentAlbum = savedInstanceState.getLong( ALBUM_KEY, Constants.NULL_ID );
@@ -134,7 +135,7 @@ public class TrackListFragment extends Fragment
 
 		Collections.sort( mTrackList, new Comparator<Track>() {
 			public int compare( Track track1, Track track2 ) {
-				return ( track1.TrackNumber - track2.TrackNumber );
+				return ( track1.getTrackNumber() - track2.getTrackNumber());
 			}
 		} );
 
@@ -173,22 +174,24 @@ public class TrackListFragment extends Fragment
 			if( convertView == null ) {
 				retValue = mLayoutInflater.inflate( R.layout.track_list_item, parent, false );
 
-				views = new ViewHolder();
-				views.NameTextView = (TextView)retValue.findViewById( R.id.track_list_item_name );
+				if( retValue != null ) {
+					views = new ViewHolder();
+					views.NameTextView = (TextView)retValue.findViewById( R.id.track_list_item_name );
 
-				views.PlayButton = (Button) retValue.findViewById( R.id.play_button );
-				views.PlayButton.setOnClickListener( new View.OnClickListener() {
-					@Override
-					public void onClick( View view ) {
-						Track   track = (Track)view.getTag();
+					views.PlayButton = (Button) retValue.findViewById( R.id.play_button );
+					views.PlayButton.setOnClickListener( new View.OnClickListener() {
+						@Override
+						public void onClick( View view ) {
+							Track   track = (Track)view.getTag();
 
-						if( track != null ) {
-							EventBus.getDefault().post( new EventPlayTrack( track ));
+							if( track != null ) {
+								EventBus.getDefault().post( new EventPlayTrack( track ));
+							}
 						}
-					}
-				} );
+					} );
 
-				retValue.setTag( views );
+					retValue.setTag( views );
+				}
 			}
 			else {
 				views = (ViewHolder)retValue.getTag();
@@ -199,7 +202,7 @@ public class TrackListFragment extends Fragment
 				Track track = mTrackList.get( position );
 
 				views.PlayButton.setTag( track );
-				views.NameTextView.setText( track.Name );
+				views.NameTextView.setText( track.getName());
 			}
 
 			return( retValue );
