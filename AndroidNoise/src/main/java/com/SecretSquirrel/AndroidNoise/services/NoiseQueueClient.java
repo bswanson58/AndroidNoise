@@ -110,7 +110,7 @@ public class NoiseQueueClient implements INoiseQueue {
 			@Override
 			public Subscription onSubscribe( Observer<? super QueuedAlbumResult> observer) {
 				try {
-					observer.onNext( new QueuedAlbumResult( album, getService().EnqueueAlbum( album.AlbumId )));
+					observer.onNext( new QueuedAlbumResult( album, getService().EnqueueAlbum( album.getAlbumId())));
 					observer.onCompleted();
 				} catch( Exception e ) {
 					observer.onError( e );

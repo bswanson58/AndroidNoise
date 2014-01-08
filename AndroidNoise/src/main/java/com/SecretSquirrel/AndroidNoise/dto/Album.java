@@ -8,14 +8,14 @@ import android.os.Parcelable;
 import com.SecretSquirrel.AndroidNoise.services.rto.RoAlbum;
 
 public class Album implements Parcelable {
-	public long         AlbumId;
-	public long			ArtistId;
-	public String       Name;
-	public int			TrackCount;
-	public int			Rating;
-	public long     	PublishedYear;
-	public String		Genre;
-	public boolean		IsFavorite;
+	private long        mAlbumId;
+	private long        mArtistId;
+	private String      mName;
+	private int         mTrackCount;
+	private int         mRating;
+	private long        mPublishedYear;
+	private String      mGenre;
+	private boolean mIsFavorite;
 
 	/** Static field used to regenerate object, individually or as arrays */
 	public static final Parcelable.Creator<Album> CREATOR = new Parcelable.Creator<Album>() {
@@ -28,48 +28,80 @@ public class Album implements Parcelable {
 	};
 
 	public Album( RoAlbum fromAlbum ) {
-		AlbumId = fromAlbum.DbId;
-		ArtistId = fromAlbum.ArtistId;
-		Name = fromAlbum.Name;
-		TrackCount = fromAlbum.TrackCount;
-		Rating = fromAlbum.Rating;
-		PublishedYear = fromAlbum.PublishedYear;
-		Genre = fromAlbum.Genre;
-		IsFavorite = fromAlbum.IsFavorite;
+		mAlbumId = fromAlbum.DbId;
+		mArtistId = fromAlbum.ArtistId;
+		mName = fromAlbum.Name;
+		mTrackCount = fromAlbum.TrackCount;
+		mRating = fromAlbum.Rating;
+		mPublishedYear = fromAlbum.PublishedYear;
+		mGenre = fromAlbum.Genre;
+		mIsFavorite = fromAlbum.IsFavorite;
 	}
 
 	public Album( Favorite favorite ) {
-		AlbumId = favorite.AlbumId;
-		ArtistId = favorite.ArtistId;
-		Name = favorite.Album;
-		IsFavorite = true;
+		mAlbumId = favorite.AlbumId;
+		mArtistId = favorite.ArtistId;
+		mName = favorite.Album;
+		mIsFavorite = true;
 	}
 
 	public Album( Parcel parcel ) {
-		AlbumId = parcel.readLong();
-		ArtistId = parcel.readLong();
-		Name = parcel.readString();
-		TrackCount = parcel.readInt();
-		Rating = parcel.readInt();
-		PublishedYear = parcel.readLong();
-		Genre = parcel.readString();
-		IsFavorite = parcel.readByte() != 0;
+		mAlbumId = parcel.readLong();
+		mArtistId = parcel.readLong();
+		mName = parcel.readString();
+		mTrackCount = parcel.readInt();
+		mRating = parcel.readInt();
+		mPublishedYear = parcel.readLong();
+		mGenre = parcel.readString();
+		mIsFavorite = parcel.readByte() != 0;
+	}
+
+	public long getAlbumId() {
+		return( mAlbumId );
+	}
+
+	public long getArtistId() {
+		return( mArtistId );
+	}
+
+	public String getName() {
+		return( mName );
+	}
+
+	public int getTrackCount() {
+		return( mTrackCount );
+	}
+
+	public int getRating() {
+		return( mRating );
+	}
+
+	public long getPublishedYear() {
+		return( mPublishedYear );
+	}
+
+	public String getGenre() {
+		return( mGenre );
+	}
+
+	public boolean isFavorite() {
+		return( mIsFavorite );
 	}
 
 	@Override
 	public int describeContents() {
-		return 0;
+		return( 0 );
 	}
 
 	@Override
 	public void writeToParcel( Parcel parcel, int i ) {
-		parcel.writeLong( AlbumId );
-		parcel.writeLong( ArtistId );
-		parcel.writeString( Name );
-		parcel.writeInt( TrackCount );
-		parcel.writeInt( Rating );
-		parcel.writeLong( PublishedYear );
-		parcel.writeString( Genre );
-		parcel.writeByte((byte)( IsFavorite ? 1 : 0));
+		parcel.writeLong( mAlbumId );
+		parcel.writeLong( mArtistId );
+		parcel.writeString( mName );
+		parcel.writeInt( mTrackCount );
+		parcel.writeInt( mRating );
+		parcel.writeLong( mPublishedYear );
+		parcel.writeString( mGenre );
+		parcel.writeByte((byte)( mIsFavorite ? 1 : 0));
 	}
 }

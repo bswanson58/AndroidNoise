@@ -18,7 +18,6 @@ import android.widget.TextView;
 
 import com.SecretSquirrel.AndroidNoise.R;
 import com.SecretSquirrel.AndroidNoise.dto.Album;
-import com.SecretSquirrel.AndroidNoise.dto.Artist;
 import com.SecretSquirrel.AndroidNoise.events.EventAlbumSelected;
 import com.SecretSquirrel.AndroidNoise.events.EventPlayAlbum;
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
@@ -40,7 +39,6 @@ public class AlbumListFragment extends Fragment
 
 	private ServiceResultReceiver   mReceiver;
 	private long                    mCurrentArtist;
-	private ListView                mAlbumListView;
 	private ArrayList<Album>        mAlbumList;
 	private AlbumAdapter            mAlbumListAdapter;
 
@@ -63,6 +61,7 @@ public class AlbumListFragment extends Fragment
 		super.onCreate( savedInstanceState );
 
 		mAlbumList = new ArrayList<Album>();
+		mAlbumListAdapter = new AlbumAdapter( getActivity(), mAlbumList );
 		mReceiver = new ServiceResultReceiver( new Handler());
 		mReceiver.setReceiver( this );
 	}
@@ -71,20 +70,22 @@ public class AlbumListFragment extends Fragment
 	public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState ) {
 		View    myView = inflater.inflate( R.layout.fragment_album_list, container, false );
 
-		mAlbumListView = (ListView)myView.findViewById( R.id.AlbumListView );
-		mAlbumListAdapter = new AlbumAdapter( getActivity(), mAlbumList );
-		mAlbumListView.setAdapter( mAlbumListAdapter );
+		if( myView != null ) {
+			ListView albumListView = (ListView)myView.findViewById( R.id.AlbumListView );
 
-		mAlbumListView.setOnItemClickListener( new AdapterView.OnItemClickListener() {
-			@Override
-			public void onItemClick( AdapterView<?> adapterView, View view, int i, long l ) {
-				Album album = mAlbumList.get( i );
+			albumListView.setAdapter( mAlbumListAdapter );
 
-				if( album != null ) {
-					EventBus.getDefault().post( new EventAlbumSelected( album ));
+			albumListView.setOnItemClickListener( new AdapterView.OnItemClickListener() {
+				@Override
+				public void onItemClick( AdapterView<?> adapterView, View view, int i, long l ) {
+					Album album = mAlbumList.get( i );
+
+					if( album != null ) {
+						EventBus.getDefault().post( new EventAlbumSelected( album ));
+					}
 				}
-			}
-		} );
+			} );
+		}
 
 		if( savedInstanceState != null ) {
 			mCurrentArtist = savedInstanceState.getLong( ARTIST_KEY );
@@ -146,7 +147,7 @@ public class AlbumListFragment extends Fragment
 
 		Collections.sort( mAlbumList, new Comparator<Album>() {
 			public int compare( Album album1, Album album2 ) {
-				return( album1.Name.compareToIgnoreCase( album2.Name ));
+				return( album1.getName().compareToIgnoreCase( album2.getName()));
 			}
 		} );
 
@@ -185,22 +186,24 @@ public class AlbumListFragment extends Fragment
 			if( convertView == null ) {
 				retValue = mLayoutInflater.inflate( R.layout.album_list_item, parent, false );
 
-				views = new ViewHolder();
-				views.NameTextView = (TextView)retValue.findViewById( R.id.album_list_item_name );
-				views.PlayButton = (Button)retValue.findViewById( R.id.play_button );
+				if( retValue != null ) {
+					views = new ViewHolder();
+					views.NameTextView = (TextView)retValue.findViewById( R.id.album_list_item_name );
+					views.PlayButton = (Button)retValue.findViewById( R.id.play_button );
 
-				views.PlayButton.setOnClickListener( new View.OnClickListener() {
-					@Override
-					public void onClick( View view ) {
-						Album   album = (Album)view.getTag();
+					views.PlayButton.setOnClickListener( new View.OnClickListener() {
+						@Override
+						public void onClick( View view ) {
+							Album   album = (Album)view.getTag();
 
-						if( album != null ) {
-							EventBus.getDefault().post( new EventPlayAlbum( album ));
+							if( album != null ) {
+								EventBus.getDefault().post( new EventPlayAlbum( album ));
+							}
 						}
-					}
-				} );
+					} );
 
-				retValue.setTag( views );
+					retValue.setTag( views );
+				}
 			}
 			else {
 				views = (ViewHolder)retValue.getTag();
@@ -210,7 +213,7 @@ public class AlbumListFragment extends Fragment
 			   ( position < mAlbumList.size())) {
 				Album      album = mAlbumList.get( position );
 
-				views.NameTextView.setText( album.Name );
+				views.NameTextView.setText( album.getName());
 				views.PlayButton.setTag( album );
 			}
 
