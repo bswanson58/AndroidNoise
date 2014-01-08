@@ -10,26 +10,23 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.SecretSquirrel.AndroidNoise.R;
+import com.SecretSquirrel.AndroidNoise.dto.Album;
 import com.SecretSquirrel.AndroidNoise.support.Constants;
 
 public class AlbumFragment extends Fragment {
 	private static final String     TAG = AlbumFragment.class.getName();
 	private static final String     ALBUM_KEY = "AlbumFragment_AlbumId";
 
-	private long        mCurrentAlbum;
+	private Album   mAlbum;
 
-	public static AlbumFragment newInstance( long albumId ) {
+	public static AlbumFragment newInstance( Album album ) {
 		AlbumFragment   fragment = new AlbumFragment();
 		Bundle          bundle = new Bundle();
 
-		bundle.putLong( ALBUM_KEY, albumId );
+		bundle.putParcelable( ALBUM_KEY, album );
 		fragment.setArguments( bundle );
 
 		return( fragment );
-	}
-
-	public AlbumFragment() {
-		mCurrentAlbum = Constants.NULL_ID;
 	}
 
 	@Override
@@ -37,21 +34,21 @@ public class AlbumFragment extends Fragment {
 		View    myView = inflater.inflate( R.layout.fragment_album_shell, container, false );
 
 		if( savedInstanceState != null ) {
-			mCurrentAlbum = savedInstanceState.getLong( ALBUM_KEY, Constants.NULL_ID );
+			mAlbum = savedInstanceState.getParcelable( ALBUM_KEY );
 		}
 		else {
 			Bundle  args = getArguments();
 
 			if( args != null ) {
-				mCurrentAlbum = args.getLong( ALBUM_KEY, Constants.NULL_ID );
+				mAlbum = args.getParcelable( ALBUM_KEY );
 			}
 		}
 
-		if( mCurrentAlbum != Constants.NULL_ID ) {
+		if( mAlbum != null ) {
 			getChildFragmentManager()
 					.beginTransaction()
-					.replace( R.id.frame_album_info, AlbumInfoFragment.newInstance( mCurrentAlbum ))
-					.replace( R.id.frame_track_list, TrackListFragment.newInstance( mCurrentAlbum ))
+					.replace( R.id.frame_album_info, AlbumInfoFragment.newInstance( mAlbum ))
+					.replace( R.id.frame_track_list, TrackListFragment.newInstance( mAlbum.getAlbumId()))
 					.commit();
 		}
 		else {
@@ -67,6 +64,6 @@ public class AlbumFragment extends Fragment {
 	public void onSaveInstanceState( Bundle outState ) {
 		super.onSaveInstanceState( outState );
 
-		outState.putLong( ALBUM_KEY, mCurrentAlbum );
+		outState.putParcelable( ALBUM_KEY, mAlbum );
 	}
 }

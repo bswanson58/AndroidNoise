@@ -1,21 +1,35 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context=".AlbumActivity$PlaceholderFragment"
     android:orientation="vertical">
 
     <TextView
+        android:id="@+id/ai_album_name"
         android:text="Album Information"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="false"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="@dimen/noise_base_padding"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="@dimen/noise_base_padding"
+        android:textSize="@dimen/list_item_title_textSize"
+        android:textColor="#0078ff"/>
 
     <ImageView
+        android:id="@+id/ai_album_cover_image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/album_cover_image"/>
-</LinearLayout>
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="@dimen/noise_base_padding"
+        android:layout_marginTop="@dimen/noise_base_padding"
+        android:layout_marginBottom="@dimen/noise_base_padding"
+        android:maxHeight="@dimen/noise_image_minimum_height"
+        android:maxWidth="@dimen/noise_image_minimum_width"
+        android:minHeight="@dimen/noise_image_minimum_height"
+        android:minWidth="@dimen/noise_image_minimum_width"
+        android:adjustViewBounds="true"/>
+</RelativeLayout>

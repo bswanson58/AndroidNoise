@@ -17,7 +17,8 @@
         android:layout_marginLeft="@dimen/noise_base_padding"
         android:layout_alignParentTop="true"
         android:layout_marginTop="@dimen/noise_base_padding"
-        android:layout_marginBottom="@dimen/noise_base_padding"/>
+        android:layout_marginBottom="@dimen/noise_base_padding"
+        android:adjustViewBounds="true"/>
 
     <TextView
         android:id="@+id/ai_artist_name"

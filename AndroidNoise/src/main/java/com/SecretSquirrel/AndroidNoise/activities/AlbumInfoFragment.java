@@ -10,8 +10,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.SecretSquirrel.AndroidNoise.R;
+import com.SecretSquirrel.AndroidNoise.dto.Album;
 import com.SecretSquirrel.AndroidNoise.dto.AlbumInfo;
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
 import com.SecretSquirrel.AndroidNoise.model.NoiseRemoteApplication;
@@ -21,25 +23,24 @@ import com.SecretSquirrel.AndroidNoise.support.Constants;
 
 public class AlbumInfoFragment extends Fragment
 							   implements ServiceResultReceiver.Receiver {
-	private static final String     TAG = AlbumInfoFragment.class.getName();
-	private static final String     ALBUM_KEY = "AlbumInfoFragment_AlbumId";
+	private static final String     TAG             = AlbumInfoFragment.class.getName();
+	private static final String     ALBUM_KEY       = "AlbumInfoFragment_Album";
+	private static final String     ALBUM_INFO_KEY  = "AlbumInfoFragment_AlbumInfo";
 
 	private ServiceResultReceiver   mServiceResultReceiver;
-	private long                    mCurrentAlbum;
+	private Album                   mAlbum;
+	private AlbumInfo               mAlbumInfo;
 	private ImageView               mAlbumCover;
+	private TextView                mAlbumName;
 
-	public static AlbumInfoFragment newInstance( long albumId ) {
+	public static AlbumInfoFragment newInstance( Album album ) {
 		AlbumInfoFragment   fragment = new AlbumInfoFragment();
 		Bundle              args = new Bundle();
 
-		args.putLong( ALBUM_KEY, albumId );
+		args.putParcelable( ALBUM_KEY, album );
 		fragment.setArguments( args );
 
 		return( fragment );
-	}
-
-	public AlbumInfoFragment() {
-		mCurrentAlbum = Constants.NULL_ID;
 	}
 
 	@Override
@@ -62,21 +63,27 @@ public class AlbumInfoFragment extends Fragment
 		View myView = inflater.inflate( R.layout.fragment_album_info, container, false );
 
 		if( savedInstanceState != null ) {
-			mCurrentAlbum = savedInstanceState.getLong( ALBUM_KEY, Constants.NULL_ID );
+			mAlbum = savedInstanceState.getParcelable( ALBUM_KEY );
+			mAlbumInfo = savedInstanceState.getParcelable( ALBUM_INFO_KEY );
 		}
 		else {
 			Bundle  args = getArguments();
 
 			if( args != null ) {
-				mCurrentAlbum = args.getLong( ALBUM_KEY, Constants.NULL_ID );
+				mAlbum = args.getParcelable( ALBUM_KEY );
 			}
 		}
 
-		mAlbumCover = (ImageView) myView.findViewById( R.id.album_cover_image );
+		if( myView != null ) {
+			mAlbumCover = (ImageView) myView.findViewById( R.id.ai_album_cover_image );
+			mAlbumName = (TextView)myView.findViewById( R.id.ai_album_name );
+		}
 
-		if( mCurrentAlbum != Constants.NULL_ID ) {
-			if( getApplicationState().getIsConnected()) {
-				getApplicationState().getDataClient().GetAlbumInfo( mCurrentAlbum, mServiceResultReceiver );
+		if( mAlbum != null ) {
+			if( mAlbumInfo == null ) {
+				if( getApplicationState().getIsConnected()) {
+					getApplicationState().getDataClient().GetAlbumInfo( mAlbum.getAlbumId(), mServiceResultReceiver );
+				}
 			}
 		}
 		else {
@@ -85,27 +92,38 @@ public class AlbumInfoFragment extends Fragment
 			}
 		}
 
+		updateDisplay();
+
 		return( myView );
 	}
 
 	@Override
 	public void onReceiveResult( int resultCode, Bundle resultData ) {
 		if( resultCode == NoiseRemoteApi.RemoteResultSuccess ) {
-			AlbumInfo albumInfo = resultData.getParcelable( NoiseRemoteApi.AlbumInfo );
+			mAlbumInfo = resultData.getParcelable( NoiseRemoteApi.AlbumInfo );
 
-			setAlbumInfo( albumInfo );
+			updateDisplay();
 		}
 	}
 
-	private void setAlbumInfo( AlbumInfo albumInfo ) {
-		mAlbumCover.setImageBitmap( albumInfo.getAlbumCover());
+	private void updateDisplay() {
+		if( mAlbum != null ) {
+			mAlbumName.setText( mAlbum.getName());
+		}
+
+		if( mAlbumInfo != null ) {
+			mAlbumCover.setImageBitmap( mAlbumInfo.getAlbumCover());
+		}
 	}
 
 	@Override
 	public void onSaveInstanceState( Bundle outState ) {
 		super.onSaveInstanceState( outState );
 
-		outState.putLong( ALBUM_KEY, mCurrentAlbum );
+		outState.putParcelable( ALBUM_KEY, mAlbum );
+		if( mAlbumInfo != null ) {
+			outState.putParcelable( ALBUM_INFO_KEY, mAlbumInfo );
+		}
 	}
 
 	private IApplicationState getApplicationState() {
