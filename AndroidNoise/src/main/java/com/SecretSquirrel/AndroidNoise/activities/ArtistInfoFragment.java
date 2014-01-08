@@ -10,8 +10,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.SecretSquirrel.AndroidNoise.R;
+import com.SecretSquirrel.AndroidNoise.dto.Artist;
 import com.SecretSquirrel.AndroidNoise.dto.ArtistInfo;
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
 import com.SecretSquirrel.AndroidNoise.model.NoiseRemoteApplication;
@@ -21,26 +23,28 @@ import com.SecretSquirrel.AndroidNoise.support.Constants;
 
 public class ArtistInfoFragment extends Fragment
 								implements ServiceResultReceiver.Receiver {
-	private static final String     TAG = ArtistInfoFragment.class.getName();
-	private static final String     ARTIST_KEY   = "ArtistInfoFragment_ArtistId";
+	private static final String     TAG             = ArtistInfoFragment.class.getName();
+	private static final String     ARTIST_KEY      = "ArtistInfoFragment_Artist";
+	private static final String     ARTIST_INFO_KEY = "ArtistInfoFragment_ArtistInfo";
 
 	private ServiceResultReceiver   mServiceResultReceiver;
-	private long                    mCurrentArtist;
+	private Artist                  mArtist;
+	private ArtistInfo              mArtistInfo;
 	private ImageView               mArtistImage;
+	private TextView                mArtistName;
+	private TextView                mArtistGenre;
 
-	public static ArtistInfoFragment newInstance( long artistId ) {
+	public static ArtistInfoFragment newInstance( Artist artist ) {
 		ArtistInfoFragment  fragment = new ArtistInfoFragment();
 		Bundle              args = new Bundle();
 
-		args.putLong( ARTIST_KEY, artistId );
+		args.putParcelable( ARTIST_KEY, artist );
 		fragment.setArguments( args );
 
 		return( fragment );
 	}
 
-	public ArtistInfoFragment() {
-		mCurrentArtist = Constants.NULL_ID;
-	}
+	protected ArtistInfoFragment() { }
 
 	@Override
 	public void onCreate( Bundle savedInstanceState ) {
@@ -62,21 +66,28 @@ public class ArtistInfoFragment extends Fragment
 		View myView = inflater.inflate( R.layout.fragment_artist_info, container, false );
 
 		if( savedInstanceState != null ) {
-			mCurrentArtist = savedInstanceState.getLong( ARTIST_KEY, Constants.NULL_ID );
+			mArtist = savedInstanceState.getParcelable( ARTIST_KEY );
+			mArtistInfo = savedInstanceState.getParcelable( ARTIST_INFO_KEY );
 		}
 		else {
 			Bundle  args = getArguments();
 
 			if( args != null ) {
-				mCurrentArtist = args.getLong( ARTIST_KEY, Constants.NULL_ID );
+				mArtist = args.getParcelable( ARTIST_KEY );
 			}
 		}
 
-		mArtistImage = (ImageView)myView.findViewById( R.id.artistImage );
+		if( myView != null ) {
+			mArtistImage = (ImageView)myView.findViewById( R.id.ai_artist_image );
+			mArtistName = (TextView)myView.findViewById( R.id.ai_artist_name );
+			mArtistGenre = (TextView)myView.findViewById( R.id.ai_artist_genre );
+		}
 
-		if( mCurrentArtist != Constants.NULL_ID ) {
-			if( getApplicationState().getIsConnected()) {
-				getApplicationState().getDataClient().GetArtistInfo( mCurrentArtist, mServiceResultReceiver );
+		if( mArtist != null ) {
+			if( mArtistInfo == null ) {
+				if( getApplicationState().getIsConnected()) {
+					getApplicationState().getDataClient().GetArtistInfo( mArtist.getArtistId(), mServiceResultReceiver );
+				}
 			}
 		}
 		else {
@@ -85,27 +96,39 @@ public class ArtistInfoFragment extends Fragment
 			}
 		}
 
+		updateDisplay();
+
 		return( myView );
 	}
 
 	@Override
 	public void onReceiveResult( int resultCode, Bundle resultData ) {
 		if( resultCode == NoiseRemoteApi.RemoteResultSuccess ) {
-			ArtistInfo  artistInfo = resultData.getParcelable( NoiseRemoteApi.ArtistInfo );
+			mArtistInfo = resultData.getParcelable( NoiseRemoteApi.ArtistInfo );
 
-			setArtistInfo( artistInfo );
+			updateDisplay();
 		}
 	}
 
-	private void setArtistInfo( ArtistInfo artistInfo ) {
-		mArtistImage.setImageBitmap( artistInfo.getArtistImage());
+	private void updateDisplay() {
+		if( mArtistInfo != null ) {
+			mArtistImage.setImageBitmap( mArtistInfo.getArtistImage());
+		}
+
+		if( mArtist != null ) {
+			mArtistName.setText( mArtist.getName());
+			mArtistGenre.setText( mArtist.getGenre());
+		}
 	}
 
 	@Override
 	public void onSaveInstanceState( Bundle outState ) {
 		super.onSaveInstanceState( outState );
 
-		outState.putLong( ARTIST_KEY, mCurrentArtist );
+		outState.putParcelable( ARTIST_KEY, mArtist );
+		if( mArtistInfo != null ) {
+			outState.putParcelable( ARTIST_INFO_KEY, mArtistInfo );
+		}
 	}
 
 	private IApplicationState getApplicationState() {

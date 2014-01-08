@@ -13,7 +13,6 @@ import com.SecretSquirrel.AndroidNoise.dto.Album;
 import com.SecretSquirrel.AndroidNoise.dto.Artist;
 import com.SecretSquirrel.AndroidNoise.events.EventAlbumSelected;
 import com.SecretSquirrel.AndroidNoise.events.EventArtistSelected;
-import com.SecretSquirrel.AndroidNoise.support.Constants;
 
 import de.greenrobot.event.EventBus;
 
@@ -29,8 +28,8 @@ public class ShellLibraryFragment extends BaseShellFragment {
 
 	private int                 mCurrentState;
 	private int                 mFragmentToCreate;
-	private long                mCurrentArtist;
-	private long                mCurrentAlbum;
+	private Artist              mCurrentArtist;
+	private Album               mCurrentAlbum;
 
 	public static ShellLibraryFragment newInstance( int fragmentId ) {
 		return( new ShellLibraryFragment( fragmentId ));
@@ -45,13 +44,13 @@ public class ShellLibraryFragment extends BaseShellFragment {
 		super.onCreate( savedInstanceState );
 
 		mCurrentState = LIBRARY_STATE_ARTIST_LIST;
-		mCurrentArtist = Constants.NULL_ID;
-		mCurrentAlbum = Constants.NULL_ID;
+		mCurrentArtist = null;
+		mCurrentAlbum = null;
 
 		if( savedInstanceState != null ) {
 			mCurrentState = savedInstanceState.getInt( LIBRARY_STATE, LIBRARY_STATE_ARTIST_LIST );
-			mCurrentArtist = savedInstanceState.getLong( LIBRARY_CURRENT_ARTIST, Constants.NULL_ID );
-			mCurrentAlbum = savedInstanceState.getLong( LIBRARY_CURRENT_ALBUM, Constants.NULL_ID );
+			mCurrentArtist = savedInstanceState.getParcelable( LIBRARY_CURRENT_ARTIST );
+			mCurrentAlbum = savedInstanceState.getParcelable( LIBRARY_CURRENT_ALBUM );
 		}
 
 		// Only create the child fragment if we are being created.
@@ -72,7 +71,7 @@ public class ShellLibraryFragment extends BaseShellFragment {
 				break;
 
 			case LIBRARY_STATE_ALBUM:
-				fragment = AlbumFragment.newInstance( mCurrentAlbum );
+				fragment = AlbumFragment.newInstance( mCurrentAlbum.AlbumId );
 				break;
 		}
 
@@ -108,8 +107,8 @@ public class ShellLibraryFragment extends BaseShellFragment {
 		// super.onSaveInstanceState( outState );
 
 		outState.putInt( LIBRARY_STATE, mCurrentState );
-		outState.putLong( LIBRARY_CURRENT_ARTIST, mCurrentArtist );
-		outState.putLong( LIBRARY_CURRENT_ALBUM, mCurrentAlbum );
+		outState.putParcelable( LIBRARY_CURRENT_ARTIST, mCurrentArtist );
+		outState.putParcelable( LIBRARY_CURRENT_ALBUM, mCurrentAlbum );
 	}
 
 	@SuppressWarnings( "unused" )
@@ -118,7 +117,7 @@ public class ShellLibraryFragment extends BaseShellFragment {
 
 		if( artist != null ) {
 			mCurrentState = LIBRARY_STATE_ARTIST;
-			mCurrentArtist = artist.ArtistId;
+			mCurrentArtist = artist;
 
 			getChildFragmentManager()
 					.beginTransaction()
@@ -135,12 +134,12 @@ public class ShellLibraryFragment extends BaseShellFragment {
 
 		if( album != null ) {
 			mCurrentState = LIBRARY_STATE_ALBUM;
-			mCurrentAlbum = album.AlbumId;
+			mCurrentAlbum = album;
 
 			getChildFragmentManager()
 					.beginTransaction()
 					.setCustomAnimations( android.R.anim.fade_in, android.R.anim.fade_out )
-					.replace( R.id.LibraryShellFrame, AlbumFragment.newInstance( mCurrentAlbum ))
+					.replace( R.id.LibraryShellFrame, AlbumFragment.newInstance( mCurrentAlbum.AlbumId ))
 					.addToBackStack( null )
 					.commit();
 		}

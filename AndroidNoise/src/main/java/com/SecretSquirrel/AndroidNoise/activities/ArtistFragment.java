@@ -10,48 +10,47 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.SecretSquirrel.AndroidNoise.R;
+import com.SecretSquirrel.AndroidNoise.dto.Artist;
 import com.SecretSquirrel.AndroidNoise.support.Constants;
 
 public class ArtistFragment extends Fragment {
 	private static final String     TAG = ArtistFragment.class.getName();
 	private static final String     ARTIST_KEY = "ArtistFragment_ArtistId";
 
-	private long        mCurrentArtist;
+	private Artist                  mCurrentArtist;
 
-	public static ArtistFragment newInstance( long artistId ) {
+	public static ArtistFragment newInstance( Artist artist ) {
 		ArtistFragment  fragment = new ArtistFragment();
 		Bundle          args = new Bundle();
 
-		args.putLong( ARTIST_KEY, artistId );
+		args.putParcelable( ARTIST_KEY, artist );
 		fragment.setArguments( args );
 
 		return( fragment );
 	}
 
-	public ArtistFragment() {
-		mCurrentArtist = Constants.NULL_ID;
-	}
+	protected ArtistFragment() { }
 
 	@Override
 	public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState ) {
 		View                myView = inflater.inflate( R.layout.fragment_artist_shell, container, false );
 
 		if( savedInstanceState != null ) {
-			mCurrentArtist = savedInstanceState.getLong( ARTIST_KEY, Constants.NULL_ID );
+			mCurrentArtist = savedInstanceState.getParcelable( ARTIST_KEY );
 		}
 		else {
 			Bundle  args = getArguments();
 
 			if( args != null ) {
-				mCurrentArtist = args.getLong( ARTIST_KEY, Constants.NULL_ID );
+				mCurrentArtist = args.getParcelable( ARTIST_KEY );
 			}
 		}
 
-		if( mCurrentArtist != Constants.NULL_ID ) {
+		if( mCurrentArtist != null ) {
 			getChildFragmentManager()
 					.beginTransaction()
 					.replace( R.id.frame_artist_info, ArtistInfoFragment.newInstance( mCurrentArtist ))
-					.replace( R.id.frame_album_list, AlbumListFragment.newInstance( mCurrentArtist ))
+					.replace( R.id.frame_album_list, AlbumListFragment.newInstance( mCurrentArtist.getArtistId()))
 					.commit();
 		}
 		else {
@@ -67,6 +66,6 @@ public class ArtistFragment extends Fragment {
 	public void onSaveInstanceState( Bundle outState ) {
 		super.onSaveInstanceState( outState );
 
-		outState.putLong( ARTIST_KEY, mCurrentArtist );
+		outState.putParcelable( ARTIST_KEY, mCurrentArtist );
 	}
 }

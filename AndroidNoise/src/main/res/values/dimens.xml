@@ -8,5 +8,10 @@
     <dimen name="list_item_subtitle_textSize">8pt</dimen>
     <dimen name="list_item_padding">5px</dimen>
     <dimen name="navigation_drawer_width">180dp</dimen>
+    <dimen name="noise_image_minimum_height">150dp</dimen>
+    <dimen name="noise_image_minimum_width">150dp</dimen>
+    <dimen name="noise_base_padding">7dp</dimen>
+    <dimen name="noise_title_textSize">14pt</dimen>
+    <dimen name="noise_subtitle_textSize">8pt</dimen>
 
 </resources>

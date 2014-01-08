@@ -1,19 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="match_parent">
 
-    <TextView
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:text="Artist Information"
-        />
-
     <ImageView
+        android:id="@+id/ai_artist_image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/artistImage"/>
+        android:minHeight="@dimen/noise_image_minimum_height"
+        android:minWidth="@dimen/noise_image_minimum_width"
+        android:maxHeight="@dimen/noise_image_minimum_height"
+        android:maxWidth="@dimen/noise_image_minimum_width"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="@dimen/noise_base_padding"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="@dimen/noise_base_padding"
+        android:layout_marginBottom="@dimen/noise_base_padding"/>
 
-</LinearLayout>
+    <TextView
+        android:id="@+id/ai_artist_name"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_alignParentLeft="false"
+        android:layout_marginLeft="0dp"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="@dimen/noise_base_padding"
+        android:layout_alignParentRight="true"
+        android:textSize="@dimen/noise_title_textSize"
+        android:textColor="#0078ff"
+        android:text="Artist Name"
+        android:layout_marginRight="@dimen/noise_base_padding"/>
+
+    <TextView
+        android:id="@+id/ai_artist_genre"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Genre"
+        android:layout_alignBottom="@+id/ai_artist_image"
+        android:layout_alignParentRight="true"
+        android:textSize="@dimen/noise_subtitle_textSize"
+        android:textColor="#0078ff"
+        android:layout_marginRight="@dimen/noise_base_padding"/>
+
+</RelativeLayout>

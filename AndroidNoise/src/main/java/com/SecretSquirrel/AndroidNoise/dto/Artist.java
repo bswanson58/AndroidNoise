@@ -4,17 +4,16 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.SecretSquirrel.AndroidNoise.services.rto.RoArtist;
-import com.SecretSquirrel.AndroidNoise.services.rto.RoServerVersion;
 
 // Secret Squirrel Software - Created by bswanson on 12/6/13.
 
 public class Artist implements Parcelable {
-	public long     ArtistId;
-	public String   Name;
-	public int      AlbumCount;
-	public int      Rating;
-	public String   Genre;
-	public boolean  IsFavorite;
+	private long        mArtistId;
+	private String      mName;
+	private int         mAlbumCount;
+	private int         mRating;
+	private String      mGenre;
+	private boolean     mIsFavorite;
 
 	/** Static field used to regenerate object, individually or as arrays */
 	public static final Parcelable.Creator<Artist> CREATOR = new Parcelable.Creator<Artist>() {
@@ -27,21 +26,45 @@ public class Artist implements Parcelable {
 	};
 
 	public Artist( RoArtist fromArtist ) {
-		ArtistId = fromArtist.DbId;
-		Name = fromArtist.Name;
-		AlbumCount = fromArtist.AlbumCount;
-		Rating = fromArtist.Rating;
-		Genre = fromArtist.Genre;
-		IsFavorite = fromArtist.IsFavorite;
+		mArtistId = fromArtist.DbId;
+		mName = fromArtist.Name;
+		mAlbumCount = fromArtist.AlbumCount;
+		mRating = fromArtist.Rating;
+		mGenre = fromArtist.Genre;
+		mIsFavorite = fromArtist.IsFavorite;
 	}
 
 	public Artist( Parcel parcel ) {
-		ArtistId = parcel.readLong();
-		Name = parcel.readString();
-		AlbumCount = parcel.readInt();
-		Rating = parcel.readInt();
-		Genre = parcel.readString();
-		IsFavorite = parcel.readByte() != 0;
+		mArtistId = parcel.readLong();
+		mName = parcel.readString();
+		mAlbumCount = parcel.readInt();
+		mRating = parcel.readInt();
+		mGenre = parcel.readString();
+		mIsFavorite = parcel.readByte() != 0;
+	}
+
+	public long getArtistId() {
+		return( mArtistId );
+	}
+
+	public String getName() {
+		return( mName );
+	}
+
+	public int getAlbumCount() {
+		return( mAlbumCount );
+	}
+
+	public int getRating() {
+		return( mRating );
+	}
+
+	public String getGenre() {
+		return( mGenre );
+	}
+
+	public boolean isFavorite() {
+		return( mIsFavorite );
 	}
 
 	@Override
@@ -51,11 +74,11 @@ public class Artist implements Parcelable {
 
 	@Override
 	public void writeToParcel( Parcel parcel, int i ) {
-		parcel.writeLong( ArtistId );
-		parcel.writeString( Name );
-		parcel.writeInt( AlbumCount );
-		parcel.writeInt( Rating );
-		parcel.writeString( Genre );
-		parcel.writeByte((byte)( IsFavorite ? 1 : 0));
+		parcel.writeLong( mArtistId );
+		parcel.writeString( mName );
+		parcel.writeInt( mAlbumCount );
+		parcel.writeInt( mRating );
+		parcel.writeString( mGenre );
+		parcel.writeByte((byte)( mIsFavorite ? 1 : 0));
 	}
 }

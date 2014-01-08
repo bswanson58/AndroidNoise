@@ -31,7 +31,6 @@ import de.greenrobot.event.EventBus;
 public class ArtistListFragment extends Fragment
 								implements ServiceResultReceiver.Receiver {
 	private ServiceResultReceiver   mServiceResultReceiver;
-	private ListView                mArtistListView;
 	private ArrayList<Artist>       mArtistList;
 	private ArtistAdapter           mArtistListAdapter;
 
@@ -54,19 +53,22 @@ public class ArtistListFragment extends Fragment
 	public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState ) {
 		View    myView = inflater.inflate( R.layout.fragment_artist_list, container, false );
 
-		mArtistListView = (ListView) myView.findViewById( R.id.ArtistListView );
-		mArtistListView.setAdapter( mArtistListAdapter );
+		if( myView != null ) {
+			ListView    artistListView = (ListView) myView.findViewById( R.id.ArtistListView );
 
-		mArtistListView.setOnItemClickListener( new AdapterView.OnItemClickListener() {
-			@Override
-			public void onItemClick( AdapterView<?> adapterView, View view, int i, long l ) {
-				Artist  artist = mArtistList.get( i );
+			artistListView.setAdapter( mArtistListAdapter );
 
-				if( artist != null ) {
-					selectArtist( artist );
+			artistListView.setOnItemClickListener( new AdapterView.OnItemClickListener() {
+				@Override
+				public void onItemClick( AdapterView<?> adapterView, View view, int i, long l ) {
+					Artist  artist = mArtistList.get( i );
+
+					if( artist != null ) {
+						selectArtist( artist );
+					}
 				}
-			}
-		} );
+			} );
+		}
 
 		if( getApplicationState().getIsConnected()) {
 			getApplicationState().getDataClient().GetArtistList( mServiceResultReceiver );
@@ -97,7 +99,7 @@ public class ArtistListFragment extends Fragment
 
 		Collections.sort( mArtistList, new Comparator<Artist>() {
 			public int compare( Artist artist1, Artist artist2 ) {
-				return (artist1.Name.compareToIgnoreCase( artist2.Name ));
+				return (artist1.getName().compareToIgnoreCase( artist2.getName()));
 			}
 		} );
 
@@ -143,12 +145,14 @@ public class ArtistListFragment extends Fragment
 			if( convertView == null ) {
 				retValue = mLayoutInflater.inflate( R.layout.artist_list_item, parent, false );
 
-				views = new ViewHolder();
-				views.NameTextView = (TextView)retValue.findViewById( R.id.artist_list_item_name );
-				views.AlbumCountTextView = (TextView)retValue.findViewById( R.id.artist_list_item_albumCount );
-				views.GenreTextView = (TextView)retValue.findViewById( R.id.artist_list_item_genre );
+				if( retValue != null ) {
+					views = new ViewHolder();
+					views.NameTextView = (TextView)retValue.findViewById( R.id.artist_list_item_name );
+					views.AlbumCountTextView = (TextView)retValue.findViewById( R.id.artist_list_item_albumCount );
+					views.GenreTextView = (TextView)retValue.findViewById( R.id.artist_list_item_genre );
 
-				retValue.setTag( views );
+					retValue.setTag( views );
+				}
 			}
 			else {
 				views = (ViewHolder)retValue.getTag();
@@ -158,9 +162,9 @@ public class ArtistListFragment extends Fragment
 			   ( position < mArtistList.size())) {
 				Artist      artist = mArtistList.get( position );
 
-				views.NameTextView.setText( artist.Name );
-				views.AlbumCountTextView.setText( "Albums: " + artist.AlbumCount );
-				views.GenreTextView.setText( artist.Genre );
+				views.NameTextView.setText( artist.getName());
+				views.AlbumCountTextView.setText( "Albums: " + artist.getAlbumCount());
+				views.GenreTextView.setText( artist.getGenre());
 			}
 
 			return( retValue );
