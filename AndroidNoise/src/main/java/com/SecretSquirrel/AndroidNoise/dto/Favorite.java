@@ -8,12 +8,12 @@ import com.SecretSquirrel.AndroidNoise.services.rto.RoFavorite;
 // Created by BSwanson on 12/28/13.
 
 public class Favorite implements Parcelable {
-	public long			ArtistId;
-	public long			AlbumId;
-	public long			TrackId;
-	public String		Artist;
-	public String		Album;
-	public String		Track;
+	private long        mArtistId;
+	private long        mAlbumId;
+	private long        mTrackId;
+	private String      mArtist;
+	private String      mAlbum;
+	private String      mTrack;
 
 	/** Static field used to regenerate object, individually or as arrays */
 	public static final Parcelable.Creator<Favorite> CREATOR = new Parcelable.Creator<Favorite>() {
@@ -26,35 +26,59 @@ public class Favorite implements Parcelable {
 	};
 
 	public Favorite( RoFavorite fromFavorite ) {
-		ArtistId = fromFavorite.ArtistId;
-		AlbumId = fromFavorite.AlbumId;
-		TrackId = fromFavorite.TrackId;
-		Artist = fromFavorite.Artist;
-		Album = fromFavorite.Album;
-		Track = fromFavorite.Track;
+		mArtistId = fromFavorite.ArtistId;
+		mAlbumId = fromFavorite.AlbumId;
+		mTrackId = fromFavorite.TrackId;
+		mArtist = fromFavorite.Artist;
+		mAlbum = fromFavorite.Album;
+		mTrack = fromFavorite.Track;
 	}
 
 	public Favorite( Parcel parcel ) {
-		ArtistId = parcel.readLong();
-		AlbumId = parcel.readLong();
-		TrackId = parcel.readLong();
-		Artist = parcel.readString();
-		Album = parcel.readString();
-		Track = parcel.readString();
+		mArtistId = parcel.readLong();
+		mAlbumId = parcel.readLong();
+		mTrackId = parcel.readLong();
+		mArtist = parcel.readString();
+		mAlbum = parcel.readString();
+		mTrack = parcel.readString();
+	}
+
+	public long getArtistId() {
+		return( mArtistId );
+	}
+
+	public long getAlbumId() {
+		return( mAlbumId );
+	}
+
+	public long getTrackId() {
+		return( mTrackId );
+	}
+
+	public String getArtist() {
+		return( mArtist );
+	}
+
+	public String getAlbum() {
+		return( mAlbum );
+	}
+
+	public String getTrack() {
+		return( mTrack );
 	}
 
 	@Override
 	public int describeContents() {
-		return 0;
+		return( 0 );
 	}
 
 	@Override
 	public void writeToParcel( Parcel parcel, int i ) {
-		parcel.writeLong( ArtistId );
-		parcel.writeLong( AlbumId );
-		parcel.writeLong( TrackId );
-		parcel.writeString( Artist );
-		parcel.writeString( Album );
-		parcel.writeString( Track );
+		parcel.writeLong( mArtistId );
+		parcel.writeLong( mAlbumId );
+		parcel.writeLong( mTrackId );
+		parcel.writeString( mArtist );
+		parcel.writeString( mAlbum );
+		parcel.writeString( mTrack );
 	}
 }

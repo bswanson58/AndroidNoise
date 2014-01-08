@@ -39,9 +39,9 @@ public class Album implements Parcelable {
 	}
 
 	public Album( Favorite favorite ) {
-		mAlbumId = favorite.AlbumId;
-		mArtistId = favorite.ArtistId;
-		mName = favorite.Album;
+		mAlbumId = favorite.getAlbumId();
+		mArtistId = favorite.getArtistId();
+		mName = favorite.getAlbum();
 		mIsFavorite = true;
 	}
 

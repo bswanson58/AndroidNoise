@@ -31,7 +31,6 @@ import de.greenrobot.event.EventBus;
 public class FavoritesListFragment extends Fragment
 								   implements ServiceResultReceiver.Receiver {
 	private ServiceResultReceiver   mServiceResultReceiver;
-	private ListView                mFavoritesListView;
 	private ArrayList<Favorite>     mFavoritesList;
 	private FavoritesAdapter        mFavoritesListAdapter;
 
@@ -54,8 +53,11 @@ public class FavoritesListFragment extends Fragment
 	public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState ) {
 		View    myView = inflater.inflate( R.layout.fragment_favorites_list, container, false );
 
-		mFavoritesListView = (ListView) myView.findViewById( R.id.FavoritesListView );
-		mFavoritesListView.setAdapter( mFavoritesListAdapter );
+		if( myView != null ) {
+			ListView    favoritesListView = (ListView) myView.findViewById( R.id.FavoritesListView );
+
+			favoritesListView.setAdapter( mFavoritesListAdapter );
+		}
 
 		if( getApplicationState().getIsConnected()) {
 			getApplicationState().getDataClient().GetFavoritesList( mServiceResultReceiver );
@@ -86,7 +88,7 @@ public class FavoritesListFragment extends Fragment
 
 		Collections.sort( mFavoritesList, new Comparator<Favorite>() {
 			public int compare( Favorite favorite1, Favorite favorite2 ) {
-				return( favorite1.Artist.compareToIgnoreCase( favorite2.Artist ));
+				return( favorite1.getArtist().compareToIgnoreCase( favorite2.getArtist()));
 			}
 		} );
 
@@ -120,27 +122,29 @@ public class FavoritesListFragment extends Fragment
 		@Override
 		public View getView( int position, View convertView, ViewGroup parent ) {
 			View        retValue = convertView;
-			ViewHolder  views;
+			ViewHolder  views = null;
 
 			if( convertView == null ) {
 				retValue = mLayoutInflater.inflate( R.layout.favorite_list_item, parent, false );
 
-				views = new ViewHolder();
-				views.NameTextView = (TextView)retValue.findViewById( R.id.favorite_list_item_name );
+				if( retValue != null ) {
+					views = new ViewHolder();
+					views.NameTextView = (TextView)retValue.findViewById( R.id.favorite_list_item_name );
 
-				views.PlayButton = (Button) retValue.findViewById( R.id.play_button );
-				views.PlayButton.setOnClickListener( new View.OnClickListener() {
-					@Override
-					public void onClick( View view ) {
-						Favorite    favorite = (Favorite)view.getTag();
+					views.PlayButton = (Button) retValue.findViewById( R.id.play_button );
+					views.PlayButton.setOnClickListener( new View.OnClickListener() {
+						@Override
+						public void onClick( View view ) {
+							Favorite    favorite = (Favorite)view.getTag();
 
-						if( favorite != null ) {
-							EventBus.getDefault().post( new EventPlayFavorite( favorite ));
+							if( favorite != null ) {
+								EventBus.getDefault().post( new EventPlayFavorite( favorite ));
+							}
 						}
-					}
-				} );
+					} );
 
-				retValue.setTag( views );
+					retValue.setTag( views );
+				}
 			}
 			else {
 				views = (ViewHolder)retValue.getTag();
@@ -151,7 +155,7 @@ public class FavoritesListFragment extends Fragment
 				Favorite    favorite = mFavoritesList.get( position );
 
 				views.PlayButton.setTag( favorite );
-				views.NameTextView.setText( favorite.Artist + "/" + favorite.Album + "/" + favorite.Track );
+				views.NameTextView.setText( favorite.getArtist() + "/" + favorite.getAlbum() + "/" + favorite.getTrack());
 			}
 
 			return( retValue );

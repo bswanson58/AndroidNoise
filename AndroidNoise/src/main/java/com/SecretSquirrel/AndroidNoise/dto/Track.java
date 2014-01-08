@@ -41,10 +41,10 @@ public class Track implements Parcelable {
 	}
 
 	public Track( Favorite favorite ) {
-		mTrackId = favorite.TrackId;
-		mAlbumId = favorite.AlbumId;
-		mArtistId = favorite.ArtistId;
-		mName = favorite.Track;
+		mTrackId = favorite.getTrackId();
+		mAlbumId = favorite.getAlbumId();
+		mArtistId = favorite.getArtistId();
+		mName = favorite.getTrack();
 		mIsFavorite = true;
 	}
 

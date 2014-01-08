@@ -91,10 +91,10 @@ public class QueueRequestHandler {
 
 	private void PlayFavorite( Favorite favorite ) {
 		if( favorite != null ) {
-			if( favorite.TrackId != Constants.NULL_ID ) {
+			if( favorite.getTrackId() != Constants.NULL_ID ) {
 				PlayTrack( new Track( favorite ));
 			}
-			else if( favorite.AlbumId != Constants.NULL_ID ) {
+			else if( favorite.getAlbumId() != Constants.NULL_ID ) {
 				PlayAlbum( new Album( favorite ));
 			}
 		}
