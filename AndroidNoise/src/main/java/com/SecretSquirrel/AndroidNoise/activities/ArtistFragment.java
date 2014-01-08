@@ -29,8 +29,6 @@ public class ArtistFragment extends Fragment {
 		return( fragment );
 	}
 
-	protected ArtistFragment() { }
-
 	@Override
 	public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState ) {
 		View                myView = inflater.inflate( R.layout.fragment_artist_shell, container, false );

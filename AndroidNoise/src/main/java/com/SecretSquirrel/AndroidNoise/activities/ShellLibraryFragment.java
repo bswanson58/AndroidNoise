@@ -32,11 +32,13 @@ public class ShellLibraryFragment extends BaseShellFragment {
 	private Album               mCurrentAlbum;
 
 	public static ShellLibraryFragment newInstance( int fragmentId ) {
-		return( new ShellLibraryFragment( fragmentId ));
-	}
+		ShellLibraryFragment    fragment = new ShellLibraryFragment();
+		Bundle                  args = new Bundle();
 
-	protected ShellLibraryFragment( int fragmentId ) {
-		super( fragmentId );
+		args.putInt( SHELL_FRAGMENT_KEY, fragmentId );
+		fragment.setArguments( args );
+
+		return( fragment );
 	}
 
 	@Override
@@ -105,6 +107,8 @@ public class ShellLibraryFragment extends BaseShellFragment {
 	public void onSaveInstanceState( Bundle outState ) {
 		// Do not save the current fragment - which the base class method will do.
 		// super.onSaveInstanceState( outState );
+
+		outState.putInt( SHELL_FRAGMENT_KEY, getFragmentId());
 
 		outState.putInt( LIBRARY_STATE, mCurrentState );
 		outState.putParcelable( LIBRARY_CURRENT_ARTIST, mCurrentArtist );

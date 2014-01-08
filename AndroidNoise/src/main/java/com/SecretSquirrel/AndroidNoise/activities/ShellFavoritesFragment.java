@@ -12,11 +12,13 @@ import com.SecretSquirrel.AndroidNoise.R;
 
 public class ShellFavoritesFragment extends BaseShellFragment {
 	public static ShellFavoritesFragment newInstance( int fragmentId ) {
-		return( new ShellFavoritesFragment( fragmentId ));
-	}
+		ShellFavoritesFragment  fragment = new ShellFavoritesFragment();
+		Bundle                  args = new Bundle();
 
-	protected ShellFavoritesFragment( int fragmentId ) {
-		super( fragmentId );
+		args.putInt( SHELL_FRAGMENT_KEY, fragmentId );
+		fragment.setArguments( args );
+
+		return( fragment );
 	}
 
 	@Override

@@ -12,11 +12,13 @@ import com.SecretSquirrel.AndroidNoise.R;
 
 public class ShellServerFragment extends BaseShellFragment {
 	public static ShellServerFragment newInstance( int fragmentId ) {
-		return( new ShellServerFragment( fragmentId ));
-	}
+		ShellServerFragment     fragment = new ShellServerFragment();
+		Bundle                  args = new Bundle();
 
-	protected ShellServerFragment( int fragmentId ) {
-		super( fragmentId );
+		args.putInt( SHELL_FRAGMENT_KEY, fragmentId );
+		fragment.setArguments( args );
+
+		return( fragment );
 	}
 
 	@Override
