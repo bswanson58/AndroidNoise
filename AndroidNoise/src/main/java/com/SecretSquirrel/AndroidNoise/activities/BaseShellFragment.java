@@ -30,8 +30,10 @@ public class BaseShellFragment extends Fragment {
 			}
 		}
 
-		if( Constants.LOG_ERROR ) {
-			Log.e( TAG, "ShellActivity Fragment ID cannot be determined." );
+		if( mFragmentId == 0 ) {
+			if( Constants.LOG_ERROR ) {
+				Log.e( TAG, "ShellActivity Fragment ID cannot be determined." );
+			}
 		}
 	}
 
