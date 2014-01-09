@@ -7,11 +7,14 @@
     <TextView
         android:layout_height="wrap_content"
         android:layout_width="fill_parent"
-        android:text="Album List"
-        />
+        android:text="@string/noise_al_album_list"
+        android:textSize="@dimen/noise_header_text_size"
+        android:layout_marginLeft="@dimen/noise_base_padding"
+        android:layout_marginTop="@dimen/noise_base_padding"/>
     <ListView
-        android:id="@+id/AlbumListView"
+        android:id="@+id/al_album_list_view"
         android:layout_height="wrap_content"
-        android:layout_width="fill_parent"/>
+        android:layout_width="fill_parent"
+        android:layout_margin="@dimen/noise_base_padding"/>
 
 </LinearLayout>

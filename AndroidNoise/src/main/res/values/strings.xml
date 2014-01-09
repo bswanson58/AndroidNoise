@@ -21,6 +21,8 @@
     <string name="action_example">Example action</string>
     <string name="text_available_servers">Available Noise Systems:</string>
     <string name="search_results_title">Search Results</string>
-    <string name="search_button_title">Search</string><string name="noise_al_artist_list">Artists:</string>
+    <string name="search_button_title">Search</string>
+    <string name="noise_al_artist_list">Artists:</string>
+    <string name="noise_al_album_list">Albums:</string>
 
 </resources>

@@ -13,12 +13,9 @@
         android:text="@string/noise_al_artist_list"
         android:textSize="@dimen/noise_header_text_size"/>
     <ListView
-        android:id="@+id/al_list_view"
+        android:id="@+id/al_artist_list_view"
         android:layout_height="wrap_content"
         android:layout_width="fill_parent"
-        android:layout_marginLeft="@dimen/noise_base_padding"
-        android:layout_marginTop="@dimen/noise_base_padding"
-        android:layout_marginRight="@dimen/noise_base_padding"
-        android:layout_marginBottom="@dimen/noise_base_padding"/>
+        android:layout_margin="@dimen/noise_base_padding"/>
 
 </LinearLayout>

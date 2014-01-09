@@ -71,7 +71,7 @@ public class AlbumListFragment extends Fragment
 		View    myView = inflater.inflate( R.layout.fragment_album_list, container, false );
 
 		if( myView != null ) {
-			ListView albumListView = (ListView)myView.findViewById( R.id.AlbumListView );
+			ListView albumListView = (ListView)myView.findViewById( R.id.al_album_list_view );
 
 			albumListView.setAdapter( mAlbumListAdapter );
 

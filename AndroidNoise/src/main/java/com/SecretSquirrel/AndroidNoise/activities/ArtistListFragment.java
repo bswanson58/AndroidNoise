@@ -54,10 +54,9 @@ public class ArtistListFragment extends Fragment
 		View    myView = inflater.inflate( R.layout.fragment_artist_list, container, false );
 
 		if( myView != null ) {
-			ListView    artistListView = (ListView) myView.findViewById( R.id.ArtistListView );
+			ListView    artistListView = (ListView) myView.findViewById( R.id.al_artist_list_view );
 
 			artistListView.setAdapter( mArtistListAdapter );
-
 			artistListView.setOnItemClickListener( new AdapterView.OnItemClickListener() {
 				@Override
 				public void onItemClick( AdapterView<?> adapterView, View view, int i, long l ) {
