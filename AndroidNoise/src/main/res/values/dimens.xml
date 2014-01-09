@@ -12,6 +12,6 @@
     <dimen name="noise_image_minimum_width">150dp</dimen>
     <dimen name="noise_base_padding">7dp</dimen>
     <dimen name="noise_title_textSize">14pt</dimen>
-    <dimen name="noise_subtitle_textSize">8pt</dimen>
+    <dimen name="noise_subtitle_textSize">8pt</dimen><dimen name="noise_header_text_size">10pt</dimen>
 
 </resources>
