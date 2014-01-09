@@ -69,8 +69,7 @@ public class ServerListFragment extends Fragment {
 		View    myView = inflater.inflate( R.layout.fragment_server_list, container, false );
 
 		if( myView != null ) {
-			ListView    serverListView = (ListView) myView.findViewById( R.id.ServerListView );
-
+			ListView    serverListView = (ListView) myView.findViewById( R.id.sl_server_list_view );
 			serverListView.setAdapter( mServerListAdapter );
 			serverListView.setOnItemClickListener( new AdapterView.OnItemClickListener() {
 				@Override

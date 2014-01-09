@@ -8,11 +8,14 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/text_available_servers"
-        android:id="@+id/textView"/>
+        android:text="@string/noise_al_server_list"
+        android:textSize="@dimen/noise_header_text_size"
+        android:layout_marginLeft="@dimen/noise_base_padding"
+        android:layout_marginTop="@dimen/noise_base_padding"/>
 
     <ListView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/ServerListView"/>
+        android:id="@+id/sl_server_list_view"
+        android:layout_margin="@dimen/noise_base_padding"/>
 </LinearLayout>
