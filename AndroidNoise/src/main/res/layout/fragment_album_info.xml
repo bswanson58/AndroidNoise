@@ -20,16 +20,11 @@
 
     <ImageView
         android:id="@+id/ai_album_cover_image"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/noise_image_maximum_width"
+        android:layout_height="@dimen/noise_image_minimum_height"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:layout_marginLeft="@dimen/noise_base_padding"
-        android:layout_marginTop="@dimen/noise_base_padding"
-        android:layout_marginBottom="@dimen/noise_base_padding"
-        android:maxHeight="@dimen/noise_image_minimum_height"
-        android:maxWidth="@dimen/noise_image_minimum_width"
-        android:minHeight="@dimen/noise_image_minimum_height"
-        android:minWidth="@dimen/noise_image_minimum_width"
+        android:scaleType="fitCenter"
+        android:layout_margin="@dimen/noise_base_padding"
         android:adjustViewBounds="true"/>
 </RelativeLayout>
