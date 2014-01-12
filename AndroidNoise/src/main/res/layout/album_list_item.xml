@@ -6,14 +6,13 @@
               android:orientation="horizontal">
 
     <Button
-        style="?android:attr/buttonStyleSmall"
+        android:id="@+id/play_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:focusable="false"
         android:text="@string/play_button_text"
-        android:id="@+id/play_button"
-        android:textSize="@dimen/list_item_subtitle_textSize"
-        android:layout_gravity="center_vertical"/>
+        android:layout_gravity="center_vertical"
+        style="@style/PlayButtonStyle"/>
 
     <TextView
         android:id="@+id/album_list_item_name"
@@ -21,8 +20,8 @@
         android:layout_width="fill_parent"
         android:textSize="@dimen/list_item_title_textSize"
         android:gravity="left|top"
-        android:textColor="#0078ff"
         android:layout_gravity="center_vertical"
-        android:clickable="false"/>
+        android:clickable="false"
+        style="@style/TitleText"/>
 
 </LinearLayout>

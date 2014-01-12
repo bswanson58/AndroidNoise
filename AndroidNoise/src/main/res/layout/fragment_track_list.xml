@@ -8,11 +8,14 @@
     <TextView
         android:layout_height="wrap_content"
         android:layout_width="fill_parent"
+        android:layout_marginLeft="@dimen/noise_base_padding"
+        android:layout_marginTop="@dimen/noise_base_padding"
         android:text="Track List"
-        />
+        style="@style/HeaderText"/>
     <ListView
         android:id="@+id/TrackListView"
         android:layout_height="wrap_content"
-        android:layout_width="fill_parent"/>
+        android:layout_width="fill_parent"
+        style="@style/LongListStyle"/>
 
 </LinearLayout>

@@ -5,4 +5,30 @@
         <!-- Customize your theme here. -->
     </style>
 
+    <style name="BaseText">
+
+    </style>
+
+    <style name="TitleText" parent="BaseText">
+        <item name="android:textSize">12pt</item>
+        <item name="android:textColor">@color/TitleText</item>
+    </style>
+
+    <style name="SubTitleText" parent="BaseText">
+        <item name="android:textSize">8pt</item>
+        <item name="android:textColor">@color/SubTitleText</item>
+    </style>
+
+    <style name="HeaderText" parent="BaseText">
+        <item name="android:textSize">@dimen/noise_header_text_size</item>
+        <item name="android:textColor">@color/HeaderText</item>
+    </style>
+
+    <style name="LongListStyle">
+        <item name="android:layout_margin">7dp</item>
+    </style>
+
+    <style name="PlayButtonStyle" parent="@android:style/Widget.Button.Small">
+        <item name="android:textSize">8pt</item>
+    </style>
 </resources>
