@@ -26,9 +26,6 @@
             android:name="com.SecretSquirrel.AndroidNoise.services.NoiseDataService"
             android:label="AndroidNoise:NoiseDataService" />
         <service
-            android:name="com.SecretSquirrel.AndroidNoise.services.ServiceLocator"
-            android:label="AndroidNoise:ServiceLocator" />
-        <service
             android:name="com.SecretSquirrel.AndroidNoise.services.EventHostService"
             android:label="AndroidNoise:EventHostService"/>
 
