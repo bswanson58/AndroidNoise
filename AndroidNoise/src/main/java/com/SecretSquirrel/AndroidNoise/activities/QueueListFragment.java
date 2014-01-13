@@ -29,6 +29,7 @@ import com.SecretSquirrel.AndroidNoise.services.EventHostService;
 import com.SecretSquirrel.AndroidNoise.support.Constants;
 
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 import rx.Subscription;
 import rx.util.functions.Action1;
@@ -36,7 +37,6 @@ import rx.util.functions.Action1;
 public class QueueListFragment extends Fragment  {
 	private static final String TAG     = QueueListFragment.class.getName();
 
-	private ListView                    mQueueListView;
 	private ArrayList<PlayQueueTrack>   mQueueList;
 	private QueueAdapter                mQueueListAdapter;
 	private Subscription                mQueueSubscription;
@@ -55,8 +55,11 @@ public class QueueListFragment extends Fragment  {
 			try {
 				Message message = Message.obtain( null, EventHostService.SERVER_EVENT_REGISTER_CLIENT );
 
-				message.replyTo = mMessenger;
-				mService.send( message );
+				if( message != null ) {
+					message.replyTo = mMessenger;
+
+					mService.send( message );
+				}
 			} catch( RemoteException ex ) {
 				if( Constants.LOG_ERROR ) {
 					Log.e( TAG, "Sending register client.", ex );
@@ -97,8 +100,11 @@ public class QueueListFragment extends Fragment  {
 	public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState ) {
 		View    myView = inflater.inflate( R.layout.fragment_queue_list, container, false );
 
-		mQueueListView = (ListView) myView.findViewById( R.id.QueueListView );
-		mQueueListView.setAdapter( mQueueListAdapter );
+		if( myView != null ) {
+			ListView queueListView = (ListView) myView.findViewById( R.id.QueueListView );
+
+			queueListView.setAdapter( mQueueListAdapter );
+		}
 
 		if( getApplicationState().getIsConnected()) {
 			bindToEventService();
@@ -138,8 +144,11 @@ public class QueueListFragment extends Fragment  {
 				try {
 					Message message = Message.obtain( null, EventHostService.SERVER_EVENT_UNREGISTER_CLIENT );
 
-					message.replyTo = mMessenger;
-					mService.send( message );
+					if( message != null ) {
+						message.replyTo = mMessenger;
+
+						mService.send( message );
+					}
 				} catch( RemoteException ex ) {
 					if( Constants.LOG_ERROR ) {
 						Log.e( TAG, "unbindEventService", ex );
@@ -204,7 +213,10 @@ public class QueueListFragment extends Fragment  {
 		private ArrayList<PlayQueueTrack>   mQueueList;
 
 		private class ViewHolder {
+			public TextView NowPlaying;
 			public TextView NameTextView;
+			public TextView AlbumTextView;
+			public TextView PlayDuration;
 		}
 
 		public QueueAdapter( Context context, ArrayList<PlayQueueTrack> queueList ) {
@@ -218,15 +230,21 @@ public class QueueListFragment extends Fragment  {
 		@Override
 		public View getView( int position, View convertView, ViewGroup parent ) {
 			View        retValue = convertView;
-			ViewHolder  views;
+			ViewHolder  views = null;
 
 			if( convertView == null ) {
 				retValue = mLayoutInflater.inflate( R.layout.queue_list_item, parent, false );
 
-				views = new ViewHolder();
-				views.NameTextView = (TextView)retValue.findViewById( R.id.queue_list_item_name );
+				if( retValue != null ) {
+					views = new ViewHolder();
+					
+					views.NowPlaying = (TextView)retValue.findViewById( R.id.qli_now_playing );
+					views.NameTextView = (TextView)retValue.findViewById( R.id.qli_item_name );
+					views.AlbumTextView = (TextView)retValue.findViewById( R.id.qli_album_name );
+					views.PlayDuration = (TextView)retValue.findViewById( R.id.qli_play_duration );
 
-				retValue.setTag( views );
+					retValue.setTag( views );
+				}
 			}
 			else {
 				views = (ViewHolder)retValue.getTag();
@@ -236,7 +254,20 @@ public class QueueListFragment extends Fragment  {
 			   ( position < mQueueList.size())) {
 				PlayQueueTrack  track = mQueueList.get( position );
 
-				views.NameTextView.setText( track.getTrackName() + " (" + track.getArtistName() + "/" + track.getAlbumName() + ")" );
+				if( track.isPlaying()) {
+					views.NowPlaying.setVisibility( View.VISIBLE );
+				}
+				else {
+					views.NowPlaying.setVisibility( View.INVISIBLE );
+				}
+
+				views.NameTextView.setText( track.getTrackName());
+				views.AlbumTextView.setText( " (" + track.getArtistName() + "/" + track.getAlbumName() + ")" );
+				views.PlayDuration.setText(
+						String.format( "%d:%02d",
+								TimeUnit.MILLISECONDS.toMinutes( track.getDurationMilliseconds()),
+								TimeUnit.MILLISECONDS.toSeconds( track.getDurationMilliseconds()) -
+								TimeUnit.MINUTES.toSeconds( TimeUnit.MILLISECONDS.toMinutes( track.getDurationMilliseconds()))));
 			}
 
 			return( retValue );
