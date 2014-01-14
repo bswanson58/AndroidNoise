@@ -27,6 +27,7 @@ import com.SecretSquirrel.AndroidNoise.support.Constants;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.concurrent.TimeUnit;
 
 import de.greenrobot.event.EventBus;
 
@@ -156,6 +157,7 @@ public class TrackListFragment extends Fragment
 		private class ViewHolder {
 			public Button   PlayButton;
 			public TextView NameTextView;
+			public TextView DurationTextView;
 		}
 
 		public TrackAdapter( Context context, ArrayList<Track> trackList ) {
@@ -176,7 +178,8 @@ public class TrackListFragment extends Fragment
 
 				if( retValue != null ) {
 					views = new ViewHolder();
-					views.NameTextView = (TextView)retValue.findViewById( R.id.track_list_item_name );
+					views.NameTextView = (TextView)retValue.findViewById( R.id.tli_name );
+					views.DurationTextView = (TextView)retValue.findViewById( R.id.tli_duration );
 
 					views.PlayButton = (Button) retValue.findViewById( R.id.play_button );
 					views.PlayButton.setOnClickListener( new View.OnClickListener() {
@@ -202,7 +205,12 @@ public class TrackListFragment extends Fragment
 				Track track = mTrackList.get( position );
 
 				views.PlayButton.setTag( track );
-				views.NameTextView.setText( track.getName());
+				views.NameTextView.setText( track.getName() );
+				views.DurationTextView.setText(
+						String.format( "%d:%02d",
+								TimeUnit.MILLISECONDS.toMinutes( track.getDurationMilliseconds()),
+								TimeUnit.MILLISECONDS.toSeconds( track.getDurationMilliseconds()) -
+								TimeUnit.MINUTES.toSeconds( TimeUnit.MILLISECONDS.toMinutes( track.getDurationMilliseconds()))));
 			}
 
 			return( retValue );

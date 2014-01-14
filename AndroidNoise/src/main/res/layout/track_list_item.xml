@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="horizontal"
               android:layout_width="match_parent"
               android:layout_height="wrap_content">
@@ -10,16 +10,22 @@
         android:layout_height="wrap_content"
         android:focusable="false"
         android:text="@string/play_button_text"
-        android:layout_gravity="center_vertical"
-        style="@style/PlayButtonStyle"/>
+        style="@style/PlayButtonStyle"
+        android:layout_alignParentLeft="true"/>
 
     <TextView
-        android:id="@+id/track_list_item_name"
+        android:id="@+id/tli_name"
         android:layout_height="wrap_content"
-        android:layout_width="fill_parent"
-        android:textSize="@dimen/list_item_title_textSize"
-        android:gravity="left|top"
-        android:layout_gravity="center_vertical"
-        style="@style/TitleText"/>
+        android:layout_width="wrap_content"
+        style="@style/TitleText"
+        android:layout_toRightOf="@+id/play_button"
+        android:layout_alignBaseline="@+id/play_button"/>
 
-</LinearLayout>
+    <TextView
+        android:id="@+id/tli_duration"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        style="@style/TitleText"
+        android:layout_alignParentRight="true"
+        android:layout_alignBaseline="@+id/play_button"/>
+</RelativeLayout>
