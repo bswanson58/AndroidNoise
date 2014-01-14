@@ -6,6 +6,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -108,7 +109,8 @@ public class FavoritesListFragment extends Fragment
 
 		private class ViewHolder {
 			public Button       PlayButton;
-			public TextView     NameTextView;
+			public TextView     TitleTextView;
+			public TextView     SubtitleTextView;
 		}
 
 		public FavoritesAdapter( Context context, ArrayList<Favorite> favoritesList ) {
@@ -129,7 +131,8 @@ public class FavoritesListFragment extends Fragment
 
 				if( retValue != null ) {
 					views = new ViewHolder();
-					views.NameTextView = (TextView)retValue.findViewById( R.id.favorite_list_item_name );
+					views.TitleTextView = (TextView)retValue.findViewById( R.id.fli_name );
+					views.SubtitleTextView = (TextView)retValue.findViewById( R.id.fli_album_name );
 
 					views.PlayButton = (Button) retValue.findViewById( R.id.play_button );
 					views.PlayButton.setOnClickListener( new View.OnClickListener() {
@@ -155,7 +158,18 @@ public class FavoritesListFragment extends Fragment
 				Favorite    favorite = mFavoritesList.get( position );
 
 				views.PlayButton.setTag( favorite );
-				views.NameTextView.setText( favorite.getArtist() + "/" + favorite.getAlbum() + "/" + favorite.getTrack());
+				if(!TextUtils.isEmpty( favorite.getTrack())) {
+					views.TitleTextView.setText( favorite.getTrack());
+					views.SubtitleTextView.setText( "(" + favorite.getArtist() + "/" + favorite.getAlbum() + ")" );
+				}
+				else if(!TextUtils.isEmpty( favorite.getAlbum())) {
+					views.TitleTextView.setText( favorite.getAlbum());
+					views.SubtitleTextView.setText( favorite.getArtist());
+				}
+				else if(!TextUtils.isEmpty( favorite.getArtist())) {
+					views.TitleTextView.setText( favorite.getArtist());
+					views.SubtitleTextView.setText( "" );
+				}
 			}
 
 			return( retValue );
