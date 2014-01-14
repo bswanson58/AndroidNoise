@@ -7,7 +7,7 @@
 
     <TextView
         android:id="@+id/ai_album_name"
-        android:text="Album Information"
+        android:text="Sticky Fingers"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="false"
@@ -16,7 +16,8 @@
         android:layout_alignParentRight="true"
         android:layout_marginRight="@dimen/noise_base_padding"
         android:textSize="@dimen/list_item_title_textSize"
-        android:textColor="#0078ff"/>
+        style="@style/TitleText"
+        android:layout_toLeftOf="@+id/ai_album_cover_image"/>
 
     <ImageView
         android:id="@+id/ai_album_cover_image"
@@ -27,4 +28,25 @@
         android:scaleType="fitCenter"
         android:layout_margin="@dimen/noise_base_padding"
         android:adjustViewBounds="true"/>
+
+    <TextView
+        android:id="@+id/ai_published_header"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Published: "
+        android:layout_alignParentRight="false"
+        android:layout_toLeftOf="@+id/ai_published"
+        android:layout_alignBottom="@+id/ai_album_cover_image"
+        style="@style/SubHeaderText" />
+
+    <TextView
+        android:id="@+id/ai_published"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="2014"
+        android:layout_alignParentRight="true"
+        android:layout_alignBaseline="@+id/ai_published_header"
+        style="@style/SubTitleText"
+        android:layout_marginRight="@dimen/noise_base_padding"/>
+
 </RelativeLayout>

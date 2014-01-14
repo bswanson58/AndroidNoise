@@ -24,6 +24,11 @@
         <item name="android:textColor">@color/HeaderText</item>
     </style>
 
+    <style name="SubHeaderText" parent="BaseText">
+        <item name="android:textSize">8pt</item>
+        <item name="android:textColor">@color/HeaderText</item>
+    </style>
+
     <style name="LongListStyle">
         <item name="android:layout_margin">7dp</item>
     </style>

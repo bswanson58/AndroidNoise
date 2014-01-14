@@ -32,6 +32,8 @@ public class AlbumInfoFragment extends Fragment
 	private AlbumInfo               mAlbumInfo;
 	private ImageView               mAlbumCover;
 	private TextView                mAlbumName;
+	private TextView                mPublishedYear;
+	private TextView                mPublishedYearHeader;
 
 	public static AlbumInfoFragment newInstance( Album album ) {
 		AlbumInfoFragment   fragment = new AlbumInfoFragment();
@@ -77,6 +79,8 @@ public class AlbumInfoFragment extends Fragment
 		if( myView != null ) {
 			mAlbumCover = (ImageView) myView.findViewById( R.id.ai_album_cover_image );
 			mAlbumName = (TextView)myView.findViewById( R.id.ai_album_name );
+			mPublishedYear = (TextView)myView.findViewById( R.id.ai_published );
+			mPublishedYearHeader = (TextView)myView.findViewById( R.id.ai_published_header );
 		}
 
 		if( mAlbum != null ) {
@@ -109,6 +113,16 @@ public class AlbumInfoFragment extends Fragment
 	private void updateDisplay() {
 		if( mAlbum != null ) {
 			mAlbumName.setText( mAlbum.getName());
+
+			if( mAlbum.getPublishedYear() > 0 ) {
+				mPublishedYear.setText( String.format( "%4d", mAlbum.getPublishedYear()));
+				mPublishedYear.setVisibility( View.VISIBLE );
+				mPublishedYearHeader.setVisibility( View.VISIBLE );
+			}
+			else {
+				mPublishedYear.setVisibility( View.INVISIBLE );
+				mPublishedYearHeader.setVisibility( View.INVISIBLE );
+			}
 		}
 
 		if( mAlbumInfo != null ) {
