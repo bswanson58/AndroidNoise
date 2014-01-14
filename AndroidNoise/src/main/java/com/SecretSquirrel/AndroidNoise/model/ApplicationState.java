@@ -14,6 +14,7 @@ import com.SecretSquirrel.AndroidNoise.interfaces.INoiseSearch;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseServer;
 import com.SecretSquirrel.AndroidNoise.services.EventHostService;
 import com.SecretSquirrel.AndroidNoise.services.NoiseDataCacheClient;
+import com.SecretSquirrel.AndroidNoise.services.NoiseDataClient;
 import com.SecretSquirrel.AndroidNoise.services.NoiseQueueClient;
 import com.SecretSquirrel.AndroidNoise.services.NoiseRemoteClient;
 import com.SecretSquirrel.AndroidNoise.services.NoiseSearchClient;
@@ -64,7 +65,7 @@ public class ApplicationState implements IApplicationState {
 
 		if( server != null ) {
 			mNoiseClient = new NoiseRemoteClient( mContext, mCurrentServer.getServerAddress());
-			mDataClient = new NoiseDataCacheClient( mContext, mCurrentServer.getServerAddress());
+			mDataClient = new NoiseDataCacheClient( new NoiseDataClient( mContext, mCurrentServer.getServerAddress()));
 			mQueueClient = new NoiseQueueClient( mCurrentServer.getServerAddress());
 			mSearchClient = new NoiseSearchClient( mCurrentServer.getServerAddress());
 		}

@@ -2,89 +2,204 @@ package com.SecretSquirrel.AndroidNoise.services;
 
 // Secret Squirrel Software - Created by bswanson on 1/13/14.
 
-import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
 
-import com.SecretSquirrel.AndroidNoise.dto.Artist;
-import com.SecretSquirrel.AndroidNoise.dto.Favorite;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseData;
 
-import java.util.ArrayList;
+import java.util.Hashtable;
 
 public class NoiseDataCacheClient implements INoiseData {
-	private final INoiseData        mNoiseData;
-	private ArrayList<Artist>       mArtistList;
-	private ArrayList<Favorite>     mFavoritesList;
+	private static final int    cCacheSize = 25;
 
-	public NoiseDataCacheClient( Context context, String serverAddress ) {
-		mNoiseData = new NoiseDataClient( context, serverAddress );
+	private class DatedBundle {
+		private Bundle  mBundle;
+		private long    mLastAccess;
+
+		public DatedBundle( Bundle bundle ) {
+			mBundle = bundle;
+
+			updateLastAccess();
+		}
+
+		public Bundle getBundle() {
+			return( mBundle );
+		}
+
+		public long getLastAccess() {
+			return( mLastAccess );
+		}
+
+		public void updateLastAccess() {
+			mLastAccess = System.currentTimeMillis();
+		}
+	}
+
+	private final INoiseData                mNoiseData;
+	private Bundle                          mArtistList;
+	private Hashtable<Long, DatedBundle>    mArtistInfo;
+	private Hashtable<Long, DatedBundle>    mAlbumList;
+	private Hashtable<Long, DatedBundle>    mAlbumInfo;
+	private Hashtable<Long, DatedBundle>    mTrackList;
+	private Bundle                          mFavoritesList;
+
+	public NoiseDataCacheClient( INoiseData downstreamClient ) {
+		mNoiseData = downstreamClient;
+
+		mArtistInfo = new Hashtable<Long, DatedBundle>();
+		mAlbumList = new Hashtable<Long, DatedBundle>();
+		mAlbumInfo = new Hashtable<Long, DatedBundle>();
+		mTrackList = new Hashtable<Long, DatedBundle>();
 	}
 
 	@Override
 	public void GetArtistList( final ResultReceiver receiver ) {
 		if( mArtistList != null ) {
-			Bundle  resultData = new Bundle();
-
-			resultData.putParcelableArrayList( NoiseRemoteApi.ArtistList, mArtistList );
-
-			receiver.send( NoiseRemoteApi.RemoteResultSuccess, resultData );
+			receiver.send( NoiseRemoteApi.RemoteResultSuccess, mArtistList );
 		}
 		else {
 			mNoiseData.GetArtistList( new ResultReceiver( new Handler()) {
 				@Override
 				public void onReceiveResult( int resultCode, Bundle resultData ) {
 					if( resultCode == NoiseRemoteApi.RemoteResultSuccess ) {
-						mArtistList = resultData.getParcelableArrayList( NoiseRemoteApi.ArtistList );
+						mArtistList = resultData;
 
 						receiver.send( resultCode, resultData );
 					}
 				}
-			}  );
+			});
 		}
 	}
 
 	@Override
-	public void GetArtistInfo( long forArtist, final ResultReceiver receiver ) {
-		mNoiseData.GetArtistInfo( forArtist, receiver );
+	public void GetArtistInfo( final long forArtist, final ResultReceiver receiver ) {
+		if( mArtistInfo.containsKey( forArtist )) {
+			DatedBundle bundle = mArtistInfo.get( forArtist );
+
+			bundle.updateLastAccess();
+			receiver.send( NoiseRemoteApi.RemoteResultSuccess, bundle.getBundle());
+		}
+		else {
+			mNoiseData.GetArtistInfo( forArtist, new ResultReceiver( new Handler()) {
+				@Override
+				public void onReceiveResult( int resultCode, Bundle resultData ) {
+					if( resultCode == NoiseRemoteApi.RemoteResultSuccess ) {
+						mArtistInfo.put( forArtist, new DatedBundle( resultData ));
+						trimCache( mArtistInfo );
+
+						receiver.send( resultCode, resultData );
+					}
+				}
+			});
+		}
 	}
 
 	@Override
-	public void GetAlbumList( long forArtist, final ResultReceiver receiver ) {
-		mNoiseData.GetAlbumList( forArtist, receiver );
+	public void GetAlbumList( final long forArtist, final ResultReceiver receiver ) {
+		if( mAlbumList.containsKey( forArtist )) {
+			DatedBundle bundle = mAlbumList.get( forArtist );
+
+			bundle.updateLastAccess();
+			receiver.send( NoiseRemoteApi.RemoteResultSuccess, bundle.getBundle() );
+		}
+		else {
+			mNoiseData.GetAlbumList( forArtist, new ResultReceiver( new Handler()) {
+				@Override
+				public void onReceiveResult( int resultCode, Bundle resultData ) {
+					if( resultCode == NoiseRemoteApi.RemoteResultSuccess ) {
+						mAlbumList.put( forArtist, new DatedBundle( resultData ));
+						trimCache( mAlbumList );
+
+						receiver.send( resultCode, resultData );
+					}
+				}
+			});
+		}
 	}
 
 	@Override
-	public void GetAlbumInfo( long forAlbum, final ResultReceiver receiver ) {
-		mNoiseData.GetAlbumInfo( forAlbum, receiver );
+	public void GetAlbumInfo( final long forAlbum, final ResultReceiver receiver ) {
+		if( mAlbumInfo.containsKey( forAlbum )) {
+			DatedBundle bundle = mAlbumInfo.get( forAlbum );
+
+			bundle.updateLastAccess();
+			receiver.send( NoiseRemoteApi.RemoteResultSuccess, bundle.getBundle());
+		}
+		else {
+			mNoiseData.GetAlbumInfo( forAlbum, new ResultReceiver( new Handler()) {
+				@Override
+				public void onReceiveResult( int resultCode, Bundle resultData ) {
+					if( resultCode == NoiseRemoteApi.RemoteResultSuccess ) {
+						mAlbumInfo.put( forAlbum, new DatedBundle( resultData ));
+						trimCache( mAlbumInfo );
+
+						receiver.send( resultCode, resultData );
+					}
+				}
+			});
+		}
 	}
 
 	@Override
-	public void GetTrackList( long forAlbum, final ResultReceiver receiver ) {
-		mNoiseData.GetTrackList( forAlbum, receiver );
+	public void GetTrackList( final long forAlbum, final ResultReceiver receiver ) {
+		if( mTrackList.containsKey( forAlbum )) {
+			DatedBundle bundle = mTrackList.get( forAlbum );
+
+			bundle.updateLastAccess();
+			receiver.send( NoiseRemoteApi.RemoteResultSuccess, bundle.getBundle());
+		}
+		else {
+			mNoiseData.GetTrackList( forAlbum, new ResultReceiver( new Handler()) {
+				@Override
+				public void onReceiveResult( int resultCode, Bundle resultData ) {
+					if( resultCode == NoiseRemoteApi.RemoteResultSuccess ) {
+						mTrackList.put( forAlbum, new DatedBundle( resultData ));
+						trimCache( mTrackList );
+
+						receiver.send( resultCode, resultData );
+					}
+				}
+			});
+		}
 	}
 
 	@Override
 	public void GetFavoritesList( final ResultReceiver receiver ) {
 		if( mFavoritesList != null ) {
-			Bundle  resultData = new Bundle();
-
-			resultData.putParcelableArrayList( NoiseRemoteApi.FavoritesList, mFavoritesList );
-
-			receiver.send( NoiseRemoteApi.RemoteResultSuccess, resultData );
+			receiver.send( NoiseRemoteApi.RemoteResultSuccess, mFavoritesList );
 		}
 		else {
 			mNoiseData.GetFavoritesList( new ResultReceiver( new Handler()) {
 				@Override
 				public void onReceiveResult( int resultCode, Bundle resultData ) {
 					if( resultCode == NoiseRemoteApi.RemoteResultSuccess ) {
-						mFavoritesList = resultData.getParcelableArrayList( NoiseRemoteApi.FavoritesList );
+						mFavoritesList = resultData;
 
 						receiver.send( resultCode, resultData );
 					}
 				}
-			}  );
+			});
+		}
+	}
+
+	private void trimCache( Hashtable<Long, DatedBundle> cacheList ) {
+		if( cacheList.size() > cCacheSize ) {
+			long    oldestEntryKey = 0;
+			long    lastAccess = System.currentTimeMillis();
+
+			for( Long entry : cacheList.keySet()) {
+				DatedBundle bundle = cacheList.get( entry );
+
+				if( bundle.getLastAccess() < lastAccess ) {
+					oldestEntryKey = entry;
+					lastAccess = bundle.getLastAccess();
+				}
+			}
+
+			if( oldestEntryKey > 0 ) {
+				cacheList.remove( oldestEntryKey );
+			}
 		}
 	}
 }
