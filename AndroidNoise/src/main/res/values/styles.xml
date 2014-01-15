@@ -29,8 +29,13 @@
         <item name="android:textColor">@color/HeaderText</item>
     </style>
 
-    <style name="LongListStyle">
+    <style name="LongListStyle" parent="@android:style/Widget.ListView">
         <item name="android:layout_margin">7dp</item>
+        <item name="android:divider">#E8E8E8</item>
+        <item name="android:dividerHeight">1dp</item>
+        <item name="android:scrollbarStyle">outsideInset</item>
+        <item name="android:fastScrollEnabled">true</item>
+        <item name="android:fastScrollAlwaysVisible">true</item>
     </style>
 
     <style name="PlayButtonStyle" parent="@android:style/Widget.Button.Small">
