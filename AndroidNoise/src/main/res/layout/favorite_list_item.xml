@@ -3,13 +3,13 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="horizontal"
               android:layout_width="match_parent"
-              android:layout_height="wrap_content">
+              android:layout_height="wrap_content"
+              android:descendantFocusability="blocksDescendants">
 
     <Button
         android:id="@+id/play_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:focusable="false"
         android:text="@string/play_button_text"
         android:layout_gravity="center_vertical"
         style="@style/PlayButtonStyle"
@@ -20,7 +20,6 @@
         android:id="@+id/fli_name"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
-        android:clickable="false"
         style="@style/TitleText"
         android:layout_toRightOf="@+id/play_button"
         android:layout_marginLeft="@dimen/noise_base_padding"
@@ -30,7 +29,6 @@
         android:id="@+id/fli_album_name"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
-        android:clickable="false"
         style="@style/SubTitleText"
         android:layout_below="@+id/fli_name"
         android:layout_toRightOf="@+id/play_button"
