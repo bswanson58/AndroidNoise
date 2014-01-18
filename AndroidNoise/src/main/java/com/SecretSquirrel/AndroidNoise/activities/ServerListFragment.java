@@ -70,6 +70,8 @@ public class ServerListFragment extends Fragment {
 
 		if( myView != null ) {
 			ListView    serverListView = (ListView) myView.findViewById( R.id.sl_server_list_view );
+
+			serverListView.setEmptyView( myView.findViewById( R.id.sl_empty_view ));
 			serverListView.setAdapter( mServerListAdapter );
 			serverListView.setOnItemClickListener( new AdapterView.OnItemClickListener() {
 				@Override

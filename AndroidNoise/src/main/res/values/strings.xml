@@ -24,5 +24,6 @@
     <string name="noise_al_artist_list">Artists:</string>
     <string name="noise_al_album_list">Albums:</string>
     <string name="noise_al_server_list">Available Noise Servers:</string>
+    <string name="esl_searching_title">Searching for Noise Systems…</string>
 
 </resources>
