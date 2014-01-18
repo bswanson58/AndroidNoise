@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="fragment_artist_shell" type="layout">@layout/fragment_artist_shell_tall</item>
+    <item name="fragment_artist_info" type="layout">@layout/fragment_artist_info_wide</item>
+    <item name="fragment_album_shell" type="layout">@layout/fragment_album_shell_tall</item>
+    <item name="fragment_album_info" type="layout">@layout/fragment_album_info_wide</item>
+</resources>
