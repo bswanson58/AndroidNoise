@@ -50,4 +50,8 @@
     <style name="PlayButtonStyle" parent="@android:style/Widget.Button.Small">
         <item name="android:textSize">8pt</item>
     </style>
+
+    <style name="separatorView">
+        <item name="android:background">@android:color/black</item>
+    </style>
 </resources>

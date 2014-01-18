@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:orientation="horizontal">
+
+        <View
+            android:layout_height="2dp"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_gravity="center_vertical"
+            android:layout_marginTop="2dp"
+            android:layout_marginLeft="@dimen/noise_base_padding"
+            android:layout_marginRight="@dimen/noise_base_padding"
+            style="@style/separatorView"/>
+
+        <TextView
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:text="@string/noise_al_album_list"
+            android:gravity="bottom"
+            style="@style/HeaderText"
+            />
+
+        <View
+            android:layout_height="2dp"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_gravity="center_vertical"
+            android:layout_marginTop="2dp"
+            android:layout_marginLeft="@dimen/noise_base_padding"
+            android:layout_marginRight="@dimen/noise_base_padding"
+            style="@style/separatorView"/>
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/al_album_list_view"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        style="@style/ShortListStyle"/>
+
+</LinearLayout>
