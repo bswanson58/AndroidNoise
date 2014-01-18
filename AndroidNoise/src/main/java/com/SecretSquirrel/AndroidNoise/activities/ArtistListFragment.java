@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Set;
 
 import de.greenrobot.event.EventBus;
 
@@ -105,7 +104,6 @@ public class ArtistListFragment extends Fragment
 			}
 		} );
 
-		mArtistListAdapter.updateAlphaIndex();
 		mArtistListAdapter.notifyDataSetChanged();
 	}
 
@@ -144,35 +142,6 @@ public class ArtistListFragment extends Fragment
 			mSections = new String[0];
 		}
 
-		public void updateAlphaIndex() {
-			int size = mArtistList.size();
-
-			for (int x = 0; x < size; x++) {
-				String s = mArtistList.get(x).getName();
-
-				// get the first letter of the store
-				String ch = s.substring(0, 1);
-				// convert to uppercase otherwise lowercase a -z will be sorted
-				// after upper A-Z
-				ch = ch.toUpperCase();
-
-				// put only if the key does not exist
-				if (!mAlphaIndexer.containsKey(ch))
-					mAlphaIndexer.put(ch, x);
-			}
-
-			Set<String> sectionLetters = mAlphaIndexer.keySet();
-
-			// create a list from the set to sort
-			ArrayList<String> sectionList = new ArrayList<String>( sectionLetters );
-
-			Collections.sort( sectionList );
-
-			mSections = new String[sectionList.size()];
-
-			sectionList.toArray( mSections );
-		}
-
 		@Override
 		public View getView( int position, View convertView, ViewGroup parent ) {
 			View        retValue = convertView;
@@ -207,6 +176,35 @@ public class ArtistListFragment extends Fragment
 		}
 
 		@Override
+		public void notifyDataSetChanged() {
+			super.notifyDataSetChanged();
+
+			updateAlphaIndex();
+		}
+
+		private void updateAlphaIndex() {
+			mAlphaIndexer.clear();
+
+			for( int index = 0; index < mArtistList.size(); index++ ) {
+				String firstChar = mArtistList.get( index ).getName().substring( 0, 1 ).toUpperCase();
+
+				// put only if the key does not exist
+				if(!mAlphaIndexer.containsKey( firstChar )) {
+					mAlphaIndexer.put( firstChar, index );
+				}
+			}
+
+			// create a list from the set to sort
+			ArrayList<String> sectionList = new ArrayList<String>( mAlphaIndexer.keySet());
+
+			Collections.sort( sectionList );
+
+			mSections = new String[sectionList.size()];
+
+			sectionList.toArray( mSections );
+		}
+
+		@Override
 		public Object[] getSections() {
 			return( mSections );
 		}
@@ -223,22 +221,22 @@ public class ArtistListFragment extends Fragment
 			int closestIndex = 0;
 			int latestDelta = Integer.MAX_VALUE;
 
-			for(int i=0; i < mSections.length; i++) {
-				int current = mAlphaIndexer.get( mSections[i]);
-				if(current == position) {
+			for( int index = 0; index < mSections.length; index++ ) {
+				int current = mAlphaIndexer.get( mSections[index]);
+				if( current == position ) {
 					//If position matches an index, return it immediately
-					return i;
-				} else if(current < position) {
+					return( index );
+				} else if( current < position ) {
 					//Check if this is closer than the last index we inspected
 					int delta = position - current;
-					if(delta < latestDelta) {
-						closestIndex = i;
+					if( delta < latestDelta ) {
+						closestIndex = index;
 						latestDelta = delta;
 					}
 				}
 			}
 
-			return closestIndex;
+			return( closestIndex );
 		}
 	}
 }
