@@ -16,6 +16,6 @@
         android:id="@+id/TrackListView"
         android:layout_height="wrap_content"
         android:layout_width="fill_parent"
-        style="@style/LongListStyle"/>
+        style="@style/ShortListStyle"/>
 
 </LinearLayout>

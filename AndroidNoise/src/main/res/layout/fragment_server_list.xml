@@ -17,7 +17,7 @@
         android:id="@+id/sl_server_list_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        style="@style/LongListStyle"/>
+        style="@style/ShortListStyle"/>
 
     <TextView
         android:id="@+id/sl_empty_view"

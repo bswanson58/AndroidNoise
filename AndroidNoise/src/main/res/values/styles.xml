@@ -39,6 +39,14 @@
         <item name="android:fastScrollAlwaysVisible">true</item>
     </style>
 
+    <style name="ShortListStyle" parent="@android:style/Widget.ListView">
+        <item name="android:layout_margin">7dp</item>
+        <item name="android:listSelector">@drawable/list_selector</item>
+        <item name="android:divider">#E8E8E8</item>
+        <item name="android:dividerHeight">1dp</item>
+        <item name="android:scrollbarStyle">outsideInset</item>
+    </style>
+
     <style name="PlayButtonStyle" parent="@android:style/Widget.Button.Small">
         <item name="android:textSize">8pt</item>
     </style>
