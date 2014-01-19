@@ -2,6 +2,8 @@ package com.SecretSquirrel.AndroidNoise.activities;
 
 // Secret Squirrel Software - Created by bswanson on 12/18/13.
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -38,6 +40,7 @@ public class AlbumInfoFragment extends Fragment
 	private TextView                mAlbumName;
 	private TextView                mPublishedYear;
 	private TextView                mPublishedYearHeader;
+	private Bitmap                  mUnknownAlbum;
 
 	public static AlbumInfoFragment newInstance( Artist artist, Album album ) {
 		AlbumInfoFragment   fragment = new AlbumInfoFragment();
@@ -56,6 +59,8 @@ public class AlbumInfoFragment extends Fragment
 
 		mServiceResultReceiver = new ServiceResultReceiver( new Handler());
 		mServiceResultReceiver.setReceiver( this );
+
+		mUnknownAlbum = BitmapFactory.decodeResource( getResources(), R.drawable.unknown_album );
 	}
 
 	@Override
@@ -104,7 +109,7 @@ public class AlbumInfoFragment extends Fragment
 			}
 		}
 
-		updateDisplay();
+		updateDisplay( false );
 
 		return( myView );
 	}
@@ -113,12 +118,12 @@ public class AlbumInfoFragment extends Fragment
 	public void onReceiveResult( int resultCode, Bundle resultData ) {
 		if( resultCode == NoiseRemoteApi.RemoteResultSuccess ) {
 			mAlbumInfo = resultData.getParcelable( NoiseRemoteApi.AlbumInfo );
-
-			updateDisplay();
 		}
+
+		updateDisplay( true );
 	}
 
-	private void updateDisplay() {
+	private void updateDisplay( boolean withDefaults ) {
 		if( mArtist != null ) {
 			mArtistName.setText( mArtist.getName());
 		}
@@ -138,7 +143,18 @@ public class AlbumInfoFragment extends Fragment
 		}
 
 		if( mAlbumInfo != null ) {
-			mAlbumCover.setImageBitmap( mAlbumInfo.getAlbumCover());
+			Bitmap  albumImage = mAlbumInfo.getAlbumCover();
+
+			if( albumImage == null ) {
+				albumImage = mUnknownAlbum;
+			}
+
+			mAlbumCover.setImageBitmap( albumImage );
+		}
+		else {
+			if( withDefaults ) {
+				mAlbumCover.setImageBitmap( mUnknownAlbum );
+			}
 		}
 	}
 
