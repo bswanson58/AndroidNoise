@@ -14,13 +14,14 @@
         android:layout_gravity="center_vertical"
         style="@style/PlayButtonStyle"/>
 
-    <TextView
+    <com.SecretSquirrel.AndroidNoise.views.AutoFitTextView
         android:id="@+id/album_list_item_name"
         android:layout_height="wrap_content"
         android:layout_width="fill_parent"
         android:textSize="@dimen/list_item_title_textSize"
         android:gravity="left|top"
         android:layout_gravity="center_vertical"
-        style="@style/TitleText"/>
+        style="@style/TitleText"
+        android:layout_marginLeft="@dimen/noise_base_padding"/>
 
 </LinearLayout>

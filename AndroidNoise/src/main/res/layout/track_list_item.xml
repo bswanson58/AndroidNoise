@@ -13,13 +13,17 @@
         style="@style/PlayButtonStyle"
         android:layout_alignParentLeft="true"/>
 
-    <TextView
+    <com.SecretSquirrel.AndroidNoise.views.AutoFitTextView
         android:id="@+id/tli_name"
         android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         style="@style/TitleText"
         android:layout_toRightOf="@+id/play_button"
-        android:layout_alignBaseline="@+id/play_button"/>
+        android:layout_alignBaseline="@+id/play_button"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="@dimen/noise_base_padding"
+        android:layout_marginRight="@dimen/noise_base_padding"
+        android:layout_toLeftOf="@+id/tli_duration"/>
 
     <TextView
         android:id="@+id/tli_duration"
@@ -27,5 +31,6 @@
         android:layout_width="wrap_content"
         style="@style/TitleText"
         android:layout_alignParentRight="true"
-        android:layout_alignBaseline="@+id/play_button"/>
+        android:layout_alignBaseline="@+id/play_button"
+        android:layout_centerVertical="true"/>
 </RelativeLayout>
