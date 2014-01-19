@@ -5,26 +5,29 @@
     tools:context=".AlbumActivity$PlaceholderFragment"
     android:orientation="vertical">
 
-    <TextView
+    <com.SecretSquirrel.AndroidNoise.views.AutoFitTextView
         android:id="@+id/ai_artist_name"
-        android:text="The Rolling Stones"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        style="@style/TitleText"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_marginLeft="@dimen/noise_base_padding"
-        android:layout_marginTop="@dimen/noise_base_padding"/>
+        android:layout_marginRight="@dimen/noise_base_padding"
+        android:layout_marginTop="@dimen/noise_base_padding"
+        android:text="The Rolling Stones"
+        style="@style/TitleText"/>
 
-    <TextView
+    <com.SecretSquirrel.AndroidNoise.views.AutoFitTextView
         android:id="@+id/ai_album_name"
-        android:text="Sticky Fingers"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        style="@style/TitleText"
         android:layout_below="@+id/ai_artist_name"
         android:layout_alignParentLeft="true"
-        android:layout_marginLeft="@dimen/noise_base_padding"/>
+        android:layout_marginLeft="@dimen/noise_base_padding"
+        android:layout_marginRight="@dimen/noise_base_padding"
+        android:text="Sticky Fingers"
+        style="@style/TitleText"
+        />
 
     <ImageView
         android:id="@+id/ai_album_cover_image"
