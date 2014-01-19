@@ -13,7 +13,20 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="false"
-        android:layout_alignParentTop="true"
+        android:layout_alignParentTop="false"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="@dimen/noise_base_padding"
+        android:textSize="@dimen/list_item_title_textSize"
+        style="@style/TitleText"
+        android:layout_toLeftOf="@+id/ai_album_cover_image"
+        android:layout_below="@+id/ai_artist_name"/>
+
+    <TextView
+        android:id="@+id/ai_artist_name"
+        android:text="The Rolling Stones"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="false"
         android:layout_marginTop="@dimen/noise_base_padding"
         android:layout_alignParentRight="true"
         android:layout_marginRight="@dimen/noise_base_padding"

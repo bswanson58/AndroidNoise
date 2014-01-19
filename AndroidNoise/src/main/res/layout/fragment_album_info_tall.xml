@@ -6,14 +6,25 @@
     android:orientation="vertical">
 
     <TextView
+        android:id="@+id/ai_artist_name"
+        android:text="The Rolling Stones"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/TitleText"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="@dimen/noise_base_padding"
+        android:layout_marginTop="@dimen/noise_base_padding"/>
+
+    <TextView
         android:id="@+id/ai_album_name"
         android:text="Sticky Fingers"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         style="@style/TitleText"
-        android:layout_margin="@dimen/noise_base_padding"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"/>
+        android:layout_below="@+id/ai_artist_name"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="@dimen/noise_base_padding"/>
 
     <ImageView
         android:id="@+id/ai_album_cover_image"

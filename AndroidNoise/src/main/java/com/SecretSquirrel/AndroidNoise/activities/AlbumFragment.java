@@ -11,18 +11,22 @@ import android.view.ViewGroup;
 
 import com.SecretSquirrel.AndroidNoise.R;
 import com.SecretSquirrel.AndroidNoise.dto.Album;
+import com.SecretSquirrel.AndroidNoise.dto.Artist;
 import com.SecretSquirrel.AndroidNoise.support.Constants;
 
 public class AlbumFragment extends Fragment {
 	private static final String     TAG = AlbumFragment.class.getName();
-	private static final String     ALBUM_KEY = "AlbumFragment_AlbumId";
+	private static final String     ARTIST_KEY  = "AlbumFragment_Artist";
+	private static final String     ALBUM_KEY   = "AlbumFragment_Album";
 
+	private Artist  mArtist;
 	private Album   mAlbum;
 
-	public static AlbumFragment newInstance( Album album ) {
+	public static AlbumFragment newInstance( Artist artist, Album album ) {
 		AlbumFragment   fragment = new AlbumFragment();
 		Bundle          bundle = new Bundle();
 
+		bundle.putParcelable( ARTIST_KEY, artist );
 		bundle.putParcelable( ALBUM_KEY, album );
 		fragment.setArguments( bundle );
 
@@ -35,11 +39,13 @@ public class AlbumFragment extends Fragment {
 
 		if( savedInstanceState != null ) {
 			mAlbum = savedInstanceState.getParcelable( ALBUM_KEY );
+			mArtist = savedInstanceState.getParcelable( ARTIST_KEY );
 		}
 		else {
 			Bundle  args = getArguments();
 
 			if( args != null ) {
+				mArtist = args.getParcelable( ARTIST_KEY );
 				mAlbum = args.getParcelable( ALBUM_KEY );
 			}
 		}
@@ -47,7 +53,7 @@ public class AlbumFragment extends Fragment {
 		if( mAlbum != null ) {
 			getChildFragmentManager()
 					.beginTransaction()
-					.replace( R.id.frame_album_info, AlbumInfoFragment.newInstance( mAlbum ))
+					.replace( R.id.frame_album_info, AlbumInfoFragment.newInstance( mArtist, mAlbum ))
 					.replace( R.id.frame_track_list, TrackListFragment.newInstance( mAlbum.getAlbumId()))
 					.commit();
 		}
@@ -64,6 +70,7 @@ public class AlbumFragment extends Fragment {
 	public void onSaveInstanceState( Bundle outState ) {
 		super.onSaveInstanceState( outState );
 
+		outState.putParcelable( ARTIST_KEY, mArtist );
 		outState.putParcelable( ALBUM_KEY, mAlbum );
 	}
 }

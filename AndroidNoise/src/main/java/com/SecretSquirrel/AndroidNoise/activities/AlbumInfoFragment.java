@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.SecretSquirrel.AndroidNoise.R;
 import com.SecretSquirrel.AndroidNoise.dto.Album;
 import com.SecretSquirrel.AndroidNoise.dto.AlbumInfo;
+import com.SecretSquirrel.AndroidNoise.dto.Artist;
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
 import com.SecretSquirrel.AndroidNoise.model.NoiseRemoteApplication;
 import com.SecretSquirrel.AndroidNoise.services.NoiseRemoteApi;
@@ -24,21 +25,25 @@ import com.SecretSquirrel.AndroidNoise.support.Constants;
 public class AlbumInfoFragment extends Fragment
 							   implements ServiceResultReceiver.Receiver {
 	private static final String     TAG             = AlbumInfoFragment.class.getName();
+	private static final String     ARTIST_KEY      = "AlbumInfoFragment_Artist";
 	private static final String     ALBUM_KEY       = "AlbumInfoFragment_Album";
 	private static final String     ALBUM_INFO_KEY  = "AlbumInfoFragment_AlbumInfo";
 
 	private ServiceResultReceiver   mServiceResultReceiver;
+	private Artist                  mArtist;
 	private Album                   mAlbum;
 	private AlbumInfo               mAlbumInfo;
 	private ImageView               mAlbumCover;
+	private TextView                mArtistName;
 	private TextView                mAlbumName;
 	private TextView                mPublishedYear;
 	private TextView                mPublishedYearHeader;
 
-	public static AlbumInfoFragment newInstance( Album album ) {
+	public static AlbumInfoFragment newInstance( Artist artist, Album album ) {
 		AlbumInfoFragment   fragment = new AlbumInfoFragment();
 		Bundle              args = new Bundle();
 
+		args.putParcelable( ARTIST_KEY, artist );
 		args.putParcelable( ALBUM_KEY, album );
 		fragment.setArguments( args );
 
@@ -65,6 +70,7 @@ public class AlbumInfoFragment extends Fragment
 		View myView = inflater.inflate( R.layout.fragment_album_info, container, false );
 
 		if( savedInstanceState != null ) {
+			mArtist = savedInstanceState.getParcelable( ARTIST_KEY );
 			mAlbum = savedInstanceState.getParcelable( ALBUM_KEY );
 			mAlbumInfo = savedInstanceState.getParcelable( ALBUM_INFO_KEY );
 		}
@@ -72,13 +78,15 @@ public class AlbumInfoFragment extends Fragment
 			Bundle  args = getArguments();
 
 			if( args != null ) {
+				mArtist = args.getParcelable( ARTIST_KEY );
 				mAlbum = args.getParcelable( ALBUM_KEY );
 			}
 		}
 
 		if( myView != null ) {
-			mAlbumCover = (ImageView) myView.findViewById( R.id.ai_album_cover_image );
+			mArtistName = (TextView)myView.findViewById( R.id.ai_artist_name );
 			mAlbumName = (TextView)myView.findViewById( R.id.ai_album_name );
+			mAlbumCover = (ImageView) myView.findViewById( R.id.ai_album_cover_image );
 			mPublishedYear = (TextView)myView.findViewById( R.id.ai_published );
 			mPublishedYearHeader = (TextView)myView.findViewById( R.id.ai_published_header );
 		}
@@ -111,6 +119,10 @@ public class AlbumInfoFragment extends Fragment
 	}
 
 	private void updateDisplay() {
+		if( mArtist != null ) {
+			mArtistName.setText( mArtist.getName());
+		}
+
 		if( mAlbum != null ) {
 			mAlbumName.setText( mAlbum.getName());
 
@@ -134,6 +146,7 @@ public class AlbumInfoFragment extends Fragment
 	public void onSaveInstanceState( Bundle outState ) {
 		super.onSaveInstanceState( outState );
 
+		outState.putParcelable( ARTIST_KEY, mArtist );
 		outState.putParcelable( ALBUM_KEY, mAlbum );
 		if( mAlbumInfo != null ) {
 			outState.putParcelable( ALBUM_INFO_KEY, mAlbumInfo );
