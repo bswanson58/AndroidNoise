@@ -67,6 +67,9 @@ public class NoiseDataCacheClient implements INoiseData {
 
 						receiver.send( resultCode, resultData );
 					}
+					else {
+						receiver.send( resultCode, null );
+					}
 				}
 			});
 		}
@@ -89,6 +92,9 @@ public class NoiseDataCacheClient implements INoiseData {
 						trimCache( mArtistInfo );
 
 						receiver.send( resultCode, resultData );
+					}
+					else {
+						receiver.send( resultCode, null );
 					}
 				}
 			});
@@ -113,6 +119,9 @@ public class NoiseDataCacheClient implements INoiseData {
 
 						receiver.send( resultCode, resultData );
 					}
+					else {
+						receiver.send( resultCode, null );
+					}
 				}
 			});
 		}
@@ -135,6 +144,9 @@ public class NoiseDataCacheClient implements INoiseData {
 						trimCache( mAlbumInfo );
 
 						receiver.send( resultCode, resultData );
+					}
+					else {
+						receiver.send( resultCode, null );
 					}
 				}
 			});
@@ -159,6 +171,9 @@ public class NoiseDataCacheClient implements INoiseData {
 
 						receiver.send( resultCode, resultData );
 					}
+					else {
+						receiver.send( resultCode, null );
+					}
 				}
 			});
 		}
@@ -177,6 +192,9 @@ public class NoiseDataCacheClient implements INoiseData {
 						mFavoritesList = resultData;
 
 						receiver.send( resultCode, resultData );
+					}
+					else {
+						receiver.send( resultCode, null );
 					}
 				}
 			});

@@ -2,6 +2,8 @@ package com.SecretSquirrel.AndroidNoise.activities;
 
 // Secret Squirrel Software - Created by bswanson on 12/17/13.
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -33,6 +35,7 @@ public class ArtistInfoFragment extends Fragment
 	private ImageView               mArtistImage;
 	private TextView                mArtistName;
 	private TextView                mArtistGenre;
+	private Bitmap                  mUnknownArtist;
 
 	public static ArtistInfoFragment newInstance( Artist artist ) {
 		ArtistInfoFragment  fragment = new ArtistInfoFragment();
@@ -50,7 +53,8 @@ public class ArtistInfoFragment extends Fragment
 
 		mServiceResultReceiver = new ServiceResultReceiver( new Handler());
 		mServiceResultReceiver.setReceiver( this );
-	}
+
+		mUnknownArtist = BitmapFactory.decodeResource( getResources(), R.drawable.unknown_artist );	}
 
 	@Override
 	public void onPause() {
@@ -94,7 +98,7 @@ public class ArtistInfoFragment extends Fragment
 			}
 		}
 
-		updateDisplay();
+		updateDisplay( false );
 
 		return( myView );
 	}
@@ -103,14 +107,25 @@ public class ArtistInfoFragment extends Fragment
 	public void onReceiveResult( int resultCode, Bundle resultData ) {
 		if( resultCode == NoiseRemoteApi.RemoteResultSuccess ) {
 			mArtistInfo = resultData.getParcelable( NoiseRemoteApi.ArtistInfo );
-
-			updateDisplay();
 		}
+
+		updateDisplay( true );
 	}
 
-	private void updateDisplay() {
+	private void updateDisplay( boolean withDefaults ) {
 		if( mArtistInfo != null ) {
-			mArtistImage.setImageBitmap( mArtistInfo.getArtistImage());
+			Bitmap  artistImage = mArtistInfo.getArtistImage();
+
+			if( artistImage == null ) {
+				artistImage = mUnknownArtist;
+			}
+
+			mArtistImage.setImageBitmap( artistImage );
+		}
+		else {
+			if( withDefaults ) {
+				mArtistImage.setImageBitmap( mUnknownArtist );
+			}
 		}
 
 		if( mArtist != null ) {
