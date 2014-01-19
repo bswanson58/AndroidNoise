@@ -21,7 +21,7 @@
     <string name="action_example">Example action</string>
     <string name="search_results_title">Search Results</string>
     <string name="search_button_title">Search</string>
-    <string name="noise_al_artist_list">Artists:</string>
+    <string name="noise_al_artist_list">Artists</string>
     <string name="noise_al_album_list">Albums</string>
     <string name="noise_tl_track_list">Tracks</string>
     <string name="noise_al_server_list">Available Noise Servers:</string>
