@@ -17,7 +17,8 @@
             android:layout_marginTop="2dp"
             android:layout_marginLeft="@dimen/noise_base_padding"
             android:layout_marginRight="@dimen/noise_base_padding"
-            style="@style/separatorView"/>
+            android:scaleX="-1"
+            style="@style/separatorViewHorizontal"/>
 
         <TextView
             android:layout_height="wrap_content"
@@ -35,7 +36,7 @@
             android:layout_marginTop="2dp"
             android:layout_marginLeft="@dimen/noise_base_padding"
             android:layout_marginRight="@dimen/noise_base_padding"
-            style="@style/separatorView"/>
+            style="@style/separatorViewHorizontal"/>
     </LinearLayout>
 
     <ListView

@@ -52,7 +52,10 @@
         <item name="android:textSize">8pt</item>
     </style>
 
-    <style name="separatorView">
-        <item name="android:background">@android:color/black</item>
+    <style name="separatorViewHorizontal">
+        <item name="android:background">@drawable/divider_gradient_horizontal</item>
+    </style>
+    <style name="separatorViewVertical">
+        <item name="android:background">@drawable/divider_gradient_vertical</item>
     </style>
 </resources>
