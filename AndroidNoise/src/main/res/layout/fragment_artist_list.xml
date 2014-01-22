@@ -40,10 +40,19 @@
             style="@style/separatorViewVertical"/>
     </LinearLayout>
 
-    <ListView
-        android:id="@+id/al_artist_list_view"
-        android:layout_height="wrap_content"
-        android:layout_width="fill_parent"
-        style="@style/LongListStyle"/>
+    <RelativeLayout
+        android:layout_height="match_parent"
+        android:layout_width="match_parent">
+        <ImageView
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:background="@drawable/artist_background"/>
+        
+        <ListView
+            android:id="@+id/al_artist_list_view"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            style="@style/LongListStyle"/>
+        </RelativeLayout>
 
 </LinearLayout>
