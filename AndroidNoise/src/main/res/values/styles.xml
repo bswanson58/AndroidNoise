@@ -49,7 +49,7 @@
     </style>
 
     <style name="PlayButtonStyle" parent="@android:style/Widget.Button.Small">
-        <item name="android:textSize">8pt</item>
+        <item name="android:background">@drawable/play_button_selector</item>
     </style>
 
     <style name="separatorViewHorizontal">
