@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Generator: Adobe Illustrator 15.1.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.1"
+   id="Layer_1"
+   x="0px"
+   y="0px"
+   width="106"
+   height="106"
+   viewBox="0 0 106 106"
+   enable-background="new 0 0 100 100"
+   xml:space="preserve"
+   inkscape:version="0.48.4 r9939"
+   sodipodi:docname="Album Background.svg"
+   inkscape:export-filename="D:\Sandbox\AndroidNoise\AndroidNoise\design\unknown_album.png"
+   inkscape:export-xdpi="203.77"
+   inkscape:export-ydpi="203.77"><metadata
+   id="metadata3005"><rdf:RDF><cc:Work
+       rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
+         rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title></dc:title></cc:Work></rdf:RDF></metadata><defs
+   id="defs3003" /><sodipodi:namedview
+   pagecolor="#ffffff"
+   bordercolor="#666666"
+   borderopacity="1"
+   objecttolerance="10"
+   gridtolerance="10"
+   guidetolerance="10"
+   inkscape:pageopacity="0"
+   inkscape:pageshadow="2"
+   inkscape:window-width="1597"
+   inkscape:window-height="966"
+   id="namedview3001"
+   showgrid="false"
+   inkscape:zoom="7.79"
+   inkscape:cx="32.974326"
+   inkscape:cy="53"
+   inkscape:window-x="1398"
+   inkscape:window-y="84"
+   inkscape:window-maximized="0"
+   inkscape:current-layer="Layer_1"
+   fit-margin-left="3"
+   fit-margin-top="3"
+   fit-margin-right="3"
+   fit-margin-bottom="3" />
+<path
+   d="M 53,3 C 25.43,3 3,25.43 3,53 3,80.57 25.43,103 53,103 80.57,103 103,80.57 103,53 103,25.43 80.57,3 53,3 z m 13,50 c 0,7.168 -5.832,13 -13,13 -1.918,0 -3.733,-0.428 -5.374,-1.177 -0.548,-0.251 -1.075,-0.537 -1.579,-0.858 -0.484,-0.308 -0.951,-0.641 -1.389,-1.008 -1.63,-1.368 -2.915,-3.128 -3.72,-5.133 C 40.339,56.331 40,54.705 40,53 c 0,-7.168 5.832,-13 13,-13 1.918,0 3.733,0.428 5.374,1.177 0.548,0.251 1.075,0.537 1.579,0.858 0.484,0.308 0.951,0.641 1.389,1.008 1.63,1.368 2.915,3.128 3.72,5.133 C 65.661,49.669 66,51.295 66,53 z M 42.091,66.021 c 0.573,0.481 1.183,0.916 1.816,1.318 L 28.379,91.826 C 26.665,90.735 25.025,89.54 23.476,88.239 L 42.091,66.021 z M 63.909,39.979 C 63.336,39.498 62.726,39.063 62.093,38.661 L 77.621,14.174 c 1.714,1.091 3.354,2.286 4.903,3.587 L 63.909,39.979 z M 53,7 c 6.785,0 13.225,1.488 19.028,4.137 L 60.027,37.539 C 57.883,36.561 55.508,36 53,36 c -9.374,0 -17,7.626 -17,17 0,2.23 0.443,4.355 1.228,6.309 L 10.301,70.079 C 8.18,64.795 7,59.034 7,53 7,27.636 27.636,7 53,7 z m 0,92 C 46.215,99 39.775,97.512 33.972,94.863 L 45.973,68.461 C 48.117,69.439 50.492,70 53,70 62.374,70 70,62.374 70,53 70,50.77 69.557,48.645 68.772,46.691 L 95.699,35.92 C 97.82,41.205 99,46.966 99,53 99,78.364 78.364,99 53,99 z"
+   id="path2997"
+   style="fill:#d3e2fd;fill-opacity:1"
+   inkscape:connector-curvature="0"
+   inkscape:export-filename="D:\Sandbox\AndroidNoise\AndroidNoise\design\unknown_album.png"
+   inkscape:export-xdpi="216"
+   inkscape:export-ydpi="216" />
+<path
+   d="m 53,43 c -5.514,0 -10,4.486 -10,10 0,5.514 4.486,10 10,10 5.514,0 10,-4.486 10,-10 0,-5.514 -4.486,-10 -10,-10 z m 0,16 c -3.309,0 -6,-2.691 -6,-6 0,-3.309 2.691,-6 6,-6 3.309,0 6,2.691 6,6 0,3.309 -2.691,6 -6,6 z"
+   id="path2999"
+   style="fill:#d3e2fd;fill-opacity:1"
+   inkscape:connector-curvature="0"
+   inkscape:export-filename="D:\Sandbox\AndroidNoise\AndroidNoise\design\unknown_album.png"
+   inkscape:export-xdpi="216"
+   inkscape:export-ydpi="216" />
+</svg>
