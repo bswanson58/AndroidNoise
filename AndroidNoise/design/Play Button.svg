@@ -15,22 +15,13 @@
    version="1.1"
    inkscape:version="0.48.4 r9939"
    sodipodi:docname="Play Button.svg"
-   inkscape:export-filename="C:\Users\BSwanson\Desktop\Sandbox\AndroidNoise\AndroidNoise\design\play_button_pressed.png"
-   inkscape:export-xdpi="3.3699999"
-   inkscape:export-ydpi="3.3699999">
+   inkscape:export-filename="D:\Sandbox\AndroidNoise\AndroidNoise\design\play_button_default.png"
+   inkscape:export-xdpi="3.8099999"
+   inkscape:export-ydpi="3.8099999">
   <title
      id="title3900">Play Button</title>
   <defs
      id="defs4">
-    <filter
-       inkscape:collect="always"
-       id="filter3835"
-       color-interpolation-filters="sRGB">
-      <feGaussianBlur
-         inkscape:collect="always"
-         stdDeviation="10.4"
-         id="feGaussianBlur3837" />
-    </filter>
     <filter
        inkscape:collect="always"
        id="filter3891"
@@ -67,8 +58,8 @@
      inkscape:snap-global="true"
      inkscape:window-width="1501"
      inkscape:window-height="973"
-     inkscape:window-x="179"
-     inkscape:window-y="52"
+     inkscape:window-x="1455"
+     inkscape:window-y="70"
      inkscape:window-maximized="0"
      width="1000px">
     <inkscape:grid
@@ -99,13 +90,13 @@
     <rect
        style="fill:none;stroke:none"
        id="rect3910"
-       width="935.15649"
-       height="935.15649"
-       x="42.474689"
-       y="71.503548"
-       inkscape:export-filename="C:\Users\BSwanson\Desktop\Sandbox\AndroidNoise\AndroidNoise\design\play_button_default.png"
-       inkscape:export-xdpi="3.3699999"
-       inkscape:export-ydpi="3.3699999" />
+       width="756.58508"
+       height="756.58502"
+       x="121.83977"
+       y="174.67815"
+       inkscape:export-filename="D:\Sandbox\AndroidNoise\AndroidNoise\design\play_button_pressed.png"
+       inkscape:export-xdpi="3.5699999"
+       inkscape:export-ydpi="3.5699999" />
   </g>
   <g
      inkscape:groupmode="layer"
@@ -122,13 +113,13 @@
        sodipodi:cy="472.36218"
        sodipodi:rx="260"
        sodipodi:ry="260"
-       d="m 600,472.36218 a 260,260 0 1 1 -520,0 260,260 0 1 1 520,0 z" />
+       d="m 600,472.36218 c 0,143.59404 -116.40597,260 -260,260 -143.59403,0 -260,-116.40596 -260,-260 0,-143.59403 116.40597,-260 260,-260 143.59403,0 260,116.40597 260,260 z" />
   </g>
   <g
      inkscape:groupmode="layer"
      id="layer6"
      inkscape:label="Pressed"
-     style="display:inline"
+     style="display:none"
      transform="translate(0,-52.362207)">
     <path
        sodipodi:type="arc"
@@ -155,7 +146,7 @@
        sodipodi:cy="472.36218"
        sodipodi:rx="260"
        sodipodi:ry="260"
-       d="m 600,472.36218 a 260,260 0 1 1 -520,0 260,260 0 1 1 520,0 z"
+       d="m 600,472.36218 c 0,143.59404 -116.40597,260 -260,260 -143.59403,0 -260,-116.40596 -260,-260 0,-143.59403 116.40597,-260 260,-260 143.59403,0 260,116.40597 260,260 z"
        transform="translate(160.05291,76.719577)" />
   </g>
   <g
@@ -172,7 +163,7 @@
        sodipodi:cy="472.36218"
        sodipodi:rx="260"
        sodipodi:ry="260"
-       d="m 600,472.36218 a 260,260 0 1 1 -520,0 260,260 0 1 1 520,0 z"
+       d="m 600,472.36218 c 0,143.59404 -116.40597,260 -260,260 -143.59403,0 -260,-116.40596 -260,-260 0,-143.59403 116.40597,-260 260,-260 143.59403,0 260,116.40597 260,260 z"
        transform="translate(160.05291,76.719577)" />
   </g>
   <g
@@ -182,8 +173,8 @@
      style="display:inline"
      transform="translate(0,-52.362207)">
     <path
-       style="fill:#006aff;fill-opacity:1;stroke:#0000ff;stroke-width:4.34062766999999990;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="M 681.59048,549.08176 C 438.51534,375.45665 438.51534,375.45665 438.51534,375.45665 l 0,347.25022 z"
+       style="fill:#006aff;fill-opacity:1;stroke:#0000ff;stroke-width:4.34062767;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="M 665.59048,549.08176 C 422.51534,375.45665 422.51534,375.45665 422.51534,375.45665 l 0,347.25022 z"
        id="path3777"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cccc" />
