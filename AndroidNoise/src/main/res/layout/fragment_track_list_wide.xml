@@ -39,9 +39,18 @@
             style="@style/separatorViewHorizontal"/>
     </LinearLayout>
 
-    <ListView
-        android:id="@+id/TrackListView"
-        android:layout_height="wrap_content"
-        android:layout_width="fill_parent"
-        style="@style/ShortListStyle"/>
+    <RelativeLayout
+        android:layout_height="match_parent"
+        android:layout_width="match_parent">
+        <ImageView
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:background="@drawable/track_background"/>
+
+        <ListView
+            android:id="@+id/TrackListView"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            style="@style/ShortListStyle"/>
+        </RelativeLayout>
 </LinearLayout>
