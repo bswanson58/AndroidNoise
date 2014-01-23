@@ -2,6 +2,7 @@ package com.SecretSquirrel.AndroidNoise.dto;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.text.TextUtils;
 
 import com.SecretSquirrel.AndroidNoise.services.rto.RoFavorite;
 
@@ -65,6 +66,20 @@ public class Favorite implements Parcelable {
 
 	public String getTrack() {
 		return( mTrack );
+	}
+
+	public String getSortingName() {
+		String  retValue = getTrack();
+
+		if( TextUtils.isEmpty( retValue )) {
+			retValue = getAlbum();
+		}
+
+		if( TextUtils.isEmpty( retValue )) {
+			retValue = getArtist();
+		}
+
+		return( retValue );
 	}
 
 	@Override

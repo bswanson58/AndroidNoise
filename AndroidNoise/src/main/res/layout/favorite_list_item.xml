@@ -4,6 +4,8 @@
               android:orientation="horizontal"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
+              android:paddingTop="@dimen/noise_base_padding"
+              android:paddingBottom="@dimen/noise_base_padding"
               android:descendantFocusability="blocksDescendants">
 
     <Button
@@ -11,26 +13,28 @@
         android:layout_width="35dp"
         android:layout_height="35dp"
         android:layout_gravity="center_vertical"
-        style="@style/PlayButtonStyle"
         android:layout_marginLeft="@dimen/noise_base_padding"
-        android:layout_centerVertical="true"/>
+        android:layout_centerVertical="true"
+        style="@style/PlayButtonStyle"
+        />
 
     <TextView
         android:id="@+id/fli_name"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
-        style="@style/TitleText"
         android:layout_toRightOf="@+id/play_button"
         android:layout_marginLeft="@dimen/noise_base_padding"
-        android:layout_marginTop="@dimen/noise_base_padding"/>
+        style="@style/TitleText"
+        />
 
     <TextView
         android:id="@+id/fli_album_name"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
-        style="@style/SubTitleText"
         android:layout_below="@+id/fli_name"
         android:layout_toRightOf="@+id/play_button"
-        android:layout_marginLeft="@dimen/noise_base_padding"/>
+        android:layout_marginLeft="@dimen/noise_sub_item_indent"
+        style="@style/SubTitleText"
+        />
 
 </RelativeLayout>

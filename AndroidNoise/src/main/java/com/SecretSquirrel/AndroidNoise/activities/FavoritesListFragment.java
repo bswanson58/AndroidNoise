@@ -89,7 +89,7 @@ public class FavoritesListFragment extends Fragment
 
 		Collections.sort( mFavoritesList, new Comparator<Favorite>() {
 			public int compare( Favorite favorite1, Favorite favorite2 ) {
-				return( favorite1.getArtist().compareToIgnoreCase( favorite2.getArtist()));
+				return( favorite1.getSortingName().compareToIgnoreCase( favorite2.getSortingName()));
 			}
 		} );
 
