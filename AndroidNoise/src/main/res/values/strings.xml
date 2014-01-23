@@ -28,4 +28,5 @@
     <string name="noise_al_server_list">Available Noise Servers:</string>
     <string name="esl_searching_title">Searching for Noise Systems…</string>
 
+    <string name="action_play_album">Play Album</string>
 </resources>

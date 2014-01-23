@@ -9,6 +9,9 @@ import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -18,11 +21,14 @@ import com.SecretSquirrel.AndroidNoise.R;
 import com.SecretSquirrel.AndroidNoise.dto.Album;
 import com.SecretSquirrel.AndroidNoise.dto.AlbumInfo;
 import com.SecretSquirrel.AndroidNoise.dto.Artist;
+import com.SecretSquirrel.AndroidNoise.events.EventPlayAlbum;
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
 import com.SecretSquirrel.AndroidNoise.model.NoiseRemoteApplication;
 import com.SecretSquirrel.AndroidNoise.services.NoiseRemoteApi;
 import com.SecretSquirrel.AndroidNoise.services.ServiceResultReceiver;
 import com.SecretSquirrel.AndroidNoise.support.Constants;
+
+import de.greenrobot.event.EventBus;
 
 public class AlbumInfoFragment extends Fragment
 							   implements ServiceResultReceiver.Receiver {
@@ -56,6 +62,8 @@ public class AlbumInfoFragment extends Fragment
 	@Override
 	public void onCreate( Bundle savedInstanceState ) {
 		super.onCreate( savedInstanceState );
+
+		setHasOptionsMenu( true );
 
 		mServiceResultReceiver = new ServiceResultReceiver( new Handler());
 		mServiceResultReceiver.setReceiver( this );
@@ -112,6 +120,43 @@ public class AlbumInfoFragment extends Fragment
 		updateDisplay( false );
 
 		return( myView );
+	}
+
+	@Override
+	public void onCreateOptionsMenu( Menu menu, MenuInflater inflater ) {
+		inflater.inflate( R.menu.album_info, menu );
+
+		super.onCreateOptionsMenu( menu, inflater );
+	}
+
+	@Override
+	public void onPrepareOptionsMenu( Menu menu ) {
+		MenuItem    item = menu.findItem( R.id.action_play_album );
+
+		if( item != null ) {
+			item.setEnabled( mAlbum != null );
+		}
+
+		super.onPrepareOptionsMenu( menu );
+	}
+
+	@Override
+	public boolean onOptionsItemSelected( MenuItem item ) {
+		boolean retValue = true;
+
+		switch( item.getItemId()) {
+			case R.id.action_play_album:
+				if( mAlbum != null ) {
+					EventBus.getDefault().post( new EventPlayAlbum( mAlbum ));
+				}
+				break;
+
+			default:
+				retValue = super.onOptionsItemSelected( item );
+				break;
+		}
+
+		return( retValue );
 	}
 
 	@Override
