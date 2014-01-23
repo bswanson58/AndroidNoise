@@ -3,6 +3,7 @@ package com.SecretSquirrel.AndroidNoise.activities;
 // Secret Squirrel Software - Created by bswanson on 12/23/13.
 
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -129,6 +130,8 @@ public class ShellLibraryFragment extends BaseShellFragment {
 					.replace( R.id.LibraryShellFrame, ArtistFragment.newInstance( mCurrentArtist ))
 					.addToBackStack( null )
 					.commit();
+
+			ActivityCompat.invalidateOptionsMenu( getActivity());
 		}
 	}
 
@@ -146,6 +149,8 @@ public class ShellLibraryFragment extends BaseShellFragment {
 					.replace( R.id.LibraryShellFrame, AlbumFragment.newInstance( mCurrentArtist, mCurrentAlbum ))
 					.addToBackStack( null )
 					.commit();
+
+			ActivityCompat.invalidateOptionsMenu( getActivity());
 		}
 	}
 }

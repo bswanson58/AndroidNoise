@@ -1,5 +1,6 @@
 package com.SecretSquirrel.AndroidNoise.activities;
 
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.FragmentManager;
@@ -93,6 +94,8 @@ public class ShellActivity extends ActionBarActivity
 			else {
 				super.onBackPressed();
 			}
+
+			ActivityCompat.invalidateOptionsMenu( this );
 		}
 		else {
 			super.onBackPressed();
@@ -142,6 +145,8 @@ public class ShellActivity extends ActionBarActivity
 
 			mCurrentChildFragment = fragment;
 		}
+
+		ActivityCompat.invalidateOptionsMenu( this );
 	}
 
 	public void restoreActionBar() {
@@ -162,6 +167,7 @@ public class ShellActivity extends ActionBarActivity
 			restoreActionBar();
 			return true;
 		}
+
 		return super.onCreateOptionsMenu( menu );
 	}
 
@@ -174,6 +180,7 @@ public class ShellActivity extends ActionBarActivity
 			case R.id.action_settings:
 				return true;
 		}
+
 		return super.onOptionsItemSelected( item );
 	}
 }
