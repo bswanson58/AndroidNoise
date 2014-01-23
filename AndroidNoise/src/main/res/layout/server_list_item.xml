@@ -3,13 +3,22 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="vertical"
               android:layout_width="match_parent"
-              android:layout_height="wrap_content">
+              android:layout_height="wrap_content"
+              android:paddingTop="@dimen/noise_base_padding"
+              android:paddingBottom="@dimen/noise_base_padding">
+
     <TextView
-        android:id="@+id/server_list_item_name"
+        android:id="@+id/sli_name"
         android:layout_height="wrap_content"
         android:layout_width="fill_parent"
-        android:gravity="left|top"
-        android:layout_gravity="center_vertical"
+        android:text="H8-BSwanson"
         style="@style/TitleText"/>
 
+    <TextView
+        android:id="@+id/sli_address"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:text="(192.168.1.103)"
+        android:layout_marginLeft="@dimen/noise_sub_item_indent"
+        style="@style/SubTitleText" />
 </LinearLayout>

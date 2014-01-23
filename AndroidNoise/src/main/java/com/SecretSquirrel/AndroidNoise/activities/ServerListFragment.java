@@ -150,7 +150,8 @@ public class ServerListFragment extends Fragment {
 		private ArrayList<ServerInformation>    mServerList;
 
 		private class ViewHolder {
-			public TextView NameTextView;
+			public TextView     NameTextView;
+			public TextView     AddressTextView;
 		}
 
 		public ServerAdapter( Context context, ArrayList<ServerInformation> serverList ) {
@@ -172,7 +173,8 @@ public class ServerListFragment extends Fragment {
 				views = new ViewHolder();
 
 				if( retValue != null ) {
-					views.NameTextView = (TextView) retValue.findViewById( R.id.server_list_item_name );
+					views.NameTextView = (TextView) retValue.findViewById( R.id.sli_name );
+					views.AddressTextView = (TextView)retValue.findViewById( R.id.sli_address );
 
 					retValue.setTag( views );
 				}
@@ -185,7 +187,8 @@ public class ServerListFragment extends Fragment {
 			   ( position < mServerList.size())) {
 				ServerInformation   serverInfo = mServerList.get( position );
 
-				views.NameTextView.setText( String.format( "%s (%s)", serverInfo.getHostName(), serverInfo.getServerAddress()));
+				views.NameTextView.setText( serverInfo.getHostName());
+				views.AddressTextView.setText( String.format( "(%s)", serverInfo.getServerAddress()));
 			}
 
 			return( retValue );

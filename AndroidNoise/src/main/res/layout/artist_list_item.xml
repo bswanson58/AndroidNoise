@@ -26,7 +26,7 @@
         android:gravity="bottom|left"
         android:layout_below="@+id/artist_list_item_name"
         android:layout_alignParentLeft="true"
-        android:layout_marginLeft="5pt"
+        android:layout_marginLeft="@dimen/noise_sub_item_indent"
         style="@style/SubTitleText"/>
 
     <TextView
