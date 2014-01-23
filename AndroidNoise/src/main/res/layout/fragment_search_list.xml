@@ -1,21 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
+              android:orientation="horizontal"
               android:layout_width="match_parent"
               android:layout_height="match_parent">
-    <TextView
+    <LinearLayout
+        android:layout_height="match_parent"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/noise_base_padding"
-        android:layout_marginTop="@dimen/noise_base_padding"
-        android:text="@string/search_button_title"
-        style="@style/HeaderText"/>
+        android:orientation="vertical">
 
-    <ListView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/search_list_view"
-        style="@style/LongListStyle"/>
+        <View
+            android:layout_height="0dp"
+            android:layout_width="2dp"
+            android:layout_weight="1"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginLeft="2dp"
+            android:layout_marginTop="@dimen/noise_base_padding"
+            android:layout_marginBottom="@dimen/noise_base_padding"
+            style="@style/separatorViewVertical"/>
+
+        <com.SecretSquirrel.AndroidNoise.views.VerticalTextView
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:text="@string/noise_sr_search_list"
+            android:gravity="bottom"
+            style="@style/HeaderText"
+            />
+
+        <View
+            android:layout_height="0dp"
+            android:layout_width="2dp"
+            android:layout_weight="1"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginLeft="2dp"
+            android:layout_marginTop="@dimen/noise_base_padding"
+            android:layout_marginBottom="@dimen/noise_base_padding"
+            android:scaleY="-1"
+            style="@style/separatorViewVertical"/>
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_height="match_parent"
+        android:layout_width="match_parent">
+        <ImageView
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:background="@drawable/search_background"/>
+        <ListView
+            android:id="@+id/search_list_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/LongListStyle"/>
+    </RelativeLayout>
 
 </LinearLayout>

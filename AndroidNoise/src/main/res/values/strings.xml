@@ -25,6 +25,7 @@
     <string name="noise_al_album_list">Albums</string>
     <string name="noise_tl_track_list">Tracks</string>
     <string name="noise_ql_queue_list">Now Playing</string>
+    <string name="noise_sr_search_list">Search Results</string>
     <string name="noise_fl_favorites_list">Favorites</string>
     <string name="noise_al_server_list">Available Noise Systems</string>
     <string name="esl_searching_title">Searching for Noise Systems…</string>
