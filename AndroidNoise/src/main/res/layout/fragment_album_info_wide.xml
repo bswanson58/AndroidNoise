@@ -7,19 +7,15 @@
                 tools:context=".AlbumActivity$PlaceholderFragment"
                 android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/ai_album_name"
-        android:text="Sticky Fingers"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="false"
-        android:layout_alignParentTop="false"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="@dimen/noise_base_padding"
-        android:textSize="@dimen/list_item_title_textSize"
-        style="@style/TitleText"
-        android:layout_toLeftOf="@+id/ai_album_cover_image"
-        android:layout_below="@+id/ai_artist_name"/>
+    <ImageView
+        android:id="@+id/ai_album_cover_image"
+        android:layout_width="@dimen/noise_image_maximum_width"
+        android:layout_height="@dimen/noise_image_minimum_height"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:scaleType="fitCenter"
+        android:layout_margin="@dimen/noise_base_padding"
+        android:adjustViewBounds="true"/>
 
     <TextView
         android:id="@+id/ai_artist_name"
@@ -34,15 +30,42 @@
         style="@style/TitleText"
         android:layout_toLeftOf="@+id/ai_album_cover_image"/>
 
-    <ImageView
-        android:id="@+id/ai_album_cover_image"
-        android:layout_width="@dimen/noise_image_maximum_width"
-        android:layout_height="@dimen/noise_image_minimum_height"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:scaleType="fitCenter"
-        android:layout_margin="@dimen/noise_base_padding"
-        android:adjustViewBounds="true"/>
+    <LinearLayout
+        android:id="@+id/ai_divider"
+        android:layout_height="3dp"
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:layout_marginTop="1dp"
+        android:layout_marginLeft="@dimen/noise_base_padding"
+        android:layout_marginRight="@dimen/noise_base_padding"
+        android:layout_marginBottom="1dp"
+        android:layout_below="@+id/ai_artist_name"
+        android:gravity="right"
+        android:weightSum="3"
+        android:layout_toRightOf="@+id/ai_album_cover_image">
+
+        <View
+            android:layout_height="3dp"
+            android:layout_width="0dp"
+            android:layout_weight="2"
+            android:scaleX="-1"
+            android:background="@drawable/divider_split_gradient_horizontal"
+            />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/ai_album_name"
+        android:text="Sticky Fingers"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="false"
+        android:layout_alignParentTop="false"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="@dimen/noise_base_padding"
+        android:textSize="@dimen/list_item_title_textSize"
+        style="@style/TitleText"
+        android:layout_toLeftOf="@+id/ai_album_cover_image"
+        android:layout_below="@+id/ai_artist_name"/>
 
     <TextView
         android:id="@+id/ai_published_header"

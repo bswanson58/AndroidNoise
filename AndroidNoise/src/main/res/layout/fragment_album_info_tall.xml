@@ -1,9 +1,9 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".AlbumActivity$PlaceholderFragment"
-    android:orientation="vertical">
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:context=".AlbumActivity$PlaceholderFragment"
+                android:orientation="vertical">
 
     <com.SecretSquirrel.AndroidNoise.views.AutoFitTextView
         android:id="@+id/ai_artist_name"
@@ -17,11 +17,31 @@
         android:text="The Rolling Stones"
         style="@style/TitleText"/>
 
+    <LinearLayout
+        android:id="@+id/ai_divider"
+        android:layout_height="3dp"
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:layout_marginTop="1dp"
+        android:layout_marginLeft="@dimen/noise_base_padding"
+        android:layout_marginRight="@dimen/noise_base_padding"
+        android:layout_marginBottom="1dp"
+        android:layout_below="@+id/ai_artist_name"
+        android:weightSum="3">
+
+        <View
+            android:layout_height="3dp"
+            android:layout_width="0dp"
+            android:layout_weight="2"
+            android:background="@drawable/divider_split_gradient_horizontal"
+            />
+    </LinearLayout>
+
     <com.SecretSquirrel.AndroidNoise.views.AutoFitTextView
         android:id="@+id/ai_album_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/ai_artist_name"
+        android:layout_below="@+id/ai_divider"
         android:layout_alignParentLeft="true"
         android:layout_marginLeft="@dimen/noise_base_padding"
         android:layout_marginRight="@dimen/noise_base_padding"

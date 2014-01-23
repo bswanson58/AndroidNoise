@@ -53,9 +53,9 @@
     </style>
 
     <style name="separatorViewHorizontal">
-        <item name="android:background">@drawable/divider_gradient_horizontal</item>
+        <item name="android:background">@drawable/divider_split_gradient_horizontal</item>
     </style>
     <style name="separatorViewVertical">
-        <item name="android:background">@drawable/divider_gradient_vertical</item>
+        <item name="android:background">@drawable/divider_split_gradient_vertical</item>
     </style>
 </resources>
