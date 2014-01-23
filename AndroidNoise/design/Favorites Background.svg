@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.1"
+   x="0px"
+   y="0px"
+   width="108"
+   height="99.731003"
+   viewBox="0 0 108 99.731003"
+   enable-background="new 0 0 100 100"
+   xml:space="preserve"
+   id="svg3274"
+   inkscape:version="0.48.4 r9939"
+   sodipodi:docname="Favorites Background.svg"
+   inkscape:export-filename="C:\Users\BSwanson\Desktop\Sandbox\AndroidNoise\AndroidNoise\design\favorites_background.png"
+   inkscape:export-xdpi="200.33891"
+   inkscape:export-ydpi="200.33891"><metadata
+   id="metadata3284"><rdf:RDF><cc:Work
+       rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
+         rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title></dc:title></cc:Work></rdf:RDF></metadata><defs
+   id="defs3282" /><sodipodi:namedview
+   pagecolor="#ffffff"
+   bordercolor="#666666"
+   borderopacity="1"
+   objecttolerance="10"
+   gridtolerance="10"
+   guidetolerance="10"
+   inkscape:pageopacity="0"
+   inkscape:pageshadow="2"
+   inkscape:window-width="1436"
+   inkscape:window-height="932"
+   id="namedview3280"
+   showgrid="false"
+   fit-margin-top="4"
+   fit-margin-left="4"
+   fit-margin-right="4"
+   fit-margin-bottom="4"
+   inkscape:zoom="7.7945297"
+   inkscape:cx="33.985964"
+   inkscape:cy="49.8655"
+   inkscape:window-x="306"
+   inkscape:window-y="102"
+   inkscape:window-maximized="0"
+   inkscape:current-layer="svg3274" />
+<g
+   id="Captions"
+   transform="translate(4,-0.134)">
+</g>
+<g
+   id="Your_Icon"
+   style="fill:#d3e2fd;fill-opacity:1"
+   transform="translate(4,-0.134)">
+	<path
+   d="m 49.991,19.205 c 0,0 -5.69,-15.07 -21.8,-15.07 C 13.538,4.134 0,12.755 0,34.216 0,51.777 13.643,62.895 26.752,72.232 44.083,84.584 41.674,95.865 41.674,95.865 41.674,95.865 100,67.755 100,34.216 100,12.755 86.426,4.134 71.778,4.134 55.672,4.134 49.991,19.205 49.991,19.205 z"
+   id="path3278"
+   style="fill:#d3e2fd;fill-opacity:1"
+   inkscape:connector-curvature="0" />
+</g>
+</svg>
