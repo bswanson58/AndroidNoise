@@ -5,6 +5,7 @@ package com.SecretSquirrel.AndroidNoise.activities;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.ServiceConnection;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -263,7 +264,13 @@ public class QueueListFragment extends Fragment  {
 				}
 
 				views.NameTextView.setText( track.getTrackName());
-				views.AlbumTextView.setText( " (" + track.getArtistName() + "/" + track.getAlbumName() + ")" );
+				views.AlbumTextView.setText( String.format( "(%s/%s)", track.getArtistName(), track.getAlbumName() ));
+
+				int typeStyle = track.isStrategySourced() ? Typeface.ITALIC : Typeface.NORMAL;
+
+				views.NameTextView.setTypeface( null, typeStyle );
+				views.AlbumTextView.setTypeface( null, typeStyle );
+
 				views.PlayDuration.setText(
 						String.format( "%d:%02d",
 								TimeUnit.MILLISECONDS.toMinutes( track.getDurationMilliseconds()),
