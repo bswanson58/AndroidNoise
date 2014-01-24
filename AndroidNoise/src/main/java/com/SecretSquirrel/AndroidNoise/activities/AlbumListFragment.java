@@ -167,7 +167,10 @@ public class AlbumListFragment extends Fragment
 
 		private class ViewHolder {
 			public Button       PlayButton;
-			public TextView     NameTextView;
+			public TextView     TitleTextView;
+			public TextView     TrackCountTextView;
+			public TextView     PublishedTextView;
+			public TextView     PublishedHeaderTextView;
 		}
 
 		public AlbumAdapter( Context context, ArrayList<Album> albumList ) {
@@ -188,7 +191,10 @@ public class AlbumListFragment extends Fragment
 
 				if( retValue != null ) {
 					views = new ViewHolder();
-					views.NameTextView = (TextView)retValue.findViewById( R.id.album_list_item_name );
+					views.TitleTextView = (TextView)retValue.findViewById( R.id.ali_title );
+					views.TrackCountTextView = (TextView)retValue.findViewById( R.id.ali_track_count );
+					views.PublishedTextView = (TextView)retValue.findViewById( R.id.ali_published );
+					views.PublishedHeaderTextView = (TextView)retValue.findViewById( R.id.ali_published_header );
 					views.PlayButton = (Button)retValue.findViewById( R.id.play_button );
 
 					views.PlayButton.setOnClickListener( new View.OnClickListener() {
@@ -213,8 +219,18 @@ public class AlbumListFragment extends Fragment
 			   ( position < mAlbumList.size())) {
 				Album      album = mAlbumList.get( position );
 
-				views.NameTextView.setText( album.getName());
 				views.PlayButton.setTag( album );
+				views.TitleTextView.setText( album.getName());
+				views.TrackCountTextView.setText( String.format( " %d", album.getTrackCount()));
+				if( album.getPublishedYear() > 1000 ) {
+					views.PublishedTextView.setText( String.format( " %d", album.getPublishedYear()));
+					views.PublishedTextView.setVisibility( View.VISIBLE );
+					views.PublishedHeaderTextView.setVisibility( View.VISIBLE );
+				}
+				else {
+					views.PublishedTextView.setVisibility( View.INVISIBLE );
+					views.PublishedHeaderTextView.setVisibility( View.INVISIBLE );
+				}
 			}
 
 			return( retValue );

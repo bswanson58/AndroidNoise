@@ -1,28 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="fill_parent"
-              android:layout_height="wrap_content"
-              android:descendantFocusability="blocksDescendants"
-              android:orientation="horizontal">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/noise_base_padding"
+                android:paddingBottom="@dimen/noise_base_padding"
+                android:descendantFocusability="blocksDescendants">
 
     <Button
         android:id="@+id/play_button"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginTop="@dimen/noise_base_padding"
-        android:layout_marginBottom="@dimen/noise_base_padding"
-        android:layout_gravity="center_vertical"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_marginRight="@dimen/noise_base_padding"
+        android:layout_centerVertical="true"
         style="@style/PlayButtonStyle"/>
 
     <com.SecretSquirrel.AndroidNoise.views.AutoFitTextView
-        android:id="@+id/album_list_item_name"
+        android:id="@+id/ali_title"
         android:layout_height="wrap_content"
         android:layout_width="fill_parent"
-        android:textSize="@dimen/list_item_title_textSize"
-        android:gravity="left|top"
-        android:layout_gravity="center_vertical"
-        style="@style/TitleText"
-        android:layout_marginLeft="@dimen/noise_base_padding"/>
+        android:layout_toRightOf="@+id/play_button"
+        android:text="Sticky Fingers"
+        style="@style/TitleText"/>
 
-</LinearLayout>
+    <LinearLayout
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_toRightOf="@+id/play_button"
+        android:layout_below="@+id/ali_title"
+        android:layout_marginLeft="@dimen/noise_sub_item_indent">
+
+        <TextView
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:text="@string/ali_track_count_title"
+            style="@style/SubTitleText"/>
+        <TextView
+            android:id="@+id/ali_track_count"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:text="15"
+            style="@style/SubTitleText"/>
+        <TextView
+            android:id="@+id/ali_published_header"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_marginLeft="17dp"
+            android:text="@string/ali_published_title"
+            style="@style/SubTitleText"/>
+        <TextView
+            android:id="@+id/ali_published"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:text="1998"
+            style="@style/SubTitleText"/>
+        </LinearLayout>
+
+</RelativeLayout>
