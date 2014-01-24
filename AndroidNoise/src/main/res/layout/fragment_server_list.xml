@@ -51,7 +51,7 @@
         android:layout_height="match_parent"
         android:layout_width="match_parent"
         android:gravity="center"
-        android:text="@string/esl_searching_title"
+        android:text="@string/sl_searching_title"
         style="@style/HeaderText"/>
 
 </LinearLayout>

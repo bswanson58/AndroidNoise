@@ -3,4 +3,5 @@
     <color name="HeaderText">#222</color>
     <color name="TitleText">#0078ff</color>
     <color name="SubTitleText">#003cff</color>
+    <color name="SubtleColor">#d3e2fd</color>
 </resources>

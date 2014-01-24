@@ -47,11 +47,22 @@
             android:layout_height="match_parent"
             android:layout_width="match_parent"
             android:background="@drawable/queue_background"/>
+
         <ListView
             android:id="@+id/QueueListView"
             android:layout_height="match_parent"
             android:layout_width="match_parent"
             style="@style/LongListStyle"/>
-        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/ql_empty_view"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:gravity="center_horizontal|bottom"
+            android:textSize="18pt"
+            android:textColor="@color/SubtleColor"
+            android:text="@string/ql_empty_list"
+            android:layout_marginBottom="@dimen/noise_base_padding"/>
+    </RelativeLayout>
 
 </LinearLayout>

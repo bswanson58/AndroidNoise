@@ -28,7 +28,8 @@
     <string name="noise_sr_search_list">Search Results</string>
     <string name="noise_fl_favorites_list">Favorites</string>
     <string name="noise_al_server_list">Available Noise Systems</string>
-    <string name="esl_searching_title">Searching for Noise Systems…</string>
+    <string name="sl_searching_title">Searching for Noise Systems…</string>
+    <string name="ql_empty_list">Play Something!</string>
 
     <string name="action_play_album">Play Album</string>
 </resources>

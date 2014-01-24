@@ -104,6 +104,7 @@ public class QueueListFragment extends Fragment  {
 			ListView queueListView = (ListView) myView.findViewById( R.id.QueueListView );
 
 			queueListView.setAdapter( mQueueListAdapter );
+			queueListView.setEmptyView( myView.findViewById( R.id.ql_empty_view ));
 		}
 
 		if( getApplicationState().getIsConnected()) {
