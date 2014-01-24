@@ -158,18 +158,8 @@ public class FavoritesListFragment extends Fragment
 				Favorite    favorite = mFavoritesList.get( position );
 
 				views.PlayButton.setTag( favorite );
-				if(!TextUtils.isEmpty( favorite.getTrack())) {
-					views.TitleTextView.setText( favorite.getTrack());
-					views.SubtitleTextView.setText( "(" + favorite.getArtist() + "/" + favorite.getAlbum() + ")" );
-				}
-				else if(!TextUtils.isEmpty( favorite.getAlbum())) {
-					views.TitleTextView.setText( favorite.getAlbum());
-					views.SubtitleTextView.setText( favorite.getArtist());
-				}
-				else if(!TextUtils.isEmpty( favorite.getArtist())) {
-					views.TitleTextView.setText( favorite.getArtist());
-					views.SubtitleTextView.setText( "" );
-				}
+				views.TitleTextView.setText( favorite.getItemTitle());
+				views.SubtitleTextView.setText( favorite.getItemSubTitle());
 			}
 
 			return( retValue );

@@ -82,6 +82,33 @@ public class Favorite implements Parcelable {
 		return( retValue );
 	}
 
+	public String getItemTitle() {
+		String  retValue = getTrack();
+
+		if( TextUtils.isEmpty( retValue )) {
+			retValue = getAlbum();
+		}
+
+		if( TextUtils.isEmpty( retValue )) {
+			retValue = getArtist();
+		}
+
+		return( retValue );
+	}
+
+	public String getItemSubTitle() {
+		String  retValue = "";
+
+		if(!TextUtils.isEmpty( getTrack())) {
+			retValue = String.format( "(%s/%s)", getArtist(), getAlbum());
+		}
+		else if(!TextUtils.isEmpty( getAlbum())) {
+			retValue = String.format( "(%s)", getArtist());
+		}
+
+		return( retValue );
+	}
+
 	@Override
 	public int describeContents() {
 		return( 0 );
