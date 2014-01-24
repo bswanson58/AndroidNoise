@@ -215,10 +215,10 @@ public class QueueListFragment extends Fragment  {
 		private ArrayList<PlayQueueTrack>   mQueueList;
 
 		private class ViewHolder {
-			public TextView NowPlaying;
-			public TextView NameTextView;
-			public TextView AlbumTextView;
-			public TextView PlayDuration;
+			public View         NowPlaying;
+			public TextView     NameTextView;
+			public TextView     AlbumTextView;
+			public TextView     PlayDuration;
 		}
 
 		public QueueAdapter( Context context, ArrayList<PlayQueueTrack> queueList ) {
@@ -240,7 +240,7 @@ public class QueueListFragment extends Fragment  {
 				if( retValue != null ) {
 					views = new ViewHolder();
 					
-					views.NowPlaying = (TextView)retValue.findViewById( R.id.qli_now_playing );
+					views.NowPlaying = retValue.findViewById( R.id.qli_now_playing );
 					views.NameTextView = (TextView)retValue.findViewById( R.id.qli_item_name );
 					views.AlbumTextView = (TextView)retValue.findViewById( R.id.qli_album_name );
 					views.PlayDuration = (TextView)retValue.findViewById( R.id.qli_play_duration );

@@ -5,15 +5,13 @@
               android:layout_width="match_parent"
               android:layout_height="wrap_content">
 
-    <TextView
+    <ImageView
         android:id="@+id/qli_now_playing"
         android:layout_width="wrap_content"
-        android:layout_height="fill_parent"
-        android:gravity="center_vertical"
-        android:textColor="#04ff00"
-        android:text=">"
-        style="@style/TitleText"
-        />
+        android:layout_height="wrap_content"
+        android:layout_marginRight="@dimen/noise_base_padding"
+        android:background="@drawable/playing_indicator"
+        android:layout_centerVertical="true"/>
 
     <TextView
         android:id="@+id/qli_item_name"
