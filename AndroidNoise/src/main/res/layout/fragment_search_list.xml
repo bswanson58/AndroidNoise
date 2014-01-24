@@ -51,6 +51,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             style="@style/LongListStyle"/>
+
+        <TextView
+            android:id="@+id/sl_empty_view"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:layout_margin="@dimen/noise_base_padding"
+            android:text="@string/sl_empty_list"
+            android:textColor="@color/SubtleColor"
+            style="@style/HeaderText"/>
     </RelativeLayout>
 
 </LinearLayout>

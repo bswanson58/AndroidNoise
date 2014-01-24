@@ -34,7 +34,6 @@ import rx.util.functions.Action1;
 public class SearchListFragment extends Fragment {
 	private final String                TAG = SearchListFragment.class.getName();
 
-	private ListView                    mSearchListView;
 	private ArrayList<SearchResultItem> mResultList;
 	private SearchResultAdapter         mSearchListAdapter;
 	private Subscription                mSearchSubscription;
@@ -57,8 +56,12 @@ public class SearchListFragment extends Fragment {
 	public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState ) {
 		View    myView = inflater.inflate( R.layout.fragment_search_list, container, false );
 
-		mSearchListView = (ListView) myView.findViewById( R.id.search_list_view );
-		mSearchListView.setAdapter( mSearchListAdapter );
+		if( myView != null ) {
+			ListView    searchListView = (ListView) myView.findViewById( R.id.search_list_view );
+
+			searchListView.setAdapter( mSearchListAdapter );
+			searchListView.setEmptyView( myView.findViewById( R.id.sl_empty_view ));
+		}
 
 		return( myView );
 	}
@@ -149,10 +152,12 @@ public class SearchListFragment extends Fragment {
 			if( convertView == null ) {
 				retValue = mLayoutInflater.inflate( R.layout.search_list_item, parent, false );
 
-				views = new ViewHolder();
-				views.NameTextView = (TextView)retValue.findViewById( R.id.search_list_item_name );
+				if( retValue != null ) {
+					views = new ViewHolder();
+					views.NameTextView = (TextView)retValue.findViewById( R.id.search_list_item_name );
 
-				retValue.setTag( views );
+					retValue.setTag( views );
+				}
 			}
 			else {
 				views = (ViewHolder)retValue.getTag();
