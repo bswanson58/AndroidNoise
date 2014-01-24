@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -133,7 +134,9 @@ public class SearchListFragment extends Fragment {
 		private ArrayList<SearchResultItem> mResultList;
 
 		private class ViewHolder {
-			public TextView NameTextView;
+			public TextView     TitleView;
+			public TextView     SubTitleView;
+			public Button       PlayButton;
 		}
 
 		public SearchResultAdapter( Context context, ArrayList<SearchResultItem> resultList ) {
@@ -154,7 +157,10 @@ public class SearchListFragment extends Fragment {
 
 				if( retValue != null ) {
 					views = new ViewHolder();
-					views.NameTextView = (TextView)retValue.findViewById( R.id.search_list_item_name );
+
+					views.TitleView = (TextView)retValue.findViewById( R.id.sli_title );
+					views.SubTitleView = (TextView)retValue.findViewById( R.id.sli_subtitle );
+					views.PlayButton = (Button)retValue.findViewById( R.id.play_button );
 
 					retValue.setTag( views );
 				}
@@ -167,7 +173,9 @@ public class SearchListFragment extends Fragment {
 			   ( position < mResultList.size())) {
 				SearchResultItem    result = mResultList.get( position );
 
-				views.NameTextView.setText( result.getArtistName());
+				views.TitleView.setText( result.getItemTitle() );
+				views.SubTitleView.setText( result.getItemSubTitle());
+				views.PlayButton.setVisibility( result.getCanPlay() ? View.VISIBLE : View.INVISIBLE );
 			}
 
 			return( retValue );

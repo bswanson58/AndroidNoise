@@ -1,15 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content">
-    <TextView
-        android:id="@+id/search_list_item_name"
-        android:layout_height="wrap_content"
-        android:layout_width="fill_parent"
-        android:gravity="left|top"
-        android:layout_gravity="center_vertical"
-        style="@style/TitleText"/>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/noise_base_padding"
+                android:paddingBottom="@dimen/noise_base_padding"
+                android:descendantFocusability="blocksDescendants">
 
-</LinearLayout>
+    <Button
+        android:id="@+id/play_button"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="@dimen/noise_base_padding"
+        android:layout_centerVertical="true"
+        style="@style/PlayButtonStyle"
+        />
+
+    <TextView
+        android:id="@+id/sli_title"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_toRightOf="@+id/play_button"
+        android:layout_marginLeft="@dimen/noise_base_padding"
+        android:text="Beast Of Burden"
+        style="@style/TitleText"
+        />
+
+    <TextView
+        android:id="@+id/sli_subtitle"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_below="@+id/sli_title"
+        android:layout_toRightOf="@+id/play_button"
+        android:layout_marginLeft="@dimen/noise_sub_item_indent"
+        android:text="(The Rolling Stones/Sticky Fingers)"
+        style="@style/SubTitleText"
+        />
+
+</RelativeLayout>

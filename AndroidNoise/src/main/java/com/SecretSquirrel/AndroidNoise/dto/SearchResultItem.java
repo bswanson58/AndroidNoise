@@ -2,6 +2,8 @@ package com.SecretSquirrel.AndroidNoise.dto;
 
 // Secret Squirrel Software - Created by bswanson on 12/30/13.
 
+import android.text.TextUtils;
+
 import com.SecretSquirrel.AndroidNoise.services.rto.RoSearchResultItem;
 
 public class SearchResultItem {
@@ -47,7 +49,34 @@ public class SearchResultItem {
 		return( mArtistName );
 	}
 
-	public boolean isCanPlay() {
+	public boolean getCanPlay() {
 		return( mCanPlay );
+	}
+
+	public String getItemTitle() {
+		String  retValue = getTrackName();
+
+		if( TextUtils.isEmpty( retValue )) {
+			retValue = getAlbumName();
+		}
+
+		if( TextUtils.isEmpty( retValue )) {
+			retValue = getArtistName();
+		}
+
+		return( retValue );
+	}
+
+	public String getItemSubTitle() {
+		String  retValue = "";
+
+		if(!TextUtils.isEmpty( getTrackName())) {
+			retValue = String.format( "(%s/%s)", getArtistName(), getAlbumName());
+		}
+		else if(!TextUtils.isEmpty( getAlbumName())) {
+			retValue = String.format( "(%s)", getArtistName());
+		}
+
+		return( retValue );
 	}
 }
