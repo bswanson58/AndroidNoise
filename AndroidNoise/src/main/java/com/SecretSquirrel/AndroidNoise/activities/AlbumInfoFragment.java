@@ -46,6 +46,7 @@ public class AlbumInfoFragment extends Fragment
 	private TextView                mAlbumName;
 	private TextView                mPublishedYear;
 	private TextView                mPublishedYearHeader;
+	private TextView                mTrackCount;
 	private Bitmap                  mUnknownAlbum;
 
 	public static AlbumInfoFragment newInstance( Artist artist, Album album ) {
@@ -102,6 +103,7 @@ public class AlbumInfoFragment extends Fragment
 			mAlbumCover = (ImageView) myView.findViewById( R.id.ai_album_cover_image );
 			mPublishedYear = (TextView)myView.findViewById( R.id.ai_published );
 			mPublishedYearHeader = (TextView)myView.findViewById( R.id.ai_published_header );
+			mTrackCount = (TextView)myView.findViewById( R.id.ai_track_count );
 		}
 
 		if( mAlbum != null ) {
@@ -175,9 +177,10 @@ public class AlbumInfoFragment extends Fragment
 
 		if( mAlbum != null ) {
 			mAlbumName.setText( mAlbum.getName());
+			mTrackCount.setText( String.format( " %d", mAlbum.getTrackCount()));
 
 			if( mAlbum.getPublishedYear() > 0 ) {
-				mPublishedYear.setText( String.format( "%4d", mAlbum.getPublishedYear()));
+				mPublishedYear.setText( String.format( " %4d", mAlbum.getPublishedYear()));
 				mPublishedYear.setVisibility( View.VISIBLE );
 				mPublishedYearHeader.setVisibility( View.VISIBLE );
 			}
