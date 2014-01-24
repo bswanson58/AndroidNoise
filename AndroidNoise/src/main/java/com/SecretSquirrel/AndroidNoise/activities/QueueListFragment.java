@@ -5,6 +5,7 @@ package com.SecretSquirrel.AndroidNoise.activities;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.ServiceConnection;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
@@ -213,6 +214,8 @@ public class QueueListFragment extends Fragment  {
 		private Context                     mContext;
 		private LayoutInflater              mLayoutInflater;
 		private ArrayList<PlayQueueTrack>   mQueueList;
+		private int                         mWillPlayColor;
+		private int                         mHasPlayedColor;
 
 		private class ViewHolder {
 			public View         NowPlaying;
@@ -225,6 +228,9 @@ public class QueueListFragment extends Fragment  {
 			super( context, R.layout.queue_list_item, queueList );
 			mContext = context;
 			mQueueList = queueList;
+
+			mWillPlayColor = getResources().getColor( R.color.TitleText );
+			mHasPlayedColor = getResources().getColor( R.color.HasPlayed );
 
 			mLayoutInflater = (LayoutInflater)mContext.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
 		}
@@ -266,7 +272,7 @@ public class QueueListFragment extends Fragment  {
 				views.NameTextView.setText( track.getTrackName());
 				views.AlbumTextView.setText( String.format( "(%s/%s)", track.getArtistName(), track.getAlbumName() ));
 
-				int typeStyle = track.isStrategySourced() ? Typeface.ITALIC : Typeface.NORMAL;
+				int typeStyle = track.getIsStrategySourced() ? Typeface.ITALIC : Typeface.NORMAL;
 
 				views.NameTextView.setTypeface( null, typeStyle );
 				views.AlbumTextView.setTypeface( null, typeStyle );
@@ -276,6 +282,17 @@ public class QueueListFragment extends Fragment  {
 								TimeUnit.MILLISECONDS.toMinutes( track.getDurationMilliseconds()),
 								TimeUnit.MILLISECONDS.toSeconds( track.getDurationMilliseconds()) -
 								TimeUnit.MINUTES.toSeconds( TimeUnit.MILLISECONDS.toMinutes( track.getDurationMilliseconds()))));
+
+				if( track.getHasPlayed()) {
+					views.NameTextView.setTextColor( mHasPlayedColor );
+					views.AlbumTextView.setTextColor( mHasPlayedColor );
+					views.PlayDuration.setTextColor( mHasPlayedColor );
+				}
+				else {
+					views.NameTextView.setTextColor( mWillPlayColor );
+					views.AlbumTextView.setTextColor( mWillPlayColor );
+					views.PlayDuration.setTextColor( mWillPlayColor );
+				}
 			}
 
 			return( retValue );

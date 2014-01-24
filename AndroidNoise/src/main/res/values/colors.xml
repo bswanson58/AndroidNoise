@@ -4,4 +4,5 @@
     <color name="TitleText">#0078ff</color>
     <color name="SubTitleText">#003cff</color>
     <color name="SubtleColor">#d3e2fd</color>
+    <color name="HasPlayed">#ff808080</color>
 </resources>

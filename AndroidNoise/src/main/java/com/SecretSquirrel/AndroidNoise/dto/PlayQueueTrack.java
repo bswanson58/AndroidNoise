@@ -47,15 +47,15 @@ public class PlayQueueTrack {
 		return( mIsPlaying );
 	}
 
-	public boolean isHasPlayed() {
+	public boolean getHasPlayed() {
 		return( mHasPlayed );
 	}
 
-	public boolean isFaulted() {
+	public boolean getIsFaulted() {
 		return( mIsFaulted );
 	}
 
-	public boolean isStrategySourced() {
+	public boolean getIsStrategySourced() {
 		return( mIsStrategySourced );
 	}
 
