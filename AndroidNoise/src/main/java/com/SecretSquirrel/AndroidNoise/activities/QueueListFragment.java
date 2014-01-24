@@ -5,7 +5,6 @@ package com.SecretSquirrel.AndroidNoise.activities;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.ServiceConnection;
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
