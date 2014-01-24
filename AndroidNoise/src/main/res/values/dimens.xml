@@ -17,5 +17,6 @@
     <dimen name="noise_subtitle_textSize">8pt</dimen>
     <dimen name="noise_header_text_size">10pt</dimen>
     <dimen name="noise_sub_item_indent">12dp</dimen>
+    <dimen name="noise_text_spacer">5dp</dimen>
 
 </resources>

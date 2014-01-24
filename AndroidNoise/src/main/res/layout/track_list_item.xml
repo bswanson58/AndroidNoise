@@ -7,32 +7,52 @@
               android:descendantFocusability="blocksDescendants">
     <Button
         android:id="@+id/play_button"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
         android:layout_marginTop="@dimen/noise_base_padding"
         android:layout_marginBottom="@dimen/noise_base_padding"
         android:layout_gravity="center_vertical"
-        style="@style/PlayButtonStyle"
-        android:layout_alignParentLeft="true"/>
+        style="@style/PlayButtonStyle"/>
+
+    <TextView
+        android:id="@+id/tli_track_number"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:minWidth="35dp"
+        android:gravity="right"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@+id/play_button"
+        android:text="23"
+        style="@style/TitleText"/>
+
+    <TextView
+        android:id="@+id/tli_track_separator"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_toRightOf="@id/tli_track_number"
+        android:layout_centerVertical="true"
+        android:layout_margin="@dimen/noise_text_spacer"
+        android:text="@string/tli_track_separator"
+        style="@style/TitleText"/>
 
     <com.SecretSquirrel.AndroidNoise.views.AutoFitTextView
         android:id="@+id/tli_name"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        style="@style/TitleText"
-        android:layout_toRightOf="@+id/play_button"
-        android:layout_alignBaseline="@+id/play_button"
-        android:layout_centerVertical="true"
-        android:layout_marginLeft="@dimen/noise_base_padding"
+        android:layout_toRightOf="@+id/tli_track_separator"
+        android:layout_toLeftOf="@+id/tli_duration"
         android:layout_marginRight="@dimen/noise_base_padding"
-        android:layout_toLeftOf="@+id/tli_duration"/>
+        android:layout_centerVertical="true"
+        android:text="Beast Of Burden"
+        style="@style/TitleText"
+        />
 
     <TextView
         android:id="@+id/tli_duration"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
-        style="@style/TitleText"
         android:layout_alignParentRight="true"
-        android:layout_alignBaseline="@+id/play_button"
-        android:layout_centerVertical="true"/>
+        android:layout_centerVertical="true"
+        android:text="7:23"
+        style="@style/TitleText"/>
 </RelativeLayout>

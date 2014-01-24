@@ -155,9 +155,10 @@ public class TrackListFragment extends Fragment
 		private ArrayList<Track>    mTrackList;
 
 		private class ViewHolder {
-			public Button   PlayButton;
-			public TextView NameTextView;
-			public TextView DurationTextView;
+			public Button       PlayButton;
+			public TextView     TrackNumberTextView;
+			public TextView     NameTextView;
+			public TextView     DurationTextView;
 		}
 
 		public TrackAdapter( Context context, ArrayList<Track> trackList ) {
@@ -178,6 +179,7 @@ public class TrackListFragment extends Fragment
 
 				if( retValue != null ) {
 					views = new ViewHolder();
+					views.TrackNumberTextView = (TextView)retValue.findViewById( R.id.tli_track_number );
 					views.NameTextView = (TextView)retValue.findViewById( R.id.tli_name );
 					views.DurationTextView = (TextView)retValue.findViewById( R.id.tli_duration );
 
@@ -204,6 +206,7 @@ public class TrackListFragment extends Fragment
 			   ( position < mTrackList.size())) {
 				Track track = mTrackList.get( position );
 
+				views.TrackNumberTextView.setText( String.format( "%d", track.getTrackNumber()));
 				views.PlayButton.setTag( track );
 				views.NameTextView.setText( track.getName() );
 				views.DurationTextView.setText(
