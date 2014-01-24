@@ -9,9 +9,11 @@ import com.SecretSquirrel.AndroidNoise.dto.Album;
 import com.SecretSquirrel.AndroidNoise.dto.Favorite;
 import com.SecretSquirrel.AndroidNoise.dto.QueuedAlbumResult;
 import com.SecretSquirrel.AndroidNoise.dto.QueuedTrackResult;
+import com.SecretSquirrel.AndroidNoise.dto.SearchResultItem;
 import com.SecretSquirrel.AndroidNoise.dto.Track;
 import com.SecretSquirrel.AndroidNoise.events.EventPlayAlbum;
 import com.SecretSquirrel.AndroidNoise.events.EventPlayFavorite;
+import com.SecretSquirrel.AndroidNoise.events.EventPlaySearchItem;
 import com.SecretSquirrel.AndroidNoise.events.EventPlayTrack;
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
 import com.SecretSquirrel.AndroidNoise.support.Constants;
@@ -57,6 +59,15 @@ public class QueueRequestHandler {
 		}
 	}
 
+	@SuppressWarnings( "unused" )
+	public void onEvent( EventPlaySearchItem args ) {
+		SearchResultItem    searchItem = args.getSearchItem();
+
+		if( searchItem != null ) {
+			PlaySearchItem( searchItem );
+		}
+	}
+
 	public void PlayAlbum( Album album ) {
 		if( album != null ) {
 			mApplicationState.getQueueClient().EnqueueAlbum( album, new Action1<QueuedAlbumResult>() {
@@ -96,6 +107,17 @@ public class QueueRequestHandler {
 			}
 			else if( favorite.getAlbumId() != Constants.NULL_ID ) {
 				PlayAlbum( new Album( favorite ));
+			}
+		}
+	}
+
+	private void PlaySearchItem( SearchResultItem searchItem ) {
+		if( searchItem != null ) {
+			if( searchItem.getTrackId() != Constants.NULL_ID ) {
+				PlayTrack( new Track( searchItem ));
+			}
+			else if( searchItem.getAlbumId() != Constants.NULL_ID ) {
+				PlayAlbum( new Album( searchItem ));
 			}
 		}
 	}

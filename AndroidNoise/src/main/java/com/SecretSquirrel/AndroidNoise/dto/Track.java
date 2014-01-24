@@ -48,6 +48,13 @@ public class Track implements Parcelable {
 		mIsFavorite = true;
 	}
 
+	public Track( SearchResultItem searchItem ) {
+		mTrackId = searchItem.getTrackId();
+		mAlbumId = searchItem.getAlbumId();
+		mArtistId = searchItem.getArtistId();
+		mName = searchItem.getTrackName();
+	}
+
 	public Track( Parcel parcel ) {
 		mTrackId = parcel.readLong();
 		mAlbumId = parcel.readLong();

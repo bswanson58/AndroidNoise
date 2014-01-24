@@ -45,6 +45,12 @@ public class Album implements Parcelable {
 		mIsFavorite = true;
 	}
 
+	public Album( SearchResultItem searchItem ) {
+		mAlbumId = searchItem.getAlbumId();
+		mArtistId = searchItem.getArtistId();
+		mName = searchItem.getAlbumName();
+	}
+
 	public Album( Parcel parcel ) {
 		mAlbumId = parcel.readLong();
 		mArtistId = parcel.readLong();

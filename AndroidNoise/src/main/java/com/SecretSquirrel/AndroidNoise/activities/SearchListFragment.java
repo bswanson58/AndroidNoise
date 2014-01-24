@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.SecretSquirrel.AndroidNoise.R;
 import com.SecretSquirrel.AndroidNoise.dto.SearchResult;
 import com.SecretSquirrel.AndroidNoise.dto.SearchResultItem;
+import com.SecretSquirrel.AndroidNoise.events.EventPlaySearchItem;
 import com.SecretSquirrel.AndroidNoise.events.EventSearchRequest;
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
 import com.SecretSquirrel.AndroidNoise.model.NoiseRemoteApplication;
@@ -161,6 +162,16 @@ public class SearchListFragment extends Fragment {
 					views.TitleView = (TextView)retValue.findViewById( R.id.sli_title );
 					views.SubTitleView = (TextView)retValue.findViewById( R.id.sli_subtitle );
 					views.PlayButton = (Button)retValue.findViewById( R.id.play_button );
+					views.PlayButton.setOnClickListener( new View.OnClickListener() {
+						@Override
+						public void onClick( View view ) {
+							SearchResultItem    searchItem = (SearchResultItem)view.getTag();
+
+							if( searchItem != null ) {
+								EventBus.getDefault().post( new EventPlaySearchItem( searchItem ));
+							}
+						}
+					} );
 
 					retValue.setTag( views );
 				}
@@ -176,6 +187,7 @@ public class SearchListFragment extends Fragment {
 				views.TitleView.setText( result.getItemTitle() );
 				views.SubTitleView.setText( result.getItemSubTitle());
 				views.PlayButton.setVisibility( result.getCanPlay() ? View.VISIBLE : View.INVISIBLE );
+				views.PlayButton.setTag( result );
 			}
 
 			return( retValue );
