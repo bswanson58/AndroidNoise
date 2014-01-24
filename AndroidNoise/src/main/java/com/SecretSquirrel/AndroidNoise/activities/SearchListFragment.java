@@ -115,7 +115,7 @@ public class SearchListFragment extends Fragment {
 
 		Collections.sort( mResultList, new Comparator<SearchResultItem>() {
 			public int compare( SearchResultItem result1, SearchResultItem result2 ) {
-				return( result1.getArtistName().compareToIgnoreCase( result2.getArtistName()));
+				return( result1.getItemTitle().compareToIgnoreCase( result2.getItemTitle()));
 			}
 		} );
 
