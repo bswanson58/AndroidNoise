@@ -34,6 +34,7 @@
     <string name="ali_track_count_title">Tracks:</string>
     <string name="ali_published_title">Published:</string>
     <string name="tli_track_separator">-</string>
+    <string name="published_year_various">Various</string>
 
     <string name="action_play_album">Play Album</string>
 </resources>

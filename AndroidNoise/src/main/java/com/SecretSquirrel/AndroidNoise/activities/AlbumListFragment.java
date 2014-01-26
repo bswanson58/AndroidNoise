@@ -25,6 +25,7 @@ import com.SecretSquirrel.AndroidNoise.model.NoiseRemoteApplication;
 import com.SecretSquirrel.AndroidNoise.services.NoiseRemoteApi;
 import com.SecretSquirrel.AndroidNoise.services.ServiceResultReceiver;
 import com.SecretSquirrel.AndroidNoise.support.Constants;
+import com.SecretSquirrel.AndroidNoise.support.NoiseUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -221,9 +222,9 @@ public class AlbumListFragment extends Fragment
 
 				views.PlayButton.setTag( album );
 				views.TitleTextView.setText( album.getName());
-				views.TrackCountTextView.setText( String.format( " %d", album.getTrackCount()));
-				if( album.getPublishedYear() > 1000 ) {
-					views.PublishedTextView.setText( String.format( " %d", album.getPublishedYear()));
+				views.TrackCountTextView.setText( String.format( "%d", album.getTrackCount()));
+				if( album.getHasPublishedYear()) {
+					views.PublishedTextView.setText( NoiseUtils.FormatPublishedYear( getActivity(), album.getPublishedYear()));
 					views.PublishedTextView.setVisibility( View.VISIBLE );
 					views.PublishedHeaderTextView.setVisibility( View.VISIBLE );
 				}

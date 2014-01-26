@@ -27,6 +27,7 @@ import com.SecretSquirrel.AndroidNoise.model.NoiseRemoteApplication;
 import com.SecretSquirrel.AndroidNoise.services.NoiseRemoteApi;
 import com.SecretSquirrel.AndroidNoise.services.ServiceResultReceiver;
 import com.SecretSquirrel.AndroidNoise.support.Constants;
+import com.SecretSquirrel.AndroidNoise.support.NoiseUtils;
 
 import de.greenrobot.event.EventBus;
 
@@ -177,10 +178,10 @@ public class AlbumInfoFragment extends Fragment
 
 		if( mAlbum != null ) {
 			mAlbumName.setText( mAlbum.getName());
-			mTrackCount.setText( String.format( " %d", mAlbum.getTrackCount()));
+			mTrackCount.setText( String.format( "%d", mAlbum.getTrackCount()));
 
-			if( mAlbum.getPublishedYear() > 0 ) {
-				mPublishedYear.setText( String.format( " %4d", mAlbum.getPublishedYear()));
+			if( mAlbum.getHasPublishedYear()) {
+				mPublishedYear.setText( NoiseUtils.FormatPublishedYear( getActivity(), mAlbum.getPublishedYear()));
 				mPublishedYear.setVisibility( View.VISIBLE );
 				mPublishedYearHeader.setVisibility( View.VISIBLE );
 			}

@@ -86,11 +86,15 @@ public class Album implements Parcelable {
 		return( mPublishedYear );
 	}
 
+	public boolean getHasPublishedYear() {
+		return( getPublishedYear() != 0 );
+	}
+
 	public String getGenre() {
 		return( mGenre );
 	}
 
-	public boolean isFavorite() {
+	public boolean getIsFavorite() {
 		return( mIsFavorite );
 	}
 

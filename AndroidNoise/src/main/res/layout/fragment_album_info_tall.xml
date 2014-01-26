@@ -62,20 +62,25 @@
         android:id="@+id/ai_published_header"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Published: "
-        style="@style/SubHeaderText"
+        android:text="@string/ali_published_title"
         android:layout_below="@+id/ai_album_cover_image"
-        android:layout_marginLeft="@dimen/noise_base_padding"/>
-
+        android:layout_marginLeft="@dimen/noise_base_padding"
+        style="@style/SubHeaderText"/>
+    <View
+        android:id="@+id/ai_published_spacer"
+        android:layout_height="1dp"
+        android:layout_width="@dimen/noise_text_spacer"
+        android:layout_toRightOf="@+id/ai_published_header"
+        android:layout_below="@+id/ai_album_cover_image"
+        />
     <TextView
         android:id="@+id/ai_published"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="2014"
-        style="@style/SubTitleText"
-        android:layout_marginRight="@dimen/noise_base_padding"
         android:layout_below="@+id/ai_album_cover_image"
-        android:layout_toRightOf="@+id/ai_published_header"/>
+        android:layout_toRightOf="@+id/ai_published_spacer"
+        style="@style/SubTitleText"/>
 
     <TextView
         android:id="@+id/ai_track_count_header"
@@ -85,13 +90,19 @@
         android:layout_marginLeft="@dimen/noise_base_padding"
         android:text="@string/ali_track_count_title"
         style="@style/SubHeaderText"/>
-
+    <View
+        android:id="@+id/ai_track_spacer"
+        android:layout_height="1dp"
+        android:layout_width="@dimen/noise_text_spacer"
+        android:layout_toRightOf="@+id/ai_track_count_header"
+        android:layout_below="@+id/ai_published_header"
+        />
     <TextView
         android:id="@+id/ai_track_count"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
-        android:layout_toRightOf="@+id/ai_track_count_header"
+        android:layout_toRightOf="@+id/ai_track_spacer"
         android:layout_below="@+id/ai_published"
-        android:text=" 15"
+        android:text="15"
         style="@style/SubTitleText"/>
 </RelativeLayout>
