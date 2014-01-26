@@ -52,7 +52,7 @@
             android:id="@+id/QueueListView"
             android:layout_height="match_parent"
             android:layout_width="match_parent"
-            style="@style/LongListStyle"/>
+            style="@style/ShortListStyle"/>
 
         <TextView
             android:id="@+id/ql_empty_view"

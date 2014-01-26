@@ -50,7 +50,7 @@
             android:id="@+id/search_list_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/LongListStyle"/>
+            style="@style/ShortListStyle"/>
 
         <TextView
             android:id="@+id/sl_empty_view"
