@@ -138,6 +138,9 @@ public class SearchListFragment extends Fragment {
 			public TextView     TitleView;
 			public TextView     SubTitleView;
 			public Button       PlayButton;
+			public View         ArtistIndicatorView;
+			public View         AlbumIndicatorView;
+			public View         TrackIndicatorView;
 		}
 
 		public SearchResultAdapter( Context context, ArrayList<SearchResultItem> resultList ) {
@@ -161,6 +164,9 @@ public class SearchListFragment extends Fragment {
 
 					views.TitleView = (TextView)retValue.findViewById( R.id.sli_title );
 					views.SubTitleView = (TextView)retValue.findViewById( R.id.sli_subtitle );
+					views.ArtistIndicatorView = retValue.findViewById( R.id.sli_type_indicator_artist );
+					views.AlbumIndicatorView = retValue.findViewById( R.id.sli_type_indicator_album );
+					views.TrackIndicatorView = retValue.findViewById( R.id.sli_type_indicator_track );
 					views.PlayButton = (Button)retValue.findViewById( R.id.play_button );
 					views.PlayButton.setOnClickListener( new View.OnClickListener() {
 						@Override
@@ -188,6 +194,22 @@ public class SearchListFragment extends Fragment {
 				views.SubTitleView.setText( result.getItemSubTitle());
 				views.PlayButton.setVisibility( result.getCanPlay() ? View.VISIBLE : View.INVISIBLE );
 				views.PlayButton.setTag( result );
+
+				views.ArtistIndicatorView.setVisibility( View.GONE );
+				views.AlbumIndicatorView.setVisibility( View.GONE );
+				views.TrackIndicatorView.setVisibility( View.GONE );
+
+				if( result.getIsArtist()) {
+					views.ArtistIndicatorView.setVisibility( View.VISIBLE );
+				}
+
+				if( result.getIsAlbum()) {
+					views.AlbumIndicatorView.setVisibility( View.VISIBLE );
+				}
+
+				if( result.getIsTrack()) {
+					views.TrackIndicatorView.setVisibility( View.VISIBLE );
+				}
 			}
 
 			return( retValue );

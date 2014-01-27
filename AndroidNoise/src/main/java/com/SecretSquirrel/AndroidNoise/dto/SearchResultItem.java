@@ -5,6 +5,7 @@ package com.SecretSquirrel.AndroidNoise.dto;
 import android.text.TextUtils;
 
 import com.SecretSquirrel.AndroidNoise.services.rto.RoSearchResultItem;
+import com.SecretSquirrel.AndroidNoise.support.Constants;
 
 public class SearchResultItem {
 	private long    mTrackId;
@@ -79,4 +80,19 @@ public class SearchResultItem {
 
 		return( retValue );
 	}
+
+	public boolean getIsArtist() {
+		return(( getAlbumId() == Constants.NULL_ID ) &&
+				( getTrackId() == Constants.NULL_ID ));
+	}
+
+	public boolean getIsAlbum() {
+		return(( getTrackId() == Constants.NULL_ID ) &&
+				( getAlbumId() != Constants.NULL_ID ));
+	}
+
+	public boolean getIsTrack() {
+		return( getTrackId() != Constants.NULL_ID );
+	}
+
 }

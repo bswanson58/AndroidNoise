@@ -111,6 +111,9 @@ public class FavoritesListFragment extends Fragment
 			public Button       PlayButton;
 			public TextView     TitleTextView;
 			public TextView     SubtitleTextView;
+			public View         ArtistIndicatorView;
+			public View         AlbumIndicatorView;
+			public View         TrackIndicatorView;
 		}
 
 		public FavoritesAdapter( Context context, ArrayList<Favorite> favoritesList ) {
@@ -133,6 +136,9 @@ public class FavoritesListFragment extends Fragment
 					views = new ViewHolder();
 					views.TitleTextView = (TextView)retValue.findViewById( R.id.fli_name );
 					views.SubtitleTextView = (TextView)retValue.findViewById( R.id.fli_album_name );
+					views.ArtistIndicatorView = retValue.findViewById( R.id.fli_type_indicator_artist );
+					views.AlbumIndicatorView = retValue.findViewById( R.id.fli_type_indicator_album );
+					views.TrackIndicatorView = retValue.findViewById( R.id.fli_type_indicator_track );
 
 					views.PlayButton = (Button) retValue.findViewById( R.id.play_button );
 					views.PlayButton.setOnClickListener( new View.OnClickListener() {
@@ -160,6 +166,22 @@ public class FavoritesListFragment extends Fragment
 				views.PlayButton.setTag( favorite );
 				views.TitleTextView.setText( favorite.getItemTitle());
 				views.SubtitleTextView.setText( favorite.getItemSubTitle());
+
+				views.ArtistIndicatorView.setVisibility( View.GONE );
+				views.AlbumIndicatorView.setVisibility( View.GONE );
+				views.TrackIndicatorView.setVisibility( View.GONE );
+
+				if( favorite.getIsArtist()) {
+					views.ArtistIndicatorView.setVisibility( View.VISIBLE );
+				}
+
+				if( favorite.getIsAlbum()) {
+					views.AlbumIndicatorView.setVisibility( View.VISIBLE );
+				}
+
+				if( favorite.getIsTrack()) {
+					views.TrackIndicatorView.setVisibility( View.VISIBLE );
+				}
 			}
 
 			return( retValue );

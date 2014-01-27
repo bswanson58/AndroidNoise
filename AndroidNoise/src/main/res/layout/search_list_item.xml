@@ -16,27 +16,49 @@
         android:layout_marginLeft="@dimen/noise_base_padding"
         android:layout_marginRight="@dimen/noise_base_padding"
         android:layout_centerVertical="true"
-        style="@style/PlayButtonStyle"
-        />
+        style="@style/PlayButtonStyle"/>
+
+    <FrameLayout
+        android:id="@+id/sli_type_indicator"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_toRightOf="@+id/play_button"
+        android:layout_centerVertical="true"
+        >
+
+        <ImageView
+            android:id="@+id/sli_type_indicator_artist"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:background="@drawable/ic_artist_icon"/>
+        <ImageView
+            android:id="@+id/sli_type_indicator_album"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:background="@drawable/ic_album_icon"/>
+        <ImageView
+            android:id="@+id/sli_type_indicator_track"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:background="@drawable/ic_track_icon"/>
+    </FrameLayout>
 
     <TextView
         android:id="@+id/sli_title"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
-        android:layout_toRightOf="@+id/play_button"
+        android:layout_toRightOf="@+id/sli_type_indicator"
         android:text="Beast Of Burden"
-        style="@style/TitleText"
-        />
+        style="@style/TitleText"/>
 
     <TextView
         android:id="@+id/sli_subtitle"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         android:layout_below="@+id/sli_title"
-        android:layout_toRightOf="@+id/play_button"
+        android:layout_toRightOf="@+id/sli_type_indicator"
         android:layout_marginLeft="@dimen/noise_sub_item_indent"
         android:text="(The Rolling Stones/Sticky Fingers)"
-        style="@style/SubTitleText"
-        />
+        style="@style/SubTitleText"/>
 
 </RelativeLayout>

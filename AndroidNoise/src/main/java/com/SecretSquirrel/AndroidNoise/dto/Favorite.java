@@ -5,6 +5,7 @@ import android.os.Parcelable;
 import android.text.TextUtils;
 
 import com.SecretSquirrel.AndroidNoise.services.rto.RoFavorite;
+import com.SecretSquirrel.AndroidNoise.support.Constants;
 
 // Created by BSwanson on 12/28/13.
 
@@ -107,6 +108,20 @@ public class Favorite implements Parcelable {
 		}
 
 		return( retValue );
+	}
+
+	public boolean getIsArtist() {
+		return(( getAlbumId() == Constants.NULL_ID ) &&
+			   ( getTrackId() == Constants.NULL_ID ));
+	}
+
+	public boolean getIsAlbum() {
+		return(( getTrackId() == Constants.NULL_ID ) &&
+			   ( getAlbumId() != Constants.NULL_ID ));
+	}
+
+	public boolean getIsTrack() {
+		return( getTrackId() != Constants.NULL_ID );
 	}
 
 	@Override
