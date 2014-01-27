@@ -43,18 +43,18 @@
             android:background="@drawable/ic_track_icon"/>
     </FrameLayout>
 
-    <TextView
+    <com.SecretSquirrel.AndroidNoise.views.AutoFitTextView
         android:id="@+id/sli_title"
         android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_toRightOf="@+id/sli_type_indicator"
         android:text="Beast Of Burden"
         style="@style/TitleText"/>
 
-    <TextView
+    <com.SecretSquirrel.AndroidNoise.views.AutoFitTextView
         android:id="@+id/sli_subtitle"
         android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_below="@+id/sli_title"
         android:layout_toRightOf="@+id/sli_type_indicator"
         android:layout_marginLeft="@dimen/noise_sub_item_indent"
