@@ -26,9 +26,8 @@
         android:layout_marginTop="@dimen/noise_base_padding"
         android:layout_alignParentRight="true"
         android:layout_marginRight="@dimen/noise_base_padding"
-        android:textSize="@dimen/list_item_title_textSize"
-        style="@style/TitleText"
-        android:layout_toLeftOf="@+id/ai_album_cover_image"/>
+        android:layout_toLeftOf="@+id/ai_album_cover_image"
+        style="@style/TitleText"/>
 
     <LinearLayout
         android:id="@+id/ai_divider"
@@ -49,8 +48,7 @@
             android:layout_width="0dp"
             android:layout_weight="2"
             android:scaleX="-1"
-            android:background="@drawable/divider_split_gradient_horizontal"
-            />
+            android:background="@drawable/divider_split_gradient_horizontal"/>
     </LinearLayout>
 
     <TextView
@@ -62,10 +60,9 @@
         android:layout_alignParentTop="false"
         android:layout_alignParentRight="true"
         android:layout_marginRight="@dimen/noise_base_padding"
-        android:textSize="@dimen/list_item_title_textSize"
-        style="@style/TitleText"
         android:layout_toLeftOf="@+id/ai_album_cover_image"
-        android:layout_below="@+id/ai_artist_name"/>
+        android:layout_below="@+id/ai_artist_name"
+        style="@style/TitleText"/>
 
     <TextView
         android:id="@+id/ai_published_header"
@@ -73,8 +70,8 @@
         android:layout_height="wrap_content"
         android:text="@string/ali_published_title"
         android:layout_toLeftOf="@+id/ai_published_spacer"
-        style="@style/SubHeaderText"
-        android:layout_above="@+id/ai_track_count_header"/>
+        android:layout_above="@+id/ai_track_count_header"
+        style="@style/SubHeaderText"/>
     <View
         android:id="@+id/ai_published_spacer"
         android:layout_height="1dp"
