@@ -9,10 +9,9 @@
     <EditText
         android:id="@+id/search_text_view"
         android:layout_width="wrap_content"
-        android:minWidth="150dp"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        />
+        android:hint="@string/search_text_hint"
+        android:layout_gravity="center_vertical"/>
 
     <Button
         android:id="@+id/execute_search_button"
@@ -21,6 +20,5 @@
         android:layout_marginRight="@dimen/noise_base_padding"
         android:layout_marginLeft="@dimen/noise_base_padding"
         android:layout_gravity="center_vertical"
-        android:text="@string/search_button_title"
-        />
+        android:text="@string/search_button_title"/>
 </LinearLayout>

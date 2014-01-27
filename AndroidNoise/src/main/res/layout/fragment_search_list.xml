@@ -57,9 +57,10 @@
             android:layout_height="match_parent"
             android:layout_width="match_parent"
             android:layout_margin="@dimen/noise_base_padding"
+            android:gravity="center_horizontal|bottom"
             android:text="@string/sl_empty_list"
-            android:textColor="@color/SubtleColor"
-            style="@style/HeaderText"/>
+            android:textSize="14pt"
+            android:textColor="@color/SubtleColor"/>
     </RelativeLayout>
 
 </LinearLayout>

@@ -30,7 +30,8 @@
     <string name="noise_al_server_list">Available Noise Systems</string>
     <string name="sl_searching_title">Searching for Noise Systems…</string>
     <string name="ql_empty_list">Play Something!</string>
-    <string name="sl_empty_list">Enter some search terms...</string>
+    <string name="sl_empty_list">Try searching for that forgotten song!</string>
+    <string name="search_text_hint">Type something to search for...</string>
     <string name="ali_track_count_title">Tracks:</string>
     <string name="ali_published_title">Published:</string>
     <string name="tli_track_separator">-</string>
