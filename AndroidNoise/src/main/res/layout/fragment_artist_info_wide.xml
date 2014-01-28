@@ -12,20 +12,20 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:scaleType="fitCenter"
-        android:layout_margin="@dimen/noise_base_padding"
+        android:layout_marginTop="@dimen/noise_base_padding"
+        android:layout_marginLeft="@dimen/noise_base_padding"
         android:adjustViewBounds="true"/>
 
-    <TextView
+    <com.SecretSquirrel.AndroidNoise.views.AutoFitTextView
         android:id="@+id/ai_artist_name"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
-        android:layout_alignParentLeft="false"
-        android:layout_marginLeft="0dp"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="@dimen/noise_base_padding"
+        android:layout_toRightOf="@+id/ai_artist_image"
+        android:layout_margin="@dimen/noise_base_padding"
         android:layout_alignParentRight="true"
+        android:gravity="right|bottom"
         android:text="The Rolling Stones"
-        android:layout_marginRight="@dimen/noise_base_padding"
         style="@style/TitleText"/>
 
     <TextView

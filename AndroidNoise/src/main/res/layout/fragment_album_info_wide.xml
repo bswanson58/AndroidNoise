@@ -21,11 +21,9 @@
         android:id="@+id/ai_artist_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="false"
-        android:layout_marginTop="@dimen/noise_base_padding"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="@dimen/noise_base_padding"
+        android:layout_margin="@dimen/noise_base_padding"
         android:layout_toRightOf="@+id/ai_album_cover_image"
+        android:gravity="right|bottom"
         android:text="The Rolling Stones"
         style="@style/TitleText"/>
 
@@ -37,7 +35,6 @@
         android:layout_marginTop="1dp"
         android:layout_marginLeft="@dimen/noise_base_padding"
         android:layout_marginRight="@dimen/noise_base_padding"
-        android:layout_marginBottom="1dp"
         android:layout_below="@+id/ai_artist_name"
         android:gravity="right"
         android:weightSum="3"
@@ -53,15 +50,14 @@
 
     <com.SecretSquirrel.AndroidNoise.views.AutoFitTextView
         android:id="@+id/ai_album_name"
-        android:text="Sticky Fingers"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="false"
-        android:layout_alignParentTop="false"
         android:layout_alignParentRight="true"
-        android:layout_marginRight="@dimen/noise_base_padding"
+        android:gravity="right"
+        android:layout_margin="@dimen/noise_base_padding"
         android:layout_toRightOf="@+id/ai_album_cover_image"
         android:layout_below="@+id/ai_artist_name"
+        android:text="Sticky Fingers"
         style="@style/TitleText"/>
 
     <TextView
