@@ -22,6 +22,7 @@ import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
 import com.SecretSquirrel.AndroidNoise.model.NoiseRemoteApplication;
 import com.SecretSquirrel.AndroidNoise.services.NoiseRemoteApi;
 import com.SecretSquirrel.AndroidNoise.services.ServiceResultReceiver;
+import com.SecretSquirrel.AndroidNoise.support.ChainedComparator;
 import com.SecretSquirrel.AndroidNoise.support.Constants;
 
 import java.util.ArrayList;
@@ -134,9 +135,25 @@ public class TrackListFragment extends Fragment
 		mTrackList.clear();
 		mTrackList.addAll( trackList );
 
+		Comparator<Track> compareVolume = new Comparator<Track>() {
+			@Override
+			public int compare( Track o1, Track o2) {
+				return( o1.getVolumeName().compareToIgnoreCase( o2.getVolumeName()));
+			}
+		};
+
+		Comparator<Track> compareTrack = new Comparator<Track>() {
+			@Override
+			public int compare( Track o1, Track o2 ) {
+				return( o1.getTrackNumber() - o2.getTrackNumber());
+			}
+		};
+
+		final ChainedComparator<Track> comparator = new ChainedComparator<Track>( compareVolume, compareTrack );
+
 		Collections.sort( mTrackList, new Comparator<Track>() {
 			public int compare( Track track1, Track track2 ) {
-				return ( track1.getTrackNumber() - track2.getTrackNumber());
+				return ( comparator.compare( track1, track2 ));
 			}
 		} );
 
