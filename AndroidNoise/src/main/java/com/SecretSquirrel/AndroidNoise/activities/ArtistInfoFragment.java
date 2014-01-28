@@ -35,6 +35,7 @@ public class ArtistInfoFragment extends Fragment
 	private ImageView               mArtistImage;
 	private TextView                mArtistName;
 	private TextView                mArtistGenre;
+	private TextView                mAlbumCount;
 	private Bitmap                  mUnknownArtist;
 
 	public static ArtistInfoFragment newInstance( Artist artist ) {
@@ -83,6 +84,7 @@ public class ArtistInfoFragment extends Fragment
 			mArtistImage = (ImageView)myView.findViewById( R.id.ai_artist_image );
 			mArtistName = (TextView)myView.findViewById( R.id.ai_artist_name );
 			mArtistGenre = (TextView)myView.findViewById( R.id.ai_artist_genre );
+			mAlbumCount = (TextView)myView.findViewById( R.id.ai_album_count );
 		}
 
 		if( mArtist != null ) {
@@ -131,6 +133,7 @@ public class ArtistInfoFragment extends Fragment
 		if( mArtist != null ) {
 			mArtistName.setText( mArtist.getName());
 			mArtistGenre.setText( mArtist.getGenre());
+			mAlbumCount.setText( String.format( "%d", mArtist.getAlbumCount()));
 		}
 	}
 
