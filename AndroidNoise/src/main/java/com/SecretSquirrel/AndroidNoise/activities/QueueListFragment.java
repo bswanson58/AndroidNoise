@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -24,6 +25,7 @@ import android.widget.TextView;
 import com.SecretSquirrel.AndroidNoise.R;
 import com.SecretSquirrel.AndroidNoise.dto.PlayQueueListResult;
 import com.SecretSquirrel.AndroidNoise.dto.PlayQueueTrack;
+import com.SecretSquirrel.AndroidNoise.events.EventAlbumRequest;
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
 import com.SecretSquirrel.AndroidNoise.model.NoiseRemoteApplication;
 import com.SecretSquirrel.AndroidNoise.services.EventHostService;
@@ -32,6 +34,7 @@ import com.SecretSquirrel.AndroidNoise.support.Constants;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
+import de.greenrobot.event.EventBus;
 import rx.Subscription;
 import rx.util.functions.Action1;
 
@@ -105,7 +108,15 @@ public class QueueListFragment extends Fragment  {
 			ListView queueListView = (ListView) myView.findViewById( R.id.QueueListView );
 
 			queueListView.setAdapter( mQueueListAdapter );
-			queueListView.setEmptyView( myView.findViewById( R.id.ql_empty_view ));
+			queueListView.setEmptyView( myView.findViewById( R.id.ql_empty_view ) );
+			queueListView.setOnItemClickListener( new AdapterView.OnItemClickListener() {
+				@Override
+				public void onItemClick( AdapterView<?> adapterView, View view, int i, long l ) {
+					//PlayQueueTrack  track = mQueueList.get( i );
+
+					EventBus.getDefault().post( new EventAlbumRequest( Constants.NULL_ID, Constants.NULL_ID ));
+				}
+			} );
 		}
 
 		if( getApplicationState().getIsConnected()) {

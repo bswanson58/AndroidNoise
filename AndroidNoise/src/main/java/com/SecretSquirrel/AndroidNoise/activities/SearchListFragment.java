@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -18,6 +19,8 @@ import android.widget.TextView;
 import com.SecretSquirrel.AndroidNoise.R;
 import com.SecretSquirrel.AndroidNoise.dto.SearchResult;
 import com.SecretSquirrel.AndroidNoise.dto.SearchResultItem;
+import com.SecretSquirrel.AndroidNoise.events.EventAlbumRequest;
+import com.SecretSquirrel.AndroidNoise.events.EventArtistRequest;
 import com.SecretSquirrel.AndroidNoise.events.EventPlaySearchItem;
 import com.SecretSquirrel.AndroidNoise.events.EventSearchRequest;
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
@@ -63,6 +66,20 @@ public class SearchListFragment extends Fragment {
 
 			searchListView.setAdapter( mSearchListAdapter );
 			searchListView.setEmptyView( myView.findViewById( R.id.sl_empty_view ));
+			searchListView.setOnItemClickListener( new AdapterView.OnItemClickListener() {
+				@Override
+				public void onItemClick( AdapterView<?> adapterView, View view, int i, long l ) {
+					SearchResultItem    searchItem = mResultList.get( i );
+
+					if( searchItem.getIsArtist()) {
+						EventBus.getDefault().post( new EventArtistRequest( searchItem.getArtistId()));
+					}
+					else if(( searchItem.getIsAlbum()) ||
+							( searchItem.getIsTrack())) {
+						EventBus.getDefault().post( new EventAlbumRequest( searchItem.getArtistId(), searchItem.getAlbumId()));
+					}
+				}
+			} );
 		}
 
 		return( myView );

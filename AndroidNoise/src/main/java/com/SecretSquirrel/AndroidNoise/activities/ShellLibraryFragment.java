@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import com.SecretSquirrel.AndroidNoise.R;
 import com.SecretSquirrel.AndroidNoise.dto.Album;
 import com.SecretSquirrel.AndroidNoise.dto.Artist;
+import com.SecretSquirrel.AndroidNoise.dto.LibraryFocusArgs;
 import com.SecretSquirrel.AndroidNoise.events.EventAlbumSelected;
 import com.SecretSquirrel.AndroidNoise.events.EventArtistSelected;
 
@@ -25,18 +26,27 @@ public class ShellLibraryFragment extends BaseShellFragment {
 	private static final int    LIBRARY_STATE_ALBUM         = 3;
 
 	private static final String LIBRARY_CURRENT_ARTIST      = "ShellLibraryFragment_CurrentArtist";
+	private static final String LIBRARY_REQUEST_ARTIST      = "ShellLibraryFragment_RequestArtist";
 	private static final String LIBRARY_CURRENT_ALBUM       = "ShellLibraryFragment_CurrentAlbum";
+	private static final String LIBRARY_REQUEST_ALBUM       = "ShellLibraryFragment_RequestAlbum";
 
 	private int                 mCurrentState;
 	private int                 mFragmentToCreate;
 	private Artist              mCurrentArtist;
 	private Album               mCurrentAlbum;
 
-	public static ShellLibraryFragment newInstance( int fragmentId ) {
+	public static ShellLibraryFragment newInstance( int fragmentId, LibraryFocusArgs focusArgs ) {
 		ShellLibraryFragment    fragment = new ShellLibraryFragment();
 		Bundle                  args = new Bundle();
 
 		args.putInt( SHELL_FRAGMENT_KEY, fragmentId );
+		if( focusArgs != null ) {
+			args.putLong( LIBRARY_REQUEST_ARTIST, focusArgs.getArtistId());
+			if( focusArgs.getIsAlbumFocusRequest()) {
+				args.putLong( LIBRARY_REQUEST_ALBUM, focusArgs.getAlbumId());
+			}
+		}
+
 		fragment.setArguments( args );
 
 		return( fragment );

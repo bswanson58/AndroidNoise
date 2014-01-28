@@ -9,6 +9,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.SecretSquirrel.AndroidNoise.R;
+import com.SecretSquirrel.AndroidNoise.dto.LibraryFocusArgs;
+import com.SecretSquirrel.AndroidNoise.events.EventAlbumRequest;
+import com.SecretSquirrel.AndroidNoise.events.EventArtistRequest;
 import com.SecretSquirrel.AndroidNoise.events.EventServerSelected;
 import com.SecretSquirrel.AndroidNoise.ui.NavigationDrawerAdapter;
 import com.SecretSquirrel.AndroidNoise.ui.NavigationDrawerConfiguration;
@@ -28,6 +31,7 @@ public class ShellActivity extends ActionBarActivity
 	// Fragment managing the behaviors, interactions and presentation of the navigation drawer.
 	private NavigationDrawerFragment    mNavigationDrawerFragment;
 	private BaseShellFragment           mCurrentChildFragment;
+	private LibraryFocusArgs            mLibraryFocusArgs;
 
 	@Override
 	protected void onCreate( Bundle savedInstanceState ) {
@@ -112,6 +116,20 @@ public class ShellActivity extends ActionBarActivity
 		mNavigationDrawerFragment.selectId( LIBRARY_ITEM_ID );
 	}
 
+	@SuppressWarnings( "unused" )
+	public void onEvent( EventArtistRequest args ) {
+		mLibraryFocusArgs = new LibraryFocusArgs( args.getArtistId());
+
+		mNavigationDrawerFragment.selectId( LIBRARY_ITEM_ID );
+	}
+
+	@SuppressWarnings( "unused" )
+	public void onEvent( EventAlbumRequest args ) {
+		mLibraryFocusArgs = new LibraryFocusArgs( args.getArtistId(), args.getAlbumId());
+
+		mNavigationDrawerFragment.selectId( LIBRARY_ITEM_ID );
+	}
+
 	@Override
 	public void onNavigationDrawerItemSelected( int itemId ) {
 		// update the main content by replacing fragments
@@ -122,7 +140,8 @@ public class ShellActivity extends ActionBarActivity
 				fragment = ShellServerFragment.newInstance( SERVERS_ITEM_ID );
 				break;
 			case LIBRARY_ITEM_ID:
-				fragment = ShellLibraryFragment.newInstance( LIBRARY_ITEM_ID );
+				fragment = ShellLibraryFragment.newInstance( LIBRARY_ITEM_ID, mLibraryFocusArgs );
+				mLibraryFocusArgs = null;
 				break;
 			case FAVORITES_ITEM_ID:
 				fragment = ShellFavoritesFragment.newInstance( FAVORITES_ITEM_ID );
