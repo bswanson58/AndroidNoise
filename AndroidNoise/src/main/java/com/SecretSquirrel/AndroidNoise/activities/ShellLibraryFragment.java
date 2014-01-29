@@ -73,18 +73,13 @@ public class ShellLibraryFragment extends BaseShellFragment {
 				mCurrentAlbum = args.getParcelable( LIBRARY_REQUEST_ALBUM );
 
 				if( mCurrentArtist != null ) {
-					if( mCurrentAlbum != null ) {
-						mCurrentState = LIBRARY_STATE_ALBUM;
-					}
-					else {
-						mCurrentState = LIBRARY_STATE_ARTIST;
-					}
+					mCurrentState = mCurrentAlbum != null ? LIBRARY_STATE_ALBUM : LIBRARY_STATE_ARTIST;
 				}
 			}
-
-			// Only create the child fragment if we are being created.
-			mFragmentToCreate = mCurrentState;
 		}
+
+		// Only create the child fragment if we are being created.
+		mFragmentToCreate = mCurrentState;
 	}
 
 	@Override
