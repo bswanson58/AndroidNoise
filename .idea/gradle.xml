@@ -4,13 +4,7 @@
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
         <option name="distributionType" value="DEFAULT_WRAPPED" />
-        <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="modules">
-          <set>
-            <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/AndroidNoise" />
-          </set>
-        </option>
+        <option name="externalProjectPath" value="D:\Sandbox\AndroidNoise" />
       </GradleProjectSettings>
     </option>
   </component>
