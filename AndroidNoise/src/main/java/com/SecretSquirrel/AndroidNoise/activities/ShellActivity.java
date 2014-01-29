@@ -10,10 +10,18 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.SecretSquirrel.AndroidNoise.R;
+import com.SecretSquirrel.AndroidNoise.dto.Album;
+import com.SecretSquirrel.AndroidNoise.dto.Artist;
 import com.SecretSquirrel.AndroidNoise.dto.LibraryFocusArgs;
 import com.SecretSquirrel.AndroidNoise.events.EventAlbumRequest;
 import com.SecretSquirrel.AndroidNoise.events.EventArtistRequest;
 import com.SecretSquirrel.AndroidNoise.events.EventServerSelected;
+import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
+import com.SecretSquirrel.AndroidNoise.model.NoiseRemoteApplication;
+import com.SecretSquirrel.AndroidNoise.services.ArtistAlbumResolver;
+import com.SecretSquirrel.AndroidNoise.services.ArtistResolver;
+import com.SecretSquirrel.AndroidNoise.services.NoiseRemoteApi;
+import com.SecretSquirrel.AndroidNoise.services.ServiceResultReceiver;
 import com.SecretSquirrel.AndroidNoise.ui.NavigationDrawerAdapter;
 import com.SecretSquirrel.AndroidNoise.ui.NavigationDrawerConfiguration;
 import com.SecretSquirrel.AndroidNoise.ui.NavigationDrawerItem;
@@ -118,16 +126,35 @@ public class ShellActivity extends ActionBarActivity
 
 	@SuppressWarnings( "unused" )
 	public void onEvent( EventArtistRequest args ) {
-		mLibraryFocusArgs = new LibraryFocusArgs( args.getArtistId());
+		ArtistResolver resolver = new ArtistResolver( getApplicationState().getDataClient());
 
-		mNavigationDrawerFragment.selectId( LIBRARY_ITEM_ID );
+		resolver.requestArtist( args.getArtistId(), new ServiceResultReceiver.Receiver() {
+			@Override
+			public void onReceiveResult( int resultCode, Bundle resultData ) {
+				Artist  artist = resultData.getParcelable( NoiseRemoteApi.Artist );
+
+				mLibraryFocusArgs = new LibraryFocusArgs( artist );
+				mNavigationDrawerFragment.selectId( LIBRARY_ITEM_ID );
+			}
+		});
 	}
 
 	@SuppressWarnings( "unused" )
 	public void onEvent( EventAlbumRequest args ) {
-		mLibraryFocusArgs = new LibraryFocusArgs( args.getArtistId(), args.getAlbumId());
+		ArtistAlbumResolver resolver = new ArtistAlbumResolver( getApplicationState().getDataClient());
 
-		mNavigationDrawerFragment.selectId( LIBRARY_ITEM_ID );
+		resolver.requestArtistAlbum( args.getArtistId(), args.getAlbumId(), new ServiceResultReceiver.Receiver() {
+			@Override
+			public void onReceiveResult( int resultCode, Bundle resultData ) {
+				if( resultCode == NoiseRemoteApi.RemoteResultSuccess ) {
+					Artist  artist = resultData.getParcelable( NoiseRemoteApi.Artist );
+					Album   album = resultData.getParcelable( NoiseRemoteApi.Album );
+
+					mLibraryFocusArgs = new LibraryFocusArgs( artist, album );
+					mNavigationDrawerFragment.selectId( LIBRARY_ITEM_ID );
+				}
+			}
+		});
 	}
 
 	@Override
@@ -201,6 +228,12 @@ public class ShellActivity extends ActionBarActivity
 		}
 
 		return super.onOptionsItemSelected( item );
+	}
+
+	private IApplicationState getApplicationState() {
+		NoiseRemoteApplication application = (NoiseRemoteApplication)getApplication();
+
+		return( application.getApplicationState());
 	}
 
 	/**

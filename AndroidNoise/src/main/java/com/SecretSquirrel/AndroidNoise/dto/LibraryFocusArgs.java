@@ -5,28 +5,27 @@ package com.SecretSquirrel.AndroidNoise.dto;
 import com.SecretSquirrel.AndroidNoise.support.Constants;
 
 public class LibraryFocusArgs {
-	private long    mArtistId;
-	private long    mAlbumId;
+	private Artist  mArtist;
+	private Album   mAlbum;
 
-	public LibraryFocusArgs( long artistId ) {
-		mArtistId = artistId;
-		mAlbumId = Constants.NULL_ID;
+	public LibraryFocusArgs( Artist artist ) {
+		mArtist = artist;
 	}
 
-	public LibraryFocusArgs( long artistId, long albumId ) {
-		this( artistId );
-		mAlbumId = albumId;
+	public LibraryFocusArgs( Artist artist, Album album ) {
+		this( artist );
+		mAlbum = album;
 	}
 
-	public long getArtistId() {
-		return( mArtistId );
+	public Artist getArtist() {
+		return( mArtist );
 	}
 
-	public long getAlbumId() {
-		return( mAlbumId );
+	public Album getAlbum() {
+		return( mAlbum );
 	}
 
 	public boolean getIsAlbumFocusRequest() {
-		return( mAlbumId != Constants.NULL_ID );
+		return( mAlbum != null );
 	}
 }
