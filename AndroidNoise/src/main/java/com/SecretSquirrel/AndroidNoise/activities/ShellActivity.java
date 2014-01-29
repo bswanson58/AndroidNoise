@@ -1,5 +1,6 @@
 package com.SecretSquirrel.AndroidNoise.activities;
 
+import android.content.Intent;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
@@ -20,6 +21,9 @@ import com.SecretSquirrel.AndroidNoise.ui.NavigationMenuItem;
 
 import de.greenrobot.event.EventBus;
 
+import static android.content.Intent.ACTION_MAIN;
+import static android.content.Intent.CATEGORY_LAUNCHER;
+
 public class ShellActivity extends ActionBarActivity
 						   implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 	private final int   LIBRARY_ITEM_ID     = 101;
@@ -37,11 +41,7 @@ public class ShellActivity extends ActionBarActivity
 	protected void onCreate( Bundle savedInstanceState ) {
 		super.onCreate( savedInstanceState );
 
-		// from: http://stackoverflow.com/questions/16283079/re-launch-of-activity-on-home-button-but-only-the-first-time?rq=1
-		if (!isTaskRoot()) {
-			// Android launched another instance of the root activity into an existing task
-			//  so just quietly finish and go away, dropping the user back into the activity
-			//  at the top of the stack (ie: the last state of this task)
+		if( isWrongInstance()) {
 			finish();
 			return;
 		}
@@ -201,5 +201,23 @@ public class ShellActivity extends ActionBarActivity
 		}
 
 		return super.onOptionsItemSelected( item );
+	}
+
+	/**
+	 * Dev tools and the play store (and others?) launch with a different intent, and so
+	 * lead to a redundant instance of this activity being spawned. <a
+	 * href="http://stackoverflow.com/questions/17702202/find-out-whether-the-current-activity-will-be-task-root-eventually-after-pendin"
+	 * >Details</a>.
+	 */
+	private boolean isWrongInstance() {
+		if(!isTaskRoot()) {
+			Intent  intent = getIntent();
+			boolean isMainAction = (( intent.getAction() != null ) &&
+									( intent.getAction().equals( ACTION_MAIN )));
+
+			return(( intent.hasCategory( CATEGORY_LAUNCHER )) &&
+				   ( isMainAction ));
+		}
+		return( false );
 	}
 }
