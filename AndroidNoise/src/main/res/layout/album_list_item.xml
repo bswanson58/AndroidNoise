@@ -1,63 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingTop="@dimen/noise_base_padding"
-                android:paddingBottom="@dimen/noise_base_padding"
-                android:descendantFocusability="blocksDescendants">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="horizontal"
+              android:layout_width="match_parent"
+              android:layout_height="@dimen/noise_list_item_height"
+              android:layout_marginTop="@dimen/noise_base_padding"
+              android:layout_marginBottom="@dimen/noise_base_padding"
+              android:paddingBottom="@dimen/noise_base_padding"
+              android:descendantFocusability="blocksDescendants">
 
     <Button
         android:id="@+id/play_button"
         android:layout_width="35dp"
         android:layout_height="35dp"
         android:layout_marginRight="@dimen/noise_base_padding"
-        android:layout_centerVertical="true"
+        android:layout_gravity="center_vertical"
         style="@style/PlayButtonStyle"/>
 
-    <com.SecretSquirrel.AndroidNoise.views.AutoFitTextView
-        android:id="@+id/ali_title"
-        android:layout_height="wrap_content"
-        android:layout_width="fill_parent"
-        android:layout_toRightOf="@+id/play_button"
-        android:text="Sticky Fingers"
-        style="@style/TitleText"/>
-
     <LinearLayout
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:layout_toRightOf="@+id/play_button"
-        android:layout_below="@+id/ali_title"
-        android:layout_marginLeft="@dimen/noise_sub_item_indent">
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:orientation="vertical">
 
-        <TextView
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:text="@string/ali_track_count_title"
-            style="@style/SubTitleText"/>
-        <TextView
-            android:id="@+id/ali_track_count"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:layout_marginLeft="@dimen/noise_text_spacer"
-            android:text="15"
-            style="@style/SubTitleText"/>
+        <com.SecretSquirrel.AndroidNoise.views.AutoFitTextView
+            android:id="@+id/ali_title"
+            android:layout_height="0dp"
+            android:layout_width="fill_parent"
+            android:gravity="bottom"
+            android:text="Sticky Fingers"
+            android:layout_weight="5"
+            style="@style/TitleText"/>
 
-        <TextView
-            android:id="@+id/ali_published_header"
+        <LinearLayout
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
-            android:layout_marginLeft="17dp"
-            android:text="@string/ali_published_title"
-            style="@style/SubTitleText"/>
-        <TextView
-            android:id="@+id/ali_published"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:layout_marginLeft="@dimen/noise_text_spacer"
-            android:text="1998"
-            style="@style/SubTitleText"/>
+            android:layout_marginLeft="@dimen/noise_sub_item_indent">
+
+            <TextView
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:text="@string/ali_track_count_title"
+                style="@style/SubTitleText"/>
+
+            <TextView
+                android:id="@+id/ali_track_count"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_marginLeft="@dimen/noise_text_spacer"
+                android:text="15"
+                style="@style/SubTitleText"/>
+
+            <TextView
+                android:id="@+id/ali_published_header"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_marginLeft="17dp"
+                android:text="@string/ali_published_title"
+                style="@style/SubTitleText"/>
+
+            <TextView
+                android:id="@+id/ali_published"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_marginLeft="@dimen/noise_text_spacer"
+                android:text="1998"
+                style="@style/SubTitleText"/>
         </LinearLayout>
 
-</RelativeLayout>
+    </LinearLayout>
+
+</LinearLayout>

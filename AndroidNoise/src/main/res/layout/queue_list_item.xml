@@ -1,46 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="horizontal"
               android:layout_width="match_parent"
-              android:layout_height="wrap_content">
+              android:layout_height="@dimen/noise_list_item_height"
+              android:layout_marginTop="@dimen/noise_base_padding"
+              android:layout_marginBottom="@dimen/noise_base_padding"
+              android:paddingBottom="@dimen/noise_base_padding">
 
     <ImageView
         android:id="@+id/qli_now_playing"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginRight="@dimen/noise_base_padding"
         android:background="@drawable/playing_indicator"
-        android:layout_centerVertical="true"/>
+        android:layout_marginRight="@dimen/noise_base_padding"
+        android:layout_gravity="center_vertical"/>
 
-    <TextView
-        android:id="@+id/qli_item_name"
-        android:layout_height="wrap_content"
-        android:layout_width="fill_parent"
-        android:layout_toRightOf="@+id/qli_now_playing"
-        android:layout_marginTop="@dimen/noise_base_padding"
-        android:text="Beast Of Burden"
-        style="@style/TitleText"
-        />
-
-    <TextView
-        android:id="@+id/qli_album_name"
-        android:layout_height="wrap_content"
+    <LinearLayout
+        android:layout_height="match_parent"
         android:layout_width="match_parent"
-        android:layout_marginLeft="@dimen/noise_sub_item_indent"
-        android:layout_toRightOf="@+id/qli_now_playing"
-        android:layout_below="@+id/qli_item_name"
-        android:text=" (The Rolling Stones/Sticky Fingers)"
-        style="@style/SubTitleText"/>
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/qli_play_duration"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/noise_base_padding"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
-        android:text="3:15"
-        style="@style/TitleText" />
+        <LinearLayout
+            android:layout_height="0dp"
+            android:layout_width="match_parent"
+            android:layout_weight="5"
+            android:orientation="horizontal">
 
-</RelativeLayout>
+            <com.SecretSquirrel.AndroidNoise.views.AutoFitTextView
+                android:id="@+id/qli_item_name"
+                android:layout_height="match_parent"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:gravity="bottom"
+                android:text="Beast Of Burden is a very long"
+                style="@style/TitleText"/>
+
+            <TextView
+                android:id="@+id/qli_play_duration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/noise_base_padding"
+                android:gravity="bottom"
+                android:text="3:15"
+                style="@style/TitleText"/>
+
+        </LinearLayout>
+
+        <com.SecretSquirrel.AndroidNoise.views.AutoFitTextView
+            android:id="@+id/qli_album_name"
+            android:layout_height="0dp"
+            android:layout_width="match_parent"
+            android:layout_marginLeft="@dimen/noise_sub_item_indent"
+            android:layout_weight="3"
+            android:text=" (The Rolling Stones/On some album or another)"
+            style="@style/SubTitleText"/>
+
+    </LinearLayout>
+</LinearLayout>

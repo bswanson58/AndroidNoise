@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="horizontal"
               android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:paddingTop="@dimen/noise_base_padding"
+              android:layout_height="@dimen/noise_list_item_height"
+              android:layout_marginTop="@dimen/noise_base_padding"
+              android:layout_marginBottom="@dimen/noise_base_padding"
               android:paddingBottom="@dimen/noise_base_padding"
               android:descendantFocusability="blocksDescendants">
 
@@ -14,16 +15,14 @@
         android:layout_height="35dp"
         android:layout_gravity="center_vertical"
         android:layout_marginLeft="@dimen/noise_base_padding"
-        android:layout_marginRight="@dimen/noise_base_padding"
-        android:layout_centerVertical="true"
         style="@style/PlayButtonStyle"/>
 
     <FrameLayout
         android:id="@+id/fli_type_indicator"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
-        android:layout_toRightOf="@+id/play_button"
-        android:layout_centerVertical="true"
+        android:layout_marginRight="@dimen/noise_base_padding"
+        android:layout_gravity="center_vertical"
         >
 
         <ImageView
@@ -43,22 +42,29 @@
             android:background="@drawable/ic_track_icon"/>
     </FrameLayout>
 
-    <com.SecretSquirrel.AndroidNoise.views.AutoFitTextView
-        android:id="@+id/fli_name"
-        android:layout_height="wrap_content"
+    <LinearLayout
+        android:layout_height="match_parent"
         android:layout_width="match_parent"
-        android:layout_toRightOf="@+id/fli_type_indicator"
-        android:text="Beast Of Burden"
-        style="@style/TitleText"/>
+        android:orientation="vertical">
 
-    <com.SecretSquirrel.AndroidNoise.views.AutoFitTextView
-        android:id="@+id/fli_album_name"
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        android:layout_below="@+id/fli_name"
-        android:layout_toRightOf="@+id/fli_type_indicator"
-        android:layout_marginLeft="@dimen/noise_sub_item_indent"
-        android:text="(The Rolling Stones/Sticky Fingers)"
-        style="@style/SubTitleText"/>
+        <com.SecretSquirrel.AndroidNoise.views.AutoFitTextView
+            android:id="@+id/fli_name"
+            android:layout_height="0dp"
+            android:layout_width="match_parent"
+            android:gravity="bottom"
+            android:layout_weight="5"
+            android:text="Beast Of Burden"
+            style="@style/TitleText"/>
 
-</RelativeLayout>
+        <com.SecretSquirrel.AndroidNoise.views.AutoFitTextView
+            android:id="@+id/fli_album_name"
+            android:layout_height="0dp"
+            android:layout_width="match_parent"
+            android:layout_weight="3"
+            android:layout_marginLeft="@dimen/noise_sub_item_indent"
+            android:text="(The Rolling Stones/Sticky Fingers)"
+            style="@style/SubTitleText"/>
+
+        </LinearLayout>
+
+</LinearLayout>
