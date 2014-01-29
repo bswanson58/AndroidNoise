@@ -36,13 +36,11 @@
             android:layout_width="wrap_content"
             android:text="@string/ali_track_count_title"
             style="@style/SubTitleText"/>
-        <View
-            android:layout_height="1dp"
-            android:layout_width="@dimen/noise_text_spacer"/>
         <TextView
             android:id="@+id/ali_track_count"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
+            android:layout_marginLeft="@dimen/noise_text_spacer"
             android:text="15"
             style="@style/SubTitleText"/>
 
@@ -53,13 +51,11 @@
             android:layout_marginLeft="17dp"
             android:text="@string/ali_published_title"
             style="@style/SubTitleText"/>
-        <View
-            android:layout_height="1dp"
-            android:layout_width="@dimen/noise_text_spacer"/>
         <TextView
             android:id="@+id/ali_published"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
+            android:layout_marginLeft="@dimen/noise_text_spacer"
             android:text="1998"
             style="@style/SubTitleText"/>
         </LinearLayout>
