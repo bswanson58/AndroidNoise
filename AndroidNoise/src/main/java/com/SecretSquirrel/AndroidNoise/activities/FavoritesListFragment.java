@@ -6,10 +6,10 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -17,6 +17,8 @@ import android.widget.TextView;
 
 import com.SecretSquirrel.AndroidNoise.R;
 import com.SecretSquirrel.AndroidNoise.dto.Favorite;
+import com.SecretSquirrel.AndroidNoise.events.EventAlbumRequest;
+import com.SecretSquirrel.AndroidNoise.events.EventArtistRequest;
 import com.SecretSquirrel.AndroidNoise.events.EventPlayFavorite;
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
 import com.SecretSquirrel.AndroidNoise.model.NoiseRemoteApplication;
@@ -58,6 +60,20 @@ public class FavoritesListFragment extends Fragment
 			ListView    favoritesListView = (ListView) myView.findViewById( R.id.FavoritesListView );
 
 			favoritesListView.setAdapter( mFavoritesListAdapter );
+			favoritesListView.setOnItemClickListener( new AdapterView.OnItemClickListener() {
+				@Override
+				public void onItemClick( AdapterView<?> adapterView, View view, int i, long l ) {
+					Favorite    favorite = mFavoritesList.get( i );
+
+					if( favorite.getIsArtist()) {
+						EventBus.getDefault().post( new EventArtistRequest( favorite.getArtistId()));
+					}
+					else if(( favorite.getIsAlbum()) ||
+							( favorite.getIsTrack())) {
+						EventBus.getDefault().post( new EventAlbumRequest( favorite.getArtistId(), favorite.getAlbumId()));
+					}
+				}
+			} );
 		}
 
 		if( getApplicationState().getIsConnected()) {
