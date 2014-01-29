@@ -272,13 +272,6 @@ public class QueueListFragment extends Fragment  {
 			   ( position < mQueueList.size())) {
 				PlayQueueTrack  track = mQueueList.get( position );
 
-				if( track.isPlaying()) {
-					views.NowPlaying.setVisibility( View.VISIBLE );
-				}
-				else {
-					views.NowPlaying.setVisibility( View.INVISIBLE );
-				}
-
 				views.NameTextView.setText( track.getTrackName());
 				views.AlbumTextView.setText( String.format( "(%s/%s)", track.getArtistName(), track.getAlbumName() ));
 
@@ -302,6 +295,20 @@ public class QueueListFragment extends Fragment  {
 					views.NameTextView.setTextColor( mWillPlayColor );
 					views.AlbumTextView.setTextColor( mWillPlayColor );
 					views.PlayDuration.setTextColor( mWillPlayColor );
+				}
+
+				if( track.isPlaying()) {
+					views.NowPlaying.setVisibility( View.VISIBLE );
+
+					if( track.getIsStrategySourced()) {
+						views.NameTextView.setTypeface( null, Typeface.BOLD_ITALIC );
+					}
+					else {
+						views.NameTextView.setTypeface( null, Typeface.BOLD );
+					}
+				}
+				else {
+					views.NowPlaying.setVisibility( View.INVISIBLE );
 				}
 			}
 
