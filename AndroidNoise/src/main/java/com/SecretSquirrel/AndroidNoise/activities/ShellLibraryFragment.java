@@ -15,6 +15,13 @@ import com.SecretSquirrel.AndroidNoise.dto.Artist;
 import com.SecretSquirrel.AndroidNoise.dto.LibraryFocusArgs;
 import com.SecretSquirrel.AndroidNoise.events.EventAlbumSelected;
 import com.SecretSquirrel.AndroidNoise.events.EventArtistSelected;
+import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
+import com.SecretSquirrel.AndroidNoise.model.NoiseRemoteApplication;
+import com.SecretSquirrel.AndroidNoise.services.ArtistAlbumResolver;
+import com.SecretSquirrel.AndroidNoise.services.ArtistResolver;
+import com.SecretSquirrel.AndroidNoise.services.NoiseRemoteApi;
+import com.SecretSquirrel.AndroidNoise.services.ServiceResultReceiver;
+import com.SecretSquirrel.AndroidNoise.support.Constants;
 
 import de.greenrobot.event.EventBus;
 
@@ -65,9 +72,56 @@ public class ShellLibraryFragment extends BaseShellFragment {
 			mCurrentArtist = savedInstanceState.getParcelable( LIBRARY_CURRENT_ARTIST );
 			mCurrentAlbum = savedInstanceState.getParcelable( LIBRARY_CURRENT_ALBUM );
 		}
+		else {
+			Bundle  args = getArguments();
 
-		// Only create the child fragment if we are being created.
-		mFragmentToCreate = mCurrentState;
+			if( args != null ) {
+				long    artistId = args.getLong( LIBRARY_REQUEST_ARTIST, Constants.NULL_ID );
+				long    albumId = args.getLong( LIBRARY_REQUEST_ALBUM, Constants.NULL_ID );
+
+				if( artistId != Constants.NULL_ID ) {
+					if( albumId != Constants.NULL_ID ) {
+						requestAlbum( artistId, albumId );
+					}
+					else {
+						requestArtist( artistId );
+					}
+				}
+				else {
+					// Only create the child fragment if we are being created.
+					mFragmentToCreate = mCurrentState;
+				}
+			}
+		}
+	}
+
+	private void requestArtist( long artistId ) {
+		ArtistResolver  resolver = new ArtistResolver( getApplicationState().getDataClient());
+
+		resolver.requestArtist( artistId, new ServiceResultReceiver.Receiver() {
+			@Override
+			public void onReceiveResult( int resultCode, Bundle resultData ) {
+				mCurrentArtist = resultData.getParcelable( NoiseRemoteApi.Artist );
+
+				displayCurrentArtist();
+			}
+		});
+	}
+
+	private void requestAlbum( long artistId, long albumId ) {
+		ArtistAlbumResolver resolver = new ArtistAlbumResolver( getApplicationState().getDataClient());
+
+		resolver.requestArtistAlbum( artistId, albumId, new ServiceResultReceiver.Receiver() {
+			@Override
+			public void onReceiveResult( int resultCode, Bundle resultData ) {
+				if( resultCode == NoiseRemoteApi.RemoteResultSuccess ) {
+					mCurrentArtist = resultData.getParcelable( NoiseRemoteApi.Artist );
+					mCurrentAlbum = resultData.getParcelable( NoiseRemoteApi.Album );
+
+					displayCurrentAlbum();
+				}
+			}
+		});
 	}
 
 	@Override
@@ -131,8 +185,15 @@ public class ShellLibraryFragment extends BaseShellFragment {
 		Artist artist = args.getArtist();
 
 		if( artist != null ) {
-			mCurrentState = LIBRARY_STATE_ARTIST;
 			mCurrentArtist = artist;
+
+			displayCurrentArtist();
+		}
+	}
+
+	private void displayCurrentArtist() {
+		if( mCurrentArtist != null ) {
+			mCurrentState = LIBRARY_STATE_ARTIST;
 
 			getChildFragmentManager()
 					.beginTransaction()
@@ -150,8 +211,16 @@ public class ShellLibraryFragment extends BaseShellFragment {
 		Album   album = args.getAlbum();
 
 		if( album != null ) {
-			mCurrentState = LIBRARY_STATE_ALBUM;
 			mCurrentAlbum = album;
+
+			displayCurrentAlbum();
+		}
+	}
+
+	private void displayCurrentAlbum() {
+		if(( mCurrentArtist != null ) &&
+		   ( mCurrentAlbum != null )) {
+			mCurrentState = LIBRARY_STATE_ALBUM;
 
 			getChildFragmentManager()
 					.beginTransaction()
@@ -162,5 +231,11 @@ public class ShellLibraryFragment extends BaseShellFragment {
 
 			ActivityCompat.invalidateOptionsMenu( getActivity());
 		}
+	}
+
+	private IApplicationState getApplicationState() {
+		NoiseRemoteApplication application = (NoiseRemoteApplication)getActivity().getApplication();
+
+		return( application.getApplicationState());
 	}
 }

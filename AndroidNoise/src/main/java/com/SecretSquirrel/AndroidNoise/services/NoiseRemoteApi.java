@@ -33,6 +33,9 @@ public class NoiseRemoteApi {
 	public static final int     GetAlbumInfo                = 6;
 	public static final String  AlbumInfo                   = "albumInfo";
 
+	public static final String  Artist                      = "artist";
+	public static final String  Album                       = "album";
+
 	// Locator methods and parameter/return value keys.
 	public static final int     LocateServices              = 1;
 	public static final String  LocateServicesType          = "locateServicesType";
