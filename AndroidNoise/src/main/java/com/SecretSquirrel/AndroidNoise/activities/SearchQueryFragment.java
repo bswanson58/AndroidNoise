@@ -12,6 +12,7 @@ import android.widget.Button;
 
 import com.SecretSquirrel.AndroidNoise.R;
 import com.SecretSquirrel.AndroidNoise.events.EventSearchRequest;
+import com.SecretSquirrel.AndroidNoise.support.NoiseUtils;
 import com.SecretSquirrel.AndroidNoise.views.ButtonEditText;
 
 import de.greenrobot.event.EventBus;
@@ -49,6 +50,8 @@ public class SearchQueryFragment extends Fragment {
 				@Override
 				public void onClick( View view ) {
 					executeSearch();
+
+					NoiseUtils.hideKeyboard( getActivity());
 				}
 			} );
 
