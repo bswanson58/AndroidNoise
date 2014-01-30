@@ -84,30 +84,32 @@ public class ShellLibraryFragment extends BaseShellFragment {
 
 	@Override
 	public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState ) {
-		Fragment    fragment = null;
+		if( getChildFragmentManager().findFragmentById( R.id.LibraryShellFrame ) == null ) {
+			Fragment    fragment = null;
 
-		switch( mFragmentToCreate ) {
-			case LIBRARY_STATE_ARTIST_LIST:
-				fragment = ArtistListFragment.newInstance();
-				break;
+			switch( mFragmentToCreate ) {
+				case LIBRARY_STATE_ARTIST_LIST:
+					fragment = ArtistListFragment.newInstance();
+					break;
 
-			case LIBRARY_STATE_ARTIST:
-				fragment = ArtistFragment.newInstance( mCurrentArtist );
-				break;
+				case LIBRARY_STATE_ARTIST:
+					fragment = ArtistFragment.newInstance( mCurrentArtist );
+					break;
 
-			case LIBRARY_STATE_ALBUM:
-				fragment = AlbumFragment.newInstance( mCurrentArtist, mCurrentAlbum );
-				break;
+				case LIBRARY_STATE_ALBUM:
+					fragment = AlbumFragment.newInstance( mCurrentArtist, mCurrentAlbum );
+					break;
+			}
+
+			if( fragment != null ) {
+				getChildFragmentManager()
+						.beginTransaction()
+						.replace( R.id.LibraryShellFrame, fragment )
+						.commit();
+			}
 		}
 
-		if( fragment != null ) {
-			getChildFragmentManager()
-					.beginTransaction()
-					.replace( R.id.LibraryShellFrame, fragment )
-					.commit();
-
-			mFragmentToCreate = LIBRARY_STATE_NONE;
-		}
+		mFragmentToCreate = LIBRARY_STATE_NONE;
 
 		return( inflater.inflate( R.layout.fragment_library_shell, container, false ));
 	}
@@ -128,8 +130,7 @@ public class ShellLibraryFragment extends BaseShellFragment {
 
 	@Override
 	public void onSaveInstanceState( Bundle outState ) {
-		// Do not save the current fragment - which the base class method will do.
-		// super.onSaveInstanceState( outState );
+		super.onSaveInstanceState( outState );
 
 		outState.putInt( SHELL_FRAGMENT_KEY, getFragmentId());
 
