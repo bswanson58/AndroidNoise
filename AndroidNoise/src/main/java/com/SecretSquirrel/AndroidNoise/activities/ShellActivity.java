@@ -79,8 +79,8 @@ public class ShellActivity extends ActionBarActivity
 				NavigationMenuItem.create( LIBRARY_ITEM_ID, getString( R.string.title_library_section ), "ic_action_library", true, this ),
 				NavigationMenuItem.create( FAVORITES_ITEM_ID, getString( R.string.title_favorites_section ), "ic_action_favorites", true, this ),
 				NavigationMenuItem.create( QUEUE_ITEM_ID, getString( R.string.title_queue_section ), "ic_action_queue", true, this ),
-				NavigationMenuItem.create( SERVERS_ITEM_ID, getString( R.string.title_server_section ), "ic_action_servers", true, this ),
-				NavigationMenuItem.create( SEARCH_ITEM_ID, getString( R.string.title_search_section ), "ic_action_search", true, this )};
+				NavigationMenuItem.create( SEARCH_ITEM_ID, getString( R.string.title_search_section ), "ic_action_search", true, this ),
+				NavigationMenuItem.create( SERVERS_ITEM_ID, getString( R.string.title_server_section ), "ic_action_servers", true, this )};
 
 		retValue.setApplicationNameId( R.string.app_name );
 		retValue.setGlobalMenuId( R.menu.global );
