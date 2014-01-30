@@ -23,11 +23,13 @@ public class ShellSearchFragment extends BaseShellFragment {
 
 	@Override
 	public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState ) {
-		getChildFragmentManager()
-				.beginTransaction()
-				.replace( R.id.search_list_frame, SearchListFragment.newInstance())
-				.replace( R.id.search_query_frame, SearchQueryFragment.newInstance())
-				.commit();
+		if( getChildFragmentManager().findFragmentById( R.id.search_query_frame ) == null ) {
+			getChildFragmentManager()
+					.beginTransaction()
+					.replace( R.id.search_list_frame, SearchListFragment.newInstance())
+					.replace( R.id.search_query_frame, SearchQueryFragment.newInstance())
+					.commit();
+		}
 
 		return( inflater.inflate( R.layout.fragment_search_shell, container, false ));
 	}

@@ -17,8 +17,9 @@ import com.SecretSquirrel.AndroidNoise.events.EventSearchRequest;
 import de.greenrobot.event.EventBus;
 
 public class SearchQueryFragment extends Fragment {
-	private EditText    mSearchText;
-	private Button      mExecuteSearch;
+	private static final String     SEARCH_TEXT_KEY  = "SearchText";
+
+	private EditText                mSearchText;
 
 	public static SearchQueryFragment newInstance() {
 		return( new SearchQueryFragment());
@@ -33,24 +34,43 @@ public class SearchQueryFragment extends Fragment {
 	public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState ) {
 		View    myView = inflater.inflate( R.layout.fragment_search_query, container, false );
 
-		mSearchText = (EditText) myView.findViewById( R.id.search_text_view );
-		mExecuteSearch = (Button) myView.findViewById( R.id.execute_search_button );
+		if( myView != null ) {
+			mSearchText = (EditText) myView.findViewById( R.id.search_text_view );
+			Button executeSearch = (Button) myView.findViewById( R.id.execute_search_button );
 
-		mExecuteSearch.setOnClickListener( new View.OnClickListener() {
-			@Override
-			public void onClick( View view ) {
-				executeSearch();
+			executeSearch.setOnClickListener( new View.OnClickListener() {
+				@Override
+				public void onClick( View view ) {
+					executeSearch();
+				}
+			} );
+
+			if( savedInstanceState != null ) {
+				mSearchText.setText( savedInstanceState.getString( SEARCH_TEXT_KEY, "" ));
 			}
-		} );
+		}
 
 		return( myView );
 	}
 
 	private void executeSearch() {
-		String  searchText = mSearchText.getText().toString();
+		if(( mSearchText != null ) &&
+		   ( mSearchText.getText() != null )) {
+			String  searchText = mSearchText.getText().toString();
 
-		if(!TextUtils.isEmpty( searchText )) {
-			EventBus.getDefault().post( new EventSearchRequest( searchText ));
+			if(!TextUtils.isEmpty( searchText )) {
+				EventBus.getDefault().post( new EventSearchRequest( searchText ));
+			}
+		}
+	}
+
+	@Override
+	public void onSaveInstanceState( Bundle outState ) {
+		super.onSaveInstanceState( outState );
+
+		if(( mSearchText != null ) &&
+		   ( mSearchText.getText() != null )) {
+			outState.putString( SEARCH_TEXT_KEY, mSearchText.getText().toString());
 		}
 	}
 }

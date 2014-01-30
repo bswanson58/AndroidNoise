@@ -38,6 +38,7 @@ import rx.util.functions.Action1;
 
 public class SearchListFragment extends Fragment {
 	private final String                TAG = SearchListFragment.class.getName();
+	private final String                SEARCH_LIST = "searchList";
 
 	private ArrayList<SearchResultItem> mResultList;
 	private SearchResultAdapter         mSearchListAdapter;
@@ -51,7 +52,13 @@ public class SearchListFragment extends Fragment {
 	public void onCreate( Bundle savedInstanceState ) {
 		super.onCreate( savedInstanceState );
 
-		mResultList = new ArrayList<SearchResultItem>();
+		if( savedInstanceState != null ) {
+			mResultList = savedInstanceState.getParcelableArrayList( SEARCH_LIST );
+		}
+		else {
+			mResultList = new ArrayList<SearchResultItem>();
+		}
+
 		mSearchListAdapter = new SearchResultAdapter( getActivity(), mResultList );
 
 		EventBus.getDefault().register( this );
@@ -83,6 +90,15 @@ public class SearchListFragment extends Fragment {
 		}
 
 		return( myView );
+	}
+
+	@Override
+	public void onSaveInstanceState( Bundle outState ) {
+		super.onSaveInstanceState( outState );
+
+		if( mResultList.size() > 0 ) {
+			outState.putParcelableArrayList( SEARCH_LIST, mResultList );
+		}
 	}
 
 	@Override
