@@ -62,6 +62,9 @@ public class ShellActivity extends ActionBarActivity
 		if( savedInstanceState == null ) {
 			mNavigationDrawerFragment.selectId( SERVERS_ITEM_ID );
 		}
+		else {
+			mCurrentChildFragment = (BaseShellFragment)getSupportFragmentManager().findFragmentById( R.id.container );
+		}
 
 		EventBus.getDefault().register( this );
 	}
