@@ -23,10 +23,12 @@ public class ShellFavoritesFragment extends BaseShellFragment {
 
 	@Override
 	public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState ) {
-		getChildFragmentManager()
-				.beginTransaction()
-				.replace( R.id.FavoritesShellFrame, FavoritesListFragment.newInstance())
-				.commit();
+		if( getChildFragmentManager().findFragmentById( R.id.FavoritesShellFrame ) == null ) {
+			getChildFragmentManager()
+					.beginTransaction()
+					.replace( R.id.FavoritesShellFrame, FavoritesListFragment.newInstance())
+					.commit();
+		}
 
 		return( inflater.inflate( R.layout.fragment_favorites_shell, container, false ));
 	}

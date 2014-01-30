@@ -22,11 +22,13 @@ public class ShellQueueFragment extends BaseShellFragment {
 
 	@Override
 	public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState ) {
-		getChildFragmentManager()
-				.beginTransaction()
-				.replace( R.id.queue_list_frame, QueueListFragment.newInstance())
-				.replace( R.id.transport_commands_frame, TransportFragment.newInstance())
-				.commit();
+		if( getChildFragmentManager().findFragmentById( R.id.queue_list_frame ) == null ) {
+			getChildFragmentManager()
+					.beginTransaction()
+					.replace( R.id.queue_list_frame, QueueListFragment.newInstance())
+					.replace( R.id.transport_commands_frame, TransportFragment.newInstance())
+					.commit();
+		}
 
 		return( inflater.inflate( R.layout.fragment_queue_shell, container, false ));
 	}

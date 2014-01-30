@@ -23,10 +23,12 @@ public class ShellServerFragment extends BaseShellFragment {
 
 	@Override
 	public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState ) {
-		getChildFragmentManager()
-				.beginTransaction()
-				.replace( R.id.ServerShellFrame, ServerListFragment.newInstance())
-				.commit();
+		if( getChildFragmentManager().findFragmentById( R.id.ServerShellFrame ) == null ) {
+			getChildFragmentManager()
+					.beginTransaction()
+					.replace( R.id.ServerShellFrame, ServerListFragment.newInstance())
+					.commit();
+		}
 
 		return( inflater.inflate( R.layout.fragment_server_shell, container, false ));
 	}
