@@ -9,17 +9,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 
 import com.SecretSquirrel.AndroidNoise.R;
 import com.SecretSquirrel.AndroidNoise.events.EventSearchRequest;
+import com.SecretSquirrel.AndroidNoise.views.ButtonEditText;
 
 import de.greenrobot.event.EventBus;
 
 public class SearchQueryFragment extends Fragment {
 	private static final String     SEARCH_TEXT_KEY  = "SearchText";
 
-	private EditText                mSearchText;
+	private ButtonEditText          mSearchText;
 
 	public static SearchQueryFragment newInstance() {
 		return( new SearchQueryFragment());
@@ -35,7 +35,14 @@ public class SearchQueryFragment extends Fragment {
 		View    myView = inflater.inflate( R.layout.fragment_search_query, container, false );
 
 		if( myView != null ) {
-			mSearchText = (EditText) myView.findViewById( R.id.search_text_view );
+			mSearchText = (ButtonEditText) myView.findViewById( R.id.search_text_view );
+			mSearchText.setDrawableClickListener( new ButtonEditText.DrawableClickListener() {
+				@Override
+				public void onClick( ButtonEditText.DrawableClickListener.DrawablePosition target ) {
+					mSearchText.setText( "" );
+				}
+			} );
+
 			Button executeSearch = (Button) myView.findViewById( R.id.execute_search_button );
 
 			executeSearch.setOnClickListener( new View.OnClickListener() {

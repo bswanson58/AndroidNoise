@@ -6,11 +6,12 @@
               android:layout_height="match_parent"
               android:padding="@dimen/noise_base_padding">
 
-    <EditText
+    <com.SecretSquirrel.AndroidNoise.views.ButtonEditText
         android:id="@+id/search_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:hint="@string/search_text_hint"
+        android:drawableRight="@android:drawable/ic_menu_close_clear_cancel"
         android:layout_gravity="center_vertical"/>
 
     <Button
