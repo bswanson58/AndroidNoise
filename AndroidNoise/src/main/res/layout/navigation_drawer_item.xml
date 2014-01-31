@@ -5,6 +5,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:paddingRight="10dp"
+                android:background="@drawable/navigation_drawer_item_selector"
     >
 
     <ImageView
@@ -20,7 +21,6 @@
         android:layout_height="50dp"
         android:layout_toRightOf="@id/navmenuitem_icon"
         android:gravity="center_vertical"
-        android:text="TextView"
         android:textColor="#FFFFFF"/>
 
 </RelativeLayout>
