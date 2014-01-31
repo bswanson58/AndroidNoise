@@ -39,8 +39,10 @@ import rx.util.functions.Action1;
 public class SearchListFragment extends Fragment {
 	private final String                TAG = SearchListFragment.class.getName();
 	private final String                SEARCH_LIST = "searchList";
+	private final String                LIST_STATE = "searchListState";
 
 	private ArrayList<SearchResultItem> mResultList;
+	private ListView                    mSearchListView;
 	private SearchResultAdapter         mSearchListAdapter;
 	private Subscription                mSearchSubscription;
 
@@ -60,8 +62,6 @@ public class SearchListFragment extends Fragment {
 		}
 
 		mSearchListAdapter = new SearchResultAdapter( getActivity(), mResultList );
-
-		EventBus.getDefault().register( this );
 	}
 
 	@Override
@@ -69,11 +69,11 @@ public class SearchListFragment extends Fragment {
 		View    myView = inflater.inflate( R.layout.fragment_search_list, container, false );
 
 		if( myView != null ) {
-			ListView    searchListView = (ListView) myView.findViewById( R.id.search_list_view );
+			mSearchListView = (ListView) myView.findViewById( R.id.search_list_view );
 
-			searchListView.setAdapter( mSearchListAdapter );
-			searchListView.setEmptyView( myView.findViewById( R.id.sl_empty_view ));
-			searchListView.setOnItemClickListener( new AdapterView.OnItemClickListener() {
+			mSearchListView.setAdapter( mSearchListAdapter );
+			mSearchListView.setEmptyView( myView.findViewById( R.id.sl_empty_view ));
+			mSearchListView.setOnItemClickListener( new AdapterView.OnItemClickListener() {
 				@Override
 				public void onItemClick( AdapterView<?> adapterView, View view, int i, long l ) {
 					SearchResultItem    searchItem = mResultList.get( i );
@@ -87,6 +87,10 @@ public class SearchListFragment extends Fragment {
 					}
 				}
 			} );
+
+			if( savedInstanceState != null ) {
+				mSearchListView.onRestoreInstanceState( savedInstanceState.getParcelable( LIST_STATE ));
+			}
 		}
 
 		return( myView );
@@ -98,7 +102,15 @@ public class SearchListFragment extends Fragment {
 
 		if( mResultList.size() > 0 ) {
 			outState.putParcelableArrayList( SEARCH_LIST, mResultList );
+			outState.putParcelable( LIST_STATE, mSearchListView.onSaveInstanceState());
 		}
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+
+		EventBus.getDefault().register( this );
 	}
 
 	@Override
@@ -121,9 +133,9 @@ public class SearchListFragment extends Fragment {
 		mResultList.clear();
 		mSearchListAdapter.notifyDataSetChanged();
 
-		if(!TextUtils.isEmpty( args.getSearchTerm())) {
-			clearSubscription();
+		clearSubscription();
 
+		if(!TextUtils.isEmpty( args.getSearchTerm())) {
 			mSearchSubscription = AndroidObservable.fromFragment( this, getApplicationState().getSearchClient().Search( args.getSearchTerm()))
 					.subscribe( new Action1<SearchResult>() {
 							@Override

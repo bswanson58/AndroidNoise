@@ -40,7 +40,9 @@ public class SearchQueryFragment extends Fragment {
 			mSearchText.setDrawableClickListener( new ButtonEditText.DrawableClickListener() {
 				@Override
 				public void onClick( ButtonEditText.DrawableClickListener.DrawablePosition target ) {
+					// Clear the edit box and the search results.
 					mSearchText.setText( "" );
+					EventBus.getDefault().post( new EventSearchRequest( "" ));
 				}
 			} );
 
