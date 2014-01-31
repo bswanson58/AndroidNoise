@@ -202,7 +202,7 @@ public class NavigationDrawerFragment extends Fragment {
 		mCurrentSelectedPosition = position;
 
 		if( mDrawerListView != null ) {
-			mDrawerListView.setItemChecked( position, true );
+			mDrawerListView.setItemChecked( mCurrentSelectedPosition, true );
 		}
 		if( mDrawerLayout != null ) {
 			mDrawerLayout.closeDrawer( mFragmentContainerView );
@@ -219,6 +219,11 @@ public class NavigationDrawerFragment extends Fragment {
 
 			if( item.getId() == id ) {
 				mCurrentSelectedPosition = index;
+
+				if( mDrawerListView != null ) {
+					mDrawerListView.setItemChecked( mCurrentSelectedPosition, true );
+				}
+
 				selectItem( item );
 
 				break;
