@@ -62,18 +62,6 @@ public class ArtistInfoFragment extends Fragment
 		mServiceResultReceiver.setReceiver( this );
 
 		mUnknownArtist = BitmapFactory.decodeResource( getResources(), R.drawable.unknown_artist );
-	}
-
-	@Override
-	public void onPause() {
-		super.onPause();
-
-		mServiceResultReceiver.clearReceiver();
-	}
-
-	@Override
-	public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState ) {
-		View myView = inflater.inflate( R.layout.fragment_artist_info, container, false );
 
 		if( savedInstanceState != null ) {
 			mArtist = savedInstanceState.getParcelable( ARTIST_KEY );
@@ -86,6 +74,17 @@ public class ArtistInfoFragment extends Fragment
 				mArtist = args.getParcelable( ARTIST_KEY );
 			}
 		}
+
+		if( mArtist == null ) {
+			if( Constants.LOG_ERROR ) {
+				Log.e( TAG, "Artist is null." );
+			}
+		}
+	}
+
+	@Override
+	public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState ) {
+		View myView = inflater.inflate( R.layout.fragment_artist_info, container, false );
 
 		if( myView != null ) {
 			mArtistImage = (ImageView)myView.findViewById( R.id.ai_artist_image );
@@ -105,17 +104,8 @@ public class ArtistInfoFragment extends Fragment
 			} );
 		}
 
-		if( mArtist != null ) {
-			if( mArtistInfo == null ) {
-				if( getApplicationState().getIsConnected()) {
-					getApplicationState().getDataClient().GetArtistInfo( mArtist.getArtistId(), mServiceResultReceiver );
-				}
-			}
-		}
-		else {
-			if( Constants.LOG_ERROR ) {
-				Log.e( TAG, "The current artist could not be determined." );
-			}
+		if( mArtistInfo == null ) {
+			retrieveArtistInfo();
 		}
 
 		updateDisplay( false );
@@ -130,6 +120,32 @@ public class ArtistInfoFragment extends Fragment
 		}
 
 		updateDisplay( true );
+	}
+
+	@Override
+	public void onPause() {
+		super.onPause();
+
+		mServiceResultReceiver.clearReceiver();
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+
+		if( mArtistInfo == null ) {
+			mServiceResultReceiver.setReceiver( this );
+
+			retrieveArtistInfo();
+		}
+	}
+
+	private void retrieveArtistInfo() {
+		if( mArtist != null ) {
+			if( getApplicationState().getIsConnected()) {
+				getApplicationState().getDataClient().GetArtistInfo( mArtist.getArtistId(), mServiceResultReceiver );
+			}
+		}
 	}
 
 	private void updateDisplay( boolean withDefaults ) {
