@@ -5,6 +5,7 @@ package com.SecretSquirrel.AndroidNoise.activities;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,8 +34,12 @@ import de.greenrobot.event.EventBus;
 
 public class FavoritesListFragment extends Fragment
 								   implements ServiceResultReceiver.Receiver {
+	private final String            LIST_STATE = "favoritesListState";
+	private final String            FAVORITES_LIST = "favoritesList";
+
 	private ServiceResultReceiver   mServiceResultReceiver;
 	private ArrayList<Favorite>     mFavoritesList;
+	private ListView                mFavoritesListView;
 	private FavoritesAdapter        mFavoritesListAdapter;
 
 	public static FavoritesListFragment newInstance() {
@@ -45,7 +50,13 @@ public class FavoritesListFragment extends Fragment
 	public void onCreate( Bundle savedInstanceState ) {
 		super.onCreate( savedInstanceState );
 
-		mFavoritesList = new ArrayList<Favorite>();
+		if( savedInstanceState != null ) {
+			mFavoritesList = savedInstanceState.getParcelableArrayList( FAVORITES_LIST );
+		}
+		else {
+			mFavoritesList = new ArrayList<Favorite>();
+		}
+
 		mFavoritesListAdapter = new FavoritesAdapter( getActivity(), mFavoritesList );
 
 		mServiceResultReceiver = new ServiceResultReceiver( new Handler());
@@ -57,10 +68,10 @@ public class FavoritesListFragment extends Fragment
 		View    myView = inflater.inflate( R.layout.fragment_favorites_list, container, false );
 
 		if( myView != null ) {
-			ListView    favoritesListView = (ListView) myView.findViewById( R.id.FavoritesListView );
+			mFavoritesListView = (ListView) myView.findViewById( R.id.FavoritesListView );
 
-			favoritesListView.setAdapter( mFavoritesListAdapter );
-			favoritesListView.setOnItemClickListener( new AdapterView.OnItemClickListener() {
+			mFavoritesListView.setAdapter( mFavoritesListAdapter );
+			mFavoritesListView.setOnItemClickListener( new AdapterView.OnItemClickListener() {
 				@Override
 				public void onItemClick( AdapterView<?> adapterView, View view, int i, long l ) {
 					Favorite    favorite = mFavoritesList.get( i );
@@ -74,13 +85,30 @@ public class FavoritesListFragment extends Fragment
 					}
 				}
 			} );
+
+			if( savedInstanceState != null ) {
+				Parcelable  listState = savedInstanceState.getParcelable( LIST_STATE );
+
+				if( listState != null ) {
+					mFavoritesListView.onRestoreInstanceState( listState );
+				}
+			}
 		}
 
-		if( getApplicationState().getIsConnected()) {
+		if(( mFavoritesList.size() == 0 ) &&
+		   ( getApplicationState().getIsConnected())) {
 			getApplicationState().getDataClient().GetFavoritesList( mServiceResultReceiver );
 		}
 
 		return( myView );
+	}
+
+	@Override
+	public void onSaveInstanceState( Bundle outState ) {
+		super.onSaveInstanceState( outState );
+
+		outState.putParcelableArrayList( FAVORITES_LIST, mFavoritesList );
+		outState.putParcelable( LIST_STATE, mFavoritesListView.onSaveInstanceState());
 	}
 
 	@Override

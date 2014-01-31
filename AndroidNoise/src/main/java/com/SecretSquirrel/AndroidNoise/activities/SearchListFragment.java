@@ -4,6 +4,7 @@ package com.SecretSquirrel.AndroidNoise.activities;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.util.Log;
@@ -89,7 +90,11 @@ public class SearchListFragment extends Fragment {
 			} );
 
 			if( savedInstanceState != null ) {
-				mSearchListView.onRestoreInstanceState( savedInstanceState.getParcelable( LIST_STATE ));
+				Parcelable  listState = savedInstanceState.getParcelable( LIST_STATE );
+
+				if( listState != null ) {
+					mSearchListView.onRestoreInstanceState( listState );
+				}
 			}
 		}
 
