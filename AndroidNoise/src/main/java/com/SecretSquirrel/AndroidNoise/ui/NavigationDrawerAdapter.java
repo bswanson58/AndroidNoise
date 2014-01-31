@@ -3,6 +3,7 @@ package com.SecretSquirrel.AndroidNoise.ui;
 // Secret Squirrel Software - Created by bswanson on 12/26/13.
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,10 +12,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.SecretSquirrel.AndroidNoise.R;
+import com.SecretSquirrel.AndroidNoise.support.Constants;
 
 public class NavigationDrawerAdapter extends ArrayAdapter<NavigationDrawerItem> {
+	private final String    TAG = NavigationDrawerAdapter.class.getName();
 
-	private LayoutInflater mInflater;
+	private LayoutInflater  mInflater;
 
 	public NavigationDrawerAdapter( Context context, int textViewResourceId, NavigationDrawerItem[] objects ) {
 		super( context, textViewResourceId, objects );
@@ -23,10 +26,10 @@ public class NavigationDrawerAdapter extends ArrayAdapter<NavigationDrawerItem> 
 
 	@Override
 	public View getView( int position, View convertView, ViewGroup parent) {
-		View                    view = null ;
+		View                    view;
 		NavigationDrawerItem    menuItem = this.getItem( position );
 
-		if ( menuItem.getType() == NavigationMenuItem.ITEM_TYPE ) {
+		if( menuItem.getType() == NavigationMenuItem.ITEM_TYPE ) {
 			view = getItemView( convertView, parent, menuItem );
 		}
 		else {
@@ -43,24 +46,33 @@ public class NavigationDrawerAdapter extends ArrayAdapter<NavigationDrawerItem> 
 
 		if( convertView == null ) {
 			convertView = mInflater.inflate( R.layout.navigation_drawer_item, parentView, false);
-			TextView labelView = (TextView) convertView
-					.findViewById( R.id.navmenuitem_label );
-			ImageView iconView = (ImageView) convertView
-					.findViewById( R.id.navmenuitem_icon );
 
-			navMenuItemHolder = new NavMenuItemHolder();
-			navMenuItemHolder.labelView = labelView ;
-			navMenuItemHolder.iconView = iconView ;
+			if( convertView != null ) {
+				TextView labelView = (TextView)convertView.findViewById( R.id.navmenuitem_label );
+				ImageView iconView = (ImageView)convertView.findViewById( R.id.navmenuitem_icon );
 
-			convertView.setTag(navMenuItemHolder);
+				navMenuItemHolder = new NavMenuItemHolder();
+				navMenuItemHolder.labelView = labelView ;
+				navMenuItemHolder.iconView = iconView ;
+
+				convertView.setTag(navMenuItemHolder);
+			}
+			else {
+				if( Constants.LOG_ERROR ) {
+					Log.e( TAG, "navigation_drawer_item layout could not be loaded" );
+				}
+			}
 		}
 
-		if( navMenuItemHolder == null ) {
-			navMenuItemHolder = (NavMenuItemHolder) convertView.getTag();
+		if(( navMenuItemHolder == null ) &&
+		   ( convertView != null )) {
+			navMenuItemHolder = (NavMenuItemHolder)convertView.getTag();
 		}
 
-		navMenuItemHolder.labelView.setText(menuItem.getLabel());
-		navMenuItemHolder.iconView.setImageResource(menuItem.getIcon());
+		if( navMenuItemHolder != null ) {
+			navMenuItemHolder.labelView.setText(menuItem.getLabel());
+			navMenuItemHolder.iconView.setImageResource(menuItem.getIcon());
+		}
 
 		return( convertView );
 	}
@@ -72,36 +84,41 @@ public class NavigationDrawerAdapter extends ArrayAdapter<NavigationDrawerItem> 
 
 		if( convertView == null ) {
 			convertView = mInflater.inflate( R.layout.navigation_section_item, parentView, false);
-			TextView labelView = (TextView) convertView
-					.findViewById( R.id.navmenusection_label );
 
-			navMenuItemHolder = new NavMenuSectionHolder();
-			navMenuItemHolder.labelView = labelView ;
-			convertView.setTag(navMenuItemHolder);
+			if( convertView != null ) {
+				TextView labelView = (TextView) convertView.findViewById( R.id.navmenusection_label );
+
+				navMenuItemHolder = new NavMenuSectionHolder();
+				navMenuItemHolder.labelView = labelView ;
+				convertView.setTag(navMenuItemHolder);
+			}
 		}
 
-		if( navMenuItemHolder == null ) {
+		if(( navMenuItemHolder == null ) &&
+		   ( convertView != null )) {
 			navMenuItemHolder = (NavMenuSectionHolder) convertView.getTag();
 		}
 
-		navMenuItemHolder.labelView.setText(menuSection.getLabel());
+		if( navMenuItemHolder != null ) {
+			navMenuItemHolder.labelView.setText(menuSection.getLabel());
+		}
 
 		return( convertView );
 	}
 
 	@Override
 	public int getViewTypeCount() {
-		return 2;
+		return( 2 );
 	}
 
 	@Override
 	public int getItemViewType( int position ) {
-		return this.getItem(position).getType();
+		return( getItem(position).getType());
 	}
 
 	@Override
 	public boolean isEnabled( int position ) {
-		return getItem(position).isEnabled();
+		return( getItem(position).isEnabled());
 	}
 
 	private static class NavMenuItemHolder {
