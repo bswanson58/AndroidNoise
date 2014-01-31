@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+    <com.SecretSquirrel.AndroidNoise.views.AutoFitTextView
+        android:id="@+id/aei_artist_name"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_marginLeft="@dimen/noise_base_padding"
+        android:layout_marginTop="@dimen/noise_base_padding"
+        android:text="The Rolling Stones"
+        style="@style/TitleText"/>
+
+    <TextView
+        android:id="@+id/aei_artist_genre"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/aei_artist_name"
+        android:layout_marginLeft="@dimen/noise_base_padding"
+        android:text="Genre"
+        style="@style/SubTitleText"/>
+
+    <ImageView
+        android:id="@+id/aei_artist_image"
+        android:layout_width="@dimen/noise_image_maximum_width"
+        android:layout_height="@dimen/noise_image_minimum_height"
+        android:scaleType="fitCenter"
+        android:layout_margin="@dimen/noise_base_padding"
+        android:adjustViewBounds="true"
+        android:layout_below="@+id/aei_artist_genre"/>
+
+    <TextView
+        android:id="@+id/aei_biography"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_below="@id/aei_artist_image"
+        android:layout_margin="@dimen/noise_base_padding"
+        android:text="The artist bio goes here..."
+        />
+
+</RelativeLayout>

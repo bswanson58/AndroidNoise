@@ -12,8 +12,10 @@ import android.view.ViewGroup;
 import com.SecretSquirrel.AndroidNoise.R;
 import com.SecretSquirrel.AndroidNoise.dto.Album;
 import com.SecretSquirrel.AndroidNoise.dto.Artist;
+import com.SecretSquirrel.AndroidNoise.dto.ArtistInfo;
 import com.SecretSquirrel.AndroidNoise.dto.LibraryFocusArgs;
 import com.SecretSquirrel.AndroidNoise.events.EventAlbumSelected;
+import com.SecretSquirrel.AndroidNoise.events.EventArtistInfoRequest;
 import com.SecretSquirrel.AndroidNoise.events.EventArtistSelected;
 
 import de.greenrobot.event.EventBus;
@@ -23,9 +25,11 @@ public class ShellLibraryFragment extends BaseShellFragment {
 	private static final int    LIBRARY_STATE_NONE          = 0;
 	private static final int    LIBRARY_STATE_ARTIST_LIST   = 1;
 	private static final int    LIBRARY_STATE_ARTIST        = 2;
-	private static final int    LIBRARY_STATE_ALBUM         = 3;
+	private static final int    LIBRARY_STATE_ARTIST_INFO   = 3;
+	private static final int    LIBRARY_STATE_ALBUM         = 4;
 
 	private static final String LIBRARY_CURRENT_ARTIST      = "ShellLibraryFragment_CurrentArtist";
+	private static final String LIBRARY_CURRENT_ARTIST_INFO = "ShellLibraryFragment_CurrentArtistInfo";
 	private static final String LIBRARY_REQUEST_ARTIST      = "ShellLibraryFragment_RequestArtist";
 	private static final String LIBRARY_CURRENT_ALBUM       = "ShellLibraryFragment_CurrentAlbum";
 	private static final String LIBRARY_REQUEST_ALBUM       = "ShellLibraryFragment_RequestAlbum";
@@ -33,6 +37,7 @@ public class ShellLibraryFragment extends BaseShellFragment {
 	private int                 mCurrentState;
 	private int                 mFragmentToCreate;
 	private Artist              mCurrentArtist;
+	private ArtistInfo          mCurrentArtistInfo;
 	private Album               mCurrentAlbum;
 
 	public static ShellLibraryFragment newInstance( int fragmentId, LibraryFocusArgs focusArgs ) {
@@ -63,6 +68,7 @@ public class ShellLibraryFragment extends BaseShellFragment {
 		if( savedInstanceState != null ) {
 			mCurrentState = savedInstanceState.getInt( LIBRARY_STATE, LIBRARY_STATE_ARTIST_LIST );
 			mCurrentArtist = savedInstanceState.getParcelable( LIBRARY_CURRENT_ARTIST );
+			mCurrentArtistInfo = savedInstanceState.getParcelable( LIBRARY_CURRENT_ARTIST_INFO );
 			mCurrentAlbum = savedInstanceState.getParcelable( LIBRARY_CURRENT_ALBUM );
 		}
 		else {
@@ -70,6 +76,7 @@ public class ShellLibraryFragment extends BaseShellFragment {
 
 			if( args != null ) {
 				mCurrentArtist = args.getParcelable( LIBRARY_REQUEST_ARTIST );
+				mCurrentArtistInfo = args.getParcelable( LIBRARY_CURRENT_ARTIST_INFO );
 				mCurrentAlbum = args.getParcelable( LIBRARY_REQUEST_ALBUM );
 
 				if( mCurrentArtist != null ) {
@@ -94,6 +101,10 @@ public class ShellLibraryFragment extends BaseShellFragment {
 
 				case LIBRARY_STATE_ARTIST:
 					fragment = ArtistFragment.newInstance( mCurrentArtist );
+					break;
+
+				case LIBRARY_STATE_ARTIST_INFO:
+					fragment = ArtistExtendedInfoFragment.newInstance( mCurrentArtist, mCurrentArtistInfo );
 					break;
 
 				case LIBRARY_STATE_ALBUM:
@@ -136,6 +147,7 @@ public class ShellLibraryFragment extends BaseShellFragment {
 
 		outState.putInt( LIBRARY_STATE, mCurrentState );
 		outState.putParcelable( LIBRARY_CURRENT_ARTIST, mCurrentArtist );
+		outState.putParcelable( LIBRARY_CURRENT_ARTIST_INFO, mCurrentArtistInfo );
 		outState.putParcelable( LIBRARY_CURRENT_ALBUM, mCurrentAlbum );
 	}
 
@@ -185,6 +197,26 @@ public class ShellLibraryFragment extends BaseShellFragment {
 					.beginTransaction()
 					.setCustomAnimations( android.R.anim.fade_in, android.R.anim.fade_out )
 					.replace( R.id.LibraryShellFrame, AlbumFragment.newInstance( mCurrentArtist, mCurrentAlbum ))
+					.addToBackStack( null )
+					.commit();
+
+			ActivityCompat.invalidateOptionsMenu( getActivity());
+		}
+	}
+
+	@SuppressWarnings( "unused" )
+	public void onEvent( EventArtistInfoRequest args ) {
+		mCurrentArtist = args.getArtist();
+		mCurrentArtistInfo = args.getArtistInfo();
+
+		if(( mCurrentArtist != null ) &&
+		   ( mCurrentArtistInfo != null )) {
+			mCurrentState = LIBRARY_STATE_ARTIST_INFO;
+
+			getChildFragmentManager()
+					.beginTransaction()
+					.setCustomAnimations( android.R.anim.fade_in, android.R.anim.fade_out )
+					.replace( R.id.LibraryShellFrame, ArtistExtendedInfoFragment.newInstance( mCurrentArtist, mCurrentArtistInfo ))
 					.addToBackStack( null )
 					.commit();
 

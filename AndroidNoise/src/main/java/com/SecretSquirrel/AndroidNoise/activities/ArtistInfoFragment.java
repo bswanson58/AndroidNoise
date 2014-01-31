@@ -7,21 +7,26 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.SecretSquirrel.AndroidNoise.R;
 import com.SecretSquirrel.AndroidNoise.dto.Artist;
 import com.SecretSquirrel.AndroidNoise.dto.ArtistInfo;
+import com.SecretSquirrel.AndroidNoise.events.EventArtistInfoRequest;
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
 import com.SecretSquirrel.AndroidNoise.model.NoiseRemoteApplication;
 import com.SecretSquirrel.AndroidNoise.services.NoiseRemoteApi;
 import com.SecretSquirrel.AndroidNoise.services.ServiceResultReceiver;
 import com.SecretSquirrel.AndroidNoise.support.Constants;
+
+import de.greenrobot.event.EventBus;
 
 public class ArtistInfoFragment extends Fragment
 								implements ServiceResultReceiver.Receiver {
@@ -36,6 +41,7 @@ public class ArtistInfoFragment extends Fragment
 	private TextView                mArtistName;
 	private TextView                mArtistGenre;
 	private TextView                mAlbumCount;
+	private Button                  mMoreButton;
 	private Bitmap                  mUnknownArtist;
 
 	public static ArtistInfoFragment newInstance( Artist artist ) {
@@ -55,7 +61,8 @@ public class ArtistInfoFragment extends Fragment
 		mServiceResultReceiver = new ServiceResultReceiver( new Handler());
 		mServiceResultReceiver.setReceiver( this );
 
-		mUnknownArtist = BitmapFactory.decodeResource( getResources(), R.drawable.unknown_artist );	}
+		mUnknownArtist = BitmapFactory.decodeResource( getResources(), R.drawable.unknown_artist );
+	}
 
 	@Override
 	public void onPause() {
@@ -85,6 +92,17 @@ public class ArtistInfoFragment extends Fragment
 			mArtistName = (TextView)myView.findViewById( R.id.ai_artist_name );
 			mArtistGenre = (TextView)myView.findViewById( R.id.ai_artist_genre );
 			mAlbumCount = (TextView)myView.findViewById( R.id.ai_album_count );
+
+			mMoreButton = (Button)myView.findViewById( R.id.ai_artist_more );
+			mMoreButton.setOnClickListener( new View.OnClickListener() {
+				@Override
+				public void onClick( View view ) {
+					if(( mArtist != null ) &&
+					   ( mArtistInfo != null )) {
+						EventBus.getDefault().post( new EventArtistInfoRequest( mArtist, mArtistInfo ));
+					}
+				}
+			} );
 		}
 
 		if( mArtist != null ) {
@@ -123,6 +141,13 @@ public class ArtistInfoFragment extends Fragment
 			}
 
 			mArtistImage.setImageBitmap( artistImage );
+
+			if(!TextUtils.isEmpty( mArtistInfo.getBiography())) {
+				mMoreButton.setVisibility( View.VISIBLE );
+			}
+			else {
+				mMoreButton.setVisibility( View.INVISIBLE );
+			}
 		}
 		else {
 			if( withDefaults ) {
