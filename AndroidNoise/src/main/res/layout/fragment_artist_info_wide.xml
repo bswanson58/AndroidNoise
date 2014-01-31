@@ -65,4 +65,13 @@
         android:text="@string/album_count_title"
         style="@style/SubTitleText"/>
 
+    <Button
+        android:id="@+id/ai_artist_more"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_margin="@dimen/noise_base_padding"
+        android:layout_alignParentRight="true"
+        android:layout_above="@+id/ai_album_count"
+        android:text="@string/artist_button_more"/>
+
 </RelativeLayout>
