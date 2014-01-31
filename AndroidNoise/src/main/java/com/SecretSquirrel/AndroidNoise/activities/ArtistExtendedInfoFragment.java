@@ -24,6 +24,7 @@ public class ArtistExtendedInfoFragment extends Fragment {
 	private ArtistInfo              mArtistInfo;
 	private TextView                mArtistName;
 	private TextView                mArtistGenre;
+	private TextView                mArtistWebsite;
 	private TextView                mArtistBiography;
 	private ImageView               mArtistImage;
 	private Bitmap                  mUnknownArtist;
@@ -66,6 +67,7 @@ public class ArtistExtendedInfoFragment extends Fragment {
 		if( myView != null ) {
 			mArtistName = (TextView)myView.findViewById( R.id.aei_artist_name );
 			mArtistGenre = (TextView)myView.findViewById( R.id.aei_artist_genre );
+			mArtistWebsite = (TextView)myView.findViewById( R.id.aei_artist_website );
 			mArtistBiography = (TextView)myView.findViewById( R.id.aei_biography );
 			mArtistImage = (ImageView)myView.findViewById( R.id.aei_artist_image );
 
@@ -93,6 +95,7 @@ public class ArtistExtendedInfoFragment extends Fragment {
 
 			mArtistImage.setImageBitmap( artistImage );
 			mArtistBiography.setText( mArtistInfo.getBiography());
+			mArtistWebsite.setText( mArtistInfo.getWebsite());
 		}
 
 		if( mArtist != null ) {
