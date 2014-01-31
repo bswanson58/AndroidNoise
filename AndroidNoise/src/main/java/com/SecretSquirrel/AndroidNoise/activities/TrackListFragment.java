@@ -5,6 +5,7 @@ package com.SecretSquirrel.AndroidNoise.activities;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -34,10 +35,14 @@ import de.greenrobot.event.EventBus;
 
 public class TrackListFragment extends Fragment
 							   implements ServiceResultReceiver.Receiver {
-	private static final String     TAG = TrackListFragment.class.getName();
-	private static final String     ALBUM_KEY = "TrackListFragment_AlbumId";
+	private static final String     TAG         = TrackListFragment.class.getName();
+	private static final String     ALBUM_KEY   = "trackListAlbumId";
+	private static final String     TRACK_LIST  = "trackList";
+	private static final String     LIST_STATE  = "trackListState";
 
 	private ArrayList<Track>        mTrackList;
+	private ListView                mTrackListView;
+	private Parcelable              mTrackListState;
 	private TrackAdapter            mTrackListAdapter;
 	private ServiceResultReceiver   mReceiver;
 	private long                    mCurrentAlbum;
@@ -60,7 +65,14 @@ public class TrackListFragment extends Fragment
 	public void onCreate( Bundle savedInstanceState ) {
 		super.onCreate( savedInstanceState );
 
-		mTrackList = new ArrayList<Track>();
+		if( savedInstanceState != null ) {
+			mTrackList = savedInstanceState.getParcelableArrayList( TRACK_LIST );
+			mTrackListState = savedInstanceState.getParcelable( LIST_STATE );
+		}
+		if( mTrackList == null ) {
+			mTrackList = new ArrayList<Track>();
+		}
+
 		mTrackListAdapter = new TrackAdapter( getActivity(), mTrackList );
 
 		mReceiver = new ServiceResultReceiver( new Handler());
@@ -72,24 +84,30 @@ public class TrackListFragment extends Fragment
 		View    myView = inflater.inflate( R.layout.fragment_track_list, container, false );
 
 		if( myView != null ) {
-			ListView    trackListView = (ListView)myView.findViewById( R.id.TrackListView );
+			mTrackListView = (ListView)myView.findViewById( R.id.TrackListView );
 
-			trackListView.setAdapter( mTrackListAdapter );
-		}
+			mTrackListView.setAdapter( mTrackListAdapter );
 
-		if( savedInstanceState != null ) {
-			mCurrentAlbum = savedInstanceState.getLong( ALBUM_KEY, Constants.NULL_ID );
-		}
-		else {
-			Bundle  args = getArguments();
+			if( savedInstanceState != null ) {
+				if( mTrackListState != null ) {
+					mTrackListView.onRestoreInstanceState( mTrackListState );
+				}
 
-			if( args != null ) {
-				mCurrentAlbum = args.getLong( ALBUM_KEY, Constants.NULL_ID );
+				mCurrentAlbum = savedInstanceState.getLong( ALBUM_KEY, Constants.NULL_ID );
+			}
+			else {
+				Bundle  args = getArguments();
+
+				if( args != null ) {
+					mCurrentAlbum = args.getLong( ALBUM_KEY, Constants.NULL_ID );
+				}
 			}
 		}
 
 		if( mCurrentAlbum != Constants.NULL_ID ) {
-			getApplicationState().getDataClient().GetTrackList( mCurrentAlbum, mReceiver );
+			if( mTrackList.size() == 0 ) {
+				getApplicationState().getDataClient().GetTrackList( mCurrentAlbum, mReceiver );
+			}
 		}
 		else {
 			if( Constants.LOG_ERROR ) {
@@ -105,6 +123,13 @@ public class TrackListFragment extends Fragment
 		super.onSaveInstanceState( outState );
 
 		outState.putLong( ALBUM_KEY, mCurrentAlbum );
+		outState.putParcelableArrayList( TRACK_LIST, mTrackList );
+		if( mTrackListView != null ) {
+			mTrackListState = mTrackListView.onSaveInstanceState();
+		}
+		if( mTrackListState != null ) {
+			outState.putParcelable( LIST_STATE, mTrackListState );
+		}
 	}
 
 	@Override

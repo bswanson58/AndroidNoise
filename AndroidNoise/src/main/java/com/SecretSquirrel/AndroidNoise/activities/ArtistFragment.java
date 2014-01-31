@@ -3,6 +3,7 @@ package com.SecretSquirrel.AndroidNoise.activities;
 // Secret Squirrel Software - Created by bswanson on 12/23/13.
 
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -45,11 +46,13 @@ public class ArtistFragment extends Fragment {
 		}
 
 		if( mCurrentArtist != null ) {
-			getChildFragmentManager()
-					.beginTransaction()
-					.replace( R.id.frame_artist_info, ArtistInfoFragment.newInstance( mCurrentArtist ))
-					.replace( R.id.frame_album_list, AlbumListFragment.newInstance( mCurrentArtist.getArtistId()))
-					.commit();
+			if( getChildFragmentManager().findFragmentById( R.id.frame_artist_info ) == null ) {
+				getChildFragmentManager()
+						.beginTransaction()
+						.replace( R.id.frame_artist_info, ArtistInfoFragment.newInstance( mCurrentArtist ))
+						.replace( R.id.frame_album_list, AlbumListFragment.newInstance( mCurrentArtist.getArtistId()))
+						.commit();
+			}
 		}
 		else {
 			if( Constants.LOG_ERROR ) {

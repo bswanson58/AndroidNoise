@@ -51,11 +51,13 @@ public class AlbumFragment extends Fragment {
 		}
 
 		if( mAlbum != null ) {
-			getChildFragmentManager()
-					.beginTransaction()
-					.replace( R.id.frame_album_info, AlbumInfoFragment.newInstance( mArtist, mAlbum ))
-					.replace( R.id.frame_track_list, TrackListFragment.newInstance( mAlbum.getAlbumId()))
-					.commit();
+			if( getChildFragmentManager().findFragmentById( R.id.frame_album_info ) == null ) {
+				getChildFragmentManager()
+						.beginTransaction()
+						.replace( R.id.frame_album_info, AlbumInfoFragment.newInstance( mArtist, mAlbum ))
+						.replace( R.id.frame_track_list, TrackListFragment.newInstance( mAlbum.getAlbumId()))
+						.commit();
+			}
 		}
 		else {
 			if( Constants.LOG_ERROR ) {

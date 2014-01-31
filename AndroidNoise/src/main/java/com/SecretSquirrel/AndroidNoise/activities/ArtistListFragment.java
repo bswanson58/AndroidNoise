@@ -39,6 +39,7 @@ public class ArtistListFragment extends Fragment
 	private ServiceResultReceiver   mServiceResultReceiver;
 	private ArrayList<Artist>       mArtistList;
 	private ListView                mArtistListView;
+	private Parcelable              mListViewState;
 	private ArtistAdapter           mArtistListAdapter;
 
 	public static ArtistListFragment newInstance() {
@@ -51,6 +52,7 @@ public class ArtistListFragment extends Fragment
 
 		if( savedInstanceState != null ) {
 			mArtistList = savedInstanceState.getParcelableArrayList( ARTIST_LIST );
+			mListViewState = savedInstanceState.getParcelable( LIST_STATE );
 		}
 		if( mArtistList == null ) {
 			mArtistList = new ArrayList<Artist>();
@@ -81,12 +83,8 @@ public class ArtistListFragment extends Fragment
 				}
 			} );
 
-			if( savedInstanceState != null ) {
-				Parcelable  listState = savedInstanceState.getParcelable( LIST_STATE );
-
-				if( listState != null ) {
-					mArtistListView.onRestoreInstanceState( listState );
-				}
+			if( mListViewState != null ) {
+				mArtistListView.onRestoreInstanceState( mListViewState );
 			}
 		}
 
@@ -103,7 +101,12 @@ public class ArtistListFragment extends Fragment
 		super.onSaveInstanceState( outState );
 
 		outState.putParcelableArrayList( ARTIST_LIST, mArtistList );
-//		outState.putParcelable( LIST_STATE, mArtistListView.onSaveInstanceState());
+		if( mArtistListView != null ) {
+			mListViewState = mArtistListView.onSaveInstanceState();
+		}
+		if( mListViewState != null ) {
+			outState.putParcelable( LIST_STATE, mListViewState );
+		}
 	}
 
 	@Override

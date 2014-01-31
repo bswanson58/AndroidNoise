@@ -45,6 +45,7 @@ public class AlbumListFragment extends Fragment
 	private long                    mCurrentArtist;
 	private ArrayList<Album>        mAlbumList;
 	private ListView                mAlbumListView;
+	private Parcelable              mAlbumListViewState;
 	private AlbumAdapter            mAlbumListAdapter;
 
 	public static AlbumListFragment newInstance( long artistId ) {
@@ -67,6 +68,7 @@ public class AlbumListFragment extends Fragment
 
 		if( savedInstanceState != null ) {
 			mAlbumList = savedInstanceState.getParcelableArrayList( ALBUM_LIST );
+			mAlbumListViewState = savedInstanceState.getParcelable( LIST_STATE );
 		}
 		if( mAlbumList == null ) {
 			mAlbumList = new ArrayList<Album>();
@@ -97,10 +99,8 @@ public class AlbumListFragment extends Fragment
 			} );
 
 			if( savedInstanceState != null ) {
-				Parcelable  listState = savedInstanceState.getParcelable( LIST_STATE );
-
-				if( listState != null ) {
-					mAlbumListView.onRestoreInstanceState( listState );
+				if( mAlbumListViewState != null ) {
+					mAlbumListView.onRestoreInstanceState( mAlbumListViewState );
 				}
 
 				mCurrentArtist = savedInstanceState.getLong( ARTIST_KEY );
@@ -134,7 +134,13 @@ public class AlbumListFragment extends Fragment
 
 		outState.putLong( ARTIST_KEY, mCurrentArtist );
 		outState.putParcelableArrayList( ALBUM_LIST, mAlbumList );
-//		outState.putParcelable( LIST_STATE, mAlbumListView.onSaveInstanceState());
+
+		if( mAlbumListView != null ) {
+			mAlbumListViewState = mAlbumListView.onSaveInstanceState();
+		}
+		if( mAlbumListViewState != null ) {
+			outState.putParcelable( LIST_STATE, mAlbumListViewState );
+		}
 	}
 
 	@Override
