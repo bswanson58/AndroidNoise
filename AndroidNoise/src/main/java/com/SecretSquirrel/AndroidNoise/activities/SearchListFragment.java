@@ -58,7 +58,7 @@ public class SearchListFragment extends Fragment {
 		if( savedInstanceState != null ) {
 			mResultList = savedInstanceState.getParcelableArrayList( SEARCH_LIST );
 		}
-		else {
+		if( mResultList == null ) {
 			mResultList = new ArrayList<SearchResultItem>();
 		}
 

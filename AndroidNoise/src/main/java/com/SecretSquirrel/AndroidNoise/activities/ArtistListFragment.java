@@ -5,6 +5,7 @@ package com.SecretSquirrel.AndroidNoise.activities;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,8 +33,12 @@ import de.greenrobot.event.EventBus;
 
 public class ArtistListFragment extends Fragment
 								implements ServiceResultReceiver.Receiver {
+	private final String            ARTIST_LIST = "artistList";
+	private final String            LIST_STATE = "artistListState";
+
 	private ServiceResultReceiver   mServiceResultReceiver;
 	private ArrayList<Artist>       mArtistList;
+	private ListView                mArtistListView;
 	private ArtistAdapter           mArtistListAdapter;
 
 	public static ArtistListFragment newInstance() {
@@ -44,7 +49,13 @@ public class ArtistListFragment extends Fragment
 	public void onCreate( Bundle savedInstanceState ) {
 		super.onCreate( savedInstanceState );
 
-		mArtistList = new ArrayList<Artist>();
+		if( savedInstanceState != null ) {
+			mArtistList = savedInstanceState.getParcelableArrayList( ARTIST_LIST );
+		}
+		if( mArtistList == null ) {
+			mArtistList = new ArrayList<Artist>();
+		}
+
 		mArtistListAdapter = new ArtistAdapter( getActivity(), mArtistList );
 
 		mServiceResultReceiver = new ServiceResultReceiver( new Handler());
@@ -56,10 +67,10 @@ public class ArtistListFragment extends Fragment
 		View    myView = inflater.inflate( R.layout.fragment_artist_list, container, false );
 
 		if( myView != null ) {
-			ListView    artistListView = (ListView) myView.findViewById( R.id.al_artist_list_view );
+			mArtistListView = (ListView) myView.findViewById( R.id.al_artist_list_view );
 
-			artistListView.setAdapter( mArtistListAdapter );
-			artistListView.setOnItemClickListener( new AdapterView.OnItemClickListener() {
+			mArtistListView.setAdapter( mArtistListAdapter );
+			mArtistListView.setOnItemClickListener( new AdapterView.OnItemClickListener() {
 				@Override
 				public void onItemClick( AdapterView<?> adapterView, View view, int i, long l ) {
 					Artist  artist = mArtistList.get( i );
@@ -69,13 +80,30 @@ public class ArtistListFragment extends Fragment
 					}
 				}
 			} );
+
+			if( savedInstanceState != null ) {
+				Parcelable  listState = savedInstanceState.getParcelable( LIST_STATE );
+
+				if( listState != null ) {
+					mArtistListView.onRestoreInstanceState( listState );
+				}
+			}
 		}
 
-		if( getApplicationState().getIsConnected()) {
+		if(( mArtistList.size() == 0 ) &&
+		   ( getApplicationState().getIsConnected())) {
 			getApplicationState().getDataClient().GetArtistList( mServiceResultReceiver );
 		}
 
 		return( myView );
+	}
+
+	@Override
+	public void onSaveInstanceState( Bundle outState ) {
+		super.onSaveInstanceState( outState );
+
+		outState.putParcelableArrayList( ARTIST_LIST, mArtistList );
+		outState.putParcelable( LIST_STATE, mArtistListView.onSaveInstanceState());
 	}
 
 	@Override

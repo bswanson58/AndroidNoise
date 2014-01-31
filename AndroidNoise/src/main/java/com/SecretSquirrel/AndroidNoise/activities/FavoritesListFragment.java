@@ -53,7 +53,7 @@ public class FavoritesListFragment extends Fragment
 		if( savedInstanceState != null ) {
 			mFavoritesList = savedInstanceState.getParcelableArrayList( FAVORITES_LIST );
 		}
-		else {
+		if( mFavoritesList == null ) {
 			mFavoritesList = new ArrayList<Favorite>();
 		}
 
