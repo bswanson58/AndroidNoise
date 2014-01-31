@@ -171,6 +171,10 @@ public class ArtistListFragment extends Fragment
 			mLayoutInflater = (LayoutInflater)mContext.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
 			mAlphaIndexer = new HashMap<String, Integer>();
 			mSections = new String[0];
+
+			if( mArtistList.size() > 0 ) {
+				updateAlphaIndex();
+			}
 		}
 
 		@Override

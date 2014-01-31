@@ -30,8 +30,8 @@ public class ShellLibraryFragment extends BaseShellFragment {
 
 	private static final String LIBRARY_CURRENT_ARTIST      = "ShellLibraryFragment_CurrentArtist";
 	private static final String LIBRARY_CURRENT_ARTIST_INFO = "ShellLibraryFragment_CurrentArtistInfo";
-	private static final String LIBRARY_REQUEST_ARTIST      = "ShellLibraryFragment_RequestArtist";
 	private static final String LIBRARY_CURRENT_ALBUM       = "ShellLibraryFragment_CurrentAlbum";
+	private static final String LIBRARY_REQUEST_ARTIST      = "ShellLibraryFragment_RequestArtist";
 	private static final String LIBRARY_REQUEST_ALBUM       = "ShellLibraryFragment_RequestAlbum";
 
 	private int                 mCurrentState;
@@ -76,7 +76,6 @@ public class ShellLibraryFragment extends BaseShellFragment {
 
 			if( args != null ) {
 				mCurrentArtist = args.getParcelable( LIBRARY_REQUEST_ARTIST );
-				mCurrentArtistInfo = args.getParcelable( LIBRARY_CURRENT_ARTIST_INFO );
 				mCurrentAlbum = args.getParcelable( LIBRARY_REQUEST_ALBUM );
 
 				if( mCurrentArtist != null ) {
