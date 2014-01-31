@@ -5,6 +5,7 @@ package com.SecretSquirrel.AndroidNoise.activities;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -36,11 +37,14 @@ import de.greenrobot.event.EventBus;
 public class AlbumListFragment extends Fragment
 							   implements ServiceResultReceiver.Receiver {
 	private static final String     TAG = AlbumListFragment.class.getName();
-	private static final String     ARTIST_KEY   = "AlbumListFragment_ArtistId";
+	private static final String     ARTIST_KEY  = "albumListArtistId";
+	private static final String     ALBUM_LIST  = "albumList";
+	private static final String     LIST_STATE  = "albumListState";
 
 	private ServiceResultReceiver   mReceiver;
 	private long                    mCurrentArtist;
 	private ArrayList<Album>        mAlbumList;
+	private ListView                mAlbumListView;
 	private AlbumAdapter            mAlbumListAdapter;
 
 	public static AlbumListFragment newInstance( long artistId ) {
@@ -61,7 +65,13 @@ public class AlbumListFragment extends Fragment
 	public void onCreate( Bundle savedInstanceState ) {
 		super.onCreate( savedInstanceState );
 
-		mAlbumList = new ArrayList<Album>();
+		if( savedInstanceState != null ) {
+			mAlbumList = savedInstanceState.getParcelableArrayList( ALBUM_LIST );
+		}
+		if( mAlbumList == null ) {
+			mAlbumList = new ArrayList<Album>();
+		}
+
 		mAlbumListAdapter = new AlbumAdapter( getActivity(), mAlbumList );
 		mReceiver = new ServiceResultReceiver( new Handler());
 		mReceiver.setReceiver( this );
@@ -72,11 +82,10 @@ public class AlbumListFragment extends Fragment
 		View    myView = inflater.inflate( R.layout.fragment_album_list, container, false );
 
 		if( myView != null ) {
-			ListView albumListView = (ListView)myView.findViewById( R.id.al_album_list_view );
+			mAlbumListView = (ListView)myView.findViewById( R.id.al_album_list_view );
 
-			albumListView.setAdapter( mAlbumListAdapter );
-
-			albumListView.setOnItemClickListener( new AdapterView.OnItemClickListener() {
+			mAlbumListView.setAdapter( mAlbumListAdapter );
+			mAlbumListView.setOnItemClickListener( new AdapterView.OnItemClickListener() {
 				@Override
 				public void onItemClick( AdapterView<?> adapterView, View view, int i, long l ) {
 					Album album = mAlbumList.get( i );
@@ -86,21 +95,29 @@ public class AlbumListFragment extends Fragment
 					}
 				}
 			} );
-		}
 
-		if( savedInstanceState != null ) {
-			mCurrentArtist = savedInstanceState.getLong( ARTIST_KEY );
-		}
-		else {
-			Bundle  args = getArguments();
+			if( savedInstanceState != null ) {
+				Parcelable  listState = savedInstanceState.getParcelable( LIST_STATE );
 
-			if( args != null ) {
-				mCurrentArtist = args.getLong( ARTIST_KEY, Constants.NULL_ID );
+				if( listState != null ) {
+					mAlbumListView.onRestoreInstanceState( listState );
+				}
+
+				mCurrentArtist = savedInstanceState.getLong( ARTIST_KEY );
+			}
+			else {
+				Bundle  args = getArguments();
+
+				if( args != null ) {
+					mCurrentArtist = args.getLong( ARTIST_KEY, Constants.NULL_ID );
+				}
 			}
 		}
 
 		if( mCurrentArtist != Constants.NULL_ID ) {
-			getApplicationState().getDataClient().GetAlbumList( mCurrentArtist, mReceiver );
+			if( mAlbumList.size() == 0 ) {
+				getApplicationState().getDataClient().GetAlbumList( mCurrentArtist, mReceiver );
+			}
 		}
 		else {
 			if( Constants.LOG_ERROR ) {
@@ -116,6 +133,8 @@ public class AlbumListFragment extends Fragment
 		super.onSaveInstanceState( outState );
 
 		outState.putLong( ARTIST_KEY, mCurrentArtist );
+		outState.putParcelableArrayList( ALBUM_LIST, mAlbumList );
+//		outState.putParcelable( LIST_STATE, mAlbumListView.onSaveInstanceState());
 	}
 
 	@Override

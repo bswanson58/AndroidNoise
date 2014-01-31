@@ -103,7 +103,7 @@ public class ArtistListFragment extends Fragment
 		super.onSaveInstanceState( outState );
 
 		outState.putParcelableArrayList( ARTIST_LIST, mArtistList );
-		outState.putParcelable( LIST_STATE, mArtistListView.onSaveInstanceState());
+//		outState.putParcelable( LIST_STATE, mArtistListView.onSaveInstanceState());
 	}
 
 	@Override
