@@ -11,6 +11,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
+import android.os.Parcelable;
 import android.os.RemoteException;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -39,9 +40,12 @@ import rx.Subscription;
 import rx.util.functions.Action1;
 
 public class QueueListFragment extends Fragment  {
-	private static final String TAG     = QueueListFragment.class.getName();
+	private static final String         TAG         = QueueListFragment.class.getName();
+	private static final String         QUEUE_LIST  = "queueList";
+	private static final String         LIST_STATE  = "queueListState";
 
 	private ArrayList<PlayQueueTrack>   mQueueList;
+	private ListView                    mQueueListView;
 	private QueueAdapter                mQueueListAdapter;
 	private Subscription                mQueueSubscription;
 	private Messenger                   mMessenger;
@@ -95,7 +99,13 @@ public class QueueListFragment extends Fragment  {
 	public void onCreate( Bundle savedInstanceState ) {
 		super.onCreate( savedInstanceState );
 
-		mQueueList = new ArrayList<PlayQueueTrack>();
+		if( savedInstanceState != null ) {
+			mQueueList = savedInstanceState.getParcelableArrayList( QUEUE_LIST );
+		}
+		if( mQueueList == null ) {
+			mQueueList = new ArrayList<PlayQueueTrack>();
+		}
+
 		mQueueListAdapter = new QueueAdapter( getActivity(), mQueueList );
 		mMessenger = new Messenger( new IncomingHandler());
 	}
@@ -105,11 +115,11 @@ public class QueueListFragment extends Fragment  {
 		View    myView = inflater.inflate( R.layout.fragment_queue_list, container, false );
 
 		if( myView != null ) {
-			ListView queueListView = (ListView) myView.findViewById( R.id.QueueListView );
+			mQueueListView = (ListView) myView.findViewById( R.id.QueueListView );
 
-			queueListView.setAdapter( mQueueListAdapter );
-			queueListView.setEmptyView( myView.findViewById( R.id.ql_empty_view ) );
-			queueListView.setOnItemClickListener( new AdapterView.OnItemClickListener() {
+			mQueueListView.setAdapter( mQueueListAdapter );
+			mQueueListView.setEmptyView( myView.findViewById( R.id.ql_empty_view ) );
+			mQueueListView.setOnItemClickListener( new AdapterView.OnItemClickListener() {
 				@Override
 				public void onItemClick( AdapterView<?> adapterView, View view, int i, long l ) {
 					//PlayQueueTrack  track = mQueueList.get( i );
@@ -117,15 +127,33 @@ public class QueueListFragment extends Fragment  {
 					EventBus.getDefault().post( new EventAlbumRequest( Constants.NULL_ID, Constants.NULL_ID ));
 				}
 			} );
+
+			if( savedInstanceState != null ) {
+				Parcelable  listState = savedInstanceState.getParcelable( LIST_STATE );
+
+				if( listState != null ) {
+					mQueueListView.onRestoreInstanceState( listState );
+				}
+			}
 		}
 
 		if( getApplicationState().getIsConnected()) {
 			bindToEventService();
 
-			requestQueueList();
+			if( mQueueList.size() == 0 ) {
+				requestQueueList();
+			}
 		}
 
 		return( myView );
+	}
+
+	@Override
+	public void onSaveInstanceState( Bundle outState ) {
+		super.onSaveInstanceState( outState );
+
+		outState.putParcelableArrayList( QUEUE_LIST, mQueueList );
+		outState.putParcelable( LIST_STATE, mQueueListView.onSaveInstanceState());
 	}
 
 	@Override
