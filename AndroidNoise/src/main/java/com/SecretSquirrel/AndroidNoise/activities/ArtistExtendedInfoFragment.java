@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -17,7 +18,6 @@ import com.SecretSquirrel.AndroidNoise.R;
 import com.SecretSquirrel.AndroidNoise.dto.Artist;
 import com.SecretSquirrel.AndroidNoise.dto.ArtistInfo;
 import com.SecretSquirrel.AndroidNoise.support.Constants;
-import com.SecretSquirrel.AndroidNoise.support.NoiseUtils;
 
 public class ArtistExtendedInfoFragment extends Fragment {
 	private static final String     TAG             = ArtistExtendedInfoFragment.class.getName();
@@ -29,7 +29,7 @@ public class ArtistExtendedInfoFragment extends Fragment {
 	private TextView                mArtistName;
 	private TextView                mArtistGenre;
 	private TextView                mArtistWebsite;
-	private TextView                mArtistBiography;
+	private WebView                 mArtistBiography;
 	private ImageView               mArtistImage;
 	private Bitmap                  mUnknownArtist;
 
@@ -81,7 +81,7 @@ public class ArtistExtendedInfoFragment extends Fragment {
 			mArtistName = (TextView)myView.findViewById( R.id.aei_artist_name );
 			mArtistGenre = (TextView)myView.findViewById( R.id.aei_artist_genre );
 			mArtistWebsite = (TextView)myView.findViewById( R.id.aei_artist_website );
-			mArtistBiography = (TextView)myView.findViewById( R.id.aei_biography );
+			mArtistBiography = (WebView)myView.findViewById( R.id.aei_biography );
 			mArtistImage = (ImageView)myView.findViewById( R.id.aei_artist_image );
 
 			updateDisplay();
@@ -107,7 +107,7 @@ public class ArtistExtendedInfoFragment extends Fragment {
 			}
 
 			mArtistImage.setImageBitmap( artistImage );
-			mArtistBiography.setText( mArtistInfo.getBiography());
+			mArtistBiography.loadData( mArtistInfo.getBiography(), "text/html", "utf-8" );
 			mArtistWebsite.setText( mArtistInfo.getWebsite());
 		}
 
