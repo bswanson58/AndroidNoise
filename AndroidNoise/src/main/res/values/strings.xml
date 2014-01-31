@@ -38,6 +38,9 @@
     <string name="tli_track_separator">-</string>
     <string name="published_year_various">Various</string>
     <string name="artist_button_more">more…</string>
+    <string name="list_header_band_members">Band Members:</string>
+    <string name="list_header_similar_artists">Similar Artists:</string>
+    <string name="list_header_top_albums">Top Albums:</string>
 
     <string name="action_play_album">Play Album</string>
 </resources>

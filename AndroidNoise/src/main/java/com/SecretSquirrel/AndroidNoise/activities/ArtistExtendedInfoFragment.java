@@ -11,7 +11,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.SecretSquirrel.AndroidNoise.R;
@@ -32,6 +34,9 @@ public class ArtistExtendedInfoFragment extends Fragment {
 	private WebView                 mArtistBiography;
 	private ImageView               mArtistImage;
 	private Bitmap                  mUnknownArtist;
+	private ListView                mBandMembersListView;
+	private ListView                mSimilarArtistsListView;
+	private ListView                mTopAlbumsListView;
 
 	public static ArtistExtendedInfoFragment newInstance( Artist artist, ArtistInfo artistInfo ) {
 		ArtistExtendedInfoFragment  fragment = new ArtistExtendedInfoFragment();
@@ -83,6 +88,9 @@ public class ArtistExtendedInfoFragment extends Fragment {
 			mArtistWebsite = (TextView)myView.findViewById( R.id.aei_artist_website );
 			mArtistBiography = (WebView)myView.findViewById( R.id.aei_biography );
 			mArtistImage = (ImageView)myView.findViewById( R.id.aei_artist_image );
+			mBandMembersListView = (ListView)myView.findViewById( R.id.aei_band_members );
+			mSimilarArtistsListView = (ListView)myView.findViewById( R.id.aei_similar_artists );
+			mTopAlbumsListView = (ListView)myView.findViewById( R.id.aei_top_albums );
 
 			updateDisplay();
 		}
@@ -109,6 +117,10 @@ public class ArtistExtendedInfoFragment extends Fragment {
 			mArtistImage.setImageBitmap( artistImage );
 			mArtistBiography.loadData( mArtistInfo.getBiography(), "text/html", "utf-8" );
 			mArtistWebsite.setText( mArtistInfo.getWebsite());
+
+			mBandMembersListView.setAdapter( new ArrayAdapter<String>( getActivity(), R.layout.simple_list_item, mArtistInfo.getBandMembers()));
+			mSimilarArtistsListView.setAdapter( new ArrayAdapter<String>( getActivity(), R.layout.simple_list_item, mArtistInfo.getSimilarArtists()));
+			mTopAlbumsListView.setAdapter( new ArrayAdapter<String>( getActivity(), R.layout.simple_list_item, mArtistInfo.getTopAlbums()));
 		}
 
 		if( mArtist != null ) {

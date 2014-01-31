@@ -48,7 +48,71 @@
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:layout_below="@id/aei_artist_image"
+        android:layout_above="@+id/aei_list_headers"
         android:layout_margin="@dimen/noise_base_padding"
         android:autoLink="web"/>
 
+    <LinearLayout
+        android:id="@+id/aei_list_block"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:layout_alignParentBottom="true"
+        android:layout_marginRight="@dimen/noise_base_padding"
+        android:layout_marginLeft="@dimen/noise_base_padding"
+        android:baselineAligned="false"
+        >
+
+        <ListView
+            android:id="@+id/aei_band_members"
+            android:layout_height="@dimen/noise_simple_list_height"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            style="@style/SimpleListStyle"/>
+
+        <ListView
+            android:id="@+id/aei_similar_artists"
+            android:layout_height="@dimen/noise_simple_list_height"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            style="@style/SimpleListStyle"/>
+
+        <ListView
+            android:id="@+id/aei_top_albums"
+            android:layout_height="@dimen/noise_simple_list_height"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            style="@style/SimpleListStyle"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/aei_list_headers"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_above="@id/aei_list_block"
+        android:layout_marginLeft="@dimen/noise_base_padding"
+        android:layout_marginRight="@dimen/noise_base_padding"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:text="@string/list_header_band_members"
+            style="@style/SimpleListHeaderStyle"/>
+
+        <TextView
+            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:text="@string/list_header_similar_artists"
+            style="@style/SimpleListHeaderStyle"/>
+
+        <TextView
+            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:text="@string/list_header_top_albums"
+            style="@style/SimpleListHeaderStyle"/>
+    </LinearLayout>
 </RelativeLayout>

@@ -10,13 +10,13 @@
     </style>
 
     <style name="TitleText" parent="BaseText">
-        <item name="android:textSize">12pt</item>
+        <item name="android:textSize">@dimen/noise_title_textSize</item>
         <item name="android:textColor">@color/TitleText</item>
         <item name="android:singleLine">true</item>
     </style>
 
     <style name="SubTitleText" parent="BaseText">
-        <item name="android:textSize">8pt</item>
+        <item name="android:textSize">@dimen/noise_subtitle_textSize</item>
         <item name="android:textColor">@color/SubTitleText</item>
     </style>
 
@@ -26,7 +26,7 @@
     </style>
 
     <style name="SubHeaderText" parent="BaseText">
-        <item name="android:textSize">8pt</item>
+        <item name="android:textSize">@dimen/noise_subtitle_textSize</item>
         <item name="android:textColor">@color/HeaderText</item>
     </style>
 
@@ -47,6 +47,20 @@
         <item name="android:dividerHeight">1dp</item>
         <item name="android:scrollbarStyle">outsideInset</item>
     </style>
+
+    <style name="SimpleListStyle" parent="@android:style/Widget.ListView">
+        <item name="android:layout_margin">3dp</item>
+        <item name="android:divider">#0000</item>
+        <item name="android:dividerHeight">0dp</item>
+        <item name="android:scrollbarStyle">outsideInset</item>
+    </style>
+
+    <style name="SimpleListTextStyle" parent="BaseText">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/SubTitleText</item>
+    </style>
+
+    <style name="SimpleListHeaderStyle" parent="SubHeaderText"/>
 
     <style name="PlayButtonStyle" parent="@android:style/Widget.Button.Small">
         <item name="android:background">@drawable/play_button_selector</item>
