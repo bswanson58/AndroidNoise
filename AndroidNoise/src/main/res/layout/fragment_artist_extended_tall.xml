@@ -14,11 +14,31 @@
         android:text="The Rolling Stones"
         style="@style/TitleText"/>
 
+    <LinearLayout
+        android:id="@+id/aei_divider"
+        android:layout_height="3dp"
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:layout_marginTop="1dp"
+        android:layout_marginLeft="@dimen/noise_base_padding"
+        android:layout_marginRight="@dimen/noise_base_padding"
+        android:layout_marginBottom="1dp"
+        android:layout_below="@+id/aei_artist_name"
+        android:weightSum="5">
+
+        <View
+            android:layout_height="3dp"
+            android:layout_width="0dp"
+            android:layout_weight="3"
+            android:background="@drawable/divider_split_gradient_horizontal"
+            />
+    </LinearLayout>
+
     <TextView
         android:id="@+id/aei_artist_genre"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/aei_artist_name"
+        android:layout_below="@+id/aei_divider"
         android:layout_marginLeft="@dimen/noise_base_padding"
         android:text="Genre"
         style="@style/SubTitleText"/>
