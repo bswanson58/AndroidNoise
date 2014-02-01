@@ -21,6 +21,7 @@ import com.SecretSquirrel.AndroidNoise.R;
 import com.SecretSquirrel.AndroidNoise.dto.Album;
 import com.SecretSquirrel.AndroidNoise.dto.AlbumInfo;
 import com.SecretSquirrel.AndroidNoise.dto.Artist;
+import com.SecretSquirrel.AndroidNoise.events.EventArtistSelected;
 import com.SecretSquirrel.AndroidNoise.events.EventPlayAlbum;
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
 import com.SecretSquirrel.AndroidNoise.model.NoiseRemoteApplication;
@@ -100,6 +101,15 @@ public class AlbumInfoFragment extends Fragment
 
 		if( myView != null ) {
 			mArtistName = (TextView)myView.findViewById( R.id.ai_artist_name );
+			mArtistName.setOnClickListener( new View.OnClickListener() {
+				@Override
+				public void onClick( View view ) {
+					if( mArtist != null ) {
+						EventBus.getDefault().post( new EventArtistSelected( mArtist ));
+					}
+				}
+			} );
+
 			mAlbumName = (TextView)myView.findViewById( R.id.ai_album_name );
 			mAlbumCover = (ImageView) myView.findViewById( R.id.ai_album_cover_image );
 			mPublishedYear = (TextView)myView.findViewById( R.id.ai_published );
