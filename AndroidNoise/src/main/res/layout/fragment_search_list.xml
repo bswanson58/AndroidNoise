@@ -52,15 +52,30 @@
             android:layout_height="wrap_content"
             style="@style/ShortListStyle"/>
 
-        <TextView
+        <RelativeLayout
             android:id="@+id/sl_empty_view"
             android:layout_height="match_parent"
-            android:layout_width="match_parent"
-            android:layout_margin="@dimen/noise_base_padding"
-            android:gravity="center_horizontal|bottom"
-            android:text="@string/sl_empty_list"
-            android:textSize="14pt"
-            android:textColor="@color/SubtleColor"/>
+            android:layout_width="match_parent">
+
+            <TextView
+                android:layout_height="match_parent"
+                android:layout_width="match_parent"
+                android:layout_margin="@dimen/noise_base_padding"
+                android:gravity="center_horizontal|bottom"
+                android:text="@string/sl_empty_list"
+                android:textSize="14pt"
+                android:textColor="@color/SubtleColor"/>
+
+            <TextView
+                android:id="@+id/sl_no_results"
+                android:layout_height="match_parent"
+                android:layout_width="match_parent"
+                android:layout_margin="@dimen/noise_base_padding"
+                android:gravity="center_horizontal|top"
+                android:text="@string/sl_no_results"
+                android:textSize="14pt"
+                android:textColor="@color/TitleText"/>
+        </RelativeLayout>
     </RelativeLayout>
 
 </LinearLayout>

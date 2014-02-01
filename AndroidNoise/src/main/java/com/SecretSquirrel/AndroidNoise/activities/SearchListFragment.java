@@ -44,6 +44,7 @@ public class SearchListFragment extends Fragment {
 
 	private ArrayList<SearchResultItem> mResultList;
 	private ListView                    mSearchListView;
+	private View                        mNoResultsView;
 	private SearchResultAdapter         mSearchListAdapter;
 	private Subscription                mSearchSubscription;
 
@@ -70,8 +71,10 @@ public class SearchListFragment extends Fragment {
 		View    myView = inflater.inflate( R.layout.fragment_search_list, container, false );
 
 		if( myView != null ) {
-			mSearchListView = (ListView) myView.findViewById( R.id.search_list_view );
+			mNoResultsView = myView.findViewById( R.id.sl_no_results );
+			mNoResultsView.setVisibility( View.INVISIBLE );
 
+			mSearchListView = (ListView) myView.findViewById( R.id.search_list_view );
 			mSearchListView.setAdapter( mSearchListAdapter );
 			mSearchListView.setEmptyView( myView.findViewById( R.id.sl_empty_view ));
 			mSearchListView.setOnItemClickListener( new AdapterView.OnItemClickListener() {
@@ -135,6 +138,7 @@ public class SearchListFragment extends Fragment {
 
 	@SuppressWarnings( "unused" )
 	public void onEvent( EventSearchRequest args ) {
+		mNoResultsView.setVisibility( View.INVISIBLE );
 		mResultList.clear();
 		mSearchListAdapter.notifyDataSetChanged();
 
@@ -161,13 +165,19 @@ public class SearchListFragment extends Fragment {
 
 	public void setResultList( ArrayList<SearchResultItem> resultList ) {
 		mResultList.clear();
-		mResultList.addAll( resultList );
 
-		Collections.sort( mResultList, new Comparator<SearchResultItem>() {
-			public int compare( SearchResultItem result1, SearchResultItem result2 ) {
-				return( result1.getItemTitle().compareToIgnoreCase( result2.getItemTitle()));
-			}
-		} );
+		if( resultList.size() > 0 ) {
+			mResultList.addAll( resultList );
+
+			Collections.sort( mResultList, new Comparator<SearchResultItem>() {
+				public int compare( SearchResultItem result1, SearchResultItem result2 ) {
+					return( result1.getItemTitle().compareToIgnoreCase( result2.getItemTitle()));
+				}
+			} );
+		}
+		else {
+			mNoResultsView.setVisibility( View.VISIBLE );
+		}
 
 		mSearchListAdapter.notifyDataSetChanged();
 		clearSubscription();
