@@ -4,6 +4,7 @@ package com.SecretSquirrel.AndroidNoise.activities;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
@@ -44,6 +45,7 @@ public class SearchListFragment extends Fragment {
 
 	private ArrayList<SearchResultItem> mResultList;
 	private ListView                    mSearchListView;
+	private Parcelable                  mListViewState;
 	private View                        mNoResultsView;
 	private SearchResultAdapter         mSearchListAdapter;
 	private Subscription                mSearchSubscription;
@@ -58,6 +60,7 @@ public class SearchListFragment extends Fragment {
 
 		if( savedInstanceState != null ) {
 			mResultList = savedInstanceState.getParcelableArrayList( SEARCH_LIST );
+			mListViewState = savedInstanceState.getParcelable( LIST_STATE );
 		}
 		if( mResultList == null ) {
 			mResultList = new ArrayList<SearchResultItem>();
@@ -92,12 +95,8 @@ public class SearchListFragment extends Fragment {
 				}
 			} );
 
-			if( savedInstanceState != null ) {
-				Parcelable  listState = savedInstanceState.getParcelable( LIST_STATE );
-
-				if( listState != null ) {
-					mSearchListView.onRestoreInstanceState( listState );
-				}
+			if( mListViewState != null ) {
+				mSearchListView.onRestoreInstanceState( mListViewState );
 			}
 		}
 
@@ -110,7 +109,13 @@ public class SearchListFragment extends Fragment {
 
 		if( mResultList.size() > 0 ) {
 			outState.putParcelableArrayList( SEARCH_LIST, mResultList );
-			outState.putParcelable( LIST_STATE, mSearchListView.onSaveInstanceState());
+
+			if( mSearchListView != null ) {
+				mListViewState = mSearchListView.onSaveInstanceState();
+			}
+			if( mListViewState != null ) {
+				outState.putParcelable( LIST_STATE, mListViewState );
+			}
 		}
 	}
 
@@ -122,8 +127,8 @@ public class SearchListFragment extends Fragment {
 	}
 
 	@Override
-	public void onDestroy() {
-		super.onDestroy();
+	public void onPause() {
+		super.onPause();
 
 		clearSubscription();
 		EventBus.getDefault().unregister( this );
