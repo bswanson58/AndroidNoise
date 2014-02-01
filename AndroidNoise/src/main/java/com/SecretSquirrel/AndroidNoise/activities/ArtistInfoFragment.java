@@ -59,8 +59,6 @@ public class ArtistInfoFragment extends Fragment
 		super.onCreate( savedInstanceState );
 
 		mServiceResultReceiver = new ServiceResultReceiver( new Handler());
-		mServiceResultReceiver.setReceiver( this );
-
 		mUnknownArtist = BitmapFactory.decodeResource( getResources(), R.drawable.unknown_artist );
 
 		if( savedInstanceState != null ) {
@@ -104,10 +102,6 @@ public class ArtistInfoFragment extends Fragment
 			} );
 		}
 
-		if( mArtistInfo == null ) {
-			retrieveArtistInfo();
-		}
-
 		updateDisplay( false );
 
 		return( myView );
@@ -123,13 +117,6 @@ public class ArtistInfoFragment extends Fragment
 	}
 
 	@Override
-	public void onPause() {
-		super.onPause();
-
-		mServiceResultReceiver.clearReceiver();
-	}
-
-	@Override
 	public void onResume() {
 		super.onResume();
 
@@ -138,6 +125,13 @@ public class ArtistInfoFragment extends Fragment
 
 			retrieveArtistInfo();
 		}
+	}
+
+	@Override
+	public void onPause() {
+		super.onPause();
+
+		mServiceResultReceiver.clearReceiver();
 	}
 
 	private void retrieveArtistInfo() {
@@ -169,6 +163,8 @@ public class ArtistInfoFragment extends Fragment
 			if( withDefaults ) {
 				mArtistImage.setImageBitmap( mUnknownArtist );
 			}
+
+			mMoreButton.setVisibility( View.INVISIBLE );
 		}
 
 		if( mArtist != null ) {
