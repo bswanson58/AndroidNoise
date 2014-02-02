@@ -14,9 +14,14 @@ import java.util.List;
 @SuppressWarnings("unused")
 public abstract class FilteredArrayAdapter<T> extends ArrayAdapter<T>
 											  implements Filterable, ListViewFilter.FilterClient<T> {
+	public interface FilteredListWatcher {
+		void    onListChanged( int itemCount );
+	}
+
 	private ArrayList<T>        mOriginalList;
 	private ListViewFilter<T>   mFilter;
 	private String              mFilterText;
+	private FilteredListWatcher mListWatcher;
 
 	public FilteredArrayAdapter( Context context, int resource, ArrayList<T> artistList ) {
 		super( context, resource );
@@ -38,10 +43,18 @@ public abstract class FilteredArrayAdapter<T> extends ArrayAdapter<T>
 
 		onListUpdated();
 
+		if( mListWatcher != null ) {
+			mListWatcher.onListChanged( getCount());
+		}
+
 		super.notifyDataSetChanged();
 	}
 
 	protected void onListUpdated() { }
+
+	public void setListWatcher( FilteredListWatcher watcher ) {
+		mListWatcher = watcher;
+	}
 
 	public void setFilterText( CharSequence filterText ) {
 		if(!TextUtils.equals( mFilterText, filterText )) {

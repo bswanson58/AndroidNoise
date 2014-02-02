@@ -38,7 +38,8 @@ import java.util.HashMap;
 import de.greenrobot.event.EventBus;
 
 public class ArtistListFragment extends Fragment
-								implements ServiceResultReceiver.Receiver {
+								implements ServiceResultReceiver.Receiver,
+										   FilteredArrayAdapter.FilteredListWatcher {
 	private final String            ARTIST_LIST = "artistList";
 	private final String            LIST_STATE  = "artistListState";
 	private final String            FILTER_TEXT = "artistListFilterText";
@@ -47,6 +48,7 @@ public class ArtistListFragment extends Fragment
 	private ArrayList<Artist>       mArtistList;
 	private ListView                mArtistListView;
 	private EditText                mFilterEditText;
+	private TextView                mArtistCount;
 	private Parcelable              mListViewState;
 	private String                  mFilterText;
 	private ArtistAdapter           mArtistListAdapter;
@@ -69,6 +71,7 @@ public class ArtistListFragment extends Fragment
 		}
 
 		mArtistListAdapter = new ArtistAdapter( getActivity(), mArtistList );
+		mArtistListAdapter.setListWatcher( this );
 
 		mServiceResultReceiver = new ServiceResultReceiver( new Handler());
 		mServiceResultReceiver.setReceiver( this );
@@ -112,6 +115,8 @@ public class ArtistListFragment extends Fragment
 			if( mListViewState != null ) {
 				mArtistListView.onRestoreInstanceState( mListViewState );
 			}
+
+			mArtistCount = (TextView)myView.findViewById( R.id.ai_list_count );
 		}
 
 		if(( mArtistList.size() == 0 ) &&
@@ -148,6 +153,10 @@ public class ArtistListFragment extends Fragment
 	public void onPause() {
 		super.onPause();
 
+		if( mArtistListAdapter != null ) {
+			mArtistListAdapter.setListWatcher( null );
+		}
+
 		mServiceResultReceiver.clearReceiver();
 	}
 
@@ -176,6 +185,13 @@ public class ArtistListFragment extends Fragment
 	private void selectArtist( Artist artist ) {
 		if( artist != null ) {
 			EventBus.getDefault().post( new EventArtistSelected( artist ));
+		}
+	}
+
+	@Override
+	public void onListChanged( int itemCount ) {
+		if( mArtistCount != null ) {
+			mArtistCount.setText( String.format( "%d artists", itemCount ));
 		}
 	}
 
