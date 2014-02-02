@@ -5,4 +5,6 @@
     <color name="SubTitleText">#003cff</color>
     <color name="SubtleColor">#d3e2fd</color>
     <color name="HasPlayed">#ff808080</color>
+    <color name="control_panel">#d3e2fd</color>
+    <color name="control_panel_text">#000</color>
 </resources>

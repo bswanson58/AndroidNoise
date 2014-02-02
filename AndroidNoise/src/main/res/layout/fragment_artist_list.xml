@@ -52,28 +52,51 @@
             android:id="@+id/al_artist_list_view"
             android:layout_height="match_parent"
             android:layout_width="match_parent"
-            android:layout_above="@+id/ai_artist_filter"
+            android:layout_above="@+id/al_filter_panel"
             style="@style/LongListStyle"/>
 
-        <com.SecretSquirrel.AndroidNoise.views.ButtonEditText
-            android:id="@+id/ai_artist_filter"
+        <RelativeLayout
+            android:id="@+id/al_filter_panel"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
-            android:hint="@string/al_filter_hint"
             android:layout_alignParentBottom="true"
-            android:layout_toLeftOf="@+id/ai_list_count"
-            android:drawableRight="@android:drawable/ic_menu_close_clear_cancel"
-            />
+            android:layout_marginRight="20dp"
+            android:background="@color/control_panel"
+            >
+            <TextView
+                android:id="@+id/al_filter_header"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:textColor="@color/control_panel_text"
+                android:layout_alignBaseline="@+id/al_artist_filter"
+                android:layout_marginLeft="@dimen/noise_base_padding"
+                android:text="@string/al_filter_header"
+                />
+            <com.SecretSquirrel.AndroidNoise.views.ButtonEditText
+                android:id="@+id/al_artist_filter"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:hint="@string/al_filter_hint"
+                android:layout_toRightOf="@+id/al_filter_header"
+                android:layout_toLeftOf="@+id/al_list_count"
+                android:layout_marginLeft="@dimen/noise_base_padding"
+                android:drawableRight="@android:drawable/ic_menu_close_clear_cancel"
+                android:textColor="@color/control_panel_text"
+                />
 
-        <TextView
-            android:id="@+id/ai_list_count"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_marginLeft="@dimen/noise_base_padding"
-            android:layout_marginRight="@dimen/noise_base_padding"
-            android:text="930 artists"
-            android:layout_alignBaseline="@+id/ai_artist_filter"/>
+            <TextView
+                android:id="@+id/al_list_count"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginLeft="@dimen/noise_base_padding"
+                android:layout_marginRight="@dimen/noise_base_padding"
+                android:textColor="@color/control_panel_text"
+                android:layout_alignBaseline="@+id/al_artist_filter"
+                android:text="930 artists"
+                />
+
+            </RelativeLayout>
         </RelativeLayout>
 
 </LinearLayout>

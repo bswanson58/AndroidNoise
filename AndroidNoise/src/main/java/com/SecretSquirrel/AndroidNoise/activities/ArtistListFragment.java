@@ -11,10 +11,12 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.EditText;
 import android.widget.Filterable;
 import android.widget.ListView;
 import android.widget.SectionIndexer;
@@ -41,9 +43,10 @@ import de.greenrobot.event.EventBus;
 public class ArtistListFragment extends Fragment
 								implements ServiceResultReceiver.Receiver,
 										   FilteredArrayAdapter.FilteredListWatcher {
-	private final String            ARTIST_LIST = "artistList";
-	private final String            LIST_STATE  = "artistListState";
-	private final String            FILTER_TEXT = "artistListFilterText";
+	private static final String     ARTIST_LIST = "artistList";
+	private static final String     LIST_STATE  = "artistListState";
+	private static final String     FILTER_TEXT = "artistListFilterText";
+	private static final String     FILTER_DISPLAYED = "artistListFilterDisplayed";
 
 	private ServiceResultReceiver   mServiceResultReceiver;
 	private ArrayList<Artist>       mArtistList;
@@ -51,8 +54,10 @@ public class ArtistListFragment extends Fragment
 	private ButtonEditText          mFilterEditText;
 	private TextView                mArtistCount;
 	private Parcelable              mListViewState;
-	private String                  mFilterText;
 	private ArtistAdapter           mArtistListAdapter;
+	private String                  mFilterText;
+	private View                    mFilterPanel;
+	private boolean                 mFilterPanelDisplayed;
 
 	public static ArtistListFragment newInstance() {
 		return( new ArtistListFragment());
@@ -62,10 +67,13 @@ public class ArtistListFragment extends Fragment
 	public void onCreate( Bundle savedInstanceState ) {
 		super.onCreate( savedInstanceState );
 
+		setHasOptionsMenu( true );
+
 		if( savedInstanceState != null ) {
 			mArtistList = savedInstanceState.getParcelableArrayList( ARTIST_LIST );
 			mListViewState = savedInstanceState.getParcelable( LIST_STATE );
 			mFilterText = savedInstanceState.getString( FILTER_TEXT );
+			mFilterPanelDisplayed = savedInstanceState.getBoolean( FILTER_DISPLAYED );
 		}
 		if( mArtistList == null ) {
 			mArtistList = new ArrayList<Artist>();
@@ -97,7 +105,7 @@ public class ArtistListFragment extends Fragment
 				}
 			} );
 
-			mFilterEditText = (ButtonEditText)myView.findViewById( R.id.ai_artist_filter );
+			mFilterEditText = (ButtonEditText)myView.findViewById( R.id.al_artist_filter );
 			mFilterEditText.addTextChangedListener( new TextWatcher() {
 				@Override
 				public void onTextChanged( CharSequence charSequence, int i, int i2, int i3 ) {
@@ -125,7 +133,10 @@ public class ArtistListFragment extends Fragment
 				mArtistListView.onRestoreInstanceState( mListViewState );
 			}
 
-			mArtistCount = (TextView)myView.findViewById( R.id.ai_list_count );
+			mArtistCount = (TextView)myView.findViewById( R.id.al_list_count );
+
+			mFilterPanel = myView.findViewById( R.id.al_filter_panel );
+			displayFilterPanel( mFilterPanelDisplayed );
 		}
 
 		if(( mArtistList.size() == 0 ) &&
@@ -156,6 +167,8 @@ public class ArtistListFragment extends Fragment
 		if(!TextUtils.isEmpty( mFilterText )) {
 			outState.putString( FILTER_TEXT, mFilterText );
 		}
+
+		outState.putBoolean( FILTER_DISPLAYED, mFilterPanelDisplayed );
 	}
 
 	@Override
@@ -176,6 +189,35 @@ public class ArtistListFragment extends Fragment
 
 			setArtistList( artistList );
 		}
+	}
+
+	@Override
+	public void onCreateOptionsMenu( Menu menu, MenuInflater inflater ) {
+		inflater.inflate( R.menu.artist_list, menu );
+
+		super.onCreateOptionsMenu( menu, inflater );
+	}
+
+	@Override
+	public void onPrepareOptionsMenu( Menu menu ) {
+		super.onPrepareOptionsMenu( menu );
+	}
+
+	@Override
+	public boolean onOptionsItemSelected( MenuItem item ) {
+		boolean retValue = true;
+
+		switch( item.getItemId()) {
+			case R.id.action_filter_artist_list:
+				displayFilterPanel( !mFilterPanelDisplayed );
+				break;
+
+			default:
+				retValue = super.onOptionsItemSelected( item );
+				break;
+		}
+
+		return( retValue );
 	}
 
 	public void setArtistList( ArrayList<Artist> artistList ) {
@@ -202,6 +244,19 @@ public class ArtistListFragment extends Fragment
 		if( mArtistCount != null ) {
 			mArtistCount.setText( String.format( "%d artists", itemCount ));
 		}
+	}
+
+	private void displayFilterPanel( boolean display ) {
+		if( mFilterPanel != null ) {
+			if( display ) {
+				mFilterPanel.setVisibility( View.VISIBLE );
+			}
+			else {
+				mFilterPanel.setVisibility( View.GONE );
+			}
+		}
+
+		mFilterPanelDisplayed = display;
 	}
 
 	private IApplicationState getApplicationState() {
