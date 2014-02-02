@@ -7,11 +7,15 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
+import android.widget.EditText;
+import android.widget.Filterable;
 import android.widget.ListView;
 import android.widget.SectionIndexer;
 import android.widget.TextView;
@@ -23,6 +27,8 @@ import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
 import com.SecretSquirrel.AndroidNoise.model.NoiseRemoteApplication;
 import com.SecretSquirrel.AndroidNoise.services.NoiseRemoteApi;
 import com.SecretSquirrel.AndroidNoise.services.ServiceResultReceiver;
+import com.SecretSquirrel.AndroidNoise.ui.FilteredArrayAdapter;
+import com.SecretSquirrel.AndroidNoise.ui.ListViewFilter;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,12 +40,15 @@ import de.greenrobot.event.EventBus;
 public class ArtistListFragment extends Fragment
 								implements ServiceResultReceiver.Receiver {
 	private final String            ARTIST_LIST = "artistList";
-	private final String            LIST_STATE = "artistListState";
+	private final String            LIST_STATE  = "artistListState";
+	private final String            FILTER_TEXT = "artistListFilterText";
 
 	private ServiceResultReceiver   mServiceResultReceiver;
 	private ArrayList<Artist>       mArtistList;
 	private ListView                mArtistListView;
+	private EditText                mFilterEditText;
 	private Parcelable              mListViewState;
+	private String                  mFilterText;
 	private ArtistAdapter           mArtistListAdapter;
 
 	public static ArtistListFragment newInstance() {
@@ -53,6 +62,7 @@ public class ArtistListFragment extends Fragment
 		if( savedInstanceState != null ) {
 			mArtistList = savedInstanceState.getParcelableArrayList( ARTIST_LIST );
 			mListViewState = savedInstanceState.getParcelable( LIST_STATE );
+			mFilterText = savedInstanceState.getString( FILTER_TEXT );
 		}
 		if( mArtistList == null ) {
 			mArtistList = new ArrayList<Artist>();
@@ -75,13 +85,29 @@ public class ArtistListFragment extends Fragment
 			mArtistListView.setOnItemClickListener( new AdapterView.OnItemClickListener() {
 				@Override
 				public void onItemClick( AdapterView<?> adapterView, View view, int i, long l ) {
-					Artist  artist = mArtistList.get( i );
+					Artist  artist = mArtistListAdapter.getItemAtPosition( i );
 
 					if( artist != null ) {
 						selectArtist( artist );
 					}
 				}
 			} );
+
+			mFilterEditText = (EditText)myView.findViewById( R.id.ai_artist_filter );
+			mFilterEditText.addTextChangedListener( new TextWatcher() {
+				@Override
+				public void onTextChanged( CharSequence charSequence, int i, int i2, int i3 ) {
+					mArtistListAdapter.setFilterText( charSequence );
+				}
+				@Override
+				public void beforeTextChanged( CharSequence charSequence, int i, int i2, int i3 ) {	}
+				@Override
+				public void afterTextChanged( Editable editable ) {	}
+			} );
+
+			if(!TextUtils.isEmpty( mFilterText )) {
+				mFilterEditText.setText( mFilterText );
+			}
 
 			if( mListViewState != null ) {
 				mArtistListView.onRestoreInstanceState( mListViewState );
@@ -101,11 +127,20 @@ public class ArtistListFragment extends Fragment
 		super.onSaveInstanceState( outState );
 
 		outState.putParcelableArrayList( ARTIST_LIST, mArtistList );
+
 		if( mArtistListView != null ) {
 			mListViewState = mArtistListView.onSaveInstanceState();
 		}
 		if( mListViewState != null ) {
 			outState.putParcelable( LIST_STATE, mListViewState );
+		}
+
+		if(( mFilterEditText != null ) &&
+		   ( mFilterEditText.getText() != null )) {
+			mFilterText = mFilterEditText.getText().toString();
+		}
+		if(!TextUtils.isEmpty( mFilterText )) {
+			outState.putString( FILTER_TEXT, mFilterText );
 		}
 	}
 
@@ -150,15 +185,15 @@ public class ArtistListFragment extends Fragment
 		return( application.getApplicationState());
 	}
 
-	private class ArtistAdapter extends ArrayAdapter<Artist> implements SectionIndexer {
+	private class ArtistAdapter extends FilteredArrayAdapter<Artist>
+								implements SectionIndexer, Filterable, ListViewFilter.FilterClient<Artist> {
 		private Context                     mContext;
 		private LayoutInflater              mLayoutInflater;
-		private ArrayList<Artist>           mArtistList;
 		private HashMap<String, Integer>    mAlphaIndexer;
 		private String[]                    mSections;
 
 		private class ViewHolder {
-			public TextView NameTextView;
+			public TextView     NameTextView;
 			public TextView     AlbumCountTextView;
 			public TextView     GenreTextView;
 		}
@@ -166,15 +201,26 @@ public class ArtistListFragment extends Fragment
 		public ArtistAdapter( Context context, ArrayList<Artist> artistList ) {
 			super( context, R.layout.artist_list_item, artistList );
 			mContext = context;
-			mArtistList = artistList;
 
 			mLayoutInflater = (LayoutInflater)mContext.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
-			mAlphaIndexer = new HashMap<String, Integer>();
-			mSections = new String[0];
+		}
 
-			if( mArtistList.size() > 0 ) {
-				updateAlphaIndex();
+		@Override
+		public boolean shouldItemBeDisplayed( Artist item, String filterText ) {
+			boolean retValue = false;
+			String  lowerText = filterText.toLowerCase();
+
+			if(( item.getName().toLowerCase().contains( lowerText )) ||
+			   ( item.getGenre().toLowerCase().contains( lowerText ))) {
+				retValue = true;
 			}
+
+			return( retValue );
+		}
+
+		@Override
+		protected void onListUpdated() {
+			updateAlphaIndex();
 		}
 
 		@Override
@@ -199,8 +245,8 @@ public class ArtistListFragment extends Fragment
 			}
 
 			if(( views != null ) &&
-			   ( position < mArtistList.size())) {
-				Artist      artist = mArtistList.get( position );
+			   ( position < getCount())) {
+				Artist      artist = getItem( position );
 
 				views.NameTextView.setText( artist.getName());
 				views.AlbumCountTextView.setText( "Albums: " + artist.getAlbumCount());
@@ -210,18 +256,16 @@ public class ArtistListFragment extends Fragment
 			return( retValue );
 		}
 
-		@Override
-		public void notifyDataSetChanged() {
-			super.notifyDataSetChanged();
-
-			updateAlphaIndex();
-		}
-
 		private void updateAlphaIndex() {
-			mAlphaIndexer.clear();
+			if( mAlphaIndexer == null ) {
+				mAlphaIndexer = new HashMap<String, Integer>();
+			}
+			else {
+				mAlphaIndexer.clear();
+			}
 
-			for( int index = 0; index < mArtistList.size(); index++ ) {
-				String firstChar = mArtistList.get( index ).getName().substring( 0, 1 ).toUpperCase();
+			for( int index = 0; index < getCount(); index++ ) {
+				String firstChar = getItem( index ).getName().substring( 0, 1 ).toUpperCase();
 
 				// put only if the key does not exist
 				if(!mAlphaIndexer.containsKey( firstChar )) {

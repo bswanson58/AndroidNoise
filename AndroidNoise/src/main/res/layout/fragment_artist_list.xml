@@ -52,7 +52,16 @@
             android:id="@+id/al_artist_list_view"
             android:layout_height="match_parent"
             android:layout_width="match_parent"
+            android:layout_above="@+id/ai_artist_filter"
             style="@style/LongListStyle"/>
+
+        <EditText
+            android:id="@+id/ai_artist_filter"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:hint="Enter artist filter text"
+            android:layout_alignParentBottom="true"
+            />
         </RelativeLayout>
 
 </LinearLayout>
