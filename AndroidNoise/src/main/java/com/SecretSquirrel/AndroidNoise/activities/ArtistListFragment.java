@@ -29,6 +29,7 @@ import com.SecretSquirrel.AndroidNoise.services.NoiseRemoteApi;
 import com.SecretSquirrel.AndroidNoise.services.ServiceResultReceiver;
 import com.SecretSquirrel.AndroidNoise.ui.FilteredArrayAdapter;
 import com.SecretSquirrel.AndroidNoise.ui.ListViewFilter;
+import com.SecretSquirrel.AndroidNoise.views.ButtonEditText;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -47,7 +48,7 @@ public class ArtistListFragment extends Fragment
 	private ServiceResultReceiver   mServiceResultReceiver;
 	private ArrayList<Artist>       mArtistList;
 	private ListView                mArtistListView;
-	private EditText                mFilterEditText;
+	private ButtonEditText          mFilterEditText;
 	private TextView                mArtistCount;
 	private Parcelable              mListViewState;
 	private String                  mFilterText;
@@ -96,7 +97,7 @@ public class ArtistListFragment extends Fragment
 				}
 			} );
 
-			mFilterEditText = (EditText)myView.findViewById( R.id.ai_artist_filter );
+			mFilterEditText = (ButtonEditText)myView.findViewById( R.id.ai_artist_filter );
 			mFilterEditText.addTextChangedListener( new TextWatcher() {
 				@Override
 				public void onTextChanged( CharSequence charSequence, int i, int i2, int i3 ) {
@@ -107,6 +108,14 @@ public class ArtistListFragment extends Fragment
 				@Override
 				public void afterTextChanged( Editable editable ) {	}
 			} );
+			mFilterEditText.setDrawableClickListener( new ButtonEditText.DrawableClickListener() {
+				@Override
+				public void onClick( ButtonEditText.DrawableClickListener.DrawablePosition target ) {
+					// Clear the edit box and the search results.
+					mFilterEditText.setText( "" );
+				}
+			} );
+
 
 			if(!TextUtils.isEmpty( mFilterText )) {
 				mFilterEditText.setText( mFilterText );

@@ -42,6 +42,7 @@
     <string name="list_header_band_members">Band Members:</string>
     <string name="list_header_similar_artists">Similar Artists:</string>
     <string name="list_header_top_albums">Top Albums:</string>
+    <string name="al_filter_hint">Enter artist filter text</string>
 
     <string name="action_play_album">Play Album</string>
 </resources>

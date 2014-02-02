@@ -55,13 +55,14 @@
             android:layout_above="@+id/ai_artist_filter"
             style="@style/LongListStyle"/>
 
-        <EditText
+        <com.SecretSquirrel.AndroidNoise.views.ButtonEditText
             android:id="@+id/ai_artist_filter"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
-            android:hint="Enter artist filter text"
+            android:hint="@string/al_filter_hint"
             android:layout_alignParentBottom="true"
             android:layout_toLeftOf="@+id/ai_list_count"
+            android:drawableRight="@android:drawable/ic_menu_close_clear_cancel"
             />
 
         <TextView
