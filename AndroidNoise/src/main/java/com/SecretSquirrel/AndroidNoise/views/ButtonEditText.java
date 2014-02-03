@@ -2,11 +2,15 @@ package com.SecretSquirrel.AndroidNoise.views;
 
 // Secret Squirrel Software - Created by bswanson on 1/30/14.
 
+import android.app.Activity;
 import android.content.Context;
+import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
+import android.view.View;
+import android.view.Window;
 import android.widget.EditText;
 
 // from: http://stackoverflow.com/questions/3554377/handling-click-events-on-a-drawable-within-an-edittext
@@ -120,10 +124,10 @@ public class ButtonEditText extends EditText {
 			else if( mDrawableRight != null ) {
 				Rect    bounds = mDrawableRight.getBounds();
 
-				if(( x >= ( getRight() - getPaddingRight() - bounds.width() - mClickPadding)) &&
-				   ( x <= ( getRight() + mClickPadding)) &&
-				   ( y >= ( getPaddingTop() - mClickPadding)) &&
-				   ( y <= ( getHeight() - getPaddingBottom()) + mClickPadding)) {
+				if(( x >= ( getWidth() - getPaddingRight() - bounds.width() - mClickPadding )) &&
+				   ( x <= ( getWidth() - mClickPadding )) &&
+				   ( y >= ( getPaddingTop() - mClickPadding )) &&
+				   ( y <= ( getHeight() - getPaddingBottom()) + mClickPadding )) {
 					mClickListener.onClick( DrawableClickListener.DrawablePosition.RIGHT );
 
 					if( mConsumeEvent ) {
@@ -154,8 +158,8 @@ public class ButtonEditText extends EditText {
 
 				if(( x >= ( center - ( bounds.width() / 2 ) - mClickPadding)) &&
 				   ( x <= ( center + ( bounds.width() / 2 ) + mClickPadding)) &&
-				   ( y >= ( getBottom() - getPaddingBottom() - bounds.height() - mClickPadding)) &&
-				   ( y <= ( getBottom() + mClickPadding))) {
+				   ( y >= ( getHeight() - getPaddingBottom() - bounds.height() - mClickPadding)) &&
+				   ( y <= ( getHeight() + mClickPadding))) {
 					mClickListener.onClick( DrawableClickListener.DrawablePosition.BOTTOM );
 
 					if( mConsumeEvent ) {
