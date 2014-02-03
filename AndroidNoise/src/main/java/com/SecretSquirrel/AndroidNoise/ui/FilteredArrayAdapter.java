@@ -92,4 +92,14 @@ public abstract class FilteredArrayAdapter<T> extends ArrayAdapter<T>
 
 		return( retValue );
 	}
+
+	public boolean getHaveFilteredItems() {
+		boolean retValue = false;
+
+		if( mFilter != null ) {
+			retValue = mFilter.getHaveFilteredItems();
+		}
+
+		return( retValue );
+	}
 }

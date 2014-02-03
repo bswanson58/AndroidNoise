@@ -6,6 +6,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -200,6 +201,13 @@ public class ArtistListFragment extends Fragment
 
 	@Override
 	public void onPrepareOptionsMenu( Menu menu ) {
+		MenuItem    filterItem = menu.findItem( R.id.action_filter_artist_list );
+
+		if( filterItem != null ) {
+			filterItem.setTitle( mArtistListAdapter.getHaveFilteredItems() ? R.string.action_filter_artist_list_on :
+																			 R.string.action_filter_artist_list );
+		}
+
 		super.onPrepareOptionsMenu( menu );
 	}
 
@@ -244,6 +252,9 @@ public class ArtistListFragment extends Fragment
 		if( mArtistCount != null ) {
 			mArtistCount.setText( String.format( "%d artists", itemCount ));
 		}
+
+		// update the action menu with the filter state.
+		ActivityCompat.invalidateOptionsMenu( getActivity());
 	}
 
 	private void displayFilterPanel( boolean display ) {

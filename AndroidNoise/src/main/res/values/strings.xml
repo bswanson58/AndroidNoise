@@ -46,4 +46,5 @@
 
     <string name="action_play_album">Play Album</string>
     <string name="action_filter_artist_list">Filter Artists</string>
+    <string name="action_filter_artist_list_on">Filter Artists (On)</string>
 </resources>

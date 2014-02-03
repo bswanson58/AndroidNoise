@@ -7,6 +7,7 @@ import java.util.List;
 
 // Created by BSwanson on 2/1/14.
 
+@SuppressWarnings("unused")
 public class ListViewFilter<T> extends Filter {
 	public interface FilterClient<T> {
 		boolean shouldItemBeDisplayed( T item, String filterText );
@@ -15,6 +16,7 @@ public class ListViewFilter<T> extends Filter {
 
 	private List<T>         mSourceObjects;
 	private FilterClient<T> mFilterClient;
+	private boolean         mHaveFilterItems;
 
 	public ListViewFilter( List<T> objects, FilterClient<T> filter ) {
 		mSourceObjects = objects;
@@ -25,6 +27,8 @@ public class ListViewFilter<T> extends Filter {
 	protected FilterResults performFiltering( CharSequence chars ) {
 		String          filterSeq = chars.toString();
 		FilterResults   result = new FilterResults();
+
+		mHaveFilterItems = false;
 
 		if(( filterSeq != null ) &&
 		   ( filterSeq.length() > 0 )) {
@@ -38,6 +42,8 @@ public class ListViewFilter<T> extends Filter {
 
 			result.count = filter.size();
 			result.values = filter;
+
+			mHaveFilterItems = result.count != mSourceObjects.size();
 		}
 		else {
 			// add all objects
@@ -54,6 +60,10 @@ public class ListViewFilter<T> extends Filter {
 	@Override
 	protected void publishResults( CharSequence constraint, FilterResults results ) {
 		mFilterClient.updateList( (List<T>) results.values );
+	}
+
+	public boolean getHaveFilteredItems() {
+		return( mHaveFilterItems );
 	}
 }
 
