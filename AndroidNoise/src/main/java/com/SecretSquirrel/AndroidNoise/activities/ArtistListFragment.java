@@ -17,6 +17,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
 import android.widget.AdapterView;
 import android.widget.Filterable;
 import android.widget.ListView;
@@ -32,6 +33,7 @@ import com.SecretSquirrel.AndroidNoise.services.NoiseRemoteApi;
 import com.SecretSquirrel.AndroidNoise.services.ServiceResultReceiver;
 import com.SecretSquirrel.AndroidNoise.ui.FilteredArrayAdapter;
 import com.SecretSquirrel.AndroidNoise.ui.ListViewFilter;
+import com.SecretSquirrel.AndroidNoise.ui.ScaledHeightAnimation;
 import com.SecretSquirrel.AndroidNoise.views.ButtonEditText;
 
 import java.util.ArrayList;
@@ -137,7 +139,7 @@ public class ArtistListFragment extends Fragment
 			mArtistCount = (TextView)myView.findViewById( R.id.al_list_count );
 
 			mFilterPanel = myView.findViewById( R.id.al_filter_panel );
-			displayFilterPanel( mFilterPanelDisplayed );
+			displayFilterPanel( mFilterPanelDisplayed, false );
 		}
 
 		if(( mArtistList.size() == 0 ) &&
@@ -217,7 +219,7 @@ public class ArtistListFragment extends Fragment
 
 		switch( item.getItemId()) {
 			case R.id.action_filter_artist_list:
-				displayFilterPanel( !mFilterPanelDisplayed );
+				displayFilterPanel( !mFilterPanelDisplayed, true );
 				break;
 
 			default:
@@ -257,14 +259,21 @@ public class ArtistListFragment extends Fragment
 		ActivityCompat.invalidateOptionsMenu( getActivity());
 	}
 
-	private void displayFilterPanel( boolean display ) {
+	private void displayFilterPanel( boolean display, boolean withAnimation ) {
 		if( mFilterPanel != null ) {
+			Animation   animation;
+
 			if( display ) {
-				mFilterPanel.setVisibility( View.VISIBLE );
+				animation = new ScaledHeightAnimation( mFilterPanel, 0, 1 );
 			}
 			else {
-				mFilterPanel.setVisibility( View.GONE );
+				animation = new ScaledHeightAnimation( mFilterPanel, 1, 0 );
 			}
+
+			if( withAnimation ) {
+				animation.setDuration( 300 );
+			}
+			mFilterPanel.startAnimation( animation );
 		}
 
 		mFilterPanelDisplayed = display;
