@@ -107,7 +107,7 @@ public class FavoritesListFragment extends Fragment
 
 		outState.putParcelableArrayList( FAVORITES_LIST, mFavoritesList );
 
-		if( mFavoritesList != null ) {
+		if( mFavoritesListView != null ) {
 			mListViewState = mFavoritesListView.onSaveInstanceState();
 		}
 		if( mListViewState != null ) {
