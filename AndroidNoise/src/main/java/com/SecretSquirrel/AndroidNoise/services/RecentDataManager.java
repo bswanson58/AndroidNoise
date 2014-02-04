@@ -3,6 +3,7 @@ package com.SecretSquirrel.AndroidNoise.services;
 // Secret Squirrel Software - Created by bswanson on 2/4/14.
 
 import com.SecretSquirrel.AndroidNoise.dto.Artist;
+import com.SecretSquirrel.AndroidNoise.events.EventArtistPlayed;
 import com.SecretSquirrel.AndroidNoise.events.EventArtistViewed;
 import com.SecretSquirrel.AndroidNoise.events.EventRecentDataUpdated;
 import com.SecretSquirrel.AndroidNoise.interfaces.IRecentData;
@@ -36,6 +37,13 @@ public class RecentDataManager implements IRecentData {
 	@SuppressWarnings("unused")
 	public void onEvent( EventArtistViewed args ) {
 		mRecentlyViewedList.putMostRecentArtist( args.getArtist());
+
+		EventBus.getDefault().post( new EventRecentDataUpdated());
+	}
+
+	@SuppressWarnings("unused")
+	public void onEvent( EventArtistPlayed args ) {
+		mRecentlyPlayedList.putMostRecentArtist( args.getArtist());
 
 		EventBus.getDefault().post( new EventRecentDataUpdated());
 	}

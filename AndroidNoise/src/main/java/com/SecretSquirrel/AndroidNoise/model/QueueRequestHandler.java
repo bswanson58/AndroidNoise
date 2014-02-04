@@ -3,19 +3,25 @@ package com.SecretSquirrel.AndroidNoise.model;
 // Secret Squirrel Software - Created by bswanson on 12/23/13.
 
 import android.content.Context;
+import android.os.Bundle;
 import android.widget.Toast;
 
 import com.SecretSquirrel.AndroidNoise.dto.Album;
+import com.SecretSquirrel.AndroidNoise.dto.Artist;
 import com.SecretSquirrel.AndroidNoise.dto.Favorite;
 import com.SecretSquirrel.AndroidNoise.dto.QueuedAlbumResult;
 import com.SecretSquirrel.AndroidNoise.dto.QueuedTrackResult;
 import com.SecretSquirrel.AndroidNoise.dto.SearchResultItem;
 import com.SecretSquirrel.AndroidNoise.dto.Track;
+import com.SecretSquirrel.AndroidNoise.events.EventArtistPlayed;
 import com.SecretSquirrel.AndroidNoise.events.EventPlayAlbum;
 import com.SecretSquirrel.AndroidNoise.events.EventPlayFavorite;
 import com.SecretSquirrel.AndroidNoise.events.EventPlaySearchItem;
 import com.SecretSquirrel.AndroidNoise.events.EventPlayTrack;
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
+import com.SecretSquirrel.AndroidNoise.services.ArtistResolver;
+import com.SecretSquirrel.AndroidNoise.services.NoiseRemoteApi;
+import com.SecretSquirrel.AndroidNoise.services.ServiceResultReceiver;
 import com.SecretSquirrel.AndroidNoise.support.Constants;
 
 import de.greenrobot.event.EventBus;
@@ -81,6 +87,8 @@ public class QueueRequestHandler {
 					}
 				}
 			} );
+
+			notifyArtistPlayed( album.getArtistId());
 		}
 	}
 
@@ -97,6 +105,8 @@ public class QueueRequestHandler {
 					}
 				}
 			} );
+
+			notifyArtistPlayed( track.getArtistId());
 		}
 	}
 
@@ -120,5 +130,20 @@ public class QueueRequestHandler {
 				PlayAlbum( new Album( searchItem ));
 			}
 		}
+	}
+
+	private void notifyArtistPlayed( long artistId ) {
+		ArtistResolver resolver = new ArtistResolver( mApplicationState.getDataClient());
+
+		resolver.requestArtist( artistId, new ServiceResultReceiver.Receiver() {
+			@Override
+			public void onReceiveResult( int resultCode, Bundle resultData ) {
+				Artist artist = resultData.getParcelable( NoiseRemoteApi.Artist );
+
+				if( artist != null ) {
+					EventBus.getDefault().post( new EventArtistPlayed( artist ));
+				}
+			}
+		});
 	}
 }

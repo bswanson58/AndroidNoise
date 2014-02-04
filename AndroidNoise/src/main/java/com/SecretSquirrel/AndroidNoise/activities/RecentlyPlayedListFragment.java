@@ -47,6 +47,7 @@ public class RecentlyPlayedListFragment extends Fragment {
 
 		if( myView != null ) {
 			mRecentlyPlayedList = (ListView)myView.findViewById( R.id.rpl_recently_played_list );
+			mRecentlyPlayedList.setAdapter( mListAdapter );
 			mRecentlyPlayedList.setOnItemClickListener( new AdapterView.OnItemClickListener() {
 				@Override
 				public void onItemClick( AdapterView<?> adapterView, View view, int i, long l ) {
