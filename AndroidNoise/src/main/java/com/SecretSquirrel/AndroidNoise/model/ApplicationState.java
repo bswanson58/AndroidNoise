@@ -12,12 +12,14 @@ import com.SecretSquirrel.AndroidNoise.interfaces.INoiseData;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseQueue;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseSearch;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseServer;
+import com.SecretSquirrel.AndroidNoise.interfaces.IRecentData;
 import com.SecretSquirrel.AndroidNoise.services.EventHostService;
 import com.SecretSquirrel.AndroidNoise.services.NoiseDataCacheClient;
 import com.SecretSquirrel.AndroidNoise.services.NoiseDataClient;
 import com.SecretSquirrel.AndroidNoise.services.NoiseQueueClient;
 import com.SecretSquirrel.AndroidNoise.services.NoiseRemoteClient;
 import com.SecretSquirrel.AndroidNoise.services.NoiseSearchClient;
+import com.SecretSquirrel.AndroidNoise.services.RecentDataManager;
 import com.SecretSquirrel.AndroidNoise.services.ServiceLocator;
 
 import rx.Observable;
@@ -31,6 +33,7 @@ public class ApplicationState implements IApplicationState {
 	private NoiseQueueClient        mQueueClient;
 	private NoiseSearchClient       mSearchClient;
 	private QueueRequestHandler     mQueueRequestHandler;
+	private IRecentData             mRecentData;
 
 	public ApplicationState( Context context ) {
 		mContext = context;
@@ -59,6 +62,10 @@ public class ApplicationState implements IApplicationState {
 		return( mSearchClient );
 	}
 
+	public IRecentData getRecentData() {
+		return( mRecentData );
+	}
+
 	public void SelectServer( ServerInformation server ) {
 		mCurrentServer = server;
 		mIsConnected = mCurrentServer != null;
@@ -68,6 +75,7 @@ public class ApplicationState implements IApplicationState {
 			mDataClient = new NoiseDataCacheClient( new NoiseDataClient( mContext, mCurrentServer.getServerAddress()));
 			mQueueClient = new NoiseQueueClient( mCurrentServer.getServerAddress());
 			mSearchClient = new NoiseSearchClient( mCurrentServer.getServerAddress());
+			mRecentData = new RecentDataManager();
 		}
 	}
 

@@ -17,6 +17,7 @@ public interface IApplicationState {
 	public  INoiseData      getDataClient();
 	public  INoiseQueue     getQueueClient();
 	public  INoiseSearch    getSearchClient();
+	public  IRecentData     getRecentData();
 
 	public  void            registerForEvents( ServiceConnection client );
 	public  void            unregisterFromEvents( ServiceConnection client );

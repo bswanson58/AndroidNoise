@@ -20,6 +20,7 @@ import com.SecretSquirrel.AndroidNoise.R;
 import com.SecretSquirrel.AndroidNoise.dto.Artist;
 import com.SecretSquirrel.AndroidNoise.dto.ArtistInfo;
 import com.SecretSquirrel.AndroidNoise.events.EventArtistInfoRequest;
+import com.SecretSquirrel.AndroidNoise.events.EventArtistViewed;
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
 import com.SecretSquirrel.AndroidNoise.model.NoiseRemoteApplication;
 import com.SecretSquirrel.AndroidNoise.services.NoiseRemoteApi;
@@ -77,6 +78,9 @@ public class ArtistInfoFragment extends Fragment
 			if( Constants.LOG_ERROR ) {
 				Log.e( TAG, "Artist is null." );
 			}
+		}
+		else {
+			EventBus.getDefault().post( new EventArtistViewed( mArtist ) );
 		}
 	}
 

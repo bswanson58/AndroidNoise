@@ -39,6 +39,7 @@ public class ShellActivity extends ActionBarActivity
 	private final int   QUEUE_ITEM_ID       = 103;
 	private final int   SERVERS_ITEM_ID     = 104;
 	private final int   SEARCH_ITEM_ID      = 105;
+	private final int   RECENT_ITEM_ID      = 106;
 
 	// Fragment managing the behaviors, interactions and presentation of the navigation drawer.
 	private NavigationDrawerFragment    mNavigationDrawerFragment;
@@ -83,6 +84,7 @@ public class ShellActivity extends ActionBarActivity
 				NavigationMenuItem.create( FAVORITES_ITEM_ID, getString( R.string.title_favorites_section ), "ic_action_favorites", true, this ),
 				NavigationMenuItem.create( QUEUE_ITEM_ID, getString( R.string.title_queue_section ), "ic_action_queue", true, this ),
 				NavigationMenuItem.create( SEARCH_ITEM_ID, getString( R.string.title_search_section ), "ic_action_search", true, this ),
+				NavigationMenuItem.create( RECENT_ITEM_ID, getString( R.string.title_recent_section ), "", true, this ),
 				NavigationMenuItem.create( SERVERS_ITEM_ID, getString( R.string.title_server_section ), "ic_action_servers", true, this )};
 
 		retValue.setApplicationNameId( R.string.app_name );
@@ -181,6 +183,9 @@ public class ShellActivity extends ActionBarActivity
 				break;
 			case SEARCH_ITEM_ID:
 				fragment = ShellSearchFragment.newInstance( SEARCH_ITEM_ID );
+				break;
+			case RECENT_ITEM_ID:
+				fragment = ShellRecentFragment.newInstance( RECENT_ITEM_ID );
 				break;
 		}
 

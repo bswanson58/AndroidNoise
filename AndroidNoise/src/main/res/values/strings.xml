@@ -16,6 +16,7 @@
     <string name="title_favorites_section">Favorites</string>
     <string name="title_queue_section">Now Playing</string>
     <string name="title_search_section">Search</string>
+    <string name="title_recent_section">Recent</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="search_results_title">Search Results</string>
@@ -45,6 +46,8 @@
     <string name="al_artist_filter_header">Artist Filter:</string>
     <string name="al_album_filter_hint">Enter album filter text</string>
     <string name="al_album_filter_header">Album Filter:</string>
+    <string name="rpl_recently_played_title">Recently Played</string>
+    <string name="rvl_recently_viewed_title">Recently Viewed</string>
 
     <string name="action_play_album">Play Album</string>
     <string name="action_filter_artist_list">Filter Artists</string>
