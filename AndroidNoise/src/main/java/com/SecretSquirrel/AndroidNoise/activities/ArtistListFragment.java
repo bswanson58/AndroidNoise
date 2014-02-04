@@ -31,6 +31,7 @@ import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
 import com.SecretSquirrel.AndroidNoise.model.NoiseRemoteApplication;
 import com.SecretSquirrel.AndroidNoise.services.NoiseRemoteApi;
 import com.SecretSquirrel.AndroidNoise.services.ServiceResultReceiver;
+import com.SecretSquirrel.AndroidNoise.support.NoiseUtils;
 import com.SecretSquirrel.AndroidNoise.ui.FilteredArrayAdapter;
 import com.SecretSquirrel.AndroidNoise.ui.ListViewFilter;
 import com.SecretSquirrel.AndroidNoise.ui.ScaledHeightAnimation;
@@ -268,6 +269,8 @@ public class ArtistListFragment extends Fragment
 			}
 			else {
 				animation = new ScaledHeightAnimation( mFilterPanel, 1, 0 );
+
+				NoiseUtils.hideKeyboard( getActivity() );
 			}
 
 			if( withAnimation ) {

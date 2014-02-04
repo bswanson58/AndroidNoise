@@ -281,6 +281,8 @@ public class AlbumListFragment extends Fragment
 			}
 			else {
 				animation = new ScaledHeightAnimation( mFilterPanel, 1, 0 );
+
+				NoiseUtils.hideKeyboard( getActivity());
 			}
 
 			if( withAnimation ) {
