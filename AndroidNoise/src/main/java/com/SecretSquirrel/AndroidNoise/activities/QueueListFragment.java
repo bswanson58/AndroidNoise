@@ -27,6 +27,7 @@ import com.SecretSquirrel.AndroidNoise.R;
 import com.SecretSquirrel.AndroidNoise.dto.PlayQueueListResult;
 import com.SecretSquirrel.AndroidNoise.dto.PlayQueueTrack;
 import com.SecretSquirrel.AndroidNoise.events.EventAlbumRequest;
+import com.SecretSquirrel.AndroidNoise.events.EventQueueTimeUpdate;
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
 import com.SecretSquirrel.AndroidNoise.model.NoiseRemoteApplication;
 import com.SecretSquirrel.AndroidNoise.services.EventHostService;
@@ -235,6 +236,19 @@ public class QueueListFragment extends Fragment  {
 			mQueueSubscription.unsubscribe();
 			mQueueSubscription = null;
 		}
+
+		long    totalMilliseconds = 0;
+		long    remainingMilliseconds = 0;
+
+		for( PlayQueueTrack track : mQueueList ) {
+			totalMilliseconds += track.getDurationMilliseconds();
+
+			if(!track.getHasPlayed()) {
+				remainingMilliseconds += track.getDurationMilliseconds();
+			}
+		}
+
+		EventBus.getDefault().post( new EventQueueTimeUpdate( totalMilliseconds, remainingMilliseconds ) );
 	}
 
 	private IApplicationState getApplicationState() {

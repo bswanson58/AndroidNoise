@@ -1,53 +1,91 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="horizontal"
               android:layout_width="match_parent"
-              android:layout_height="match_parent"
+              android:layout_height="wrap_content"
               android:layout_marginLeft="15dp"
               android:layout_marginRight="15dp"
               android:padding="5dp"
               android:background="@color/control_panel">
 
     <Button
-        style="?android:attr/buttonStyleSmall"
+        android:id="@+id/play_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Play"
-        android:id="@+id/play_button"/>
+        style="?android:attr/buttonStyleSmall"
+        />
 
     <Button
-        style="?android:attr/buttonStyleSmall"
+        android:id="@+id/stop_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/play_button"
         android:text="Stop"
-        android:id="@+id/stop_button"/>
+        style="?android:attr/buttonStyleSmall"
+        />
 
     <Button
-        style="?android:attr/buttonStyleSmall"
+        android:id="@+id/pause_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/stop_button"
         android:text="Pause"
-        android:id="@+id/pause_button"/>
+        style="?android:attr/buttonStyleSmall"
+        />
 
     <Button
-        style="?android:attr/buttonStyleSmall"
+        android:id="@+id/next_track_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/pause_button"
         android:text="Next"
-        android:id="@+id/next_track_button"/>
+        style="?android:attr/buttonStyleSmall"
+        />
 
     <Button
-        style="?android:attr/buttonStyleSmall"
+        android:id="@+id/previous_track_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/next_track_button"
         android:text="Previous"
-        android:id="@+id/previous_track_button"/>
+        style="?android:attr/buttonStyleSmall"
+        />
 
     <Button
-        style="?android:attr/buttonStyleSmall"
+        android:id="@+id/repeat_track_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/previous_track_button"
         android:text="Repeat"
-        android:id="@+id/repeat_track_button"/>
-</LinearLayout>
+        style="?android:attr/buttonStyleSmall"
+        />
+
+    <LinearLayout
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_alignParentRight="true"
+        android:orientation="vertical"
+        android:layout_toRightOf="@+id/repeat_track_button"
+        android:layout_centerVertical="true">
+
+        <TextView
+            android:id="@+id/tr_total_time"
+            android:layout_height="0dp"
+            android:layout_width="wrap_content"
+            android:layout_weight="1"
+            android:text="Playing Time: 1:14"
+            android:gravity="center_vertical"
+            android:layout_gravity="right"/>
+
+        <TextView
+            android:id="@+id/tr_remaining_time"
+            android:layout_height="0dp"
+            android:layout_width="wrap_content"
+            android:layout_weight="1"
+            android:text="Remaining Time: 0:45"
+            android:gravity="center_vertical"
+            android:layout_gravity="right"/>
+        </LinearLayout>
+</RelativeLayout>

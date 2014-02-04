@@ -48,6 +48,8 @@
     <string name="al_album_filter_header">Album Filter:</string>
     <string name="rpl_recently_played_title">Recently Played</string>
     <string name="rvl_recently_viewed_title">Recently Viewed</string>
+    <string name="tr_total_time_format">Playing Time: %1$d:%2$02d:%3$02d</string>
+    <string name="tr_remaining_time_format">Remaining Time: %1$d:%2$02d:%3$02d</string>
 
     <string name="action_play_album">Play Album</string>
     <string name="action_filter_artist_list">Filter Artists</string>
