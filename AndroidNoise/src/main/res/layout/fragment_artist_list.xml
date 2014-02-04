@@ -70,14 +70,14 @@
                 android:textColor="@color/control_panel_text"
                 android:layout_alignBaseline="@+id/al_artist_filter"
                 android:layout_marginLeft="@dimen/noise_base_padding"
-                android:text="@string/al_filter_header"
+                android:text="@string/al_artist_filter_header"
                 />
 
             <com.SecretSquirrel.AndroidNoise.views.ButtonEditText
                 android:id="@+id/al_artist_filter"
                 android:layout_height="wrap_content"
                 android:layout_width="match_parent"
-                android:hint="@string/al_filter_hint"
+                android:hint="@string/al_artist_filter_hint"
                 android:layout_toRightOf="@+id/al_filter_header"
                 android:layout_toLeftOf="@+id/al_list_count"
                 android:layout_marginLeft="@dimen/noise_base_padding"

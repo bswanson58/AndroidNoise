@@ -52,7 +52,52 @@
             android:id="@+id/al_album_list_view"
             android:layout_height="match_parent"
             android:layout_width="match_parent"
+            android:layout_above="@+id/al_filter_panel"
             style="@style/ShortListStyle"/>
+
+        <RelativeLayout
+            android:id="@+id/al_filter_panel"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:background="@color/control_panel">
+
+            <TextView
+                android:id="@+id/al_filter_header"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:textColor="@color/control_panel_text"
+                android:layout_alignBaseline="@+id/al_album_filter"
+                android:layout_marginLeft="@dimen/noise_base_padding"
+                android:text="@string/al_album_filter_header"
+                />
+
+            <com.SecretSquirrel.AndroidNoise.views.ButtonEditText
+                android:id="@+id/al_album_filter"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:hint="@string/al_album_filter_hint"
+                android:layout_toRightOf="@+id/al_filter_header"
+                android:layout_toLeftOf="@+id/al_list_count"
+                android:layout_marginLeft="@dimen/noise_base_padding"
+                android:drawableRight="@android:drawable/ic_menu_close_clear_cancel"
+                android:textColor="@color/control_panel_text"
+                />
+
+            <TextView
+                android:id="@+id/al_list_count"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginLeft="@dimen/noise_base_padding"
+                android:layout_marginRight="@dimen/noise_base_padding"
+                android:textColor="@color/control_panel_text"
+                android:layout_alignBaseline="@+id/al_album_filter"
+                android:text="47 albums"
+                />
+        </RelativeLayout>
         </RelativeLayout>
 
 </LinearLayout>

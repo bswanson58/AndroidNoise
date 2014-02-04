@@ -54,10 +54,10 @@ public class ArtistListFragment extends Fragment
 	private ServiceResultReceiver   mServiceResultReceiver;
 	private ArrayList<Artist>       mArtistList;
 	private ListView                mArtistListView;
-	private ButtonEditText          mFilterEditText;
 	private TextView                mArtistCount;
 	private Parcelable              mListViewState;
 	private ArtistAdapter           mArtistListAdapter;
+	private ButtonEditText          mFilterEditText;
 	private String                  mFilterText;
 	private View                    mFilterPanel;
 	private boolean                 mFilterPanelDisplayed;
