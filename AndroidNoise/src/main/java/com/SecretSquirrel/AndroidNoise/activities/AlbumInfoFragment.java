@@ -22,6 +22,7 @@ import com.SecretSquirrel.AndroidNoise.dto.Album;
 import com.SecretSquirrel.AndroidNoise.dto.AlbumInfo;
 import com.SecretSquirrel.AndroidNoise.dto.Artist;
 import com.SecretSquirrel.AndroidNoise.events.EventArtistSelected;
+import com.SecretSquirrel.AndroidNoise.events.EventArtistViewed;
 import com.SecretSquirrel.AndroidNoise.events.EventPlayAlbum;
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
 import com.SecretSquirrel.AndroidNoise.model.NoiseRemoteApplication;
@@ -127,6 +128,15 @@ public class AlbumInfoFragment extends Fragment
 		else {
 			if( Constants.LOG_ERROR ) {
 				Log.e( TAG, "The current album could not be determined." );
+			}
+		}
+
+		if( mArtist != null ) {
+			EventBus.getDefault().post( new EventArtistViewed( mArtist ));
+		}
+		else {
+			if( Constants.LOG_ERROR ) {
+				Log.e( TAG, "The current artist could not be determined." );
 			}
 		}
 
