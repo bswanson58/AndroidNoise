@@ -11,11 +11,14 @@ import android.view.ViewGroup;
 import com.SecretSquirrel.AndroidNoise.R;
 
 public class ShellServerFragment extends BaseShellFragment {
-	public static ShellServerFragment newInstance( int fragmentId ) {
+	private static final String SELECT_LAST_SERVER = "serverFragmentSelectLastServer";
+
+	public static ShellServerFragment newInstance( int fragmentId, boolean selectLastServer ) {
 		ShellServerFragment     fragment = new ShellServerFragment();
 		Bundle                  args = new Bundle();
 
 		args.putInt( SHELL_FRAGMENT_KEY, fragmentId );
+		args.putBoolean( SELECT_LAST_SERVER, selectLastServer );
 		fragment.setArguments( args );
 
 		return( fragment );
@@ -23,10 +26,17 @@ public class ShellServerFragment extends BaseShellFragment {
 
 	@Override
 	public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState ) {
+		boolean selectLastServer = false;
+		Bundle  args = getArguments();
+
+		if( args != null ) {
+			selectLastServer = args.getBoolean( SELECT_LAST_SERVER );
+		}
+
 		if( getChildFragmentManager().findFragmentById( R.id.ServerShellFrame ) == null ) {
 			getChildFragmentManager()
 					.beginTransaction()
-					.replace( R.id.ServerShellFrame, ServerListFragment.newInstance())
+					.replace( R.id.ServerShellFrame, ServerListFragment.newInstance( selectLastServer ))
 					.commit();
 		}
 

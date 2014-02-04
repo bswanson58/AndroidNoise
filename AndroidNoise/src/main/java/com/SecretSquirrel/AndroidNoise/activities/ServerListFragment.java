@@ -3,7 +3,9 @@ package com.SecretSquirrel.AndroidNoise.activities;
 // Secret Squirrel Software - Created by bswanson on 12/23/13.
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -30,13 +32,21 @@ import rx.util.functions.Action1;
 
 public class ServerListFragment extends Fragment {
 	private static final String             TAG = ServerListFragment.class.getName();
+	private static final String             SELECT_LAST_SERVER = "serverListSelectLast";
 
 	private ArrayList<ServerInformation>    mServerList;
 	private ServerAdapter                   mServerListAdapter;
 	private Subscription                    mLocatorSubscription;
+	private String                          mLastServer;
 
-	public static ServerListFragment newInstance() {
-		return( new ServerListFragment());
+	public static ServerListFragment newInstance( boolean selectLastServer ) {
+		ServerListFragment  fragment = new ServerListFragment();
+		Bundle              args = new Bundle();
+
+		args.putBoolean( SELECT_LAST_SERVER, selectLastServer );
+		fragment.setArguments( args );
+
+		return( fragment );
 	}
 
 	@Override
@@ -45,6 +55,18 @@ public class ServerListFragment extends Fragment {
 
 		mServerList = new ArrayList<ServerInformation>();
 		mServerListAdapter = new ServerAdapter( getActivity(), mServerList );
+
+		Bundle  args = getArguments();
+
+		if( args != null ) {
+			boolean selectLastServer = args.getBoolean( SELECT_LAST_SERVER );
+
+			if( selectLastServer ) {
+				SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences( getActivity());
+
+				mLastServer = settings.getString( getString( R.string.setting_last_server_used ), "" );
+			}
+		}
 
 		mLocatorSubscription = getApplicationState().locateServers()
 			.observeOn( AndroidSchedulers.mainThread() )
@@ -113,6 +135,11 @@ public class ServerListFragment extends Fragment {
 
 				if(!exists ) {
 					mServerList.add( serverInformation );
+
+					if( serverInformation.getHostName().equals( mLastServer )) {
+						selectServer( serverInformation );
+					}
+
 					mServerListAdapter.notifyDataSetChanged();
 				}
 				break;
@@ -140,7 +167,13 @@ public class ServerListFragment extends Fragment {
 		if( server != null ) {
 			getApplicationState().SelectServer( server );
 
-			EventBus.getDefault().post( new EventServerSelected( server ) );
+			SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences( getActivity());
+			SharedPreferences.Editor editor = settings.edit();
+
+			editor.putString( getString( R.string.setting_last_server_used ), server.getHostName());
+			editor.commit();
+
+			EventBus.getDefault().post( new EventServerSelected( server ));
 		}
 	}
 

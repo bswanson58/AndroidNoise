@@ -1,6 +1,8 @@
 package com.SecretSquirrel.AndroidNoise.activities;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
@@ -45,6 +47,7 @@ public class ShellActivity extends ActionBarActivity
 	private NavigationDrawerFragment    mNavigationDrawerFragment;
 	private BaseShellFragment           mCurrentChildFragment;
 	private LibraryFocusArgs            mLibraryFocusArgs;
+	private boolean                     mSelectLastServer;
 
 	@Override
 	protected void onCreate( Bundle savedInstanceState ) {
@@ -59,6 +62,9 @@ public class ShellActivity extends ActionBarActivity
 
 		mNavigationDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById( R.id.navigation_drawer );
 		mNavigationDrawerFragment.setConfiguration( getNavigationDrawerConfiguration());
+
+		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences( this );
+		mSelectLastServer = settings.getBoolean( getString( R.string.setting_use_last_server ), false );
 
 		if( savedInstanceState == null ) {
 			mNavigationDrawerFragment.selectId( SERVERS_ITEM_ID );
@@ -169,7 +175,8 @@ public class ShellActivity extends ActionBarActivity
 
 		switch( itemId ) {
 			case SERVERS_ITEM_ID:
-				fragment = ShellServerFragment.newInstance( SERVERS_ITEM_ID );
+				fragment = ShellServerFragment.newInstance( SERVERS_ITEM_ID, mSelectLastServer );
+				mSelectLastServer = false;
 				break;
 			case LIBRARY_ITEM_ID:
 				fragment = ShellLibraryFragment.newInstance( LIBRARY_ITEM_ID, mLibraryFocusArgs );

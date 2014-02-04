@@ -5,9 +5,10 @@
         android:title="Options">
 
         <CheckBoxPreference
-            android:key="open_last_server"
-            android:title="Automatically Select Last Server"
-            android:summary="Automatically select the last Noise server used if it is available on startup"
+            android:key="@string/setting_use_last_server"
+            android:title="@string/setting_use_last_server_title"
+            android:summary="@string/setting_use_last_server_summary"
             android:defaultValue="true"/>
+
     </PreferenceCategory>
 </PreferenceScreen>
