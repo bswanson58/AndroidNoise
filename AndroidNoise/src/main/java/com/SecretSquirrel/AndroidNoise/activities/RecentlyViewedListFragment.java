@@ -8,14 +8,14 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.SecretSquirrel.AndroidNoise.R;
 import com.SecretSquirrel.AndroidNoise.dto.Artist;
-import com.SecretSquirrel.AndroidNoise.dto.Favorite;
+import com.SecretSquirrel.AndroidNoise.events.EventArtistRequest;
 import com.SecretSquirrel.AndroidNoise.events.EventRecentDataUpdated;
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
 import com.SecretSquirrel.AndroidNoise.model.NoiseRemoteApplication;
@@ -49,6 +49,16 @@ public class RecentlyViewedListFragment extends Fragment {
 		if( myView != null ) {
 			mRecentlyViewedList = (ListView)myView.findViewById( R.id.rvl_recently_viewed_list );
 			mRecentlyViewedList.setAdapter( mListAdapter );
+			mRecentlyViewedList.setOnItemClickListener( new AdapterView.OnItemClickListener() {
+				@Override
+				public void onItemClick( AdapterView<?> adapterView, View view, int i, long l ) {
+					Artist artist = mArtistList.get( i );
+
+					if( artist != null ) {
+						EventBus.getDefault().post( new EventArtistRequest( artist.getArtistId()));
+					}
+				}
+			} );
 		}
 
 		return( myView );
@@ -75,12 +85,14 @@ public class RecentlyViewedListFragment extends Fragment {
 	}
 
 	private void updateList() {
+		mArtistList.clear();
+
 		if(( mRecentlyViewedList != null ) &&
 		   ( getApplicationState().getIsConnected())) {
 			mArtistList.addAll( getApplicationState().getRecentData().getRecentlyViewedArtists());
-
-			mListAdapter.notifyDataSetChanged();
 		}
+
+		mListAdapter.notifyDataSetChanged();
 	}
 
 	private IApplicationState getApplicationState() {
@@ -125,7 +137,7 @@ public class RecentlyViewedListFragment extends Fragment {
 			   ( position < getCount())) {
 				Artist  artist = getItem( position );
 
-				views.TitleTextView.setText( artist.getName());
+				views.TitleTextView.setText( artist.getName() );
 			}
 
 			return( retValue );

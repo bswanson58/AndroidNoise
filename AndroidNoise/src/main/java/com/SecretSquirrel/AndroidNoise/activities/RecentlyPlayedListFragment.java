@@ -8,17 +8,21 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.SecretSquirrel.AndroidNoise.R;
 import com.SecretSquirrel.AndroidNoise.dto.Artist;
+import com.SecretSquirrel.AndroidNoise.events.EventArtistRequest;
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
 import com.SecretSquirrel.AndroidNoise.model.NoiseRemoteApplication;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import de.greenrobot.event.EventBus;
 
 public class RecentlyPlayedListFragment extends Fragment {
 	private ArrayList<Artist>       mArtistList;
@@ -43,6 +47,16 @@ public class RecentlyPlayedListFragment extends Fragment {
 
 		if( myView != null ) {
 			mRecentlyPlayedList = (ListView)myView.findViewById( R.id.rpl_recently_played_list );
+			mRecentlyPlayedList.setOnItemClickListener( new AdapterView.OnItemClickListener() {
+				@Override
+				public void onItemClick( AdapterView<?> adapterView, View view, int i, long l ) {
+					Artist  artist = mArtistList.get( i );
+
+					if( artist != null ) {
+						EventBus.getDefault().post( new EventArtistRequest( artist.getArtistId()));
+					}
+				}
+			} );
 		}
 
 		return( myView );
@@ -56,12 +70,14 @@ public class RecentlyPlayedListFragment extends Fragment {
 	}
 
 	private void updateList() {
-		if(( mRecentlyPlayedList != null ) &&
-				( getApplicationState().getIsConnected())) {
-			mArtistList.addAll( getApplicationState().getRecentData().getRecentlyPlayedArtists());
+		mArtistList.clear();
 
-			mListAdapter.notifyDataSetChanged();
+		if(( mRecentlyPlayedList != null ) &&
+		   ( getApplicationState().getIsConnected())) {
+			mArtistList.addAll( getApplicationState().getRecentData().getRecentlyPlayedArtists());
 		}
+
+		mListAdapter.notifyDataSetChanged();
 	}
 
 	private IApplicationState getApplicationState() {
