@@ -227,15 +227,25 @@ public class ShellActivity extends ActionBarActivity
 
 	@Override
 	public boolean onOptionsItemSelected( MenuItem item ) {
+		boolean retValue = false;
+
 		// Handle action bar item clicks here. The action bar will
 		// automatically handle clicks on the Home/Up button, so long
 		// as you specify a parent activity in AndroidManifest.xml.
 		switch( item.getItemId()) {
 			case R.id.action_settings:
-				return true;
+				Intent intent = new Intent( this, SettingsActivity.class );
+
+				startActivity( intent );
+				retValue = true;
+				break;
 		}
 
-		return super.onOptionsItemSelected( item );
+		if(!retValue ) {
+			retValue = super.onOptionsItemSelected( item );
+		}
+
+		return( retValue );
 	}
 
 	private IApplicationState getApplicationState() {

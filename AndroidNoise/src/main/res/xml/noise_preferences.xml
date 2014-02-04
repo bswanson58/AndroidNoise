@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:title="Options">
+
+        <CheckBoxPreference
+            android:key="open_last_server"
+            android:title="Automatically Select Last Server"
+            android:summary="Automatically select the last Noise server used if it is available on startup"
+            android:defaultValue="true"/>
+    </PreferenceCategory>
+</PreferenceScreen>
