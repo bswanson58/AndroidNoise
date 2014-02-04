@@ -34,12 +34,13 @@ import de.greenrobot.event.EventBus;
 
 public class FavoritesListFragment extends Fragment
 								   implements ServiceResultReceiver.Receiver {
-	private final String            LIST_STATE = "favoritesListState";
-	private final String            FAVORITES_LIST = "favoritesList";
+	private final String            LIST_STATE      = "favoritesListState";
+	private final String            FAVORITES_LIST  = "favoritesList";
 
 	private ServiceResultReceiver   mServiceResultReceiver;
 	private ArrayList<Favorite>     mFavoritesList;
 	private ListView                mFavoritesListView;
+	private Parcelable              mListViewState;
 	private FavoritesAdapter        mFavoritesListAdapter;
 
 	public static FavoritesListFragment newInstance() {
@@ -52,6 +53,7 @@ public class FavoritesListFragment extends Fragment
 
 		if( savedInstanceState != null ) {
 			mFavoritesList = savedInstanceState.getParcelableArrayList( FAVORITES_LIST );
+			mListViewState = savedInstanceState.getParcelable( LIST_STATE );
 		}
 		if( mFavoritesList == null ) {
 			mFavoritesList = new ArrayList<Favorite>();
@@ -86,12 +88,8 @@ public class FavoritesListFragment extends Fragment
 				}
 			} );
 
-			if( savedInstanceState != null ) {
-				Parcelable  listState = savedInstanceState.getParcelable( LIST_STATE );
-
-				if( listState != null ) {
-					mFavoritesListView.onRestoreInstanceState( listState );
-				}
+			if( mListViewState != null ) {
+				mFavoritesListView.onRestoreInstanceState( mListViewState );
 			}
 		}
 
@@ -108,7 +106,13 @@ public class FavoritesListFragment extends Fragment
 		super.onSaveInstanceState( outState );
 
 		outState.putParcelableArrayList( FAVORITES_LIST, mFavoritesList );
-		outState.putParcelable( LIST_STATE, mFavoritesListView.onSaveInstanceState());
+
+		if( mFavoritesList != null ) {
+			mListViewState = mFavoritesListView.onSaveInstanceState();
+		}
+		if( mListViewState != null ) {
+			outState.putParcelable( LIST_STATE, mListViewState );
+		}
 	}
 
 	@Override
