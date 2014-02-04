@@ -20,8 +20,21 @@ public class RecentDataManager implements IRecentData {
 	public RecentDataManager() {
 		mRecentlyPlayedList = new RecentArtistList( Constants.RECENT_LIST_SIZE );
 		mRecentlyViewedList = new RecentArtistList( Constants.RECENT_LIST_SIZE );
+	}
 
+	@Override
+	public void start() {
 		EventBus.getDefault().register( this );
+	}
+
+	@Override
+	public void persistData() {
+
+	}
+
+	@Override
+	public void stop() {
+		EventBus.getDefault().unregister( this );
 	}
 
 	@Override

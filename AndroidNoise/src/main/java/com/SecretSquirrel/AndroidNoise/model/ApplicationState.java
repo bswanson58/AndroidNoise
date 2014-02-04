@@ -75,7 +75,14 @@ public class ApplicationState implements IApplicationState {
 			mDataClient = new NoiseDataCacheClient( new NoiseDataClient( mContext, mCurrentServer.getServerAddress()));
 			mQueueClient = new NoiseQueueClient( mCurrentServer.getServerAddress());
 			mSearchClient = new NoiseSearchClient( mCurrentServer.getServerAddress());
+
+			if( mRecentData != null ) {
+				mRecentData.persistData();
+				mRecentData.stop();
+			}
+
 			mRecentData = new RecentDataManager();
+			mRecentData.start();
 		}
 	}
 
