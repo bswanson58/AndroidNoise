@@ -40,10 +40,19 @@
             style="@style/separatorViewVertical"/>
     </LinearLayout>
 
-    <ListView
-        android:id="@+id/rpl_recently_played_list"
+    <RelativeLayout
         android:layout_height="match_parent"
-        android:layout_width="match_parent"
-        style="@style/ShortListStyle"/>
+        android:layout_width="match_parent">
+        <ImageView
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:background="@drawable/recent_background"/>
+
+        <ListView
+            android:id="@+id/rpl_recently_played_list"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            style="@style/ShortListStyle"/>
+        </RelativeLayout>
 
 </LinearLayout>
