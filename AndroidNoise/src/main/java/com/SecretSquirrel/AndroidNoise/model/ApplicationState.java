@@ -87,6 +87,26 @@ public class ApplicationState implements IApplicationState {
 	}
 
 	@Override
+	public void pauseOperation() {
+		if( getIsConnected()) {
+			if( mRecentData != null ) {
+				mRecentData.persistData();
+			}
+		}
+	}
+
+	@Override
+	public boolean resumeOperation() {
+		boolean retValue = true;
+
+		if( getIsConnected()) {
+			// we need to determine if the server we were connected to is still available...
+		}
+
+		return( retValue );
+	}
+
+	@Override
 	public void registerForEvents( ServiceConnection client ) {
 		mContext.bindService( new Intent( mContext, EventHostService.class ), client, Context.BIND_AUTO_CREATE );
 	}

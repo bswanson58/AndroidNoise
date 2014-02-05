@@ -36,12 +36,12 @@ import static android.content.Intent.CATEGORY_LAUNCHER;
 
 public class ShellActivity extends ActionBarActivity
 						   implements NavigationDrawerFragment.NavigationDrawerCallbacks {
-	private final int   LIBRARY_ITEM_ID     = 101;
-	private final int   FAVORITES_ITEM_ID   = 102;
-	private final int   QUEUE_ITEM_ID       = 103;
-	private final int   SERVERS_ITEM_ID     = 104;
-	private final int   SEARCH_ITEM_ID      = 105;
-	private final int   RECENT_ITEM_ID      = 106;
+	private static final int   LIBRARY_ITEM_ID     = 101;
+	private static final int   FAVORITES_ITEM_ID   = 102;
+	private static final int   QUEUE_ITEM_ID       = 103;
+	private static final int   SERVERS_ITEM_ID     = 104;
+	private static final int   SEARCH_ITEM_ID      = 105;
+	private static final int   RECENT_ITEM_ID      = 106;
 
 	// Fragment managing the behaviors, interactions and presentation of the navigation drawer.
 	private NavigationDrawerFragment    mNavigationDrawerFragment;
@@ -74,6 +74,26 @@ public class ShellActivity extends ActionBarActivity
 		}
 
 		EventBus.getDefault().register( this );
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+
+		// If we cannot resume operation, display the server select screen.
+		if(!getApplicationState().resumeOperation()) {
+			if(( mCurrentChildFragment == null ) ||
+		       ( mCurrentChildFragment.getFragmentId() != SERVERS_ITEM_ID )) {
+				mNavigationDrawerFragment.selectId( SERVERS_ITEM_ID );
+			}
+		}
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+
+		getApplicationState().pauseOperation();
 	}
 
 	@Override

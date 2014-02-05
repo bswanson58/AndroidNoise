@@ -9,16 +9,19 @@ import com.SecretSquirrel.AndroidNoise.services.ServiceResultReceiver;
 import rx.Observable;
 
 public interface IApplicationState {
-	public  boolean                         getIsConnected();
-	public Observable<ServerInformation>    locateServers();
-	public  void                            SelectServer( ServerInformation server );
+	void                            pauseOperation();
+	boolean                         resumeOperation();
 
-	public  INoiseServer    getNoiseClient();
-	public  INoiseData      getDataClient();
-	public  INoiseQueue     getQueueClient();
-	public  INoiseSearch    getSearchClient();
-	public  IRecentData     getRecentData();
+	boolean                         getIsConnected();
+	Observable<ServerInformation>   locateServers();
+	void                            SelectServer( ServerInformation server );
 
-	public  void            registerForEvents( ServiceConnection client );
-	public  void            unregisterFromEvents( ServiceConnection client );
+	INoiseServer    getNoiseClient();
+	INoiseData      getDataClient();
+	INoiseQueue     getQueueClient();
+	INoiseSearch    getSearchClient();
+	IRecentData     getRecentData();
+
+	void            registerForEvents( ServiceConnection client );
+	void            unregisterFromEvents( ServiceConnection client );
 }
