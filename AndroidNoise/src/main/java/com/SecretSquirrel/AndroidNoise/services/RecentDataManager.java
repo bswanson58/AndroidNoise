@@ -101,7 +101,7 @@ public class RecentDataManager implements IRecentData {
 
 		if( artists != null ) {
 			for( Artist artist : artists ) {
-				artistList.putMostRecentArtist( artist );
+				artistList.add( artist );
 			}
 		}
 	}
