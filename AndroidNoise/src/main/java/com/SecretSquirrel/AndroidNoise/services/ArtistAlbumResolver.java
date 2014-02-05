@@ -57,6 +57,49 @@ public class ArtistAlbumResolver {
 		} );
 	}
 
+	public void requestArtistAlbum( String artistName, final String albumName, ServiceResultReceiver.Receiver receiver ) {
+		mClientReceiver = receiver;
+
+		ArtistResolver  artistResolver = new ArtistResolver( mNoiseData );
+
+		artistResolver.requestArtist( artistName, new ServiceResultReceiver.Receiver() {
+			@Override
+			public void onReceiveResult( int resultCode, Bundle resultData ) {
+				if( resultCode == NoiseRemoteApi.RemoteResultSuccess ) {
+					mArtist = resultData.getParcelable( NoiseRemoteApi.Artist );
+
+					requestAlbum( albumName );
+				}
+				else {
+					mClientNotified = true;
+					mClientReceiver.onReceiveResult( resultCode, null );
+				}
+			}
+		} );
+
+	}
+
+	private void requestAlbum( String albumName ) {
+		if( mArtist != null ) {
+			AlbumResolver   albumResolver = new AlbumResolver( mNoiseData );
+
+			albumResolver.requestAlbum( albumName, mArtist.getArtistId(), new ServiceResultReceiver.Receiver() {
+				@Override
+				public void onReceiveResult( int resultCode, Bundle resultData ) {
+					if( resultCode == NoiseRemoteApi.RemoteResultSuccess ) {
+						mAlbum = resultData.getParcelable( NoiseRemoteApi.Album );
+
+						notifyClient();
+					}
+					else {
+						mClientNotified = true;
+						mClientReceiver.onReceiveResult( resultCode, null );
+					}
+				}
+			} );
+		}
+	}
+
 	private void notifyClient() {
 		if(!mClientNotified ) {
 			if(( mArtist != null ) &&

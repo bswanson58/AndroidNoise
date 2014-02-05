@@ -5,6 +5,7 @@ import android.os.Handler;
 
 import com.SecretSquirrel.AndroidNoise.dto.Artist;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseData;
+import com.SecretSquirrel.AndroidNoise.support.Constants;
 
 import java.util.ArrayList;
 
@@ -15,9 +16,11 @@ public class ArtistResolver implements ServiceResultReceiver.Receiver {
 	private ServiceResultReceiver.Receiver  mClientReceiver;
 	private INoiseData                      mNoiseData;
 	private long                            mArtistId;
+	private String                          mArtistName;
 
 	public ArtistResolver( INoiseData data ) {
 		mNoiseData = data;
+		mArtistId = Constants.NULL_ID;
 
 		mServiceResultReceiver = new ServiceResultReceiver( new Handler());
 		mServiceResultReceiver.setReceiver( this );
@@ -30,6 +33,26 @@ public class ArtistResolver implements ServiceResultReceiver.Receiver {
 		mNoiseData.GetArtistList( mServiceResultReceiver );
 	}
 
+	public void requestArtist( String artistName, ServiceResultReceiver.Receiver receiver ) {
+		mArtistName = artistName;
+		mClientReceiver = receiver;
+
+		mNoiseData.GetArtistList( mServiceResultReceiver );
+	}
+
+	private boolean determineMatch( Artist artist ) {
+		boolean retValue;
+
+		if( mArtistId != Constants.NULL_ID ) {
+			retValue = artist.getArtistId() == mArtistId;
+		}
+		else {
+			retValue = artist.getName().equals( mArtistName );
+		}
+
+		return( retValue );
+	}
+
 	@Override
 	public void onReceiveResult( int resultCode, Bundle resultData ) {
 		if( resultCode == NoiseRemoteApi.RemoteResultSuccess ) {
@@ -37,7 +60,7 @@ public class ArtistResolver implements ServiceResultReceiver.Receiver {
 
 			if( artistList != null ) {
 				for( Artist artist : artistList ) {
-					if( artist.getArtistId() == mArtistId ) {
+					if( determineMatch( artist )) {
 						Bundle  artistData = new Bundle();
 
 						artistData.putParcelable( NoiseRemoteApi.Artist, artist );

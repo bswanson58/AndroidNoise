@@ -26,7 +26,7 @@ import android.widget.TextView;
 import com.SecretSquirrel.AndroidNoise.R;
 import com.SecretSquirrel.AndroidNoise.dto.PlayQueueListResult;
 import com.SecretSquirrel.AndroidNoise.dto.PlayQueueTrack;
-import com.SecretSquirrel.AndroidNoise.events.EventAlbumRequest;
+import com.SecretSquirrel.AndroidNoise.events.EventAlbumNameRequest;
 import com.SecretSquirrel.AndroidNoise.events.EventQueueTimeUpdate;
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
 import com.SecretSquirrel.AndroidNoise.model.NoiseRemoteApplication;
@@ -123,9 +123,9 @@ public class QueueListFragment extends Fragment  {
 			mQueueListView.setOnItemClickListener( new AdapterView.OnItemClickListener() {
 				@Override
 				public void onItemClick( AdapterView<?> adapterView, View view, int i, long l ) {
-					//PlayQueueTrack  track = mQueueList.get( i );
+					PlayQueueTrack  track = mQueueList.get( i );
 
-					EventBus.getDefault().post( new EventAlbumRequest( Constants.NULL_ID, Constants.NULL_ID ));
+					EventBus.getDefault().post( new EventAlbumNameRequest( track.getArtistName(), track.getAlbumName()));
 				}
 			} );
 

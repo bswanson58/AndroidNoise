@@ -15,6 +15,7 @@ import com.SecretSquirrel.AndroidNoise.R;
 import com.SecretSquirrel.AndroidNoise.dto.Album;
 import com.SecretSquirrel.AndroidNoise.dto.Artist;
 import com.SecretSquirrel.AndroidNoise.dto.LibraryFocusArgs;
+import com.SecretSquirrel.AndroidNoise.events.EventAlbumNameRequest;
 import com.SecretSquirrel.AndroidNoise.events.EventAlbumRequest;
 import com.SecretSquirrel.AndroidNoise.events.EventArtistRequest;
 import com.SecretSquirrel.AndroidNoise.events.EventServerSelected;
@@ -178,14 +179,32 @@ public class ShellActivity extends ActionBarActivity
 			@Override
 			public void onReceiveResult( int resultCode, Bundle resultData ) {
 				if( resultCode == NoiseRemoteApi.RemoteResultSuccess ) {
-					Artist  artist = resultData.getParcelable( NoiseRemoteApi.Artist );
-					Album   album = resultData.getParcelable( NoiseRemoteApi.Album );
-
-					mLibraryFocusArgs = new LibraryFocusArgs( artist, album );
-					mNavigationDrawerFragment.selectId( LIBRARY_ITEM_ID );
+					requestLibraryFocus( resultData );
 				}
 			}
 		});
+	}
+
+	@SuppressWarnings( "unused" )
+	public void onEvent( EventAlbumNameRequest args ) {
+		ArtistAlbumResolver resolver = new ArtistAlbumResolver( getApplicationState().getDataClient());
+
+		resolver.requestArtistAlbum( args.getArtistName(), args.getAlbumName(), new ServiceResultReceiver.Receiver() {
+			@Override
+			public void onReceiveResult( int resultCode, Bundle resultData ) {
+				if( resultCode == NoiseRemoteApi.RemoteResultSuccess ) {
+					requestLibraryFocus( resultData );
+				}
+			}
+		});
+	}
+
+	private void requestLibraryFocus( Bundle args ) {
+		Artist  artist = args.getParcelable( NoiseRemoteApi.Artist );
+		Album   album = args.getParcelable( NoiseRemoteApi.Album );
+
+		mLibraryFocusArgs = new LibraryFocusArgs( artist, album );
+		mNavigationDrawerFragment.selectId( LIBRARY_ITEM_ID );
 	}
 
 	@Override
