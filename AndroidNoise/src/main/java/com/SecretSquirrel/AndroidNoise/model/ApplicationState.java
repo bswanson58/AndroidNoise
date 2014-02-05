@@ -81,7 +81,7 @@ public class ApplicationState implements IApplicationState {
 				mRecentData.stop();
 			}
 
-			mRecentData = new RecentDataManager();
+			mRecentData = new RecentDataManager( mContext, mCurrentServer );
 			mRecentData.start();
 		}
 	}
