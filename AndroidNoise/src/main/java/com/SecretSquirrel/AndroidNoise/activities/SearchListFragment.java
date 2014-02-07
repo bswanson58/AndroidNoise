@@ -4,7 +4,6 @@ package com.SecretSquirrel.AndroidNoise.activities;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
@@ -25,13 +24,15 @@ import com.SecretSquirrel.AndroidNoise.events.EventAlbumRequest;
 import com.SecretSquirrel.AndroidNoise.events.EventArtistRequest;
 import com.SecretSquirrel.AndroidNoise.events.EventPlaySearchItem;
 import com.SecretSquirrel.AndroidNoise.events.EventSearchRequest;
-import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
-import com.SecretSquirrel.AndroidNoise.model.NoiseRemoteApplication;
+import com.SecretSquirrel.AndroidNoise.services.NoiseSearchClient;
 import com.SecretSquirrel.AndroidNoise.support.Constants;
+import com.SecretSquirrel.AndroidNoise.support.IocUtility;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+
+import javax.inject.Inject;
 
 import de.greenrobot.event.EventBus;
 import rx.Subscription;
@@ -50,6 +51,8 @@ public class SearchListFragment extends Fragment {
 	private SearchResultAdapter         mSearchListAdapter;
 	private Subscription                mSearchSubscription;
 
+	@Inject	NoiseSearchClient           mSearchClient;
+
 	public static SearchListFragment newInstance() {
 		return( new SearchListFragment());
 	}
@@ -57,6 +60,8 @@ public class SearchListFragment extends Fragment {
 	@Override
 	public void onCreate( Bundle savedInstanceState ) {
 		super.onCreate( savedInstanceState );
+
+		IocUtility.inject( this );
 
 		if( savedInstanceState != null ) {
 			mResultList = savedInstanceState.getParcelableArrayList( SEARCH_LIST );
@@ -150,7 +155,7 @@ public class SearchListFragment extends Fragment {
 		clearSubscription();
 
 		if(!TextUtils.isEmpty( args.getSearchTerm())) {
-			mSearchSubscription = AndroidObservable.fromFragment( this, getApplicationState().getSearchClient().Search( args.getSearchTerm()))
+			mSearchSubscription = AndroidObservable.fromFragment( this, mSearchClient.Search( args.getSearchTerm()))
 					.subscribe( new Action1<SearchResult>() {
 							@Override
 							public void call( SearchResult searchResult ) {
@@ -186,12 +191,6 @@ public class SearchListFragment extends Fragment {
 
 		mSearchListAdapter.notifyDataSetChanged();
 		clearSubscription();
-	}
-
-	private IApplicationState getApplicationState() {
-		NoiseRemoteApplication application = (NoiseRemoteApplication)getActivity().getApplication();
-
-		return( application.getApplicationState());
 	}
 
 	private class SearchResultAdapter extends ArrayAdapter<SearchResultItem> {

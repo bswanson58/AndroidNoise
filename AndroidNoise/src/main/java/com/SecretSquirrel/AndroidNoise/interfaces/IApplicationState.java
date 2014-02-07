@@ -4,7 +4,6 @@ package com.SecretSquirrel.AndroidNoise.interfaces;
 
 import android.content.ServiceConnection;
 import com.SecretSquirrel.AndroidNoise.dto.ServerInformation;
-import com.SecretSquirrel.AndroidNoise.services.ServiceResultReceiver;
 
 import rx.Observable;
 
@@ -13,13 +12,11 @@ public interface IApplicationState {
 	boolean                         resumeOperation();
 
 	boolean                         getIsConnected();
+	ServerInformation               getCurrentServer();
 	Observable<ServerInformation>   locateServers();
 	void                            SelectServer( ServerInformation server );
 
-	INoiseServer    getNoiseClient();
 	INoiseData      getDataClient();
-	INoiseQueue     getQueueClient();
-	INoiseSearch    getSearchClient();
 	IRecentData     getRecentData();
 
 	void            registerForEvents( ServiceConnection client );

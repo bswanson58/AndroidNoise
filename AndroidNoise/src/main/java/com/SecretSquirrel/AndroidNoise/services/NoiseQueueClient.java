@@ -11,12 +11,13 @@ import com.SecretSquirrel.AndroidNoise.dto.QueuedTrackResult;
 import com.SecretSquirrel.AndroidNoise.dto.Track;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseQueue;
 import com.SecretSquirrel.AndroidNoise.services.rto.BaseServerResult;
-import com.SecretSquirrel.AndroidNoise.services.rto.RemoteServerQueueApi;
+import com.SecretSquirrel.AndroidNoise.services.noiseApi.RemoteServerQueueApi;
 import com.SecretSquirrel.AndroidNoise.support.Constants;
 
 import java.util.EnumMap;
 
-import retrofit.RestAdapter;
+import javax.inject.Inject;
+
 import rx.Observable;
 import rx.Observer;
 import rx.Subscription;
@@ -28,12 +29,12 @@ import rx.util.functions.Action1;
 public class NoiseQueueClient implements INoiseQueue {
 	private static final String     TAG = NoiseQueueClient.class.getName();
 
-	private final String                                mServerAddress;
-	private RemoteServerQueueApi                        mService;
+	private final RemoteServerQueueApi                  mService;
 	public  final EnumMap<TransportCommand, Integer>    mTransportCommands;
 
-	public NoiseQueueClient( String serverAddress ) {
-		mServerAddress = serverAddress;
+	@Inject
+	public NoiseQueueClient( RemoteServerQueueApi queueApi ) {
+		mService = queueApi;
 
 		mTransportCommands = new EnumMap<TransportCommand, Integer>( TransportCommand.class );
 
@@ -72,7 +73,7 @@ public class NoiseQueueClient implements INoiseQueue {
 			@Override
 			public Subscription onSubscribe( Observer<? super QueuedTrackResult> observer ) {
 				try {
-					observer.onNext( new QueuedTrackResult( track, getService().EnqueueTrack( track.getTrackId())));
+					observer.onNext( new QueuedTrackResult( track, mService.EnqueueTrack( track.getTrackId())));
 					observer.onCompleted();
 				} catch( Exception e ) {
 					observer.onError( e );
@@ -110,7 +111,7 @@ public class NoiseQueueClient implements INoiseQueue {
 			@Override
 			public Subscription onSubscribe( Observer<? super QueuedAlbumResult> observer) {
 				try {
-					observer.onNext( new QueuedAlbumResult( album, getService().EnqueueAlbum( album.getAlbumId())));
+					observer.onNext( new QueuedAlbumResult( album, mService.EnqueueAlbum( album.getAlbumId())));
 					observer.onCompleted();
 				} catch( Exception e ) {
 					observer.onError( e );
@@ -134,7 +135,7 @@ public class NoiseQueueClient implements INoiseQueue {
 			@Override
 			public Subscription onSubscribe( Observer<? super PlayQueueListResult> observer ) {
 				try {
-					observer.onNext( new PlayQueueListResult( getService().GetQueuedTrackList()));
+					observer.onNext( new PlayQueueListResult( mService.GetQueuedTrackList()));
 					observer.onCompleted();
 				}
 				catch( Exception ex ) {
@@ -152,7 +153,7 @@ public class NoiseQueueClient implements INoiseQueue {
 			@Override
 			public Subscription onSubscribe( Observer<? super BaseServerResult> observer ) {
 				try {
-					observer.onNext( new BaseServerResult( getService().ExecuteTransportCommand( mTransportCommands.get( command ))));
+					observer.onNext( new BaseServerResult( mService.ExecuteTransportCommand( mTransportCommands.get( command ))));
 					observer.onCompleted();
 				}
 				catch( Exception ex ) {
@@ -162,21 +163,5 @@ public class NoiseQueueClient implements INoiseQueue {
 				return( Subscriptions.empty());
 			}
 		} )).subscribeOn( Schedulers.threadPoolForIO());
-	}
-
-	private RemoteServerQueueApi getService() {
-		if( mService == null ) {
-			mService = buildService( mServerAddress );
-		}
-
-		return( mService );
-	}
-
-	private RemoteServerQueueApi buildService( String serverAddress ) {
-		RestAdapter restAdapter = new RestAdapter.Builder()
-				.setServer( serverAddress )
-				.build();
-
-		return( restAdapter.create( RemoteServerQueueApi.class ));
 	}
 }

@@ -13,7 +13,7 @@ import com.SecretSquirrel.AndroidNoise.dto.Artist;
 import com.SecretSquirrel.AndroidNoise.dto.ArtistInfo;
 import com.SecretSquirrel.AndroidNoise.dto.Favorite;
 import com.SecretSquirrel.AndroidNoise.dto.Track;
-import com.SecretSquirrel.AndroidNoise.services.rto.RemoteServerDataApi;
+import com.SecretSquirrel.AndroidNoise.services.noiseApi.RemoteServerDataApi;
 import com.SecretSquirrel.AndroidNoise.services.rto.RoAlbum;
 import com.SecretSquirrel.AndroidNoise.services.rto.RoAlbumInfoResult;
 import com.SecretSquirrel.AndroidNoise.services.rto.RoAlbumListResult;

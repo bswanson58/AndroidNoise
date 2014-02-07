@@ -19,19 +19,25 @@ import com.SecretSquirrel.AndroidNoise.events.EventPlayFavorite;
 import com.SecretSquirrel.AndroidNoise.events.EventPlaySearchItem;
 import com.SecretSquirrel.AndroidNoise.events.EventPlayTrack;
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
+import com.SecretSquirrel.AndroidNoise.interfaces.INoiseQueue;
 import com.SecretSquirrel.AndroidNoise.services.ArtistResolver;
 import com.SecretSquirrel.AndroidNoise.services.NoiseRemoteApi;
 import com.SecretSquirrel.AndroidNoise.services.ServiceResultReceiver;
 import com.SecretSquirrel.AndroidNoise.support.Constants;
 
+import javax.inject.Inject;
+
 import de.greenrobot.event.EventBus;
 import rx.util.functions.Action1;
 
 public class QueueRequestHandler {
-	private Context mContext;
-	private IApplicationState mApplicationState;
+	private final Context           mContext;
+	private final INoiseQueue       mNoiseQueue;
+	private final IApplicationState mApplicationState;
 
-	public QueueRequestHandler( Context context, IApplicationState applicationState ) {
+	@Inject
+	public QueueRequestHandler( Context context, INoiseQueue noiseQueue, IApplicationState applicationState ) {
+		mNoiseQueue = noiseQueue;
 		mContext = context;
 		mApplicationState = applicationState;
 
@@ -76,7 +82,7 @@ public class QueueRequestHandler {
 
 	public void PlayAlbum( Album album ) {
 		if( album != null ) {
-			mApplicationState.getQueueClient().EnqueueAlbum( album, new Action1<QueuedAlbumResult>() {
+			mNoiseQueue.EnqueueAlbum( album, new Action1<QueuedAlbumResult>() {
 				@Override
 				public void call( QueuedAlbumResult queuedAlbumResult ) {
 					if( queuedAlbumResult.Success ) {
@@ -94,7 +100,7 @@ public class QueueRequestHandler {
 
 	public void PlayTrack( Track track ) {
 		if( track != null ) {
-			mApplicationState.getQueueClient().EnqueueTrack( track, new Action1<QueuedTrackResult>() {
+			mNoiseQueue.EnqueueTrack( track, new Action1<QueuedTrackResult>() {
 				@Override
 				public void call( QueuedTrackResult queuedTrackResult ) {
 					if( queuedTrackResult.Success ) {

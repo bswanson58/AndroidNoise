@@ -29,12 +29,16 @@ import com.SecretSquirrel.AndroidNoise.dto.PlayQueueTrack;
 import com.SecretSquirrel.AndroidNoise.events.EventAlbumNameRequest;
 import com.SecretSquirrel.AndroidNoise.events.EventQueueTimeUpdate;
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
+import com.SecretSquirrel.AndroidNoise.interfaces.INoiseQueue;
 import com.SecretSquirrel.AndroidNoise.model.NoiseRemoteApplication;
 import com.SecretSquirrel.AndroidNoise.services.EventHostService;
 import com.SecretSquirrel.AndroidNoise.support.Constants;
+import com.SecretSquirrel.AndroidNoise.support.IocUtility;
 
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
+
+import javax.inject.Inject;
 
 import de.greenrobot.event.EventBus;
 import rx.Subscription;
@@ -52,6 +56,8 @@ public class QueueListFragment extends Fragment  {
 	private Messenger                   mMessenger;
 	private Messenger                   mService;
 	private boolean                     mIsBound;
+
+	@Inject	INoiseQueue                 mNoiseQueue;
 
 	public static QueueListFragment newInstance() {
 		return( new QueueListFragment());
@@ -99,6 +105,8 @@ public class QueueListFragment extends Fragment  {
 	@Override
 	public void onCreate( Bundle savedInstanceState ) {
 		super.onCreate( savedInstanceState );
+
+		IocUtility.inject( this );
 
 		if( savedInstanceState != null ) {
 			mQueueList = savedInstanceState.getParcelableArrayList( QUEUE_LIST );
@@ -210,7 +218,7 @@ public class QueueListFragment extends Fragment  {
 			mQueueSubscription = null;
 		}
 
-		mQueueSubscription = getApplicationState().getQueueClient()
+		mQueueSubscription = mNoiseQueue
 				.GetQueuedTrackList( new Action1<PlayQueueListResult>() {
 					                     @Override
 					                     public void call( PlayQueueListResult playQueueListResult ) {

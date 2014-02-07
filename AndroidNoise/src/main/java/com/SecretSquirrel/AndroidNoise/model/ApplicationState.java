@@ -9,18 +9,14 @@ import android.content.ServiceConnection;
 import com.SecretSquirrel.AndroidNoise.dto.ServerInformation;
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseData;
-import com.SecretSquirrel.AndroidNoise.interfaces.INoiseQueue;
-import com.SecretSquirrel.AndroidNoise.interfaces.INoiseSearch;
-import com.SecretSquirrel.AndroidNoise.interfaces.INoiseServer;
 import com.SecretSquirrel.AndroidNoise.interfaces.IRecentData;
 import com.SecretSquirrel.AndroidNoise.services.EventHostService;
 import com.SecretSquirrel.AndroidNoise.services.NoiseDataCacheClient;
 import com.SecretSquirrel.AndroidNoise.services.NoiseDataClient;
-import com.SecretSquirrel.AndroidNoise.services.NoiseQueueClient;
-import com.SecretSquirrel.AndroidNoise.services.NoiseRemoteClient;
-import com.SecretSquirrel.AndroidNoise.services.NoiseSearchClient;
 import com.SecretSquirrel.AndroidNoise.services.RecentDataManager;
 import com.SecretSquirrel.AndroidNoise.services.ServiceLocator;
+
+import javax.inject.Inject;
 
 import rx.Observable;
 
@@ -28,17 +24,12 @@ public class ApplicationState implements IApplicationState {
 	private Context                 mContext;
 	private ServerInformation       mCurrentServer;
 	private boolean                 mIsConnected;
-	private NoiseRemoteClient       mNoiseClient;
 	private NoiseDataCacheClient    mDataClient;
-	private NoiseQueueClient        mQueueClient;
-	private NoiseSearchClient       mSearchClient;
-	private QueueRequestHandler     mQueueRequestHandler;
 	private IRecentData             mRecentData;
 
+	@Inject
 	public ApplicationState( Context context ) {
 		mContext = context;
-
-		mQueueRequestHandler = new QueueRequestHandler( mContext, this );
 	}
 
 	public boolean getIsConnected() {
@@ -46,20 +37,12 @@ public class ApplicationState implements IApplicationState {
 			   ( mCurrentServer != null ));
 	}
 
-	public INoiseServer getNoiseClient() {
-		return( mNoiseClient );
+	public ServerInformation getCurrentServer() {
+		return( mCurrentServer );
 	}
 
 	public INoiseData getDataClient() {
 		return( mDataClient );
-	}
-
-	public INoiseQueue getQueueClient() {
-		return( mQueueClient );
-	}
-
-	public INoiseSearch getSearchClient() {
-		return( mSearchClient );
 	}
 
 	public IRecentData getRecentData() {
@@ -71,10 +54,7 @@ public class ApplicationState implements IApplicationState {
 		mIsConnected = mCurrentServer != null;
 
 		if( server != null ) {
-			mNoiseClient = new NoiseRemoteClient( mContext, mCurrentServer.getServerAddress());
 			mDataClient = new NoiseDataCacheClient( new NoiseDataClient( mContext, mCurrentServer.getServerAddress()));
-			mQueueClient = new NoiseQueueClient( mCurrentServer.getServerAddress());
-			mSearchClient = new NoiseSearchClient( mCurrentServer.getServerAddress());
 
 			if( mRecentData != null ) {
 				mRecentData.persistData();

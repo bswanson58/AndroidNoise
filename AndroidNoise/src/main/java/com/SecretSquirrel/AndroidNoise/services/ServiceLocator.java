@@ -8,8 +8,10 @@ import android.os.ResultReceiver;
 
 import com.SecretSquirrel.AndroidNoise.dto.ServerInformation;
 import com.SecretSquirrel.AndroidNoise.dto.ServerVersion;
+import com.SecretSquirrel.AndroidNoise.services.noiseApi.RemoteServerRestApi;
 import com.SecretSquirrel.AndroidNoise.services.rto.ServiceInformation;
 
+import retrofit.RestAdapter;
 import rx.Observable;
 import rx.Observer;
 import rx.Subscription;
@@ -65,7 +67,8 @@ public class ServiceLocator {
 	private static void onServiceInformation( final ServiceInformation serviceInformation,
 	                                          final Observer<? super ServerInformation> observer,
 	                                          final Context context ) {
-		NoiseRemoteClient   remoteClient = new NoiseRemoteClient( context, serviceInformation.getHostAddress());
+		NoiseRemoteClient   remoteClient = new NoiseRemoteClient( createAdapter(serviceInformation.getHostAddress()),
+																  serviceInformation.getHostAddress(), context );
 
 		remoteClient.getServerVersion( new ResultReceiver( null ) {
 			@Override
@@ -78,5 +81,11 @@ public class ServiceLocator {
 					}
 				}
 			}} );
+	}
+
+	private static RemoteServerRestApi createAdapter( String serverAddress ) {
+		RestAdapter restAdapter = new RestAdapter.Builder().setServer( serverAddress ).build();
+
+		return( restAdapter.create( RemoteServerRestApi.class ));
 	}
 }

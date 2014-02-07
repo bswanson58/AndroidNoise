@@ -76,6 +76,8 @@
     <orderEntry type="library" exported="" name="support-v4-19.0.1" level="project" />
     <orderEntry type="library" exported="" name="rxjava-android-0.14.9" level="project" />
     <orderEntry type="library" exported="" name="ComAndroidSupportAppcompatV71901.aar" level="project" />
+    <orderEntry type="library" exported="" name="dagger-compiler-1.2.0" level="project" />
+    <orderEntry type="library" exported="" name="com.squareup.dagger:dagger:1.2.0" level="project" />
   </component>
 </module>
 

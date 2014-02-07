@@ -8,7 +8,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.SecretSquirrel.AndroidNoise.dto.ServerVersion;
-import com.SecretSquirrel.AndroidNoise.services.rto.RemoteServerRestApi;
+import com.SecretSquirrel.AndroidNoise.services.noiseApi.RemoteServerRestApi;
 import com.SecretSquirrel.AndroidNoise.services.rto.RoServerVersion;
 import com.SecretSquirrel.AndroidNoise.support.Constants;
 
