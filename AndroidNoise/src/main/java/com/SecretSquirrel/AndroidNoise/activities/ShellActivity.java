@@ -154,6 +154,9 @@ public class ShellActivity extends ActionBarActivity
 		if( mCurrentChildFragment != null ) {
 			mNavigationDrawerFragment.syncWithFragment( mCurrentChildFragment.getFragmentId());
 		}
+		else {
+			finish();
+		}
 	}
 
 	@SuppressWarnings( "unused" )
@@ -242,6 +245,12 @@ public class ShellActivity extends ActionBarActivity
 
 		if( fragment != null ) {
 			FragmentManager fragmentManager = getSupportFragmentManager();
+
+			// If we are leaving the servers screen, clear the back stack.
+			if(( mCurrentChildFragment != null ) &&
+			   ( mCurrentChildFragment.getFragmentId() == SERVERS_ITEM_ID )) {
+				fragmentManager.popBackStack( null, FragmentManager.POP_BACK_STACK_INCLUSIVE );
+			}
 
 			fragmentManager.beginTransaction()
 					.replace( R.id.container, fragment )
