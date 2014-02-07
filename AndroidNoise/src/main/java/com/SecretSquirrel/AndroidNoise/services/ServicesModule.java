@@ -33,17 +33,17 @@ import dagger.Provides;
 )
 public class ServicesModule {
 	@Provides
-	public INoiseServer provideNoiseServer( RemoteServerRestApi serverApi, IApplicationState applicationState, Context context ) {
-		return( new NoiseRemoteClient( serverApi, applicationState, context ));
+	public INoiseServer provideNoiseServer( NoiseRemoteClient client ) {
+		return( client );
 	}
 
 	@Provides
-	public INoiseQueue providesNoiseQueue( RemoteServerQueueApi queueApi ) {
-		return( new NoiseQueueClient( queueApi ));
+	public INoiseQueue providesNoiseQueue( NoiseQueueClient client ) {
+		return( client );
 	}
 
 	@Provides
-	public INoiseSearch providesNoiseSearch( RemoteServerSearchApi searchApi ) {
-		return( new NoiseSearchClient( searchApi ));
+	public INoiseSearch providesNoiseSearch( NoiseSearchClient client ) {
+		return( client );
 	}
 }

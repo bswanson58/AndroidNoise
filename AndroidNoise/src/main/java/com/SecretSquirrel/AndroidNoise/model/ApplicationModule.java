@@ -27,7 +27,7 @@ public class ApplicationModule {
 
 	@Provides
 	@Singleton
-	public IApplicationState provideApplicationState() {
-		return( new ApplicationState( mContext ));
+	public IApplicationState provideApplicationState( ApplicationState applicationState ) {
+		return( applicationState );
 	}
 }
