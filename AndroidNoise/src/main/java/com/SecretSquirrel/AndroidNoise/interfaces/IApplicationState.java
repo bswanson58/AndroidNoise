@@ -17,7 +17,6 @@ public interface IApplicationState {
 	void                            SelectServer( ServerInformation server );
 
 	INoiseData      getDataClient();
-	IRecentData     getRecentData();
 
 	void            registerForEvents( ServiceConnection client );
 	void            unregisterFromEvents( ServiceConnection client );

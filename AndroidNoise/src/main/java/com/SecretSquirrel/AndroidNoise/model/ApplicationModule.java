@@ -11,6 +11,7 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import de.greenrobot.event.EventBus;
 
 @Module( library = true )
 public class ApplicationModule {
@@ -23,6 +24,11 @@ public class ApplicationModule {
 	@Provides
 	public Context provideContext() {
 		return( mContext );
+	}
+
+	@Provides
+	public EventBus provideEventBus() {
+		return( EventBus.getDefault());
 	}
 
 	@Provides

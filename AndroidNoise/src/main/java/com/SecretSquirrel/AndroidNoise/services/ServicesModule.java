@@ -2,23 +2,21 @@ package com.SecretSquirrel.AndroidNoise.services;
 
 // Secret Squirrel Software - Created by bswanson on 2/7/14.
 
-import android.content.Context;
-
-import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
-import com.SecretSquirrel.AndroidNoise.interfaces.INoiseData;
+import com.SecretSquirrel.AndroidNoise.events.EventServerSelected;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseQueue;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseSearch;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseServer;
+import com.SecretSquirrel.AndroidNoise.interfaces.IRecentData;
 import com.SecretSquirrel.AndroidNoise.model.ApplicationModule;
 import com.SecretSquirrel.AndroidNoise.model.QueueRequestHandler;
 import com.SecretSquirrel.AndroidNoise.services.noiseApi.NoiseApiModule;
-import com.SecretSquirrel.AndroidNoise.services.noiseApi.RemoteServerDataApi;
-import com.SecretSquirrel.AndroidNoise.services.noiseApi.RemoteServerQueueApi;
-import com.SecretSquirrel.AndroidNoise.services.noiseApi.RemoteServerRestApi;
-import com.SecretSquirrel.AndroidNoise.services.noiseApi.RemoteServerSearchApi;
 
+import javax.inject.Inject;
+
+import dagger.Lazy;
 import dagger.Module;
 import dagger.Provides;
+import de.greenrobot.event.EventBus;
 
 @Module(
 		includes = {
@@ -32,6 +30,19 @@ import dagger.Provides;
 		}
 )
 public class ServicesModule {
+	private IRecentData mRecentData;
+	private EventBus    mEventBus;
+
+	@SuppressWarnings("unused")
+	public void onEvent( EventServerSelected args ) {
+		if( mRecentData != null ) {
+			mRecentData.persistData();
+			mRecentData.stop();
+		}
+
+		mRecentData = null;
+	}
+
 	@Provides
 	public INoiseServer provideNoiseServer( NoiseRemoteClient client ) {
 		return( client );
@@ -45,5 +56,21 @@ public class ServicesModule {
 	@Provides
 	public INoiseSearch providesNoiseSearch( NoiseSearchClient client ) {
 		return( client );
+	}
+
+	@Provides
+	public IRecentData provideRecentData( Lazy<RecentDataManager> provider, EventBus eventBus ) {
+		if( mEventBus == null ) {
+			mEventBus = eventBus;
+			mEventBus.register( this );
+		}
+
+		if( mRecentData == null ) {
+			mRecentData = provider.get();
+
+			mRecentData.start();
+		}
+
+		return( mRecentData );
 	}
 }

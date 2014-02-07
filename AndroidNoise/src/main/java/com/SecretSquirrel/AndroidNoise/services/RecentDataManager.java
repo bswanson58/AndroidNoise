@@ -6,10 +6,10 @@ import android.content.Context;
 import android.util.Log;
 
 import com.SecretSquirrel.AndroidNoise.dto.Artist;
-import com.SecretSquirrel.AndroidNoise.dto.ServerInformation;
 import com.SecretSquirrel.AndroidNoise.events.EventArtistPlayed;
 import com.SecretSquirrel.AndroidNoise.events.EventArtistViewed;
 import com.SecretSquirrel.AndroidNoise.events.EventRecentDataUpdated;
+import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
 import com.SecretSquirrel.AndroidNoise.interfaces.IRecentData;
 import com.SecretSquirrel.AndroidNoise.support.Constants;
 import com.SecretSquirrel.AndroidNoise.support.NoiseUtils;
@@ -23,6 +23,8 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import de.greenrobot.event.EventBus;
 
 public class RecentDataManager implements IRecentData {
@@ -31,13 +33,14 @@ public class RecentDataManager implements IRecentData {
 	private final static String     RECENTLY_PLAYED_FILE_NAME_FORMAT = "recently played - %s";
 
 	private final Context           mContext;
-	private final ServerInformation mCurrentServer;
+	private final IApplicationState mApplicationState;
 	private RecentArtistList        mRecentlyPlayedList;
 	private RecentArtistList        mRecentlyViewedList;
 
-	public RecentDataManager( Context context, ServerInformation currentServer ) {
+	@Inject
+	public RecentDataManager( Context context, IApplicationState applicationState ) {
 		mContext = context;
-		mCurrentServer = currentServer;
+		mApplicationState = applicationState;
 
 		mRecentlyPlayedList = new RecentArtistList( Constants.RECENT_LIST_SIZE );
 		mRecentlyViewedList = new RecentArtistList( Constants.RECENT_LIST_SIZE );
@@ -45,24 +48,25 @@ public class RecentDataManager implements IRecentData {
 
 	@Override
 	public void start() {
-		loadArtistList( mRecentlyViewedList,
-						String.format( RECENTLY_VIEWED_FILE_NAME_FORMAT,
-									   mCurrentServer.getHostName()));
-		loadArtistList( mRecentlyPlayedList,
-						String.format( RECENTLY_PLAYED_FILE_NAME_FORMAT,
-									   mCurrentServer.getHostName()));
+		if( mApplicationState.getIsConnected()) {
+			String  hostName = mApplicationState.getCurrentServer().getHostName();
+
+			loadArtistList( mRecentlyViewedList, String.format( RECENTLY_VIEWED_FILE_NAME_FORMAT, hostName ));
+			loadArtistList( mRecentlyPlayedList, String.format( RECENTLY_PLAYED_FILE_NAME_FORMAT, hostName ));
+		}
 
 		EventBus.getDefault().register( this );
 	}
 
 	@Override
 	public void persistData() {
-		saveArtistList( mRecentlyViewedList,
-						String.format( RECENTLY_VIEWED_FILE_NAME_FORMAT,
-									   mCurrentServer.getHostName()));
-		saveArtistList( mRecentlyPlayedList,
-						String.format( RECENTLY_PLAYED_FILE_NAME_FORMAT,
-									   mCurrentServer.getHostName()));
+
+		if( mApplicationState.getIsConnected()) {
+			String  hostName = mApplicationState.getCurrentServer().getHostName();
+
+			saveArtistList( mRecentlyViewedList, String.format( RECENTLY_VIEWED_FILE_NAME_FORMAT, hostName ));
+			saveArtistList( mRecentlyPlayedList, String.format( RECENTLY_PLAYED_FILE_NAME_FORMAT, hostName ));
+		}
 	}
 
 	@Override

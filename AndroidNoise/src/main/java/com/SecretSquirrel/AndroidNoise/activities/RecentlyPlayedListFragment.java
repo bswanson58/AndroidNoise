@@ -17,6 +17,7 @@ import com.SecretSquirrel.AndroidNoise.R;
 import com.SecretSquirrel.AndroidNoise.dto.Artist;
 import com.SecretSquirrel.AndroidNoise.events.EventArtistRequest;
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
+import com.SecretSquirrel.AndroidNoise.interfaces.IRecentData;
 import com.SecretSquirrel.AndroidNoise.support.IocUtility;
 
 import java.util.ArrayList;
@@ -32,6 +33,7 @@ public class RecentlyPlayedListFragment extends Fragment {
 	private RecentArtistListAdapter mListAdapter;
 
 	@Inject IApplicationState       mApplicationState;
+	@Inject	IRecentData             mRecentDataService;
 
 	public static RecentlyPlayedListFragment newInstance() {
 		return( new RecentlyPlayedListFragment());
@@ -81,7 +83,7 @@ public class RecentlyPlayedListFragment extends Fragment {
 
 		if(( mRecentlyPlayedList != null ) &&
 		   ( mApplicationState.getIsConnected())) {
-			mArtistList.addAll( mApplicationState.getRecentData().getRecentlyPlayedArtists() );
+			mArtistList.addAll( mRecentDataService.getRecentlyPlayedArtists());
 		}
 
 		mListAdapter.notifyDataSetChanged();

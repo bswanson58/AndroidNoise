@@ -9,11 +9,9 @@ import android.content.ServiceConnection;
 import com.SecretSquirrel.AndroidNoise.dto.ServerInformation;
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseData;
-import com.SecretSquirrel.AndroidNoise.interfaces.IRecentData;
 import com.SecretSquirrel.AndroidNoise.services.EventHostService;
 import com.SecretSquirrel.AndroidNoise.services.NoiseDataCacheClient;
 import com.SecretSquirrel.AndroidNoise.services.NoiseDataClient;
-import com.SecretSquirrel.AndroidNoise.services.RecentDataManager;
 import com.SecretSquirrel.AndroidNoise.services.ServiceLocator;
 
 import javax.inject.Inject;
@@ -25,7 +23,6 @@ public class ApplicationState implements IApplicationState {
 	private ServerInformation       mCurrentServer;
 	private boolean                 mIsConnected;
 	private NoiseDataCacheClient    mDataClient;
-	private IRecentData             mRecentData;
 
 	@Inject
 	public ApplicationState( Context context ) {
@@ -45,33 +42,21 @@ public class ApplicationState implements IApplicationState {
 		return( mDataClient );
 	}
 
-	public IRecentData getRecentData() {
-		return( mRecentData );
-	}
-
 	public void SelectServer( ServerInformation server ) {
 		mCurrentServer = server;
 		mIsConnected = mCurrentServer != null;
 
 		if( server != null ) {
 			mDataClient = new NoiseDataCacheClient( new NoiseDataClient( mContext, mCurrentServer.getServerAddress()));
-
-			if( mRecentData != null ) {
-				mRecentData.persistData();
-				mRecentData.stop();
-			}
-
-			mRecentData = new RecentDataManager( mContext, mCurrentServer );
-			mRecentData.start();
 		}
 	}
 
 	@Override
 	public void pauseOperation() {
 		if( getIsConnected()) {
-			if( mRecentData != null ) {
-				mRecentData.persistData();
-			}
+//			if( mRecentData != null ) {
+//				mRecentData.persistData();
+//			}
 		}
 	}
 

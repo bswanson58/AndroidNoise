@@ -18,6 +18,7 @@ import com.SecretSquirrel.AndroidNoise.dto.Artist;
 import com.SecretSquirrel.AndroidNoise.events.EventArtistRequest;
 import com.SecretSquirrel.AndroidNoise.events.EventRecentDataUpdated;
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
+import com.SecretSquirrel.AndroidNoise.interfaces.IRecentData;
 import com.SecretSquirrel.AndroidNoise.support.IocUtility;
 
 import java.util.ArrayList;
@@ -33,6 +34,7 @@ public class RecentlyViewedListFragment extends Fragment {
 	private ListView                mRecentlyViewedList;
 
 	@Inject IApplicationState       mApplicationState;
+	@Inject	IRecentData             mRecentDataService;
 
 	public static RecentlyViewedListFragment newInstance() {
 		return( new RecentlyViewedListFragment());
@@ -95,7 +97,7 @@ public class RecentlyViewedListFragment extends Fragment {
 
 		if(( mRecentlyViewedList != null ) &&
 		   ( mApplicationState.getIsConnected())) {
-			mArtistList.addAll( mApplicationState.getRecentData().getRecentlyViewedArtists() );
+			mArtistList.addAll( mRecentDataService.getRecentlyViewedArtists());
 		}
 
 		mListAdapter.notifyDataSetChanged();

@@ -28,9 +28,9 @@ public class NoiseRemoteApplication extends Application
 	protected List<Object> getModules() {
 		return Arrays.asList(
 				new ApplicationModule( this ),
-				new ServicesModule(),
-				new NoiseApiModule(),
-				new ActivitiesModule()
+				ServicesModule.class,
+				NoiseApiModule.class,
+				ActivitiesModule.class
 			);
 	}
 
