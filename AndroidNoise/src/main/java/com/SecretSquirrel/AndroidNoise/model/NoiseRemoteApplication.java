@@ -5,7 +5,6 @@ package com.SecretSquirrel.AndroidNoise.model;
 import android.app.Application;
 
 import com.SecretSquirrel.AndroidNoise.activities.ActivitiesModule;
-import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
 import com.SecretSquirrel.AndroidNoise.services.ServicesModule;
 import com.SecretSquirrel.AndroidNoise.services.noiseApi.NoiseApiModule;
 import com.SecretSquirrel.AndroidNoise.support.IocUtility;
@@ -17,32 +16,22 @@ import dagger.ObjectGraph;
 
 public class NoiseRemoteApplication extends Application
 									implements IocUtility.ObjectGraphApplication {
-	private ObjectGraph         mObjectGraph;
-	private ApplicationModule   mApplicationModule;
-	private IApplicationState   mApplicationState;
+	private ObjectGraph     mObjectGraph;
 
 	@Override
 	public void onCreate() {
 		super.onCreate();
 
-		mApplicationState = new ApplicationState( this );
-		mApplicationModule = new ApplicationModule( this, mApplicationState );
-
 		mObjectGraph = ObjectGraph.create( getModules().toArray());
-
 	}
 
 	protected List<Object> getModules() {
-		return Arrays.<Object>asList(
-				mApplicationModule,
+		return Arrays.asList(
+				new ApplicationModule( this ),
 				new ServicesModule(),
 				new NoiseApiModule(),
 				new ActivitiesModule()
-		);
-	}
-
-	public IApplicationState getApplicationState() {
-		return( mApplicationState );
+			);
 	}
 
 	@Override

@@ -14,10 +14,20 @@ import dagger.Module;
 				ApplicationModule.class
 		},
 		injects = {
+				AlbumInfoFragment.class,
+				AlbumListFragment.class,
+				ArtistInfoFragment.class,
+				ArtistListFragment.class,
+				FavoritesListFragment.class,
 				QueueListFragment.class,
+				QueueRequestHandler.class,
+				RecentlyPlayedListFragment.class,
+				RecentlyViewedListFragment.class,
 				SearchListFragment.class,
+				ServerListFragment.class,
+				TrackListFragment.class,
 				TransportFragment.class,
-				QueueRequestHandler.class
+				ShellActivity.class
 		}
 )
 public class ActivitiesModule {

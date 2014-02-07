@@ -17,10 +17,12 @@ import com.SecretSquirrel.AndroidNoise.R;
 import com.SecretSquirrel.AndroidNoise.dto.Artist;
 import com.SecretSquirrel.AndroidNoise.events.EventArtistRequest;
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
-import com.SecretSquirrel.AndroidNoise.model.NoiseRemoteApplication;
+import com.SecretSquirrel.AndroidNoise.support.IocUtility;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.inject.Inject;
 
 import de.greenrobot.event.EventBus;
 
@@ -29,6 +31,8 @@ public class RecentlyPlayedListFragment extends Fragment {
 	private ListView                mRecentlyPlayedList;
 	private RecentArtistListAdapter mListAdapter;
 
+	@Inject IApplicationState       mApplicationState;
+
 	public static RecentlyPlayedListFragment newInstance() {
 		return( new RecentlyPlayedListFragment());
 	}
@@ -36,6 +40,8 @@ public class RecentlyPlayedListFragment extends Fragment {
 	@Override
 	public void onCreate( Bundle savedInstanceState ) {
 		super.onCreate( savedInstanceState );
+
+		IocUtility.inject( this );
 
 		mArtistList = new ArrayList<Artist>();
 		mListAdapter = new RecentArtistListAdapter( getActivity(), mArtistList );
@@ -74,17 +80,11 @@ public class RecentlyPlayedListFragment extends Fragment {
 		mArtistList.clear();
 
 		if(( mRecentlyPlayedList != null ) &&
-		   ( getApplicationState().getIsConnected())) {
-			mArtistList.addAll( getApplicationState().getRecentData().getRecentlyPlayedArtists());
+		   ( mApplicationState.getIsConnected())) {
+			mArtistList.addAll( mApplicationState.getRecentData().getRecentlyPlayedArtists() );
 		}
 
 		mListAdapter.notifyDataSetChanged();
-	}
-
-	private IApplicationState getApplicationState() {
-		NoiseRemoteApplication application = (NoiseRemoteApplication)getActivity().getApplication();
-
-		return( application.getApplicationState());
 	}
 
 	private class RecentArtistListAdapter extends ArrayAdapter<Artist> {

@@ -20,15 +20,17 @@ import com.SecretSquirrel.AndroidNoise.events.EventAlbumRequest;
 import com.SecretSquirrel.AndroidNoise.events.EventArtistRequest;
 import com.SecretSquirrel.AndroidNoise.events.EventServerSelected;
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
-import com.SecretSquirrel.AndroidNoise.model.NoiseRemoteApplication;
 import com.SecretSquirrel.AndroidNoise.services.ArtistAlbumResolver;
 import com.SecretSquirrel.AndroidNoise.services.ArtistResolver;
 import com.SecretSquirrel.AndroidNoise.services.NoiseRemoteApi;
 import com.SecretSquirrel.AndroidNoise.services.ServiceResultReceiver;
+import com.SecretSquirrel.AndroidNoise.support.IocUtility;
 import com.SecretSquirrel.AndroidNoise.ui.NavigationDrawerAdapter;
 import com.SecretSquirrel.AndroidNoise.ui.NavigationDrawerConfiguration;
 import com.SecretSquirrel.AndroidNoise.ui.NavigationDrawerItem;
 import com.SecretSquirrel.AndroidNoise.ui.NavigationMenuItem;
+
+import javax.inject.Inject;
 
 import de.greenrobot.event.EventBus;
 
@@ -49,6 +51,7 @@ public class ShellActivity extends ActionBarActivity
 	private BaseShellFragment           mCurrentChildFragment;
 	private LibraryFocusArgs            mLibraryFocusArgs;
 	private boolean                     mSelectLastServer;
+	@Inject IApplicationState           mApplicationState;
 
 	@Override
 	protected void onCreate( Bundle savedInstanceState ) {
@@ -58,6 +61,8 @@ public class ShellActivity extends ActionBarActivity
 			finish();
 			return;
 		}
+
+		IocUtility.inject( this );
 
 		setContentView( R.layout.activity_shell );
 
@@ -82,7 +87,7 @@ public class ShellActivity extends ActionBarActivity
 		super.onResume();
 
 		// If we cannot resume operation, display the server select screen.
-		if(!getApplicationState().resumeOperation()) {
+		if(!mApplicationState.resumeOperation()) {
 			if(( mCurrentChildFragment == null ) ||
 		       ( mCurrentChildFragment.getFragmentId() != SERVERS_ITEM_ID )) {
 				mNavigationDrawerFragment.selectId( SERVERS_ITEM_ID );
@@ -94,7 +99,7 @@ public class ShellActivity extends ActionBarActivity
 	protected void onPause() {
 		super.onPause();
 
-		getApplicationState().pauseOperation();
+		mApplicationState.pauseOperation();
 	}
 
 	@Override
@@ -158,22 +163,22 @@ public class ShellActivity extends ActionBarActivity
 
 	@SuppressWarnings( "unused" )
 	public void onEvent( EventArtistRequest args ) {
-		ArtistResolver resolver = new ArtistResolver( getApplicationState().getDataClient());
+		ArtistResolver resolver = new ArtistResolver( mApplicationState.getDataClient());
 
 		resolver.requestArtist( args.getArtistId(), new ServiceResultReceiver.Receiver() {
 			@Override
 			public void onReceiveResult( int resultCode, Bundle resultData ) {
-				Artist  artist = resultData.getParcelable( NoiseRemoteApi.Artist );
+				Artist artist = resultData.getParcelable( NoiseRemoteApi.Artist );
 
 				mLibraryFocusArgs = new LibraryFocusArgs( artist );
 				mNavigationDrawerFragment.selectId( LIBRARY_ITEM_ID );
 			}
-		});
+		} );
 	}
 
 	@SuppressWarnings( "unused" )
 	public void onEvent( EventAlbumRequest args ) {
-		ArtistAlbumResolver resolver = new ArtistAlbumResolver( getApplicationState().getDataClient());
+		ArtistAlbumResolver resolver = new ArtistAlbumResolver( mApplicationState.getDataClient());
 
 		resolver.requestArtistAlbum( args.getArtistId(), args.getAlbumId(), new ServiceResultReceiver.Receiver() {
 			@Override
@@ -187,7 +192,7 @@ public class ShellActivity extends ActionBarActivity
 
 	@SuppressWarnings( "unused" )
 	public void onEvent( EventAlbumNameRequest args ) {
-		ArtistAlbumResolver resolver = new ArtistAlbumResolver( getApplicationState().getDataClient());
+		ArtistAlbumResolver resolver = new ArtistAlbumResolver( mApplicationState.getDataClient());
 
 		resolver.requestArtistAlbum( args.getArtistName(), args.getAlbumName(), new ServiceResultReceiver.Receiver() {
 			@Override
@@ -196,7 +201,7 @@ public class ShellActivity extends ActionBarActivity
 					requestLibraryFocus( resultData );
 				}
 			}
-		});
+		} );
 	}
 
 	private void requestLibraryFocus( Bundle args ) {
@@ -292,12 +297,6 @@ public class ShellActivity extends ActionBarActivity
 		}
 
 		return( retValue );
-	}
-
-	private IApplicationState getApplicationState() {
-		NoiseRemoteApplication application = (NoiseRemoteApplication)getApplication();
-
-		return( application.getApplicationState());
 	}
 
 	/**

@@ -30,7 +30,6 @@ import com.SecretSquirrel.AndroidNoise.events.EventAlbumNameRequest;
 import com.SecretSquirrel.AndroidNoise.events.EventQueueTimeUpdate;
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseQueue;
-import com.SecretSquirrel.AndroidNoise.model.NoiseRemoteApplication;
 import com.SecretSquirrel.AndroidNoise.services.EventHostService;
 import com.SecretSquirrel.AndroidNoise.support.Constants;
 import com.SecretSquirrel.AndroidNoise.support.IocUtility;
@@ -58,6 +57,7 @@ public class QueueListFragment extends Fragment  {
 	private boolean                     mIsBound;
 
 	@Inject	INoiseQueue                 mNoiseQueue;
+	@Inject IApplicationState           mApplicationState;
 
 	public static QueueListFragment newInstance() {
 		return( new QueueListFragment());
@@ -146,7 +146,7 @@ public class QueueListFragment extends Fragment  {
 			}
 		}
 
-		if( getApplicationState().getIsConnected()) {
+		if( mApplicationState.getIsConnected()) {
 			bindToEventService();
 
 			if( mQueueList.size() == 0 ) {
@@ -183,7 +183,7 @@ public class QueueListFragment extends Fragment  {
 	}
 
 	private void bindToEventService() {
-		getApplicationState().registerForEvents( mConnection );
+		mApplicationState.registerForEvents( mConnection );
 
 		mIsBound = true;
 	}
@@ -207,7 +207,7 @@ public class QueueListFragment extends Fragment  {
 			}
 
 			// Detach our existing connection.
-			getApplicationState().unregisterFromEvents( mConnection );
+			mApplicationState.unregisterFromEvents( mConnection );
 			mIsBound = false;
 		}
 	}
@@ -257,17 +257,6 @@ public class QueueListFragment extends Fragment  {
 		}
 
 		EventBus.getDefault().post( new EventQueueTimeUpdate( totalMilliseconds, remainingMilliseconds ) );
-	}
-
-	private IApplicationState getApplicationState() {
-		IApplicationState       retValue = null;
-		NoiseRemoteApplication  application = (NoiseRemoteApplication)getActivity().getApplication();
-
-		if( application != null ) {
-			retValue = application.getApplicationState();
-		}
-
-		return( retValue );
 	}
 
 	private class QueueAdapter extends ArrayAdapter<PlayQueueTrack> {

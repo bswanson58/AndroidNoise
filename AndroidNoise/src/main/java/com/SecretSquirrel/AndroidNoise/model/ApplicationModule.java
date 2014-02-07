@@ -12,16 +12,12 @@ import javax.inject.Singleton;
 import dagger.Module;
 import dagger.Provides;
 
-@Module(
-		library = true
-)
+@Module( library = true )
 public class ApplicationModule {
-	private final IApplicationState mApplicationState;
 	private final Context mContext;
 
-	public ApplicationModule( Context context, IApplicationState applicationState ) {
+	public ApplicationModule( Context context ) {
 		mContext = context;
-		mApplicationState = applicationState;
 	}
 
 	@Provides
@@ -32,6 +28,6 @@ public class ApplicationModule {
 	@Provides
 	@Singleton
 	public IApplicationState provideApplicationState() {
-		return( mApplicationState );
+		return( new ApplicationState( mContext ));
 	}
 }

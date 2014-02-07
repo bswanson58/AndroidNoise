@@ -30,10 +30,10 @@ import com.SecretSquirrel.AndroidNoise.dto.Album;
 import com.SecretSquirrel.AndroidNoise.events.EventAlbumSelected;
 import com.SecretSquirrel.AndroidNoise.events.EventPlayAlbum;
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
-import com.SecretSquirrel.AndroidNoise.model.NoiseRemoteApplication;
 import com.SecretSquirrel.AndroidNoise.services.NoiseRemoteApi;
 import com.SecretSquirrel.AndroidNoise.services.ServiceResultReceiver;
 import com.SecretSquirrel.AndroidNoise.support.Constants;
+import com.SecretSquirrel.AndroidNoise.support.IocUtility;
 import com.SecretSquirrel.AndroidNoise.support.NoiseUtils;
 import com.SecretSquirrel.AndroidNoise.ui.FilteredArrayAdapter;
 import com.SecretSquirrel.AndroidNoise.ui.ListViewFilter;
@@ -43,6 +43,8 @@ import com.SecretSquirrel.AndroidNoise.views.ButtonEditText;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+
+import javax.inject.Inject;
 
 import de.greenrobot.event.EventBus;
 
@@ -68,6 +70,8 @@ public class AlbumListFragment extends Fragment
 	private View                    mFilterPanel;
 	private boolean                 mFilterPanelDisplayed;
 
+	@Inject IApplicationState       mApplicationState;
+
 	public static AlbumListFragment newInstance( long artistId ) {
 		AlbumListFragment   fragment = new AlbumListFragment();
 		Bundle              args = new Bundle();
@@ -85,6 +89,8 @@ public class AlbumListFragment extends Fragment
 	@Override
 	public void onCreate( Bundle savedInstanceState ) {
 		super.onCreate( savedInstanceState );
+
+		IocUtility.inject( this );
 
 		setHasOptionsMenu( true );
 
@@ -171,7 +177,7 @@ public class AlbumListFragment extends Fragment
 
 		if( mCurrentArtist != Constants.NULL_ID ) {
 			if( mAlbumList.size() == 0 ) {
-				getApplicationState().getDataClient().GetAlbumList( mCurrentArtist, mReceiver );
+				mApplicationState.getDataClient().GetAlbumList( mCurrentArtist, mReceiver );
 			}
 		}
 		else {
@@ -265,7 +271,7 @@ public class AlbumListFragment extends Fragment
 	@Override
 	public void onListChanged( int itemCount ) {
 		if( mAlbumCount != null ) {
-			mAlbumCount.setText( String.format( "%d albums", itemCount ));
+			mAlbumCount.setText( String.format( "%d albums", itemCount ) );
 		}
 
 		// update the action menu with the filter state.
@@ -306,12 +312,6 @@ public class AlbumListFragment extends Fragment
 		} );
 
 		mAlbumListAdapter.notifyDataSetChanged();
-	}
-
-	private IApplicationState getApplicationState() {
-		NoiseRemoteApplication application = (NoiseRemoteApplication)getActivity().getApplication();
-
-		return( application.getApplicationState());
 	}
 
 	private class AlbumAdapter extends FilteredArrayAdapter<Album>

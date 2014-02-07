@@ -25,11 +25,13 @@ import com.SecretSquirrel.AndroidNoise.events.EventArtistSelected;
 import com.SecretSquirrel.AndroidNoise.events.EventArtistViewed;
 import com.SecretSquirrel.AndroidNoise.events.EventPlayAlbum;
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
-import com.SecretSquirrel.AndroidNoise.model.NoiseRemoteApplication;
 import com.SecretSquirrel.AndroidNoise.services.NoiseRemoteApi;
 import com.SecretSquirrel.AndroidNoise.services.ServiceResultReceiver;
 import com.SecretSquirrel.AndroidNoise.support.Constants;
+import com.SecretSquirrel.AndroidNoise.support.IocUtility;
 import com.SecretSquirrel.AndroidNoise.support.NoiseUtils;
+
+import javax.inject.Inject;
 
 import de.greenrobot.event.EventBus;
 
@@ -52,6 +54,8 @@ public class AlbumInfoFragment extends Fragment
 	private TextView                mTrackCount;
 	private Bitmap                  mUnknownAlbum;
 
+	@Inject IApplicationState       mApplicationState;
+
 	public static AlbumInfoFragment newInstance( Artist artist, Album album ) {
 		AlbumInfoFragment   fragment = new AlbumInfoFragment();
 		Bundle              args = new Bundle();
@@ -66,6 +70,8 @@ public class AlbumInfoFragment extends Fragment
 	@Override
 	public void onCreate( Bundle savedInstanceState ) {
 		super.onCreate( savedInstanceState );
+
+		IocUtility.inject( this );
 
 		setHasOptionsMenu( true );
 
@@ -120,8 +126,8 @@ public class AlbumInfoFragment extends Fragment
 
 		if( mAlbum != null ) {
 			if( mAlbumInfo == null ) {
-				if( getApplicationState().getIsConnected()) {
-					getApplicationState().getDataClient().GetAlbumInfo( mAlbum.getAlbumId(), mServiceResultReceiver );
+				if( mApplicationState.getIsConnected()) {
+					mApplicationState.getDataClient().GetAlbumInfo( mAlbum.getAlbumId(), mServiceResultReceiver );
 				}
 			}
 		}
@@ -236,11 +242,5 @@ public class AlbumInfoFragment extends Fragment
 		if( mAlbumInfo != null ) {
 			outState.putParcelable( ALBUM_INFO_KEY, mAlbumInfo );
 		}
-	}
-
-	private IApplicationState getApplicationState() {
-		NoiseRemoteApplication application = (NoiseRemoteApplication)getActivity().getApplication();
-
-		return( application.getApplicationState());
 	}
 }
