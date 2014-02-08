@@ -42,7 +42,7 @@ public class ApplicationState implements IApplicationState {
 		return( mDataClient );
 	}
 
-	public void SelectServer( ServerInformation server ) {
+	public void selectServer( ServerInformation server ) {
 		mCurrentServer = server;
 		mIsConnected = mCurrentServer != null;
 
@@ -52,16 +52,7 @@ public class ApplicationState implements IApplicationState {
 	}
 
 	@Override
-	public void pauseOperation() {
-		if( getIsConnected()) {
-//			if( mRecentData != null ) {
-//				mRecentData.persistData();
-//			}
-		}
-	}
-
-	@Override
-	public boolean resumeOperation() {
+	public boolean canResumeWithCurrentServer() {
 		boolean retValue = true;
 
 		if( getIsConnected()) {

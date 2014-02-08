@@ -8,13 +8,12 @@ import com.SecretSquirrel.AndroidNoise.dto.ServerInformation;
 import rx.Observable;
 
 public interface IApplicationState {
-	void                            pauseOperation();
-	boolean                         resumeOperation();
+	Observable<ServerInformation>   locateServers();
 
 	boolean                         getIsConnected();
+	boolean                         canResumeWithCurrentServer();
 	ServerInformation               getCurrentServer();
-	Observable<ServerInformation>   locateServers();
-	void                            SelectServer( ServerInformation server );
+	void                            selectServer( ServerInformation server );
 
 	INoiseData      getDataClient();
 

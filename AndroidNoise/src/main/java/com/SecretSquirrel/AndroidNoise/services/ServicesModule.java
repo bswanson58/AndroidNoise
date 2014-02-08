@@ -2,6 +2,7 @@ package com.SecretSquirrel.AndroidNoise.services;
 
 // Secret Squirrel Software - Created by bswanson on 2/7/14.
 
+import com.SecretSquirrel.AndroidNoise.events.EventActivityPausing;
 import com.SecretSquirrel.AndroidNoise.events.EventServerSelected;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseQueue;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseSearch;
@@ -35,6 +36,15 @@ public class ServicesModule {
 
 	@SuppressWarnings("unused")
 	public void onEvent( EventServerSelected args ) {
+		saveRecentData();
+	}
+
+	@SuppressWarnings("unused")
+	public void onEvent( EventActivityPausing args ) {
+		saveRecentData();
+	}
+
+	private void saveRecentData() {
 		if( mRecentData != null ) {
 			mRecentData.persistData();
 			mRecentData.stop();

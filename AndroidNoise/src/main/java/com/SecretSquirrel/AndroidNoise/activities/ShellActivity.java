@@ -15,6 +15,8 @@ import com.SecretSquirrel.AndroidNoise.R;
 import com.SecretSquirrel.AndroidNoise.dto.Album;
 import com.SecretSquirrel.AndroidNoise.dto.Artist;
 import com.SecretSquirrel.AndroidNoise.dto.LibraryFocusArgs;
+import com.SecretSquirrel.AndroidNoise.events.EventActivityPausing;
+import com.SecretSquirrel.AndroidNoise.events.EventActivityResuming;
 import com.SecretSquirrel.AndroidNoise.events.EventAlbumNameRequest;
 import com.SecretSquirrel.AndroidNoise.events.EventAlbumRequest;
 import com.SecretSquirrel.AndroidNoise.events.EventArtistRequest;
@@ -51,7 +53,9 @@ public class ShellActivity extends ActionBarActivity
 	private BaseShellFragment           mCurrentChildFragment;
 	private LibraryFocusArgs            mLibraryFocusArgs;
 	private boolean                     mSelectLastServer;
+
 	@Inject IApplicationState           mApplicationState;
+	@Inject EventBus                    mEventBus;
 
 	@Override
 	protected void onCreate( Bundle savedInstanceState ) {
@@ -79,15 +83,17 @@ public class ShellActivity extends ActionBarActivity
 			mCurrentChildFragment = (BaseShellFragment)getSupportFragmentManager().findFragmentById( R.id.container );
 		}
 
-		EventBus.getDefault().register( this );
+		mEventBus.register( this );
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
 
+		mEventBus.post( new EventActivityResuming());
+
 		// If we cannot resume operation, display the server select screen.
-		if(!mApplicationState.resumeOperation()) {
+		if(!mApplicationState.canResumeWithCurrentServer()) {
 			if(( mCurrentChildFragment == null ) ||
 		       ( mCurrentChildFragment.getFragmentId() != SERVERS_ITEM_ID )) {
 				mNavigationDrawerFragment.selectId( SERVERS_ITEM_ID );
@@ -99,12 +105,12 @@ public class ShellActivity extends ActionBarActivity
 	protected void onPause() {
 		super.onPause();
 
-		mApplicationState.pauseOperation();
+		mEventBus.post( new EventActivityPausing());
 	}
 
 	@Override
 	protected void onDestroy() {
-		EventBus.getDefault().unregister( this );
+		mEventBus.unregister( this );
 
 		super.onDestroy();
 	}
@@ -323,6 +329,7 @@ public class ShellActivity extends ActionBarActivity
 			return(( intent.hasCategory( CATEGORY_LAUNCHER )) &&
 				   ( isMainAction ));
 		}
+
 		return( false );
 	}
 }
