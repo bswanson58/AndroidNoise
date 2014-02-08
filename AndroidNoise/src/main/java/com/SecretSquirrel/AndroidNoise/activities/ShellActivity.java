@@ -12,21 +12,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.SecretSquirrel.AndroidNoise.R;
-import com.SecretSquirrel.AndroidNoise.dto.Album;
-import com.SecretSquirrel.AndroidNoise.dto.Artist;
 import com.SecretSquirrel.AndroidNoise.dto.LibraryFocusArgs;
 import com.SecretSquirrel.AndroidNoise.events.EventActivityPausing;
 import com.SecretSquirrel.AndroidNoise.events.EventActivityResuming;
-import com.SecretSquirrel.AndroidNoise.events.EventAlbumNameRequest;
-import com.SecretSquirrel.AndroidNoise.events.EventAlbumRequest;
-import com.SecretSquirrel.AndroidNoise.events.EventArtistRequest;
 import com.SecretSquirrel.AndroidNoise.events.EventServerSelected;
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
-import com.SecretSquirrel.AndroidNoise.interfaces.INoiseData;
-import com.SecretSquirrel.AndroidNoise.services.ArtistAlbumResolver;
-import com.SecretSquirrel.AndroidNoise.services.ArtistResolver;
-import com.SecretSquirrel.AndroidNoise.services.NoiseRemoteApi;
-import com.SecretSquirrel.AndroidNoise.services.ServiceResultReceiver;
 import com.SecretSquirrel.AndroidNoise.support.IocUtility;
 import com.SecretSquirrel.AndroidNoise.ui.NavigationDrawerAdapter;
 import com.SecretSquirrel.AndroidNoise.ui.NavigationDrawerConfiguration;
@@ -41,13 +31,14 @@ import static android.content.Intent.ACTION_MAIN;
 import static android.content.Intent.CATEGORY_LAUNCHER;
 
 public class ShellActivity extends ActionBarActivity
-						   implements NavigationDrawerFragment.NavigationDrawerCallbacks {
-	private static final int   LIBRARY_ITEM_ID     = 101;
-	private static final int   FAVORITES_ITEM_ID   = 102;
-	private static final int   QUEUE_ITEM_ID       = 103;
-	private static final int   SERVERS_ITEM_ID     = 104;
-	private static final int   SEARCH_ITEM_ID      = 105;
-	private static final int   RECENT_ITEM_ID      = 106;
+						   implements NavigationDrawerFragment.NavigationDrawerCallbacks,
+									  NavigationRequestResponder.NavigationRequestListener {
+	public static final int     LIBRARY_ITEM_ID     = 101;
+	public static final int     FAVORITES_ITEM_ID   = 102;
+	public static final int     QUEUE_ITEM_ID       = 103;
+	public static final int     SERVERS_ITEM_ID     = 104;
+	public static final int     SEARCH_ITEM_ID      = 105;
+	public static final int     RECENT_ITEM_ID      = 106;
 
 	// Fragment managing the behaviors, interactions and presentation of the navigation drawer.
 	private NavigationDrawerFragment    mNavigationDrawerFragment;
@@ -56,8 +47,8 @@ public class ShellActivity extends ActionBarActivity
 	private boolean                     mSelectLastServer;
 
 	@Inject IApplicationState           mApplicationState;
-	@Inject	INoiseData                  mNoiseData;
 	@Inject EventBus                    mEventBus;
+	@Inject	NavigationRequestResponder  mNavigationRequestResponder;
 
 	@Override
 	protected void onCreate( Bundle savedInstanceState ) {
@@ -73,7 +64,7 @@ public class ShellActivity extends ActionBarActivity
 		setContentView( R.layout.activity_shell );
 
 		mNavigationDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById( R.id.navigation_drawer );
-		mNavigationDrawerFragment.setConfiguration( getNavigationDrawerConfiguration());
+		mNavigationDrawerFragment.setConfiguration( getNavigationDrawerConfiguration() );
 
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences( this );
 		mSelectLastServer = settings.getBoolean( getString( R.string.setting_use_last_server ), false );
@@ -84,8 +75,6 @@ public class ShellActivity extends ActionBarActivity
 		else {
 			mCurrentChildFragment = (BaseShellFragment)getSupportFragmentManager().findFragmentById( R.id.container );
 		}
-
-		mEventBus.register( this );
 	}
 
 	@Override
@@ -101,44 +90,16 @@ public class ShellActivity extends ActionBarActivity
 				mNavigationDrawerFragment.selectId( SERVERS_ITEM_ID );
 			}
 		}
+
+		mNavigationRequestResponder.setListener( this );
 	}
 
 	@Override
 	protected void onPause() {
 		super.onPause();
 
-		mEventBus.post( new EventActivityPausing());
-	}
-
-	@Override
-	protected void onDestroy() {
-		mEventBus.unregister( this );
-
-		super.onDestroy();
-	}
-
-	private NavigationDrawerConfiguration getNavigationDrawerConfiguration() {
-		NavigationDrawerConfiguration   retValue = new NavigationDrawerConfiguration();
-		NavigationDrawerItem[]          menu = new NavigationDrawerItem[] {
-				NavigationMenuItem.create( LIBRARY_ITEM_ID, getString( R.string.title_library_section ), "ic_action_library", true, this ),
-				NavigationMenuItem.create( FAVORITES_ITEM_ID, getString( R.string.title_favorites_section ), "ic_action_favorites", true, this ),
-				NavigationMenuItem.create( QUEUE_ITEM_ID, getString( R.string.title_queue_section ), "ic_action_queue", true, this ),
-				NavigationMenuItem.create( SEARCH_ITEM_ID, getString( R.string.title_search_section ), "ic_action_search", true, this ),
-				NavigationMenuItem.create( RECENT_ITEM_ID, getString( R.string.title_recent_section ), "ic_action_recent", true, this ),
-				NavigationMenuItem.create( SERVERS_ITEM_ID, getString( R.string.title_server_section ), "ic_action_servers", true, this )};
-
-		retValue.setApplicationNameId( R.string.app_name );
-		retValue.setGlobalMenuId( R.menu.global );
-		retValue.setNavigationDrawerId( R.id.navigation_drawer );
-		retValue.setNavigationItems( menu );
-		retValue.setDrawerLayoutId( R.id.drawer_layout );
-		retValue.setDrawerIconId( R.drawable.ic_drawer );
-		retValue.setDrawerShadow( R.drawable.drawer_shadow );
-		retValue.setDrawerOpenDesc( R.string.navigation_drawer_open );
-		retValue.setDrawerCloseDesc( R.string.navigation_drawer_close );
-		retValue.setBaseAdapter( new NavigationDrawerAdapter( this, R.layout.navigation_drawer_item, menu ));
-
-		return( retValue );
+		mNavigationRequestResponder.setListener( null );
+		mEventBus.post( new EventActivityPausing() );
 	}
 
 	@Override
@@ -167,60 +128,11 @@ public class ShellActivity extends ActionBarActivity
 		}
 	}
 
-	@SuppressWarnings( "unused" )
-	public void onEvent( EventServerSelected args ) {
-		mNavigationDrawerFragment.selectId( LIBRARY_ITEM_ID );
-	}
+	@Override
+	public void navigateRequest( int id, LibraryFocusArgs args ) {
+		mLibraryFocusArgs = args;
 
-	@SuppressWarnings( "unused" )
-	public void onEvent( EventArtistRequest args ) {
-		ArtistResolver resolver = new ArtistResolver( mNoiseData );
-
-		resolver.requestArtist( args.getArtistId(), new ServiceResultReceiver.Receiver() {
-			@Override
-			public void onReceiveResult( int resultCode, Bundle resultData ) {
-				Artist artist = resultData.getParcelable( NoiseRemoteApi.Artist );
-
-				mLibraryFocusArgs = new LibraryFocusArgs( artist );
-				mNavigationDrawerFragment.selectId( LIBRARY_ITEM_ID );
-			}
-		} );
-	}
-
-	@SuppressWarnings( "unused" )
-	public void onEvent( EventAlbumRequest args ) {
-		ArtistAlbumResolver resolver = new ArtistAlbumResolver( mNoiseData );
-
-		resolver.requestArtistAlbum( args.getArtistId(), args.getAlbumId(), new ServiceResultReceiver.Receiver() {
-			@Override
-			public void onReceiveResult( int resultCode, Bundle resultData ) {
-				if( resultCode == NoiseRemoteApi.RemoteResultSuccess ) {
-					requestLibraryFocus( resultData );
-				}
-			}
-		});
-	}
-
-	@SuppressWarnings( "unused" )
-	public void onEvent( EventAlbumNameRequest args ) {
-		ArtistAlbumResolver resolver = new ArtistAlbumResolver( mNoiseData );
-
-		resolver.requestArtistAlbum( args.getArtistName(), args.getAlbumName(), new ServiceResultReceiver.Receiver() {
-			@Override
-			public void onReceiveResult( int resultCode, Bundle resultData ) {
-				if( resultCode == NoiseRemoteApi.RemoteResultSuccess ) {
-					requestLibraryFocus( resultData );
-				}
-			}
-		} );
-	}
-
-	private void requestLibraryFocus( Bundle args ) {
-		Artist  artist = args.getParcelable( NoiseRemoteApi.Artist );
-		Album   album = args.getParcelable( NoiseRemoteApi.Album );
-
-		mLibraryFocusArgs = new LibraryFocusArgs( artist, album );
-		mNavigationDrawerFragment.selectId( LIBRARY_ITEM_ID );
+		mNavigationDrawerFragment.selectId( id );
 	}
 
 	@Override
@@ -287,7 +199,8 @@ public class ShellActivity extends ActionBarActivity
 			// decide what to show in the action bar.
 			getMenuInflater().inflate( R.menu.shell, menu );
 			restoreActionBar();
-			return true;
+
+			return( true );
 		}
 
 		return super.onCreateOptionsMenu( menu );
@@ -312,6 +225,30 @@ public class ShellActivity extends ActionBarActivity
 		if(!retValue ) {
 			retValue = super.onOptionsItemSelected( item );
 		}
+
+		return( retValue );
+	}
+
+	private NavigationDrawerConfiguration getNavigationDrawerConfiguration() {
+		NavigationDrawerConfiguration   retValue = new NavigationDrawerConfiguration();
+		NavigationDrawerItem[]          menu = new NavigationDrawerItem[] {
+				NavigationMenuItem.create( LIBRARY_ITEM_ID, getString( R.string.title_library_section ), "ic_action_library", true, this ),
+				NavigationMenuItem.create( FAVORITES_ITEM_ID, getString( R.string.title_favorites_section ), "ic_action_favorites", true, this ),
+				NavigationMenuItem.create( QUEUE_ITEM_ID, getString( R.string.title_queue_section ), "ic_action_queue", true, this ),
+				NavigationMenuItem.create( SEARCH_ITEM_ID, getString( R.string.title_search_section ), "ic_action_search", true, this ),
+				NavigationMenuItem.create( RECENT_ITEM_ID, getString( R.string.title_recent_section ), "ic_action_recent", true, this ),
+				NavigationMenuItem.create( SERVERS_ITEM_ID, getString( R.string.title_server_section ), "ic_action_servers", true, this )};
+
+		retValue.setApplicationNameId( R.string.app_name );
+		retValue.setGlobalMenuId( R.menu.global );
+		retValue.setNavigationDrawerId( R.id.navigation_drawer );
+		retValue.setNavigationItems( menu );
+		retValue.setDrawerLayoutId( R.id.drawer_layout );
+		retValue.setDrawerIconId( R.drawable.ic_drawer );
+		retValue.setDrawerShadow( R.drawable.drawer_shadow );
+		retValue.setDrawerOpenDesc( R.string.navigation_drawer_open );
+		retValue.setDrawerCloseDesc( R.string.navigation_drawer_close );
+		retValue.setBaseAdapter( new NavigationDrawerAdapter( this, R.layout.navigation_drawer_item, menu ));
 
 		return( retValue );
 	}
