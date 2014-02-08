@@ -17,6 +17,7 @@ import com.SecretSquirrel.AndroidNoise.events.EventActivityPausing;
 import com.SecretSquirrel.AndroidNoise.events.EventActivityResuming;
 import com.SecretSquirrel.AndroidNoise.events.EventServerSelected;
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
+import com.SecretSquirrel.AndroidNoise.model.QueueRequestHandler;
 import com.SecretSquirrel.AndroidNoise.support.IocUtility;
 import com.SecretSquirrel.AndroidNoise.ui.NavigationDrawerAdapter;
 import com.SecretSquirrel.AndroidNoise.ui.NavigationDrawerConfiguration;
@@ -49,6 +50,7 @@ public class ShellActivity extends ActionBarActivity
 	@Inject IApplicationState           mApplicationState;
 	@Inject EventBus                    mEventBus;
 	@Inject	NavigationRequestResponder  mNavigationRequestResponder;
+	@Inject	QueueRequestHandler         mQueueRequestHandler;
 
 	@Override
 	protected void onCreate( Bundle savedInstanceState ) {
@@ -99,7 +101,7 @@ public class ShellActivity extends ActionBarActivity
 		super.onPause();
 
 		mNavigationRequestResponder.setListener( null );
-		mEventBus.post( new EventActivityPausing() );
+		mEventBus.post( new EventActivityPausing());
 	}
 
 	@Override
@@ -188,7 +190,7 @@ public class ShellActivity extends ActionBarActivity
 
 		actionBar.setNavigationMode( ActionBar.NAVIGATION_MODE_STANDARD );
 		actionBar.setDisplayShowTitleEnabled( true );
-		actionBar.setTitle( mNavigationDrawerFragment.getTitle());
+		actionBar.setTitle( mNavigationDrawerFragment.getTitle() );
 	}
 
 	@Override

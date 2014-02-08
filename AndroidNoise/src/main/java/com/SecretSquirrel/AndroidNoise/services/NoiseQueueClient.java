@@ -18,6 +18,7 @@ import java.util.EnumMap;
 
 import javax.inject.Inject;
 
+import dagger.Lazy;
 import rx.Observable;
 import rx.Observer;
 import rx.Subscription;
@@ -29,12 +30,13 @@ import rx.util.functions.Action1;
 public class NoiseQueueClient implements INoiseQueue {
 	private static final String     TAG = NoiseQueueClient.class.getName();
 
-	private final RemoteServerQueueApi                  mService;
+	private final Lazy<RemoteServerQueueApi>            mServiceProvider;
 	public  final EnumMap<TransportCommand, Integer>    mTransportCommands;
+	private RemoteServerQueueApi                        mService;
 
 	@Inject
-	public NoiseQueueClient( RemoteServerQueueApi queueApi ) {
-		mService = queueApi;
+	public NoiseQueueClient( Lazy<RemoteServerQueueApi> queueApi ) {
+		mServiceProvider = queueApi;
 
 		mTransportCommands = new EnumMap<TransportCommand, Integer>( TransportCommand.class );
 
@@ -44,6 +46,14 @@ public class NoiseQueueClient implements INoiseQueue {
 		mTransportCommands.put( TransportCommand.PlayNext, 4 );
 		mTransportCommands.put( TransportCommand.PlayPrevious, 5 );
 		mTransportCommands.put( TransportCommand.Repeat, 6 );
+	}
+
+	private RemoteServerQueueApi getService() {
+		if( mService == null ) {
+			mService = mServiceProvider.get();
+		}
+
+		return( mService );
 	}
 
 	@Override
@@ -73,7 +83,7 @@ public class NoiseQueueClient implements INoiseQueue {
 			@Override
 			public Subscription onSubscribe( Observer<? super QueuedTrackResult> observer ) {
 				try {
-					observer.onNext( new QueuedTrackResult( track, mService.EnqueueTrack( track.getTrackId())));
+					observer.onNext( new QueuedTrackResult( track, getService().EnqueueTrack( track.getTrackId())));
 					observer.onCompleted();
 				} catch( Exception e ) {
 					observer.onError( e );
@@ -111,7 +121,7 @@ public class NoiseQueueClient implements INoiseQueue {
 			@Override
 			public Subscription onSubscribe( Observer<? super QueuedAlbumResult> observer) {
 				try {
-					observer.onNext( new QueuedAlbumResult( album, mService.EnqueueAlbum( album.getAlbumId())));
+					observer.onNext( new QueuedAlbumResult( album, getService().EnqueueAlbum( album.getAlbumId())));
 					observer.onCompleted();
 				} catch( Exception e ) {
 					observer.onError( e );
@@ -135,7 +145,7 @@ public class NoiseQueueClient implements INoiseQueue {
 			@Override
 			public Subscription onSubscribe( Observer<? super PlayQueueListResult> observer ) {
 				try {
-					observer.onNext( new PlayQueueListResult( mService.GetQueuedTrackList()));
+					observer.onNext( new PlayQueueListResult( getService().GetQueuedTrackList()));
 					observer.onCompleted();
 				}
 				catch( Exception ex ) {
@@ -153,7 +163,7 @@ public class NoiseQueueClient implements INoiseQueue {
 			@Override
 			public Subscription onSubscribe( Observer<? super BaseServerResult> observer ) {
 				try {
-					observer.onNext( new BaseServerResult( mService.ExecuteTransportCommand( mTransportCommands.get( command ))));
+					observer.onNext( new BaseServerResult( getService().ExecuteTransportCommand( mTransportCommands.get( command ))));
 					observer.onCompleted();
 				}
 				catch( Exception ex ) {

@@ -13,7 +13,6 @@ import com.SecretSquirrel.AndroidNoise.model.ApplicationModule;
 import com.SecretSquirrel.AndroidNoise.model.QueueRequestHandler;
 import com.SecretSquirrel.AndroidNoise.services.noiseApi.NoiseApiModule;
 
-import javax.inject.Inject;
 import javax.inject.Named;
 
 import dagger.Lazy;
@@ -33,9 +32,9 @@ import de.greenrobot.event.EventBus;
 		}
 )
 public class ServicesModule {
-	private IRecentData mRecentData;
-	private INoiseData  mNoiseData;
-	private EventBus    mEventBus;
+	private EventBus            mEventBus;
+	private IRecentData         mRecentData;
+	private INoiseData          mNoiseData;
 
 	@SuppressWarnings("unused")
 	public void onEvent( EventServerSelected args ) {

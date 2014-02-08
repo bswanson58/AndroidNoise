@@ -46,6 +46,7 @@ public class FavoritesListFragment extends Fragment
 	private FavoritesAdapter        mFavoritesListAdapter;
 
 	@Inject	INoiseData              mNoiseData;
+	@Inject EventBus                mEventBus;
 
 	public static FavoritesListFragment newInstance() {
 		return( new FavoritesListFragment());
@@ -89,7 +90,7 @@ public class FavoritesListFragment extends Fragment
 					}
 					else if(( favorite.getIsAlbum()) ||
 							( favorite.getIsTrack())) {
-						EventBus.getDefault().post( new EventAlbumRequest( favorite.getArtistId(), favorite.getAlbumId()));
+						mEventBus.post( new EventAlbumRequest( favorite.getArtistId(), favorite.getAlbumId()));
 					}
 				}
 			} );
@@ -194,7 +195,7 @@ public class FavoritesListFragment extends Fragment
 							Favorite    favorite = (Favorite)view.getTag();
 
 							if( favorite != null ) {
-								EventBus.getDefault().post( new EventPlayFavorite( favorite ));
+								mEventBus.post( new EventPlayFavorite( favorite ));
 							}
 						}
 					} );
