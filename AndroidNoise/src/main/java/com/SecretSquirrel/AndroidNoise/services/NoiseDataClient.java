@@ -4,17 +4,21 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.ResultReceiver;
 
+import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseData;
+
+import javax.inject.Inject;
 
 // Secret Squirrel Software - Created by bswanson on 12/6/13.
 
 public class NoiseDataClient implements INoiseData {
-	private Context     mContext;
-	private String      mServerAddress;
+	private final Context           mContext;
+	private final IApplicationState mApplicationState;
 
-	public NoiseDataClient( Context context, String serverAddress ) {
+	@Inject
+	public NoiseDataClient( Context context, IApplicationState applicationState ) {
 		mContext = context;
-		mServerAddress = serverAddress;
+		mApplicationState = applicationState;
 	}
 
 	@Override
@@ -66,7 +70,7 @@ public class NoiseDataClient implements INoiseData {
 	private Intent setupApi( int apiCode, ResultReceiver resultReceiver ) {
 		Intent intent = new Intent( mContext, NoiseDataService.class );
 
-		intent.putExtra( NoiseRemoteApi.RemoteServerAddress, mServerAddress );
+		intent.putExtra( NoiseRemoteApi.RemoteServerAddress, mApplicationState.getCurrentServer().getServerAddress());
 		intent.putExtra( NoiseRemoteApi.RemoteApiParameter, apiCode );
 		intent.putExtra( NoiseRemoteApi.RemoteCallReceiver, resultReceiver );
 

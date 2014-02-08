@@ -10,6 +10,9 @@ import com.SecretSquirrel.AndroidNoise.interfaces.INoiseData;
 
 import java.util.Hashtable;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
 public class NoiseDataCacheClient implements INoiseData {
 	private static final int    cCacheSize = 25;
 
@@ -44,7 +47,8 @@ public class NoiseDataCacheClient implements INoiseData {
 	private Hashtable<Long, DatedBundle>    mTrackList;
 	private Bundle                          mFavoritesList;
 
-	public NoiseDataCacheClient( INoiseData downstreamClient ) {
+	@Inject
+	public NoiseDataCacheClient( @Named( "NoiseDataClient" ) INoiseData downstreamClient ) {
 		mNoiseData = downstreamClient;
 
 		mArtistInfo = new Hashtable<Long, DatedBundle>();

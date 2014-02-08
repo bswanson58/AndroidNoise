@@ -18,7 +18,7 @@ import com.SecretSquirrel.AndroidNoise.events.EventPlayAlbum;
 import com.SecretSquirrel.AndroidNoise.events.EventPlayFavorite;
 import com.SecretSquirrel.AndroidNoise.events.EventPlaySearchItem;
 import com.SecretSquirrel.AndroidNoise.events.EventPlayTrack;
-import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
+import com.SecretSquirrel.AndroidNoise.interfaces.INoiseData;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseQueue;
 import com.SecretSquirrel.AndroidNoise.services.ArtistResolver;
 import com.SecretSquirrel.AndroidNoise.services.NoiseRemoteApi;
@@ -33,15 +33,18 @@ import rx.util.functions.Action1;
 public class QueueRequestHandler {
 	private final Context           mContext;
 	private final INoiseQueue       mNoiseQueue;
-	private final IApplicationState mApplicationState;
+	private final INoiseData        mNoiseData;
+	private final EventBus          mEventBus;
 
 	@Inject
-	public QueueRequestHandler( Context context, INoiseQueue noiseQueue, IApplicationState applicationState ) {
+	public QueueRequestHandler( Context context, EventBus eventBus,
+	                            INoiseData noiseData, INoiseQueue noiseQueue ) {
+		mNoiseData = noiseData;
 		mNoiseQueue = noiseQueue;
 		mContext = context;
-		mApplicationState = applicationState;
+		mEventBus = eventBus;
 
-		EventBus.getDefault().register( this );
+		mEventBus.register( this );
 	}
 
 	@SuppressWarnings( "unused" )
@@ -139,7 +142,7 @@ public class QueueRequestHandler {
 	}
 
 	private void notifyArtistPlayed( long artistId ) {
-		ArtistResolver resolver = new ArtistResolver( mApplicationState.getDataClient());
+		ArtistResolver resolver = new ArtistResolver( mNoiseData );
 
 		resolver.requestArtist( artistId, new ServiceResultReceiver.Receiver() {
 			@Override
@@ -147,7 +150,7 @@ public class QueueRequestHandler {
 				Artist artist = resultData.getParcelable( NoiseRemoteApi.Artist );
 
 				if( artist != null ) {
-					EventBus.getDefault().post( new EventArtistPlayed( artist ));
+					mEventBus.post( new EventArtistPlayed( artist ));
 				}
 			}
 		});

@@ -24,7 +24,7 @@ import com.SecretSquirrel.AndroidNoise.dto.Artist;
 import com.SecretSquirrel.AndroidNoise.events.EventArtistSelected;
 import com.SecretSquirrel.AndroidNoise.events.EventArtistViewed;
 import com.SecretSquirrel.AndroidNoise.events.EventPlayAlbum;
-import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
+import com.SecretSquirrel.AndroidNoise.interfaces.INoiseData;
 import com.SecretSquirrel.AndroidNoise.services.NoiseRemoteApi;
 import com.SecretSquirrel.AndroidNoise.services.ServiceResultReceiver;
 import com.SecretSquirrel.AndroidNoise.support.Constants;
@@ -54,7 +54,7 @@ public class AlbumInfoFragment extends Fragment
 	private TextView                mTrackCount;
 	private Bitmap                  mUnknownAlbum;
 
-	@Inject IApplicationState       mApplicationState;
+	@Inject	INoiseData              mNoiseData;
 
 	public static AlbumInfoFragment newInstance( Artist artist, Album album ) {
 		AlbumInfoFragment   fragment = new AlbumInfoFragment();
@@ -126,9 +126,7 @@ public class AlbumInfoFragment extends Fragment
 
 		if( mAlbum != null ) {
 			if( mAlbumInfo == null ) {
-				if( mApplicationState.getIsConnected()) {
-					mApplicationState.getDataClient().GetAlbumInfo( mAlbum.getAlbumId(), mServiceResultReceiver );
-				}
+				mNoiseData.GetAlbumInfo( mAlbum.getAlbumId(), mServiceResultReceiver );
 			}
 		}
 		else {

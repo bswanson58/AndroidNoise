@@ -4,6 +4,7 @@ package com.SecretSquirrel.AndroidNoise.services;
 
 import com.SecretSquirrel.AndroidNoise.events.EventActivityPausing;
 import com.SecretSquirrel.AndroidNoise.events.EventServerSelected;
+import com.SecretSquirrel.AndroidNoise.interfaces.INoiseData;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseQueue;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseSearch;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseServer;
@@ -13,6 +14,7 @@ import com.SecretSquirrel.AndroidNoise.model.QueueRequestHandler;
 import com.SecretSquirrel.AndroidNoise.services.noiseApi.NoiseApiModule;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import dagger.Lazy;
 import dagger.Module;
@@ -32,16 +34,21 @@ import de.greenrobot.event.EventBus;
 )
 public class ServicesModule {
 	private IRecentData mRecentData;
+	private INoiseData  mNoiseData;
 	private EventBus    mEventBus;
 
 	@SuppressWarnings("unused")
 	public void onEvent( EventServerSelected args ) {
 		saveRecentData();
+
+		mNoiseData = null;
 	}
 
 	@SuppressWarnings("unused")
 	public void onEvent( EventActivityPausing args ) {
 		saveRecentData();
+
+		mNoiseData = null;
 	}
 
 	private void saveRecentData() {
@@ -82,5 +89,20 @@ public class ServicesModule {
 		}
 
 		return( mRecentData );
+	}
+
+	@Provides
+	@Named( "NoiseDataClient" )
+	public INoiseData provideNoiseData( NoiseDataClient client ) {
+		return( client );
+	}
+
+	@Provides
+	public INoiseData provideNoiseDataCache( Lazy<NoiseDataCacheClient> provider ) {
+		if( mNoiseData == null ) {
+			mNoiseData = provider.get();
+		}
+
+		return( mNoiseData );
 	}
 }

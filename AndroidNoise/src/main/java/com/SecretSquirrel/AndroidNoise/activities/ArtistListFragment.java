@@ -27,7 +27,7 @@ import android.widget.TextView;
 import com.SecretSquirrel.AndroidNoise.R;
 import com.SecretSquirrel.AndroidNoise.dto.Artist;
 import com.SecretSquirrel.AndroidNoise.events.EventArtistSelected;
-import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
+import com.SecretSquirrel.AndroidNoise.interfaces.INoiseData;
 import com.SecretSquirrel.AndroidNoise.services.NoiseRemoteApi;
 import com.SecretSquirrel.AndroidNoise.services.ServiceResultReceiver;
 import com.SecretSquirrel.AndroidNoise.support.IocUtility;
@@ -65,7 +65,7 @@ public class ArtistListFragment extends Fragment
 	private View                    mFilterPanel;
 	private boolean                 mFilterPanelDisplayed;
 
-	@Inject IApplicationState       mApplicationState;
+	@Inject	INoiseData              mNoiseData;
 
 	public static ArtistListFragment newInstance() {
 		return( new ArtistListFragment());
@@ -149,9 +149,8 @@ public class ArtistListFragment extends Fragment
 			displayFilterPanel( mFilterPanelDisplayed, false );
 		}
 
-		if(( mArtistList.size() == 0 ) &&
-		   ( mApplicationState.getIsConnected())) {
-			mApplicationState.getDataClient().GetArtistList( mServiceResultReceiver );
+		if( mArtistList.size() == 0 ) {
+			mNoiseData.GetArtistList( mServiceResultReceiver );
 		}
 
 		return( myView );

@@ -22,6 +22,7 @@ import com.SecretSquirrel.AndroidNoise.events.EventAlbumRequest;
 import com.SecretSquirrel.AndroidNoise.events.EventArtistRequest;
 import com.SecretSquirrel.AndroidNoise.events.EventServerSelected;
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
+import com.SecretSquirrel.AndroidNoise.interfaces.INoiseData;
 import com.SecretSquirrel.AndroidNoise.services.ArtistAlbumResolver;
 import com.SecretSquirrel.AndroidNoise.services.ArtistResolver;
 import com.SecretSquirrel.AndroidNoise.services.NoiseRemoteApi;
@@ -55,6 +56,7 @@ public class ShellActivity extends ActionBarActivity
 	private boolean                     mSelectLastServer;
 
 	@Inject IApplicationState           mApplicationState;
+	@Inject	INoiseData                  mNoiseData;
 	@Inject EventBus                    mEventBus;
 
 	@Override
@@ -172,7 +174,7 @@ public class ShellActivity extends ActionBarActivity
 
 	@SuppressWarnings( "unused" )
 	public void onEvent( EventArtistRequest args ) {
-		ArtistResolver resolver = new ArtistResolver( mApplicationState.getDataClient());
+		ArtistResolver resolver = new ArtistResolver( mNoiseData );
 
 		resolver.requestArtist( args.getArtistId(), new ServiceResultReceiver.Receiver() {
 			@Override
@@ -187,7 +189,7 @@ public class ShellActivity extends ActionBarActivity
 
 	@SuppressWarnings( "unused" )
 	public void onEvent( EventAlbumRequest args ) {
-		ArtistAlbumResolver resolver = new ArtistAlbumResolver( mApplicationState.getDataClient());
+		ArtistAlbumResolver resolver = new ArtistAlbumResolver( mNoiseData );
 
 		resolver.requestArtistAlbum( args.getArtistId(), args.getAlbumId(), new ServiceResultReceiver.Receiver() {
 			@Override
@@ -201,7 +203,7 @@ public class ShellActivity extends ActionBarActivity
 
 	@SuppressWarnings( "unused" )
 	public void onEvent( EventAlbumNameRequest args ) {
-		ArtistAlbumResolver resolver = new ArtistAlbumResolver( mApplicationState.getDataClient());
+		ArtistAlbumResolver resolver = new ArtistAlbumResolver( mNoiseData );
 
 		resolver.requestArtistAlbum( args.getArtistName(), args.getAlbumName(), new ServiceResultReceiver.Receiver() {
 			@Override

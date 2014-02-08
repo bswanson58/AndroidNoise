@@ -29,7 +29,7 @@ import com.SecretSquirrel.AndroidNoise.R;
 import com.SecretSquirrel.AndroidNoise.dto.Album;
 import com.SecretSquirrel.AndroidNoise.events.EventAlbumSelected;
 import com.SecretSquirrel.AndroidNoise.events.EventPlayAlbum;
-import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
+import com.SecretSquirrel.AndroidNoise.interfaces.INoiseData;
 import com.SecretSquirrel.AndroidNoise.services.NoiseRemoteApi;
 import com.SecretSquirrel.AndroidNoise.services.ServiceResultReceiver;
 import com.SecretSquirrel.AndroidNoise.support.Constants;
@@ -70,7 +70,7 @@ public class AlbumListFragment extends Fragment
 	private View                    mFilterPanel;
 	private boolean                 mFilterPanelDisplayed;
 
-	@Inject IApplicationState       mApplicationState;
+	@Inject	INoiseData              mNoiseData;
 
 	public static AlbumListFragment newInstance( long artistId ) {
 		AlbumListFragment   fragment = new AlbumListFragment();
@@ -177,7 +177,7 @@ public class AlbumListFragment extends Fragment
 
 		if( mCurrentArtist != Constants.NULL_ID ) {
 			if( mAlbumList.size() == 0 ) {
-				mApplicationState.getDataClient().GetAlbumList( mCurrentArtist, mReceiver );
+				mNoiseData.GetAlbumList( mCurrentArtist, mReceiver );
 			}
 		}
 		else {

@@ -21,7 +21,7 @@ import com.SecretSquirrel.AndroidNoise.dto.Favorite;
 import com.SecretSquirrel.AndroidNoise.events.EventAlbumRequest;
 import com.SecretSquirrel.AndroidNoise.events.EventArtistRequest;
 import com.SecretSquirrel.AndroidNoise.events.EventPlayFavorite;
-import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
+import com.SecretSquirrel.AndroidNoise.interfaces.INoiseData;
 import com.SecretSquirrel.AndroidNoise.services.NoiseRemoteApi;
 import com.SecretSquirrel.AndroidNoise.services.ServiceResultReceiver;
 import com.SecretSquirrel.AndroidNoise.support.IocUtility;
@@ -45,7 +45,7 @@ public class FavoritesListFragment extends Fragment
 	private Parcelable              mListViewState;
 	private FavoritesAdapter        mFavoritesListAdapter;
 
-	@Inject IApplicationState       mApplicationState;
+	@Inject	INoiseData              mNoiseData;
 
 	public static FavoritesListFragment newInstance() {
 		return( new FavoritesListFragment());
@@ -99,9 +99,8 @@ public class FavoritesListFragment extends Fragment
 			}
 		}
 
-		if(( mFavoritesList.size() == 0 ) &&
-		   ( mApplicationState.getIsConnected())) {
-			mApplicationState.getDataClient().GetFavoritesList( mServiceResultReceiver );
+		if( mFavoritesList.size() == 0 ) {
+			mNoiseData.GetFavoritesList( mServiceResultReceiver );
 		}
 
 		return( myView );

@@ -21,7 +21,7 @@ import com.SecretSquirrel.AndroidNoise.dto.Artist;
 import com.SecretSquirrel.AndroidNoise.dto.ArtistInfo;
 import com.SecretSquirrel.AndroidNoise.events.EventArtistInfoRequest;
 import com.SecretSquirrel.AndroidNoise.events.EventArtistViewed;
-import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
+import com.SecretSquirrel.AndroidNoise.interfaces.INoiseData;
 import com.SecretSquirrel.AndroidNoise.services.NoiseRemoteApi;
 import com.SecretSquirrel.AndroidNoise.services.ServiceResultReceiver;
 import com.SecretSquirrel.AndroidNoise.support.Constants;
@@ -47,7 +47,7 @@ public class ArtistInfoFragment extends Fragment
 	private Button                  mMoreButton;
 	private Bitmap                  mUnknownArtist;
 
-	@Inject	IApplicationState       mApplicationState;
+	@Inject	INoiseData              mNoiseData;
 
 	public static ArtistInfoFragment newInstance( Artist artist ) {
 		ArtistInfoFragment  fragment = new ArtistInfoFragment();
@@ -146,9 +146,7 @@ public class ArtistInfoFragment extends Fragment
 
 	private void retrieveArtistInfo() {
 		if( mArtist != null ) {
-			if( mApplicationState.getIsConnected()) {
-				mApplicationState.getDataClient().GetArtistInfo( mArtist.getArtistId(), mServiceResultReceiver );
-			}
+			mNoiseData.GetArtistInfo( mArtist.getArtistId(), mServiceResultReceiver );
 		}
 	}
 

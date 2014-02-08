@@ -10,13 +10,11 @@ import rx.Observable;
 public interface IApplicationState {
 	Observable<ServerInformation>   locateServers();
 
-	boolean                         getIsConnected();
-	boolean                         canResumeWithCurrentServer();
-	ServerInformation               getCurrentServer();
-	void                            selectServer( ServerInformation server );
+	boolean             getIsConnected();
+	boolean             canResumeWithCurrentServer();
+	ServerInformation   getCurrentServer();
+	void                selectServer( ServerInformation server );
 
-	INoiseData      getDataClient();
-
-	void            registerForEvents( ServiceConnection client );
-	void            unregisterFromEvents( ServiceConnection client );
+	void                registerForEvents( ServiceConnection client );
+	void                unregisterFromEvents( ServiceConnection client );
 }

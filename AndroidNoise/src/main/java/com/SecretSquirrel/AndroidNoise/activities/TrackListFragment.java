@@ -19,7 +19,7 @@ import android.widget.TextView;
 import com.SecretSquirrel.AndroidNoise.R;
 import com.SecretSquirrel.AndroidNoise.dto.Track;
 import com.SecretSquirrel.AndroidNoise.events.EventPlayTrack;
-import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
+import com.SecretSquirrel.AndroidNoise.interfaces.INoiseData;
 import com.SecretSquirrel.AndroidNoise.services.NoiseRemoteApi;
 import com.SecretSquirrel.AndroidNoise.services.ServiceResultReceiver;
 import com.SecretSquirrel.AndroidNoise.support.ChainedComparator;
@@ -49,7 +49,7 @@ public class TrackListFragment extends Fragment
 	private ServiceResultReceiver   mReceiver;
 	private long                    mCurrentAlbum;
 
-	@Inject IApplicationState       mApplicationState;
+	@Inject	INoiseData              mNoiseData;
 
 	public static TrackListFragment newInstance( long albumId ) {
 		TrackListFragment   fragment = new TrackListFragment();
@@ -112,7 +112,7 @@ public class TrackListFragment extends Fragment
 
 		if( mCurrentAlbum != Constants.NULL_ID ) {
 			if( mTrackList.size() == 0 ) {
-				mApplicationState.getDataClient().GetTrackList( mCurrentAlbum, mReceiver );
+				mNoiseData.GetTrackList( mCurrentAlbum, mReceiver );
 			}
 		}
 		else {
