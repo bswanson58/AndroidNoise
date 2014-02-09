@@ -1,4 +1,4 @@
-package com.SecretSquirrel.AndroidNoise.model;
+package com.SecretSquirrel.AndroidNoise.services;
 
 // Secret Squirrel Software - Created by bswanson on 12/23/13.
 
@@ -43,8 +43,14 @@ public class QueueRequestHandler {
 		mNoiseQueue = noiseQueue;
 		mContext = context;
 		mEventBus = eventBus;
+	}
 
+	public void start() {
 		mEventBus.register( this );
+	}
+
+	public void stop() {
+		mEventBus.unregister( this );
 	}
 
 	@SuppressWarnings( "unused" )

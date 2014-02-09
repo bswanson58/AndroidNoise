@@ -165,7 +165,7 @@ public class ServerListFragment extends Fragment {
 
 	private void selectServer( ServerInformation server ) {
 		if( server != null ) {
-			mApplicationState.selectServer( server );
+			mApplicationState.setCurrentServer( server );
 
 			SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences( getActivity());
 			SharedPreferences.Editor editor = settings.edit();

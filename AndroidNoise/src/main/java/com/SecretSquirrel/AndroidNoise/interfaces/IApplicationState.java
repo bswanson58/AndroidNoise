@@ -13,7 +13,7 @@ public interface IApplicationState {
 	boolean             getIsConnected();
 	boolean             canResumeWithCurrentServer();
 	ServerInformation   getCurrentServer();
-	void                selectServer( ServerInformation server );
+	void                setCurrentServer( ServerInformation server );
 
 	void                registerForEvents( ServiceConnection client );
 	void                unregisterFromEvents( ServiceConnection client );

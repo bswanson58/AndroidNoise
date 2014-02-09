@@ -4,16 +4,16 @@ package com.SecretSquirrel.AndroidNoise.services;
 
 import com.SecretSquirrel.AndroidNoise.events.EventActivityPausing;
 import com.SecretSquirrel.AndroidNoise.events.EventServerSelected;
+import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationServices;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseData;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseQueue;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseSearch;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseServer;
 import com.SecretSquirrel.AndroidNoise.interfaces.IRecentData;
-import com.SecretSquirrel.AndroidNoise.model.ApplicationModule;
-import com.SecretSquirrel.AndroidNoise.model.QueueRequestHandler;
 import com.SecretSquirrel.AndroidNoise.services.noiseApi.NoiseApiModule;
 
 import javax.inject.Named;
+import javax.inject.Singleton;
 
 import dagger.Lazy;
 import dagger.Module;
@@ -22,8 +22,7 @@ import de.greenrobot.event.EventBus;
 
 @Module(
 		includes = {
-				NoiseApiModule.class,
-				ApplicationModule.class
+				NoiseApiModule.class
 		},
 		library = true,
 		injects = {
@@ -57,6 +56,12 @@ public class ServicesModule {
 		}
 
 		mRecentData = null;
+	}
+
+	@Provides
+	@Singleton
+	public IApplicationServices provideApplicationServices( Lazy<ApplicationServices> provider ) {
+		return( provider.get());
 	}
 
 	@Provides

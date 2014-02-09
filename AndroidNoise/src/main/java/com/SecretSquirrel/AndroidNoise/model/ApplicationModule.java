@@ -5,7 +5,6 @@ package com.SecretSquirrel.AndroidNoise.model;
 import android.content.Context;
 
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
-import com.SecretSquirrel.AndroidNoise.services.ServicesModule;
 
 import javax.inject.Singleton;
 

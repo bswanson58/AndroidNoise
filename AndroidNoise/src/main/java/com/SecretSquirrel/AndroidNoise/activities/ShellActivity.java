@@ -15,8 +15,8 @@ import com.SecretSquirrel.AndroidNoise.R;
 import com.SecretSquirrel.AndroidNoise.dto.LibraryFocusArgs;
 import com.SecretSquirrel.AndroidNoise.events.EventActivityPausing;
 import com.SecretSquirrel.AndroidNoise.events.EventActivityResuming;
+import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationServices;
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
-import com.SecretSquirrel.AndroidNoise.model.QueueRequestHandler;
 import com.SecretSquirrel.AndroidNoise.support.IocUtility;
 import com.SecretSquirrel.AndroidNoise.ui.NavigationDrawerAdapter;
 import com.SecretSquirrel.AndroidNoise.ui.NavigationDrawerConfiguration;
@@ -46,10 +46,10 @@ public class ShellActivity extends ActionBarActivity
 	private LibraryFocusArgs            mLibraryFocusArgs;
 	private boolean                     mSelectLastServer;
 
-	@Inject IApplicationState           mApplicationState;
 	@Inject EventBus                    mEventBus;
+	@Inject IApplicationState           mApplicationState;
+	@Inject	IApplicationServices        mApplicationServices;
 	@Inject	NavigationRequestResponder  mNavigationRequestResponder;
-	@Inject	QueueRequestHandler         mQueueRequestHandler;
 
 	@Override
 	protected void onCreate( Bundle savedInstanceState ) {

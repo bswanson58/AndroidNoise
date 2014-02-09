@@ -13,12 +13,13 @@ import com.SecretSquirrel.AndroidNoise.services.ServiceLocator;
 
 import javax.inject.Inject;
 
+import de.greenrobot.event.EventBus;
 import rx.Observable;
 
 public class ApplicationState implements IApplicationState {
-	private Context                 mContext;
-	private ServerInformation       mCurrentServer;
-	private boolean                 mIsConnected;
+	private final Context                   mContext;
+	private ServerInformation               mCurrentServer;
+	private boolean                         mIsConnected;
 
 	@Inject
 	public ApplicationState( Context context ) {
@@ -34,7 +35,7 @@ public class ApplicationState implements IApplicationState {
 		return( mCurrentServer );
 	}
 
-	public void selectServer( ServerInformation server ) {
+	public void setCurrentServer( ServerInformation server ) {
 		mCurrentServer = server;
 		mIsConnected = mCurrentServer != null;
 	}
