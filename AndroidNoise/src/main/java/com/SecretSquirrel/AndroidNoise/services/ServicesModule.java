@@ -2,8 +2,6 @@ package com.SecretSquirrel.AndroidNoise.services;
 
 // Secret Squirrel Software - Created by bswanson on 2/7/14.
 
-import com.SecretSquirrel.AndroidNoise.events.EventActivityPausing;
-import com.SecretSquirrel.AndroidNoise.events.EventServerSelected;
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationServices;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseData;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseQueue;
@@ -18,7 +16,6 @@ import javax.inject.Singleton;
 import dagger.Lazy;
 import dagger.Module;
 import dagger.Provides;
-import de.greenrobot.event.EventBus;
 
 @Module(
 		includes = {
@@ -31,19 +28,7 @@ import de.greenrobot.event.EventBus;
 		}
 )
 public class ServicesModule {
-	private EventBus                mEventBus;
-	private INoiseData              mNoiseData;
 	private ApplicationServices     mApplicationServices;
-
-	@SuppressWarnings("unused")
-	public void onEvent( EventServerSelected args ) {
-		mNoiseData = null;
-	}
-
-	@SuppressWarnings("unused")
-	public void onEvent( EventActivityPausing args ) {
-		mNoiseData = null;
-	}
 
 	@Provides
 	@Singleton
@@ -86,16 +71,13 @@ public class ServicesModule {
 	}
 
 	@Provides
-	public INoiseData provideNoiseDataCache( Lazy<NoiseDataCacheClient> provider, EventBus eventBus ) {
-		if( mEventBus == null ) {
-			mEventBus = eventBus;
-			mEventBus.register( this );
+	public INoiseData provideNoiseDataCache() {
+		INoiseData  retValue = null;
+
+		if( mApplicationServices != null ) {
+			retValue = mApplicationServices.getNoiseData();
 		}
 
-		if( mNoiseData == null ) {
-			mNoiseData = provider.get();
-		}
-
-		return( mNoiseData );
+		return( retValue );
 	}
 }
