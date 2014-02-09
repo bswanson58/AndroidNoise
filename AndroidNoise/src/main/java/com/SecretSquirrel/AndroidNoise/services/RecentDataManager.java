@@ -60,7 +60,6 @@ public class RecentDataManager implements IRecentData {
 
 	@Override
 	public void persistData() {
-
 		if( mApplicationState.getIsConnected()) {
 			String  hostName = mApplicationState.getCurrentServer().getHostName();
 

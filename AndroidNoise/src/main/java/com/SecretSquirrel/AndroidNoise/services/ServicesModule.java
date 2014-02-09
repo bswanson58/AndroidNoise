@@ -31,37 +31,26 @@ import de.greenrobot.event.EventBus;
 		}
 )
 public class ServicesModule {
-	private EventBus            mEventBus;
-	private IRecentData         mRecentData;
-	private INoiseData          mNoiseData;
+	private EventBus                mEventBus;
+	private INoiseData              mNoiseData;
+	private ApplicationServices     mApplicationServices;
 
 	@SuppressWarnings("unused")
 	public void onEvent( EventServerSelected args ) {
-		saveRecentData();
-
 		mNoiseData = null;
 	}
 
 	@SuppressWarnings("unused")
 	public void onEvent( EventActivityPausing args ) {
-		saveRecentData();
-
 		mNoiseData = null;
-	}
-
-	private void saveRecentData() {
-		if( mRecentData != null ) {
-			mRecentData.persistData();
-			mRecentData.stop();
-		}
-
-		mRecentData = null;
 	}
 
 	@Provides
 	@Singleton
 	public IApplicationServices provideApplicationServices( Lazy<ApplicationServices> provider ) {
-		return( provider.get());
+		mApplicationServices = provider.get();
+
+		return( mApplicationServices );
 	}
 
 	@Provides
@@ -80,19 +69,14 @@ public class ServicesModule {
 	}
 
 	@Provides
-	public IRecentData provideRecentData( Lazy<RecentDataManager> provider, EventBus eventBus ) {
-		if( mEventBus == null ) {
-			mEventBus = eventBus;
-			mEventBus.register( this );
+	public IRecentData provideRecentData() {
+		IRecentData retValue = null;
+
+		if( mApplicationServices != null ) {
+			retValue = mApplicationServices.getRecentDataManager();
 		}
 
-		if( mRecentData == null ) {
-			mRecentData = provider.get();
-
-			mRecentData.start();
-		}
-
-		return( mRecentData );
+		return( retValue );
 	}
 
 	@Provides
@@ -102,7 +86,12 @@ public class ServicesModule {
 	}
 
 	@Provides
-	public INoiseData provideNoiseDataCache( Lazy<NoiseDataCacheClient> provider ) {
+	public INoiseData provideNoiseDataCache( Lazy<NoiseDataCacheClient> provider, EventBus eventBus ) {
+		if( mEventBus == null ) {
+			mEventBus = eventBus;
+			mEventBus.register( this );
+		}
+
 		if( mNoiseData == null ) {
 			mNoiseData = provider.get();
 		}
