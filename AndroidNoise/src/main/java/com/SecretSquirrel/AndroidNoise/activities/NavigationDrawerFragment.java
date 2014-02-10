@@ -33,7 +33,8 @@ public class NavigationDrawerFragment extends Fragment {
 	// Callback interface that all activities using this fragment must implement.
 	public static interface NavigationDrawerCallbacks {
 		// Called when an item in the navigation drawer is selected.
-		void onNavigationDrawerItemSelected( int position );
+		void    onNavigationDrawerItemSelected( int position );
+		boolean canSelectNavigationDrawerItem( int itemId );
 	}
 
 	// Remember the position of the selected item.
@@ -197,19 +198,26 @@ public class NavigationDrawerFragment extends Fragment {
 	}
 
 	private void selectPosition( int position ) {
-		NavigationDrawerItem selectedItem = mConfiguration.getNavigationItems()[position];
+		NavigationDrawerItem    selectedItem = mConfiguration.getNavigationItems()[position];
+		boolean                 shouldSelect = true;
 
-		mCurrentSelectedPosition = position;
-
-		if( mDrawerListView != null ) {
-			mDrawerListView.setItemChecked( mCurrentSelectedPosition, true );
-		}
-		if( mDrawerLayout != null ) {
-			mDrawerLayout.closeDrawer( mFragmentContainerView );
+		if( mCallbacks != null ) {
+			shouldSelect = mCallbacks.canSelectNavigationDrawerItem( selectedItem.getId());
 		}
 
-		if( selectedItem != null ) {
-			selectItem( selectedItem );
+		if( shouldSelect ) {
+			mCurrentSelectedPosition = position;
+
+			if( mDrawerListView != null ) {
+				mDrawerListView.setItemChecked( mCurrentSelectedPosition, true );
+			}
+			if( mDrawerLayout != null ) {
+				mDrawerLayout.closeDrawer( mFragmentContainerView );
+			}
+
+			if( selectedItem != null ) {
+				selectItem( selectedItem );
+			}
 		}
 	}
 

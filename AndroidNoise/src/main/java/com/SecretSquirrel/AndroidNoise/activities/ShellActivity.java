@@ -100,7 +100,7 @@ public class ShellActivity extends ActionBarActivity
 		super.onPause();
 
 		mNavigationRequestResponder.setListener( null );
-		mEventBus.post( new EventActivityPausing());
+		mEventBus.post( new EventActivityPausing() );
 	}
 
 	@Override
@@ -134,6 +134,17 @@ public class ShellActivity extends ActionBarActivity
 		mLibraryFocusArgs = args;
 
 		mNavigationDrawerFragment.selectId( id );
+	}
+
+	@Override
+	public boolean canSelectNavigationDrawerItem( int itemId ) {
+		boolean retValue = itemId == SERVERS_ITEM_ID;
+
+		if( mApplicationState.getIsConnected()) {
+			retValue = true;
+		}
+
+		return( retValue );
 	}
 
 	@Override
