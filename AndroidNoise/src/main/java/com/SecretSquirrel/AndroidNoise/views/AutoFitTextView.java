@@ -5,6 +5,7 @@ import java.util.List;
 
 import android.content.Context;
 import android.graphics.Paint;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.ViewGroup.LayoutParams;
@@ -81,16 +82,23 @@ public class AutoFitTextView extends TextView {
 		mTestPaint = new Paint();
 		mTestPaint.set( this.getPaint() );
 
-		this.getViewTreeObserver().addOnGlobalLayoutListener( new OnGlobalLayoutListener() {
-
-			@Override
-			public void onGlobalLayout() {
-				// make an initial call to onSizeChanged to make sure that refitText is triggered
-				onSizeChanged( AutoFitTextView.this.getWidth(), AutoFitTextView.this.getHeight(), 0, 0 );
-				// Remove the LayoutListener immediately so we don't run into an infinite loop
-				AutoFitTextView.this.getViewTreeObserver().removeOnGlobalLayoutListener( this );
+		if(!isInEditMode()) {
+			if( getViewTreeObserver() != null ) {
+				getViewTreeObserver().addOnGlobalLayoutListener( new OnGlobalLayoutListener() {
+					@Override
+					public void onGlobalLayout() {
+						// make an initial call to onSizeChanged to make sure that refitText is triggered
+						onSizeChanged( AutoFitTextView.this.getWidth(), AutoFitTextView.this.getHeight(), 0, 0 );
+						// Remove the LayoutListener immediately so we don't run into an infinite loop
+						if( Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN ) {
+							AutoFitTextView.this.getViewTreeObserver().removeGlobalOnLayoutListener( this );
+						} else {
+							AutoFitTextView.this.getViewTreeObserver().removeOnGlobalLayoutListener( this );
+						}
+					}
+				} );
 			}
-		} );
+		}
 	}
 
 	/**
