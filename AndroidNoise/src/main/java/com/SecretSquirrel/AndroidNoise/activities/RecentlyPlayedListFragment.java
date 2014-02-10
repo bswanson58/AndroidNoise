@@ -16,6 +16,7 @@ import android.widget.TextView;
 import com.SecretSquirrel.AndroidNoise.R;
 import com.SecretSquirrel.AndroidNoise.dto.Artist;
 import com.SecretSquirrel.AndroidNoise.events.EventArtistRequest;
+import com.SecretSquirrel.AndroidNoise.events.EventRecentDataUpdated;
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
 import com.SecretSquirrel.AndroidNoise.interfaces.IRecentData;
 import com.SecretSquirrel.AndroidNoise.support.IocUtility;
@@ -75,6 +76,19 @@ public class RecentlyPlayedListFragment extends Fragment {
 	public void onResume() {
 		super.onResume();
 
+		updateList();
+		EventBus.getDefault().register( this );
+	}
+
+	@Override
+	public void onPause() {
+		super.onPause();
+
+		EventBus.getDefault().unregister( this );
+	}
+
+	@SuppressWarnings("unused")
+	public void onEvent( EventRecentDataUpdated args ) {
 		updateList();
 	}
 
