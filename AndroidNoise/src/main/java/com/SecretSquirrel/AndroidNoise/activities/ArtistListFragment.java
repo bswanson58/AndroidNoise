@@ -27,10 +27,10 @@ import android.widget.TextView;
 import com.SecretSquirrel.AndroidNoise.R;
 import com.SecretSquirrel.AndroidNoise.dto.Artist;
 import com.SecretSquirrel.AndroidNoise.events.EventArtistSelected;
-import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
-import com.SecretSquirrel.AndroidNoise.model.NoiseRemoteApplication;
+import com.SecretSquirrel.AndroidNoise.interfaces.INoiseData;
 import com.SecretSquirrel.AndroidNoise.services.NoiseRemoteApi;
 import com.SecretSquirrel.AndroidNoise.services.ServiceResultReceiver;
+import com.SecretSquirrel.AndroidNoise.support.IocUtility;
 import com.SecretSquirrel.AndroidNoise.support.NoiseUtils;
 import com.SecretSquirrel.AndroidNoise.ui.FilteredArrayAdapter;
 import com.SecretSquirrel.AndroidNoise.ui.ListViewFilter;
@@ -41,6 +41,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+
+import javax.inject.Inject;
 
 import de.greenrobot.event.EventBus;
 
@@ -63,6 +65,8 @@ public class ArtistListFragment extends Fragment
 	private View                    mFilterPanel;
 	private boolean                 mFilterPanelDisplayed;
 
+	@Inject	INoiseData              mNoiseData;
+
 	public static ArtistListFragment newInstance() {
 		return( new ArtistListFragment());
 	}
@@ -70,6 +74,8 @@ public class ArtistListFragment extends Fragment
 	@Override
 	public void onCreate( Bundle savedInstanceState ) {
 		super.onCreate( savedInstanceState );
+
+		IocUtility.inject( this );
 
 		setHasOptionsMenu( true );
 
@@ -143,9 +149,8 @@ public class ArtistListFragment extends Fragment
 			displayFilterPanel( mFilterPanelDisplayed, false );
 		}
 
-		if(( mArtistList.size() == 0 ) &&
-		   ( getApplicationState().getIsConnected())) {
-			getApplicationState().getDataClient().GetArtistList( mServiceResultReceiver );
+		if( mArtistList.size() == 0 ) {
+			mNoiseData.GetArtistList( mServiceResultReceiver );
 		}
 
 		return( myView );
@@ -246,14 +251,14 @@ public class ArtistListFragment extends Fragment
 
 	private void selectArtist( Artist artist ) {
 		if( artist != null ) {
-			EventBus.getDefault().post( new EventArtistSelected( artist ));
+			EventBus.getDefault().post( new EventArtistSelected( artist ) );
 		}
 	}
 
 	@Override
 	public void onListChanged( int itemCount ) {
 		if( mArtistCount != null ) {
-			mArtistCount.setText( String.format( "%d artists", itemCount ));
+			mArtistCount.setText( String.format( "%d artists", itemCount ) );
 		}
 
 		// update the action menu with the filter state.
@@ -280,12 +285,6 @@ public class ArtistListFragment extends Fragment
 		}
 
 		mFilterPanelDisplayed = display;
-	}
-
-	private IApplicationState getApplicationState() {
-		NoiseRemoteApplication application = (NoiseRemoteApplication)getActivity().getApplication();
-
-		return( application.getApplicationState());
 	}
 
 	private class ArtistAdapter extends FilteredArrayAdapter<Artist>

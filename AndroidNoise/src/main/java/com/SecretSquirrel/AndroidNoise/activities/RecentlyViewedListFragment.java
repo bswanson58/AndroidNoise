@@ -18,10 +18,13 @@ import com.SecretSquirrel.AndroidNoise.dto.Artist;
 import com.SecretSquirrel.AndroidNoise.events.EventArtistRequest;
 import com.SecretSquirrel.AndroidNoise.events.EventRecentDataUpdated;
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
-import com.SecretSquirrel.AndroidNoise.model.NoiseRemoteApplication;
+import com.SecretSquirrel.AndroidNoise.interfaces.IRecentData;
+import com.SecretSquirrel.AndroidNoise.support.IocUtility;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.inject.Inject;
 
 import de.greenrobot.event.EventBus;
 
@@ -30,6 +33,9 @@ public class RecentlyViewedListFragment extends Fragment {
 	private RecentArtistListAdapter mListAdapter;
 	private ListView                mRecentlyViewedList;
 
+	@Inject IApplicationState       mApplicationState;
+	@Inject	IRecentData             mRecentDataService;
+
 	public static RecentlyViewedListFragment newInstance() {
 		return( new RecentlyViewedListFragment());
 	}
@@ -37,6 +43,8 @@ public class RecentlyViewedListFragment extends Fragment {
 	@Override
 	public void onCreate( Bundle savedInstanceState ) {
 		super.onCreate( savedInstanceState );
+
+		IocUtility.inject( this );
 
 		mArtistList = new ArrayList<Artist>();
 		mListAdapter = new RecentArtistListAdapter( getActivity(), mArtistList );
@@ -88,17 +96,11 @@ public class RecentlyViewedListFragment extends Fragment {
 		mArtistList.clear();
 
 		if(( mRecentlyViewedList != null ) &&
-		   ( getApplicationState().getIsConnected())) {
-			mArtistList.addAll( getApplicationState().getRecentData().getRecentlyViewedArtists());
+		   ( mApplicationState.getIsConnected())) {
+			mArtistList.addAll( mRecentDataService.getRecentlyViewedArtists());
 		}
 
 		mListAdapter.notifyDataSetChanged();
-	}
-
-	private IApplicationState getApplicationState() {
-		NoiseRemoteApplication application = (NoiseRemoteApplication)getActivity().getApplication();
-
-		return( application.getApplicationState());
 	}
 
 	private class RecentArtistListAdapter extends ArrayAdapter<Artist> {

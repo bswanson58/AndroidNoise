@@ -20,10 +20,12 @@ import com.SecretSquirrel.AndroidNoise.R;
 import com.SecretSquirrel.AndroidNoise.dto.ServerInformation;
 import com.SecretSquirrel.AndroidNoise.events.EventServerSelected;
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
-import com.SecretSquirrel.AndroidNoise.model.NoiseRemoteApplication;
 import com.SecretSquirrel.AndroidNoise.support.Constants;
+import com.SecretSquirrel.AndroidNoise.support.IocUtility;
 
 import java.util.ArrayList;
+
+import javax.inject.Inject;
 
 import de.greenrobot.event.EventBus;
 import rx.Subscription;
@@ -39,6 +41,8 @@ public class ServerListFragment extends Fragment {
 	private Subscription                    mLocatorSubscription;
 	private String                          mLastServer;
 
+	@Inject IApplicationState               mApplicationState;
+
 	public static ServerListFragment newInstance( boolean selectLastServer ) {
 		ServerListFragment  fragment = new ServerListFragment();
 		Bundle              args = new Bundle();
@@ -52,6 +56,8 @@ public class ServerListFragment extends Fragment {
 	@Override
 	public void onCreate( Bundle savedInstanceState ) {
 		super.onCreate( savedInstanceState );
+
+		IocUtility.inject( this );
 
 		mServerList = new ArrayList<ServerInformation>();
 		mServerListAdapter = new ServerAdapter( getActivity(), mServerList );
@@ -68,7 +74,7 @@ public class ServerListFragment extends Fragment {
 			}
 		}
 
-		mLocatorSubscription = getApplicationState().locateServers()
+		mLocatorSubscription = mApplicationState.locateServers()
 			.observeOn( AndroidSchedulers.mainThread() )
 			.subscribe( new Action1<ServerInformation>() {
 							@Override
@@ -157,15 +163,9 @@ public class ServerListFragment extends Fragment {
 		}
 	}
 
-	private IApplicationState getApplicationState() {
-		NoiseRemoteApplication application = (NoiseRemoteApplication)getActivity().getApplication();
-
-		return( application.getApplicationState());
-	}
-
 	private void selectServer( ServerInformation server ) {
 		if( server != null ) {
-			getApplicationState().SelectServer( server );
+			mApplicationState.setCurrentServer( server );
 
 			SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences( getActivity());
 			SharedPreferences.Editor editor = settings.edit();

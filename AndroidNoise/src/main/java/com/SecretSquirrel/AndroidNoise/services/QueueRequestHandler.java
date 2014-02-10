@@ -1,4 +1,4 @@
-package com.SecretSquirrel.AndroidNoise.model;
+package com.SecretSquirrel.AndroidNoise.services;
 
 // Secret Squirrel Software - Created by bswanson on 12/23/13.
 
@@ -18,24 +18,39 @@ import com.SecretSquirrel.AndroidNoise.events.EventPlayAlbum;
 import com.SecretSquirrel.AndroidNoise.events.EventPlayFavorite;
 import com.SecretSquirrel.AndroidNoise.events.EventPlaySearchItem;
 import com.SecretSquirrel.AndroidNoise.events.EventPlayTrack;
-import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
+import com.SecretSquirrel.AndroidNoise.interfaces.INoiseData;
+import com.SecretSquirrel.AndroidNoise.interfaces.INoiseQueue;
 import com.SecretSquirrel.AndroidNoise.services.ArtistResolver;
 import com.SecretSquirrel.AndroidNoise.services.NoiseRemoteApi;
 import com.SecretSquirrel.AndroidNoise.services.ServiceResultReceiver;
 import com.SecretSquirrel.AndroidNoise.support.Constants;
 
+import javax.inject.Inject;
+
 import de.greenrobot.event.EventBus;
 import rx.util.functions.Action1;
 
 public class QueueRequestHandler {
-	private Context mContext;
-	private IApplicationState mApplicationState;
+	private final Context           mContext;
+	private final INoiseQueue       mNoiseQueue;
+	private final INoiseData        mNoiseData;
+	private final EventBus          mEventBus;
 
-	public QueueRequestHandler( Context context, IApplicationState applicationState ) {
+	@Inject
+	public QueueRequestHandler( Context context, EventBus eventBus,
+	                            INoiseData noiseData, INoiseQueue noiseQueue ) {
+		mNoiseData = noiseData;
+		mNoiseQueue = noiseQueue;
 		mContext = context;
-		mApplicationState = applicationState;
+		mEventBus = eventBus;
+	}
 
-		EventBus.getDefault().register( this );
+	public void start() {
+		mEventBus.register( this );
+	}
+
+	public void stop() {
+		mEventBus.unregister( this );
 	}
 
 	@SuppressWarnings( "unused" )
@@ -76,7 +91,7 @@ public class QueueRequestHandler {
 
 	public void PlayAlbum( Album album ) {
 		if( album != null ) {
-			mApplicationState.getQueueClient().EnqueueAlbum( album, new Action1<QueuedAlbumResult>() {
+			mNoiseQueue.EnqueueAlbum( album, new Action1<QueuedAlbumResult>() {
 				@Override
 				public void call( QueuedAlbumResult queuedAlbumResult ) {
 					if( queuedAlbumResult.Success ) {
@@ -94,7 +109,7 @@ public class QueueRequestHandler {
 
 	public void PlayTrack( Track track ) {
 		if( track != null ) {
-			mApplicationState.getQueueClient().EnqueueTrack( track, new Action1<QueuedTrackResult>() {
+			mNoiseQueue.EnqueueTrack( track, new Action1<QueuedTrackResult>() {
 				@Override
 				public void call( QueuedTrackResult queuedTrackResult ) {
 					if( queuedTrackResult.Success ) {
@@ -133,7 +148,7 @@ public class QueueRequestHandler {
 	}
 
 	private void notifyArtistPlayed( long artistId ) {
-		ArtistResolver resolver = new ArtistResolver( mApplicationState.getDataClient());
+		ArtistResolver resolver = new ArtistResolver( mNoiseData );
 
 		resolver.requestArtist( artistId, new ServiceResultReceiver.Receiver() {
 			@Override
@@ -141,7 +156,7 @@ public class QueueRequestHandler {
 				Artist artist = resultData.getParcelable( NoiseRemoteApi.Artist );
 
 				if( artist != null ) {
-					EventBus.getDefault().post( new EventArtistPlayed( artist ));
+					mEventBus.post( new EventArtistPlayed( artist ));
 				}
 			}
 		});

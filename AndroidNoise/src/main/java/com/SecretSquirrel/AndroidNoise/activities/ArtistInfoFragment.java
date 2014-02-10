@@ -21,11 +21,13 @@ import com.SecretSquirrel.AndroidNoise.dto.Artist;
 import com.SecretSquirrel.AndroidNoise.dto.ArtistInfo;
 import com.SecretSquirrel.AndroidNoise.events.EventArtistInfoRequest;
 import com.SecretSquirrel.AndroidNoise.events.EventArtistViewed;
-import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
-import com.SecretSquirrel.AndroidNoise.model.NoiseRemoteApplication;
+import com.SecretSquirrel.AndroidNoise.interfaces.INoiseData;
 import com.SecretSquirrel.AndroidNoise.services.NoiseRemoteApi;
 import com.SecretSquirrel.AndroidNoise.services.ServiceResultReceiver;
 import com.SecretSquirrel.AndroidNoise.support.Constants;
+import com.SecretSquirrel.AndroidNoise.support.IocUtility;
+
+import javax.inject.Inject;
 
 import de.greenrobot.event.EventBus;
 
@@ -45,6 +47,8 @@ public class ArtistInfoFragment extends Fragment
 	private Button                  mMoreButton;
 	private Bitmap                  mUnknownArtist;
 
+	@Inject	INoiseData              mNoiseData;
+
 	public static ArtistInfoFragment newInstance( Artist artist ) {
 		ArtistInfoFragment  fragment = new ArtistInfoFragment();
 		Bundle              args = new Bundle();
@@ -58,6 +62,8 @@ public class ArtistInfoFragment extends Fragment
 	@Override
 	public void onCreate( Bundle savedInstanceState ) {
 		super.onCreate( savedInstanceState );
+
+		IocUtility.inject( this );
 
 		mServiceResultReceiver = new ServiceResultReceiver( new Handler());
 		mUnknownArtist = BitmapFactory.decodeResource( getResources(), R.drawable.unknown_artist );
@@ -140,9 +146,7 @@ public class ArtistInfoFragment extends Fragment
 
 	private void retrieveArtistInfo() {
 		if( mArtist != null ) {
-			if( getApplicationState().getIsConnected()) {
-				getApplicationState().getDataClient().GetArtistInfo( mArtist.getArtistId(), mServiceResultReceiver );
-			}
+			mNoiseData.GetArtistInfo( mArtist.getArtistId(), mServiceResultReceiver );
 		}
 	}
 
@@ -174,7 +178,7 @@ public class ArtistInfoFragment extends Fragment
 		if( mArtist != null ) {
 			mArtistName.setText( mArtist.getName());
 			mArtistGenre.setText( mArtist.getGenre());
-			mAlbumCount.setText( String.format( "%d", mArtist.getAlbumCount()));
+			mAlbumCount.setText( String.format( "%d", mArtist.getAlbumCount() ) );
 		}
 	}
 
@@ -186,11 +190,5 @@ public class ArtistInfoFragment extends Fragment
 		if( mArtistInfo != null ) {
 			outState.putParcelable( ARTIST_INFO_KEY, mArtistInfo );
 		}
-	}
-
-	private IApplicationState getApplicationState() {
-		NoiseRemoteApplication application = (NoiseRemoteApplication)getActivity().getApplication();
-
-		return( application.getApplicationState());
 	}
 }

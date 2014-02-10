@@ -3,7 +3,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.6.+'
+        classpath 'com.android.tools.build:gradle:0.8.+'
     }
 }
 apply plugin: 'android'
@@ -28,4 +28,8 @@ dependencies {
     compile 'com.google.code.gson:gson:2.2.4'
     compile 'com.netflix.rxjava:rxjava-android:0.14.9'
     compile 'de.greenrobot:eventbus:2.2.0@jar'
+    compile 'com.squareup.dagger:dagger-compiler:1.2.0@jar'
+    compile 'com.squareup.dagger:dagger:1.2.0@jar'
+    compile 'com.squareup:javawriter:2.3.0@jar'
+    compile 'javax.inject:javax.inject:1@jar'
 }

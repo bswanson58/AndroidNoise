@@ -4,7 +4,9 @@ package com.SecretSquirrel.AndroidNoise.services;
 
 import com.SecretSquirrel.AndroidNoise.dto.SearchResult;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseSearch;
-import com.SecretSquirrel.AndroidNoise.services.rto.RemoteServerSearchApi;
+import com.SecretSquirrel.AndroidNoise.services.noiseApi.RemoteServerSearchApi;
+
+import javax.inject.Inject;
 
 import retrofit.RestAdapter;
 import rx.Observable;
@@ -14,11 +16,11 @@ import rx.concurrency.Schedulers;
 import rx.subscriptions.Subscriptions;
 
 public class NoiseSearchClient implements INoiseSearch {
-	private final String            mServerAddress;
-	private RemoteServerSearchApi mService;
+	private final RemoteServerSearchApi mService;
 
-	public NoiseSearchClient( String serverAddress ) {
-		mServerAddress = serverAddress;
+	@Inject
+	public NoiseSearchClient( RemoteServerSearchApi service ) {
+		mService = service;
 	}
 
 	@Override
@@ -27,7 +29,7 @@ public class NoiseSearchClient implements INoiseSearch {
 			@Override
 			public Subscription onSubscribe( Observer<? super SearchResult> observer ) {
 				try {
-					observer.onNext( new SearchResult( getService().Search( searchTerms )));
+					observer.onNext( new SearchResult( mService.Search( searchTerms )));
 					observer.onCompleted();
 				}
 				catch( Exception ex ) {
@@ -37,21 +39,5 @@ public class NoiseSearchClient implements INoiseSearch {
 				return( Subscriptions.empty());
 			}
 		} ).subscribeOn( Schedulers.threadPoolForIO()));
-	}
-
-	private RemoteServerSearchApi getService() {
-		if( mService == null ) {
-			mService = buildService( mServerAddress );
-		}
-
-		return( mService );
-	}
-
-	private RemoteServerSearchApi buildService( String serverAddress ) {
-		RestAdapter restAdapter = new RestAdapter.Builder()
-				.setServer( serverAddress )
-				.build();
-
-		return( restAdapter.create( RemoteServerSearchApi.class ));
 	}
 }

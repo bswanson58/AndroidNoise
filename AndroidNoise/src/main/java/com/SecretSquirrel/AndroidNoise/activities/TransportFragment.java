@@ -12,12 +12,13 @@ import android.widget.TextView;
 
 import com.SecretSquirrel.AndroidNoise.R;
 import com.SecretSquirrel.AndroidNoise.events.EventQueueTimeUpdate;
-import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseQueue;
-import com.SecretSquirrel.AndroidNoise.model.NoiseRemoteApplication;
 import com.SecretSquirrel.AndroidNoise.services.rto.BaseServerResult;
+import com.SecretSquirrel.AndroidNoise.support.IocUtility;
 
 import java.util.concurrent.TimeUnit;
+
+import javax.inject.Inject;
 
 import de.greenrobot.event.EventBus;
 import rx.android.observables.AndroidObservable;
@@ -31,6 +32,8 @@ public class TransportFragment extends Fragment {
 	private String      mTotalTimeFormat;
 	private String      mRemainingTimeFormat;
 
+	@Inject INoiseQueue mNoiseQueue;
+
 	public static TransportFragment newInstance() {
 		return( new TransportFragment());
 	}
@@ -38,6 +41,8 @@ public class TransportFragment extends Fragment {
 	@Override
 	public void onCreate( Bundle savedInstanceState ) {
 		super.onCreate( savedInstanceState );
+
+		IocUtility.inject( this );
 
 		mTotalTimeFormat = getResources().getString( R.string.tr_total_time_format );
 		mRemainingTimeFormat = getResources().getString( R.string.tr_remaining_time_format );
@@ -129,7 +134,7 @@ public class TransportFragment extends Fragment {
 	}
 
 	private void ExecuteCommand( INoiseQueue.TransportCommand command ) {
-		AndroidObservable.fromFragment( this, getApplicationState().getQueueClient().ExecuteTransportCommand( command ))
+		AndroidObservable.fromFragment( this, mNoiseQueue.ExecuteTransportCommand( command ))
 				.subscribe( new Action1<BaseServerResult>() {
 			@Override
 			public void call( BaseServerResult serverResult ) {
@@ -138,11 +143,5 @@ public class TransportFragment extends Fragment {
 					}
 			}
 		} );
-	}
-
-	private IApplicationState getApplicationState() {
-		NoiseRemoteApplication application = (NoiseRemoteApplication)getActivity().getApplication();
-
-		return( application.getApplicationState());
 	}
 }

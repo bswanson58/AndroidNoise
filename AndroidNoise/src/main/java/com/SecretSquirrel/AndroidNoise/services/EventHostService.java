@@ -12,14 +12,16 @@ import android.os.RemoteException;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
-import com.SecretSquirrel.AndroidNoise.model.NoiseRemoteApplication;
+import com.SecretSquirrel.AndroidNoise.interfaces.INoiseServer;
 import com.SecretSquirrel.AndroidNoise.nanoHttpd.NanoHTTPD;
 import com.SecretSquirrel.AndroidNoise.services.rto.BaseServerResult;
 import com.SecretSquirrel.AndroidNoise.support.Constants;
+import com.SecretSquirrel.AndroidNoise.support.IocUtility;
 import com.SecretSquirrel.AndroidNoise.support.NetworkUtility;
 
 import java.util.ArrayList;
+
+import javax.inject.Inject;
 
 import rx.Subscription;
 import rx.util.functions.Action1;
@@ -41,6 +43,8 @@ public class EventHostService extends Service {
 	private String                      mLocalAddress;
 	private Subscription                mEventRequestSubscription;
 	private boolean                     mIsRunning;
+
+	@Inject	INoiseServer                mNoiseServer;
 
 	private class IncomingHandler extends Handler { // Handler of incoming messages from clients.
 		@Override
@@ -68,6 +72,8 @@ public class EventHostService extends Service {
 
 	@Override
 	public IBinder onBind( Intent intent ) {
+		IocUtility.inject( this  );
+
 		return( mMessenger.getBinder());
 	}
 
@@ -151,7 +157,7 @@ public class EventHostService extends Service {
 		configureEventHost();
 
 		try {
-			mEventRequestSubscription = getApplicationState().getNoiseClient().requestEvents( mLocalAddress )
+			mEventRequestSubscription = mNoiseServer.requestEvents( mLocalAddress )
 					.subscribe( new Action1<BaseServerResult>() {
 						            @Override
 						            public void call( BaseServerResult serverResult ) {
@@ -218,7 +224,7 @@ public class EventHostService extends Service {
 
 	private void revokeEvents() {
 		if(!TextUtils.isEmpty( mLocalAddress )) {
-			mEventRequestSubscription = getApplicationState().getNoiseClient().revokeEvents( mLocalAddress )
+			mEventRequestSubscription = mNoiseServer.revokeEvents( mLocalAddress )
 					.subscribe( new Action1<BaseServerResult>() {
 						            @Override
 						            public void call( BaseServerResult serverResult ) {
@@ -233,17 +239,6 @@ public class EventHostService extends Service {
 						            }
 					            } );
 		}
-	}
-
-	private IApplicationState getApplicationState() {
-		IApplicationState       retValue = null;
-		NoiseRemoteApplication  application = (NoiseRemoteApplication)getApplication();
-
-		if( application != null ) {
-			retValue = application.getApplicationState();
-		}
-
-		return( retValue );
 	}
 }
 

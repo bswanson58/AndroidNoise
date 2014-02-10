@@ -16,11 +16,15 @@ import android.widget.TextView;
 import com.SecretSquirrel.AndroidNoise.R;
 import com.SecretSquirrel.AndroidNoise.dto.Artist;
 import com.SecretSquirrel.AndroidNoise.events.EventArtistRequest;
+import com.SecretSquirrel.AndroidNoise.events.EventRecentDataUpdated;
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
-import com.SecretSquirrel.AndroidNoise.model.NoiseRemoteApplication;
+import com.SecretSquirrel.AndroidNoise.interfaces.IRecentData;
+import com.SecretSquirrel.AndroidNoise.support.IocUtility;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.inject.Inject;
 
 import de.greenrobot.event.EventBus;
 
@@ -29,6 +33,9 @@ public class RecentlyPlayedListFragment extends Fragment {
 	private ListView                mRecentlyPlayedList;
 	private RecentArtistListAdapter mListAdapter;
 
+	@Inject IApplicationState       mApplicationState;
+	@Inject	IRecentData             mRecentDataService;
+
 	public static RecentlyPlayedListFragment newInstance() {
 		return( new RecentlyPlayedListFragment());
 	}
@@ -36,6 +43,8 @@ public class RecentlyPlayedListFragment extends Fragment {
 	@Override
 	public void onCreate( Bundle savedInstanceState ) {
 		super.onCreate( savedInstanceState );
+
+		IocUtility.inject( this );
 
 		mArtistList = new ArrayList<Artist>();
 		mListAdapter = new RecentArtistListAdapter( getActivity(), mArtistList );
@@ -68,23 +77,30 @@ public class RecentlyPlayedListFragment extends Fragment {
 		super.onResume();
 
 		updateList();
+		EventBus.getDefault().register( this );
+	}
+
+	@Override
+	public void onPause() {
+		super.onPause();
+
+		EventBus.getDefault().unregister( this );
+	}
+
+	@SuppressWarnings("unused")
+	public void onEvent( EventRecentDataUpdated args ) {
+		updateList();
 	}
 
 	private void updateList() {
 		mArtistList.clear();
 
 		if(( mRecentlyPlayedList != null ) &&
-		   ( getApplicationState().getIsConnected())) {
-			mArtistList.addAll( getApplicationState().getRecentData().getRecentlyPlayedArtists());
+		   ( mApplicationState.getIsConnected())) {
+			mArtistList.addAll( mRecentDataService.getRecentlyPlayedArtists());
 		}
 
 		mListAdapter.notifyDataSetChanged();
-	}
-
-	private IApplicationState getApplicationState() {
-		NoiseRemoteApplication application = (NoiseRemoteApplication)getActivity().getApplication();
-
-		return( application.getApplicationState());
 	}
 
 	private class RecentArtistListAdapter extends ArrayAdapter<Artist> {

@@ -21,14 +21,16 @@ import com.SecretSquirrel.AndroidNoise.dto.Favorite;
 import com.SecretSquirrel.AndroidNoise.events.EventAlbumRequest;
 import com.SecretSquirrel.AndroidNoise.events.EventArtistRequest;
 import com.SecretSquirrel.AndroidNoise.events.EventPlayFavorite;
-import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
-import com.SecretSquirrel.AndroidNoise.model.NoiseRemoteApplication;
+import com.SecretSquirrel.AndroidNoise.interfaces.INoiseData;
 import com.SecretSquirrel.AndroidNoise.services.NoiseRemoteApi;
 import com.SecretSquirrel.AndroidNoise.services.ServiceResultReceiver;
+import com.SecretSquirrel.AndroidNoise.support.IocUtility;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+
+import javax.inject.Inject;
 
 import de.greenrobot.event.EventBus;
 
@@ -43,6 +45,9 @@ public class FavoritesListFragment extends Fragment
 	private Parcelable              mListViewState;
 	private FavoritesAdapter        mFavoritesListAdapter;
 
+	@Inject	INoiseData              mNoiseData;
+	@Inject EventBus                mEventBus;
+
 	public static FavoritesListFragment newInstance() {
 		return( new FavoritesListFragment());
 	}
@@ -50,6 +55,8 @@ public class FavoritesListFragment extends Fragment
 	@Override
 	public void onCreate( Bundle savedInstanceState ) {
 		super.onCreate( savedInstanceState );
+
+		IocUtility.inject( this );
 
 		if( savedInstanceState != null ) {
 			mFavoritesList = savedInstanceState.getParcelableArrayList( FAVORITES_LIST );
@@ -83,7 +90,7 @@ public class FavoritesListFragment extends Fragment
 					}
 					else if(( favorite.getIsAlbum()) ||
 							( favorite.getIsTrack())) {
-						EventBus.getDefault().post( new EventAlbumRequest( favorite.getArtistId(), favorite.getAlbumId()));
+						mEventBus.post( new EventAlbumRequest( favorite.getArtistId(), favorite.getAlbumId()));
 					}
 				}
 			} );
@@ -93,9 +100,8 @@ public class FavoritesListFragment extends Fragment
 			}
 		}
 
-		if(( mFavoritesList.size() == 0 ) &&
-		   ( getApplicationState().getIsConnected())) {
-			getApplicationState().getDataClient().GetFavoritesList( mServiceResultReceiver );
+		if( mFavoritesList.size() == 0 ) {
+			mNoiseData.GetFavoritesList( mServiceResultReceiver );
 		}
 
 		return( myView );
@@ -144,12 +150,6 @@ public class FavoritesListFragment extends Fragment
 		mFavoritesListAdapter.notifyDataSetChanged();
 	}
 
-	private IApplicationState getApplicationState() {
-		NoiseRemoteApplication application = (NoiseRemoteApplication)getActivity().getApplication();
-
-		return( application.getApplicationState());
-	}
-
 	private class FavoritesAdapter extends ArrayAdapter<Favorite> {
 		private Context             mContext;
 		private LayoutInflater      mLayoutInflater;
@@ -195,7 +195,7 @@ public class FavoritesListFragment extends Fragment
 							Favorite    favorite = (Favorite)view.getTag();
 
 							if( favorite != null ) {
-								EventBus.getDefault().post( new EventPlayFavorite( favorite ));
+								mEventBus.post( new EventPlayFavorite( favorite ));
 							}
 						}
 					} );

@@ -11,12 +11,14 @@ import com.SecretSquirrel.AndroidNoise.dto.QueuedTrackResult;
 import com.SecretSquirrel.AndroidNoise.dto.Track;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseQueue;
 import com.SecretSquirrel.AndroidNoise.services.rto.BaseServerResult;
-import com.SecretSquirrel.AndroidNoise.services.rto.RemoteServerQueueApi;
+import com.SecretSquirrel.AndroidNoise.services.noiseApi.RemoteServerQueueApi;
 import com.SecretSquirrel.AndroidNoise.support.Constants;
 
 import java.util.EnumMap;
 
-import retrofit.RestAdapter;
+import javax.inject.Inject;
+
+import dagger.Lazy;
 import rx.Observable;
 import rx.Observer;
 import rx.Subscription;
@@ -28,12 +30,13 @@ import rx.util.functions.Action1;
 public class NoiseQueueClient implements INoiseQueue {
 	private static final String     TAG = NoiseQueueClient.class.getName();
 
-	private final String                                mServerAddress;
-	private RemoteServerQueueApi                        mService;
+	private final Lazy<RemoteServerQueueApi>            mServiceProvider;
 	public  final EnumMap<TransportCommand, Integer>    mTransportCommands;
+	private RemoteServerQueueApi                        mService;
 
-	public NoiseQueueClient( String serverAddress ) {
-		mServerAddress = serverAddress;
+	@Inject
+	public NoiseQueueClient( Lazy<RemoteServerQueueApi> queueApi ) {
+		mServiceProvider = queueApi;
 
 		mTransportCommands = new EnumMap<TransportCommand, Integer>( TransportCommand.class );
 
@@ -43,6 +46,14 @@ public class NoiseQueueClient implements INoiseQueue {
 		mTransportCommands.put( TransportCommand.PlayNext, 4 );
 		mTransportCommands.put( TransportCommand.PlayPrevious, 5 );
 		mTransportCommands.put( TransportCommand.Repeat, 6 );
+	}
+
+	private RemoteServerQueueApi getService() {
+		if( mService == null ) {
+			mService = mServiceProvider.get();
+		}
+
+		return( mService );
 	}
 
 	@Override
@@ -162,21 +173,5 @@ public class NoiseQueueClient implements INoiseQueue {
 				return( Subscriptions.empty());
 			}
 		} )).subscribeOn( Schedulers.threadPoolForIO());
-	}
-
-	private RemoteServerQueueApi getService() {
-		if( mService == null ) {
-			mService = buildService( mServerAddress );
-		}
-
-		return( mService );
-	}
-
-	private RemoteServerQueueApi buildService( String serverAddress ) {
-		RestAdapter restAdapter = new RestAdapter.Builder()
-				.setServer( serverAddress )
-				.build();
-
-		return( restAdapter.create( RemoteServerQueueApi.class ));
 	}
 }
