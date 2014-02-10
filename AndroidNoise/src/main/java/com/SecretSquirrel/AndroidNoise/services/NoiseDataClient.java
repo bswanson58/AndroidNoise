@@ -70,9 +70,11 @@ public class NoiseDataClient implements INoiseData {
 	private Intent setupApi( int apiCode, ResultReceiver resultReceiver ) {
 		Intent intent = new Intent( mContext, NoiseDataService.class );
 
-		intent.putExtra( NoiseRemoteApi.RemoteServerAddress, mApplicationState.getCurrentServer().getServerAddress());
-		intent.putExtra( NoiseRemoteApi.RemoteApiParameter, apiCode );
-		intent.putExtra( NoiseRemoteApi.RemoteCallReceiver, resultReceiver );
+		if( mApplicationState.getIsConnected()) {
+			intent.putExtra( NoiseRemoteApi.RemoteServerAddress, mApplicationState.getCurrentServer().getServerAddress());
+			intent.putExtra( NoiseRemoteApi.RemoteApiParameter, apiCode );
+			intent.putExtra( NoiseRemoteApi.RemoteCallReceiver, resultReceiver );
+		}
 
 		return( intent );
 	}
