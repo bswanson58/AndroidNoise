@@ -51,16 +51,6 @@ public class ApplicationState implements IApplicationState {
 		return( retValue );
 	}
 
-	@Override
-	public void registerForEvents( ServiceConnection client ) {
-		mContext.bindService( new Intent( mContext, EventHostService.class ), client, Context.BIND_AUTO_CREATE );
-	}
-
-	@Override
-	public void unregisterFromEvents( ServiceConnection client ) {
-		mContext.unbindService( client );
-	}
-
 	public Observable<ServerInformation> locateServers() {
 		return( ServiceLocator.createServiceLocator( mContext ));
 	}

@@ -14,7 +14,4 @@ public interface IApplicationState {
 	boolean             canResumeWithCurrentServer();
 	ServerInformation   getCurrentServer();
 	void                setCurrentServer( ServerInformation server );
-
-	void                registerForEvents( ServiceConnection client );
-	void                unregisterFromEvents( ServiceConnection client );
 }

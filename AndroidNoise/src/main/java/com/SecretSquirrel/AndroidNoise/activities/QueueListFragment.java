@@ -30,6 +30,7 @@ import com.SecretSquirrel.AndroidNoise.events.EventAlbumNameRequest;
 import com.SecretSquirrel.AndroidNoise.events.EventQueueTimeUpdate;
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseQueue;
+import com.SecretSquirrel.AndroidNoise.services.EventHostClient;
 import com.SecretSquirrel.AndroidNoise.services.EventHostService;
 import com.SecretSquirrel.AndroidNoise.support.Constants;
 import com.SecretSquirrel.AndroidNoise.support.IocUtility;
@@ -58,6 +59,7 @@ public class QueueListFragment extends Fragment  {
 
 	@Inject	INoiseQueue                 mNoiseQueue;
 	@Inject IApplicationState           mApplicationState;
+	@Inject	EventHostClient             mEventHostClient;
 
 	public static QueueListFragment newInstance() {
 		return( new QueueListFragment());
@@ -183,7 +185,7 @@ public class QueueListFragment extends Fragment  {
 	}
 
 	private void bindToEventService() {
-		mApplicationState.registerForEvents( mConnection );
+		mEventHostClient.registerForEvents( mConnection );
 
 		mIsBound = true;
 	}
@@ -207,7 +209,7 @@ public class QueueListFragment extends Fragment  {
 			}
 
 			// Detach our existing connection.
-			mApplicationState.unregisterFromEvents( mConnection );
+			mEventHostClient.unregisterFromEvents( mConnection );
 			mIsBound = false;
 		}
 	}
