@@ -4,7 +4,6 @@ package com.SecretSquirrel.AndroidNoise.activities;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -33,6 +32,9 @@ import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
 
 public class TrackListFragment extends Fragment
@@ -46,10 +48,10 @@ public class TrackListFragment extends Fragment
 	private ListView                mTrackListView;
 	private Parcelable              mTrackListState;
 	private TrackAdapter            mTrackListAdapter;
-	private ServiceResultReceiver   mReceiver;
 	private long                    mCurrentAlbum;
 
 	@Inject	INoiseData              mNoiseData;
+	@Inject ServiceResultReceiver   mReceiver;
 
 	public static TrackListFragment newInstance( long albumId ) {
 		TrackListFragment   fragment = new TrackListFragment();
@@ -74,15 +76,27 @@ public class TrackListFragment extends Fragment
 		if( savedInstanceState != null ) {
 			mTrackList = savedInstanceState.getParcelableArrayList( TRACK_LIST );
 			mTrackListState = savedInstanceState.getParcelable( LIST_STATE );
+			mCurrentAlbum = savedInstanceState.getLong( ALBUM_KEY, Constants.NULL_ID );
 		}
+		else {
+			Bundle  args = getArguments();
+
+			if( args != null ) {
+				mCurrentAlbum = args.getLong( ALBUM_KEY, Constants.NULL_ID );
+			}
+		}
+
 		if( mTrackList == null ) {
 			mTrackList = new ArrayList<Track>();
 		}
 
 		mTrackListAdapter = new TrackAdapter( getActivity(), mTrackList );
 
-		mReceiver = new ServiceResultReceiver( new Handler());
-		mReceiver.setReceiver( this );
+		if( mCurrentAlbum == Constants.NULL_ID ) {
+			if( Constants.LOG_ERROR ) {
+				Log.e( TAG, "The current album could not be determined. " );
+			}
+		}
 	}
 
 	@Override
@@ -94,34 +108,39 @@ public class TrackListFragment extends Fragment
 
 			mTrackListView.setAdapter( mTrackListAdapter );
 
-			if( savedInstanceState != null ) {
-				if( mTrackListState != null ) {
-					mTrackListView.onRestoreInstanceState( mTrackListState );
-				}
-
-				mCurrentAlbum = savedInstanceState.getLong( ALBUM_KEY, Constants.NULL_ID );
-			}
-			else {
-				Bundle  args = getArguments();
-
-				if( args != null ) {
-					mCurrentAlbum = args.getLong( ALBUM_KEY, Constants.NULL_ID );
-				}
-			}
-		}
-
-		if( mCurrentAlbum != Constants.NULL_ID ) {
-			if( mTrackList.size() == 0 ) {
-				mNoiseData.GetTrackList( mCurrentAlbum, mReceiver );
-			}
-		}
-		else {
-			if( Constants.LOG_ERROR ) {
-				Log.e( TAG, "The current album could not be determined. " );
+			if( mTrackListState != null ) {
+				mTrackListView.onRestoreInstanceState( mTrackListState );
 			}
 		}
 
 		return( myView );
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+
+		if( mCurrentAlbum != Constants.NULL_ID ) {
+			if( mTrackList.size() == 0 ) {
+				mReceiver.setReceiver( this );
+
+				mNoiseData.GetTrackList( mCurrentAlbum, mReceiver );
+			}
+		}
+	}
+
+	@Override
+	public void onPause() {
+		super.onPause();
+
+		mReceiver.clearReceiver();
+	}
+
+	@Override
+	public void onDestroyView() {
+		super.onDestroyView();
+
+		mTrackListView = null;
 	}
 
 	@Override
@@ -135,15 +154,6 @@ public class TrackListFragment extends Fragment
 		}
 		if( mTrackListState != null ) {
 			outState.putParcelable( LIST_STATE, mTrackListState );
-		}
-	}
-
-	@Override
-	public void onDestroyView() {
-		super.onDestroyView();
-
-		if( mReceiver != null ) {
-			mReceiver.clearReceiver();
 		}
 	}
 
@@ -191,16 +201,30 @@ public class TrackListFragment extends Fragment
 		mTrackListAdapter.notifyDataSetChanged();
 	}
 
-	private class TrackAdapter extends ArrayAdapter<Track> {
+	protected class TrackAdapter extends ArrayAdapter<Track> {
 		private Context             mContext;
 		private LayoutInflater      mLayoutInflater;
 		private ArrayList<Track>    mTrackList;
 
-		private class ViewHolder {
-			public Button       PlayButton;
-			public TextView     TrackNumberTextView;
-			public TextView     NameTextView;
-			public TextView     DurationTextView;
+		protected class ViewHolder {
+			public ViewHolder( View view ) {
+				ButterKnife.inject( this, view );
+			}
+
+			@InjectView( R.id.play_button )	        Button       PlayButton;
+			@InjectView( R.id.tli_track_number )    TextView     TrackNumberTextView;
+			@InjectView( R.id.tli_name )            TextView     NameTextView;
+			@InjectView( R.id.tli_duration )        TextView     DurationTextView;
+
+			@SuppressWarnings( "unused" )
+			@OnClick( R.id.play_button )
+			public void onClick( View view ) {
+				Track   track = (Track)view.getTag();
+
+				if( track != null ) {
+					EventBus.getDefault().post( new EventPlayTrack( track ));
+				}
+			}
 		}
 
 		public TrackAdapter( Context context, ArrayList<Track> trackList ) {
@@ -220,22 +244,7 @@ public class TrackListFragment extends Fragment
 				retValue = mLayoutInflater.inflate( R.layout.track_list_item, parent, false );
 
 				if( retValue != null ) {
-					views = new ViewHolder();
-					views.TrackNumberTextView = (TextView)retValue.findViewById( R.id.tli_track_number );
-					views.NameTextView = (TextView)retValue.findViewById( R.id.tli_name );
-					views.DurationTextView = (TextView)retValue.findViewById( R.id.tli_duration );
-
-					views.PlayButton = (Button) retValue.findViewById( R.id.play_button );
-					views.PlayButton.setOnClickListener( new View.OnClickListener() {
-						@Override
-						public void onClick( View view ) {
-							Track   track = (Track)view.getTag();
-
-							if( track != null ) {
-								EventBus.getDefault().post( new EventPlayTrack( track ));
-							}
-						}
-					} );
+					views = new ViewHolder( retValue );
 
 					retValue.setTag( views );
 				}
