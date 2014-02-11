@@ -26,6 +26,8 @@ import com.SecretSquirrel.AndroidNoise.support.IocUtility;
 
 import javax.inject.Inject;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 import de.greenrobot.event.EventBus;
 
 public class ArtistExtendedInfoFragment extends Fragment {
@@ -34,18 +36,19 @@ public class ArtistExtendedInfoFragment extends Fragment {
 	private static final String     ARTIST_INFO_KEY = "ArtistInfoFragment_ArtistInfo";
 
 	private Artist                  mArtist;
-	private ArtistInfo              mArtistInfo;
-	private TextView                mArtistName;
-	private TextView                mArtistGenre;
-	private TextView                mArtistWebsite;
-	private WebView                 mArtistBiography;
-	private ImageView               mArtistImage;
 	private Bitmap                  mUnknownArtist;
-	private ListView                mBandMembersListView;
-	private ListView                mSimilarArtistsListView;
-	private ListView                mTopAlbumsListView;
+	private ArtistInfo              mArtistInfo;
 
 	@Inject	EventBus                mEventBus;
+
+	@InjectView( R.id.aei_artist_name )     TextView    mArtistName;
+	@InjectView( R.id.aei_artist_genre )    TextView    mArtistGenre;
+	@InjectView( R.id.aei_artist_website )  TextView    mArtistWebsite;
+	@InjectView( R.id.aei_biography )       WebView     mArtistBiography;
+	@InjectView( R.id.aei_artist_image )    ImageView   mArtistImage;
+	@InjectView( R.id.aei_band_members )    ListView    mBandMembersListView;
+	@InjectView( R.id.aei_similar_artists ) ListView    mSimilarArtistsListView;
+	@InjectView( R.id.aei_top_albums )      ListView    mTopAlbumsListView;
 
 	public static ArtistExtendedInfoFragment newInstance( Artist artist, ArtistInfo artistInfo ) {
 		ArtistExtendedInfoFragment  fragment = new ArtistExtendedInfoFragment();
@@ -96,14 +99,7 @@ public class ArtistExtendedInfoFragment extends Fragment {
 		View myView = inflater.inflate( R.layout.fragment_artist_extended, container, false );
 
 		if( myView != null ) {
-			mArtistName = (TextView)myView.findViewById( R.id.aei_artist_name );
-			mArtistGenre = (TextView)myView.findViewById( R.id.aei_artist_genre );
-			mArtistWebsite = (TextView)myView.findViewById( R.id.aei_artist_website );
-			mArtistBiography = (WebView)myView.findViewById( R.id.aei_biography );
-			mArtistImage = (ImageView)myView.findViewById( R.id.aei_artist_image );
-			mBandMembersListView = (ListView)myView.findViewById( R.id.aei_band_members );
-			mSimilarArtistsListView = (ListView)myView.findViewById( R.id.aei_similar_artists );
-			mTopAlbumsListView = (ListView)myView.findViewById( R.id.aei_top_albums );
+			ButterKnife.inject( this, myView );
 
 			updateDisplay();
 		}
@@ -115,7 +111,14 @@ public class ArtistExtendedInfoFragment extends Fragment {
 	public void onResume() {
 		super.onResume();
 
-		mEventBus.post( new EventNavigationUpEnable() );
+		mEventBus.post( new EventNavigationUpEnable());
+	}
+
+	@Override
+	public void onDestroyView() {
+		super.onDestroyView();
+
+		ButterKnife.reset( this );
 	}
 
 	@Override
