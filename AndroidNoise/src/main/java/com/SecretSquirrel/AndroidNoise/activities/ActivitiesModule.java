@@ -27,7 +27,8 @@ import dagger.Module;
 				ServerListFragment.class,
 				TrackListFragment.class,
 				TransportFragment.class,
-				ShellActivity.class
+				ShellActivity.class,
+				ShellLibraryFragment.class
 		}
 )
 public class ActivitiesModule {

@@ -17,6 +17,9 @@ import com.SecretSquirrel.AndroidNoise.dto.LibraryFocusArgs;
 import com.SecretSquirrel.AndroidNoise.events.EventAlbumSelected;
 import com.SecretSquirrel.AndroidNoise.events.EventArtistInfoRequest;
 import com.SecretSquirrel.AndroidNoise.events.EventArtistSelected;
+import com.SecretSquirrel.AndroidNoise.support.IocUtility;
+
+import javax.inject.Inject;
 
 import de.greenrobot.event.EventBus;
 
@@ -41,6 +44,8 @@ public class ShellLibraryFragment extends BaseShellFragment {
 	private ArtistInfo          mCurrentArtistInfo;
 	private Album               mCurrentAlbum;
 
+	@Inject EventBus            mEventBus;
+
 	public static ShellLibraryFragment newInstance( int fragmentId, LibraryFocusArgs focusArgs ) {
 		ShellLibraryFragment    fragment = new ShellLibraryFragment();
 		Bundle                  args = new Bundle();
@@ -61,6 +66,8 @@ public class ShellLibraryFragment extends BaseShellFragment {
 	@Override
 	public void onCreate( Bundle savedInstanceState ) {
 		super.onCreate( savedInstanceState );
+
+		IocUtility.inject( this );
 
 		mCurrentState = LIBRARY_STATE_ARTIST_LIST;
 		mCurrentArtist = null;
@@ -131,14 +138,14 @@ public class ShellLibraryFragment extends BaseShellFragment {
 	public void onResume() {
 		super.onResume();
 
-		EventBus.getDefault().register( this );
+		mEventBus.register( this );
 	}
 
 	@Override
 	public void onPause() {
 		super.onPause();
 
-		EventBus.getDefault().unregister( this );
+		mEventBus.unregister( this );
 	}
 
 	@Override
