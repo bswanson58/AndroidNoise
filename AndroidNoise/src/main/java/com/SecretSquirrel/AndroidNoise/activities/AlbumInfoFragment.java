@@ -45,7 +45,6 @@ public class AlbumInfoFragment extends Fragment
 	private static final String     ALBUM_KEY       = "AlbumInfoFragment_Album";
 	private static final String     ALBUM_INFO_KEY  = "AlbumInfoFragment_AlbumInfo";
 
-	private ServiceResultReceiver   mServiceResultReceiver;
 	private Artist                  mArtist;
 	private Album                   mAlbum;
 	private AlbumInfo               mAlbumInfo;
@@ -53,6 +52,7 @@ public class AlbumInfoFragment extends Fragment
 
 	@Inject EventBus                mEventBus;
 	@Inject	INoiseData              mNoiseData;
+	@Inject ServiceResultReceiver   mServiceResultReceiver;
 
 	@InjectView( R.id.ai_album_cover_image )ImageView   mAlbumCover;
 	@InjectView( R.id.ai_artist_name )	    TextView    mArtistName;
@@ -80,7 +80,6 @@ public class AlbumInfoFragment extends Fragment
 
 		setHasOptionsMenu( true );
 
-		mServiceResultReceiver = new ServiceResultReceiver( new Handler());
 		mUnknownAlbum = BitmapFactory.decodeResource( getResources(), R.drawable.unknown_album );
 
 		if( savedInstanceState != null ) {

@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
 
+import javax.inject.Inject;
+
 public class ServiceResultReceiver extends ResultReceiver {
 	public interface Receiver {
 		public void onReceiveResult( int resultCode, Bundle resultData );
@@ -13,6 +15,7 @@ public class ServiceResultReceiver extends ResultReceiver {
 
 	private Receiver mReceiver;
 
+	@Inject
 	public ServiceResultReceiver( Handler handler ) {
 		super( handler );
 	}

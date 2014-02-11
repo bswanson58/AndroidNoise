@@ -2,6 +2,8 @@ package com.SecretSquirrel.AndroidNoise.services;
 
 // Secret Squirrel Software - Created by bswanson on 2/7/14.
 
+import android.os.Handler;
+
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationServices;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseData;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseQueue;
@@ -36,6 +38,11 @@ public class ServicesModule {
 		mApplicationServices = provider.get();
 
 		return( mApplicationServices );
+	}
+
+	@Provides
+	public ServiceResultReceiver providesServiceResultReceiver() {
+		return( new ServiceResultReceiver( new Handler()));
 	}
 
 	@Provides
