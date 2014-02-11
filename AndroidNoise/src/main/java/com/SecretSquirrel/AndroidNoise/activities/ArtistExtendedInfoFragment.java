@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
@@ -19,7 +20,13 @@ import android.widget.TextView;
 import com.SecretSquirrel.AndroidNoise.R;
 import com.SecretSquirrel.AndroidNoise.dto.Artist;
 import com.SecretSquirrel.AndroidNoise.dto.ArtistInfo;
+import com.SecretSquirrel.AndroidNoise.events.EventNavigationUpEnable;
 import com.SecretSquirrel.AndroidNoise.support.Constants;
+import com.SecretSquirrel.AndroidNoise.support.IocUtility;
+
+import javax.inject.Inject;
+
+import de.greenrobot.event.EventBus;
 
 public class ArtistExtendedInfoFragment extends Fragment {
 	private static final String     TAG             = ArtistExtendedInfoFragment.class.getName();
@@ -38,6 +45,8 @@ public class ArtistExtendedInfoFragment extends Fragment {
 	private ListView                mSimilarArtistsListView;
 	private ListView                mTopAlbumsListView;
 
+	@Inject	EventBus                mEventBus;
+
 	public static ArtistExtendedInfoFragment newInstance( Artist artist, ArtistInfo artistInfo ) {
 		ArtistExtendedInfoFragment  fragment = new ArtistExtendedInfoFragment();
 		Bundle                      args = new Bundle();
@@ -52,6 +61,10 @@ public class ArtistExtendedInfoFragment extends Fragment {
 	@Override
 	public void onCreate( Bundle savedInstanceState ) {
 		super.onCreate( savedInstanceState );
+
+		IocUtility.inject( this );
+
+		setHasOptionsMenu( true );
 
 		if( savedInstanceState != null ) {
 			mArtist = savedInstanceState.getParcelable( ARTIST_KEY );
@@ -99,11 +112,35 @@ public class ArtistExtendedInfoFragment extends Fragment {
 	}
 
 	@Override
+	public void onResume() {
+		super.onResume();
+
+		mEventBus.post( new EventNavigationUpEnable() );
+	}
+
+	@Override
 	public void onSaveInstanceState( Bundle outState ) {
 		super.onSaveInstanceState( outState );
 
 		outState.putParcelable( ARTIST_KEY, mArtist );
 		outState.putParcelable( ARTIST_INFO_KEY, mArtistInfo );
+	}
+
+	@Override
+	public boolean onOptionsItemSelected( MenuItem item ) {
+		boolean retValue = true;
+
+		switch( item.getItemId()) {
+			case android.R.id.home:
+				getActivity().onBackPressed();
+				break;
+
+			default:
+				retValue = super.onOptionsItemSelected( item );
+				break;
+		}
+
+		return( retValue );
 	}
 
 	private void updateDisplay() {

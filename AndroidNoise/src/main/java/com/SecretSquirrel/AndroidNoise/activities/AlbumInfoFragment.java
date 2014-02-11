@@ -5,7 +5,6 @@ package com.SecretSquirrel.AndroidNoise.activities;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,8 +20,10 @@ import com.SecretSquirrel.AndroidNoise.R;
 import com.SecretSquirrel.AndroidNoise.dto.Album;
 import com.SecretSquirrel.AndroidNoise.dto.AlbumInfo;
 import com.SecretSquirrel.AndroidNoise.dto.Artist;
+import com.SecretSquirrel.AndroidNoise.events.EventArtistRequest;
 import com.SecretSquirrel.AndroidNoise.events.EventArtistSelected;
 import com.SecretSquirrel.AndroidNoise.events.EventArtistViewed;
+import com.SecretSquirrel.AndroidNoise.events.EventNavigationUpEnable;
 import com.SecretSquirrel.AndroidNoise.events.EventPlayAlbum;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseData;
 import com.SecretSquirrel.AndroidNoise.services.NoiseRemoteApi;
@@ -40,15 +41,17 @@ import de.greenrobot.event.EventBus;
 
 public class AlbumInfoFragment extends Fragment
 							   implements ServiceResultReceiver.Receiver {
-	private static final String     TAG             = AlbumInfoFragment.class.getName();
-	private static final String     ARTIST_KEY      = "AlbumInfoFragment_Artist";
-	private static final String     ALBUM_KEY       = "AlbumInfoFragment_Album";
-	private static final String     ALBUM_INFO_KEY  = "AlbumInfoFragment_AlbumInfo";
+	private static final String     TAG              = AlbumInfoFragment.class.getName();
+	private static final String     ARTIST_KEY       = "AlbumInfoFragment_Artist";
+	private static final String     ALBUM_KEY        = "AlbumInfoFragment_Album";
+	private static final String     ALBUM_INFO_KEY   = "AlbumInfoFragment_AlbumInfo";
+	private static final String     EXTERNAL_REQUEST = "AlbumInfoFragment_ExternalRequest";
 
 	private Artist                  mArtist;
 	private Album                   mAlbum;
 	private AlbumInfo               mAlbumInfo;
 	private Bitmap                  mUnknownAlbum;
+	private boolean                 mIsExternalRequest;
 
 	@Inject EventBus                mEventBus;
 	@Inject	INoiseData              mNoiseData;
@@ -61,12 +64,14 @@ public class AlbumInfoFragment extends Fragment
 	@InjectView( R.id.ai_published_header )	TextView    mPublishedYearHeader;
 	@InjectView( R.id.ai_track_count )      TextView    mTrackCount;
 
-	public static AlbumInfoFragment newInstance( Artist artist, Album album ) {
+	public static AlbumInfoFragment newInstance( Artist artist, Album album, boolean isExternalRequest ) {
 		AlbumInfoFragment   fragment = new AlbumInfoFragment();
 		Bundle              args = new Bundle();
 
 		args.putParcelable( ARTIST_KEY, artist );
 		args.putParcelable( ALBUM_KEY, album );
+		args.putBoolean( EXTERNAL_REQUEST, isExternalRequest );
+
 		fragment.setArguments( args );
 
 		return( fragment );
@@ -86,6 +91,7 @@ public class AlbumInfoFragment extends Fragment
 			mArtist = savedInstanceState.getParcelable( ARTIST_KEY );
 			mAlbum = savedInstanceState.getParcelable( ALBUM_KEY );
 			mAlbumInfo = savedInstanceState.getParcelable( ALBUM_INFO_KEY );
+			mIsExternalRequest = savedInstanceState.getBoolean( EXTERNAL_REQUEST );
 		}
 		else {
 			Bundle  args = getArguments();
@@ -93,6 +99,7 @@ public class AlbumInfoFragment extends Fragment
 			if( args != null ) {
 				mArtist = args.getParcelable( ARTIST_KEY );
 				mAlbum = args.getParcelable( ALBUM_KEY );
+				mIsExternalRequest = args.getBoolean( EXTERNAL_REQUEST );
 			}
 		}
 
@@ -134,6 +141,8 @@ public class AlbumInfoFragment extends Fragment
 
 			mNoiseData.GetAlbumInfo( mAlbum.getAlbumId(), mServiceResultReceiver );
 		}
+
+		mEventBus.post( new EventNavigationUpEnable());
 	}
 
 	@Override
@@ -187,6 +196,15 @@ public class AlbumInfoFragment extends Fragment
 			case R.id.action_play_album:
 				if( mAlbum != null ) {
 					EventBus.getDefault().post( new EventPlayAlbum( mAlbum ));
+				}
+				break;
+
+			case android.R.id.home:
+				if( mIsExternalRequest ) {
+					mEventBus.post( new EventArtistRequest( mArtist.getArtistId()));
+				}
+				else {
+					getActivity().onBackPressed();
 				}
 				break;
 

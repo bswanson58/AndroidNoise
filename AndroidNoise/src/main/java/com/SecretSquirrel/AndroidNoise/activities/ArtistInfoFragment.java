@@ -10,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -20,7 +21,9 @@ import com.SecretSquirrel.AndroidNoise.R;
 import com.SecretSquirrel.AndroidNoise.dto.Artist;
 import com.SecretSquirrel.AndroidNoise.dto.ArtistInfo;
 import com.SecretSquirrel.AndroidNoise.events.EventArtistInfoRequest;
+import com.SecretSquirrel.AndroidNoise.events.EventArtistListRequest;
 import com.SecretSquirrel.AndroidNoise.events.EventArtistViewed;
+import com.SecretSquirrel.AndroidNoise.events.EventNavigationUpEnable;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseData;
 import com.SecretSquirrel.AndroidNoise.services.NoiseRemoteApi;
 import com.SecretSquirrel.AndroidNoise.services.ServiceResultReceiver;
@@ -33,9 +36,10 @@ import de.greenrobot.event.EventBus;
 
 public class ArtistInfoFragment extends Fragment
 								implements ServiceResultReceiver.Receiver {
-	private static final String     TAG             = ArtistInfoFragment.class.getName();
-	private static final String     ARTIST_KEY      = "ArtistInfoFragment_Artist";
-	private static final String     ARTIST_INFO_KEY = "ArtistInfoFragment_ArtistInfo";
+	private static final String     TAG              = ArtistInfoFragment.class.getName();
+	private static final String     ARTIST_KEY       = "ArtistInfoFragment_Artist";
+	private static final String     ARTIST_INFO_KEY  = "ArtistInfoFragment_ArtistInfo";
+	private static final String     EXTERNAL_REQUEST = "ArtistInfoFragment_ExternalRequest";
 
 	private ServiceResultReceiver   mServiceResultReceiver;
 	private Artist                  mArtist;
@@ -46,14 +50,18 @@ public class ArtistInfoFragment extends Fragment
 	private TextView                mAlbumCount;
 	private Button                  mMoreButton;
 	private Bitmap                  mUnknownArtist;
+	private boolean                 mIsExternalRequest;
 
+	@Inject EventBus                mEventBus;
 	@Inject	INoiseData              mNoiseData;
 
-	public static ArtistInfoFragment newInstance( Artist artist ) {
+	public static ArtistInfoFragment newInstance( Artist artist, boolean isExternalRequest ) {
 		ArtistInfoFragment  fragment = new ArtistInfoFragment();
 		Bundle              args = new Bundle();
 
 		args.putParcelable( ARTIST_KEY, artist );
+		args.putBoolean( EXTERNAL_REQUEST, isExternalRequest );
+
 		fragment.setArguments( args );
 
 		return( fragment );
@@ -65,18 +73,22 @@ public class ArtistInfoFragment extends Fragment
 
 		IocUtility.inject( this );
 
+		setHasOptionsMenu( true );
+
 		mServiceResultReceiver = new ServiceResultReceiver( new Handler());
 		mUnknownArtist = BitmapFactory.decodeResource( getResources(), R.drawable.unknown_artist );
 
 		if( savedInstanceState != null ) {
 			mArtist = savedInstanceState.getParcelable( ARTIST_KEY );
 			mArtistInfo = savedInstanceState.getParcelable( ARTIST_INFO_KEY );
+			mIsExternalRequest = savedInstanceState.getBoolean( EXTERNAL_REQUEST );
 		}
 		else {
 			Bundle  args = getArguments();
 
 			if( args != null ) {
 				mArtist = args.getParcelable( ARTIST_KEY );
+				mIsExternalRequest = args.getBoolean( EXTERNAL_REQUEST );
 			}
 		}
 
@@ -86,7 +98,7 @@ public class ArtistInfoFragment extends Fragment
 			}
 		}
 		else {
-			EventBus.getDefault().post( new EventArtistViewed( mArtist ) );
+			mEventBus.post( new EventArtistViewed( mArtist ) );
 		}
 	}
 
@@ -106,7 +118,7 @@ public class ArtistInfoFragment extends Fragment
 				public void onClick( View view ) {
 					if(( mArtist != null ) &&
 					   ( mArtistInfo != null )) {
-						EventBus.getDefault().post( new EventArtistInfoRequest( mArtist, mArtistInfo ));
+						mEventBus.post( new EventArtistInfoRequest( mArtist, mArtistInfo ) );
 					}
 				}
 			} );
@@ -135,6 +147,8 @@ public class ArtistInfoFragment extends Fragment
 
 			retrieveArtistInfo();
 		}
+
+		mEventBus.post( new EventNavigationUpEnable());
 	}
 
 	@Override
@@ -142,6 +156,28 @@ public class ArtistInfoFragment extends Fragment
 		super.onPause();
 
 		mServiceResultReceiver.clearReceiver();
+	}
+
+	@Override
+	public boolean onOptionsItemSelected( MenuItem item ) {
+		boolean retValue = true;
+
+		switch( item.getItemId()) {
+			case android.R.id.home:
+				if( mIsExternalRequest ) {
+					mEventBus.post( new EventArtistListRequest());
+				}
+				else {
+					getActivity().onBackPressed();
+				}
+				break;
+
+			default:
+				retValue = super.onOptionsItemSelected( item );
+				break;
+		}
+
+		return( retValue );
 	}
 
 	private void retrieveArtistInfo() {
@@ -190,5 +226,6 @@ public class ArtistInfoFragment extends Fragment
 		if( mArtistInfo != null ) {
 			outState.putParcelable( ARTIST_INFO_KEY, mArtistInfo );
 		}
+		outState.putBoolean( EXTERNAL_REQUEST, mIsExternalRequest );
 	}
 }

@@ -36,6 +36,7 @@ public class ShellLibraryFragment extends BaseShellFragment {
 
 	private int                 mCurrentState;
 	private int                 mFragmentToCreate;
+	private boolean             mExternalRequest;
 	private Artist              mCurrentArtist;
 	private ArtistInfo          mCurrentArtistInfo;
 	private Album               mCurrentAlbum;
@@ -79,6 +80,8 @@ public class ShellLibraryFragment extends BaseShellFragment {
 				mCurrentAlbum = args.getParcelable( LIBRARY_REQUEST_ALBUM );
 
 				if( mCurrentArtist != null ) {
+					mExternalRequest = true;
+
 					mCurrentState = mCurrentAlbum != null ? LIBRARY_STATE_ALBUM : LIBRARY_STATE_ARTIST;
 				}
 			}
@@ -99,7 +102,7 @@ public class ShellLibraryFragment extends BaseShellFragment {
 					break;
 
 				case LIBRARY_STATE_ARTIST:
-					fragment = ArtistFragment.newInstance( mCurrentArtist );
+					fragment = ArtistFragment.newInstance( mCurrentArtist, mExternalRequest );
 					break;
 
 				case LIBRARY_STATE_ARTIST_INFO:
@@ -107,7 +110,7 @@ public class ShellLibraryFragment extends BaseShellFragment {
 					break;
 
 				case LIBRARY_STATE_ALBUM:
-					fragment = AlbumFragment.newInstance( mCurrentArtist, mCurrentAlbum );
+					fragment = AlbumFragment.newInstance( mCurrentArtist, mCurrentAlbum, mExternalRequest );
 					break;
 			}
 
@@ -168,7 +171,7 @@ public class ShellLibraryFragment extends BaseShellFragment {
 			getChildFragmentManager()
 					.beginTransaction()
 					.setCustomAnimations( android.R.anim.fade_in, android.R.anim.fade_out )
-					.replace( R.id.LibraryShellFrame, ArtistFragment.newInstance( mCurrentArtist ))
+					.replace( R.id.LibraryShellFrame, ArtistFragment.newInstance( mCurrentArtist, false ))
 					.addToBackStack( null )
 					.commit();
 
@@ -195,7 +198,7 @@ public class ShellLibraryFragment extends BaseShellFragment {
 			getChildFragmentManager()
 					.beginTransaction()
 					.setCustomAnimations( android.R.anim.fade_in, android.R.anim.fade_out )
-					.replace( R.id.LibraryShellFrame, AlbumFragment.newInstance( mCurrentArtist, mCurrentAlbum ))
+					.replace( R.id.LibraryShellFrame, AlbumFragment.newInstance( mCurrentArtist, mCurrentAlbum, false ))
 					.addToBackStack( null )
 					.commit();
 
