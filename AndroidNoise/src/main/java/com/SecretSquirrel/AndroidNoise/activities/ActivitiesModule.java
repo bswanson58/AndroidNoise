@@ -23,6 +23,7 @@ import dagger.Module;
 				RecentlyPlayedListFragment.class,
 				RecentlyViewedListFragment.class,
 				SearchListFragment.class,
+				SearchQueryFragment.class,
 				ServerListFragment.class,
 				TrackListFragment.class,
 				TransportFragment.class,

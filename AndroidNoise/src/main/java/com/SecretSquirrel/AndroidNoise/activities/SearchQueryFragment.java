@@ -8,19 +8,26 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
 import com.SecretSquirrel.AndroidNoise.R;
 import com.SecretSquirrel.AndroidNoise.events.EventSearchRequest;
+import com.SecretSquirrel.AndroidNoise.support.IocUtility;
 import com.SecretSquirrel.AndroidNoise.support.NoiseUtils;
 import com.SecretSquirrel.AndroidNoise.views.ButtonEditText;
 
+import javax.inject.Inject;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
 
 public class SearchQueryFragment extends Fragment {
 	private static final String     SEARCH_TEXT_KEY  = "SearchText";
 
-	private ButtonEditText          mSearchText;
+	@Inject	EventBus                mEventBus;
+
+	@InjectView( R.id.search_text_view )    ButtonEditText  mSearchText;
 
 	public static SearchQueryFragment newInstance() {
 		return( new SearchQueryFragment());
@@ -29,6 +36,8 @@ public class SearchQueryFragment extends Fragment {
 	@Override
 	public void onCreate( Bundle savedInstanceState ) {
 		super.onCreate( savedInstanceState );
+
+		IocUtility.inject( this );
 	}
 
 	@Override
@@ -36,33 +45,31 @@ public class SearchQueryFragment extends Fragment {
 		View    myView = inflater.inflate( R.layout.fragment_search_query, container, false );
 
 		if( myView != null ) {
-			mSearchText = (ButtonEditText) myView.findViewById( R.id.search_text_view );
+			ButterKnife.inject( this, myView );
+
 			mSearchText.setDrawableClickListener( new ButtonEditText.DrawableClickListener() {
 				@Override
 				public void onClick( ButtonEditText.DrawableClickListener.DrawablePosition target ) {
 					// Clear the edit box and the search results.
 					mSearchText.setText( "" );
-					EventBus.getDefault().post( new EventSearchRequest( "" ));
-				}
-			} );
-
-			Button executeSearch = (Button) myView.findViewById( R.id.execute_search_button );
-
-			executeSearch.setOnClickListener( new View.OnClickListener() {
-				@Override
-				public void onClick( View view ) {
-					executeSearch();
-
-					NoiseUtils.hideKeyboard( getActivity());
+					EventBus.getDefault().post( new EventSearchRequest( "" ) );
 				}
 			} );
 
 			if( savedInstanceState != null ) {
-				mSearchText.setText( savedInstanceState.getString( SEARCH_TEXT_KEY, "" ));
+				mSearchText.setText( savedInstanceState.getString( SEARCH_TEXT_KEY ));
 			}
 		}
 
 		return( myView );
+	}
+
+	@SuppressWarnings( "unused" )
+	@OnClick( R.id.execute_search_button )
+	public void onClick() {
+		executeSearch();
+
+		NoiseUtils.hideKeyboard( getActivity());
 	}
 
 	private void executeSearch() {
@@ -71,9 +78,16 @@ public class SearchQueryFragment extends Fragment {
 			String  searchText = mSearchText.getText().toString();
 
 			if(!TextUtils.isEmpty( searchText )) {
-				EventBus.getDefault().post( new EventSearchRequest( searchText ));
+				mEventBus.post( new EventSearchRequest( searchText ) );
 			}
 		}
+	}
+
+	@Override
+	public void onDestroyView() {
+		super.onDestroyView();
+
+		ButterKnife.reset( this );
 	}
 
 	@Override
