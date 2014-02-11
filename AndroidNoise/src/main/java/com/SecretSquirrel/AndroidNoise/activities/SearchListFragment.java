@@ -34,6 +34,9 @@ import java.util.Comparator;
 
 import javax.inject.Inject;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
 import rx.Subscription;
 import rx.android.observables.AndroidObservable;
@@ -45,13 +48,15 @@ public class SearchListFragment extends Fragment {
 	private final String                LIST_STATE = "searchListState";
 
 	private ArrayList<SearchResultItem> mResultList;
-	private ListView                    mSearchListView;
 	private Parcelable                  mListViewState;
-	private View                        mNoResultsView;
 	private SearchResultAdapter         mSearchListAdapter;
 	private Subscription                mSearchSubscription;
 
+	@Inject EventBus                    mEventBus;
 	@Inject	NoiseSearchClient           mSearchClient;
+
+	@InjectView( R.id.sl_list_view )    ListView    mSearchListView;
+	@InjectView( R.id.sl_no_results )   View        mNoResultsView;
 
 	public static SearchListFragment newInstance() {
 		return( new SearchListFragment());
@@ -79,10 +84,10 @@ public class SearchListFragment extends Fragment {
 		View    myView = inflater.inflate( R.layout.fragment_search_list, container, false );
 
 		if( myView != null ) {
-			mNoResultsView = myView.findViewById( R.id.sl_no_results );
+			ButterKnife.inject( this, myView );
+
 			mNoResultsView.setVisibility( View.INVISIBLE );
 
-			mSearchListView = (ListView) myView.findViewById( R.id.search_list_view );
 			mSearchListView.setAdapter( mSearchListAdapter );
 			mSearchListView.setEmptyView( myView.findViewById( R.id.sl_empty_view ));
 			mSearchListView.setOnItemClickListener( new AdapterView.OnItemClickListener() {
@@ -109,6 +114,28 @@ public class SearchListFragment extends Fragment {
 	}
 
 	@Override
+	public void onResume() {
+		super.onResume();
+
+		mEventBus.register( this );
+	}
+
+	@Override
+	public void onPause() {
+		super.onPause();
+
+		clearSubscription();
+		mEventBus.unregister( this );
+	}
+
+	@Override
+	public void onDestroyView() {
+		super.onDestroyView();
+
+		ButterKnife.reset( this );
+	}
+
+	@Override
 	public void onSaveInstanceState( Bundle outState ) {
 		super.onSaveInstanceState( outState );
 
@@ -122,21 +149,6 @@ public class SearchListFragment extends Fragment {
 				outState.putParcelable( LIST_STATE, mListViewState );
 			}
 		}
-	}
-
-	@Override
-	public void onResume() {
-		super.onResume();
-
-		EventBus.getDefault().register( this );
-	}
-
-	@Override
-	public void onPause() {
-		super.onPause();
-
-		clearSubscription();
-		EventBus.getDefault().unregister( this );
 	}
 
 	private void clearSubscription() {
@@ -193,18 +205,32 @@ public class SearchListFragment extends Fragment {
 		clearSubscription();
 	}
 
-	private class SearchResultAdapter extends ArrayAdapter<SearchResultItem> {
+	protected class SearchResultAdapter extends ArrayAdapter<SearchResultItem> {
 		private Context                     mContext;
 		private LayoutInflater              mLayoutInflater;
 		private ArrayList<SearchResultItem> mResultList;
 
-		private class ViewHolder {
-			public TextView     TitleView;
-			public TextView     SubTitleView;
-			public Button       PlayButton;
-			public View         ArtistIndicatorView;
-			public View         AlbumIndicatorView;
-			public View         TrackIndicatorView;
+		protected class ViewHolder {
+			public ViewHolder( View view ) {
+				ButterKnife.inject( this, view );
+			}
+
+			@InjectView( R.id.sli_title )                   TextView     TitleView;
+			@InjectView( R.id.sli_subtitle )                TextView     SubTitleView;
+			@InjectView( R.id.play_button )                 Button       PlayButton;
+			@InjectView( R.id.sli_type_indicator_artist )   View         ArtistIndicatorView;
+			@InjectView( R.id.sli_type_indicator_album )    View         AlbumIndicatorView;
+			@InjectView( R.id.sli_type_indicator_track )    View         TrackIndicatorView;
+
+			@SuppressWarnings( "unused" )
+			@OnClick( R.id.play_button )
+			public void onClick( View view ) {
+				SearchResultItem    searchItem = (SearchResultItem)view.getTag();
+
+				if( searchItem != null ) {
+					EventBus.getDefault().post( new EventPlaySearchItem( searchItem ));
+				}
+			}
 		}
 
 		public SearchResultAdapter( Context context, ArrayList<SearchResultItem> resultList ) {
@@ -224,24 +250,7 @@ public class SearchListFragment extends Fragment {
 				retValue = mLayoutInflater.inflate( R.layout.search_list_item, parent, false );
 
 				if( retValue != null ) {
-					views = new ViewHolder();
-
-					views.TitleView = (TextView)retValue.findViewById( R.id.sli_title );
-					views.SubTitleView = (TextView)retValue.findViewById( R.id.sli_subtitle );
-					views.ArtistIndicatorView = retValue.findViewById( R.id.sli_type_indicator_artist );
-					views.AlbumIndicatorView = retValue.findViewById( R.id.sli_type_indicator_album );
-					views.TrackIndicatorView = retValue.findViewById( R.id.sli_type_indicator_track );
-					views.PlayButton = (Button)retValue.findViewById( R.id.play_button );
-					views.PlayButton.setOnClickListener( new View.OnClickListener() {
-						@Override
-						public void onClick( View view ) {
-							SearchResultItem    searchItem = (SearchResultItem)view.getTag();
-
-							if( searchItem != null ) {
-								EventBus.getDefault().post( new EventPlaySearchItem( searchItem ));
-							}
-						}
-					} );
+					views = new ViewHolder( retValue );
 
 					retValue.setTag( views );
 				}

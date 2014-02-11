@@ -33,6 +33,7 @@ public class RecentlyPlayedListFragment extends Fragment {
 	private ListView                mRecentlyPlayedList;
 	private RecentArtistListAdapter mListAdapter;
 
+	@Inject EventBus                mEventBus;
 	@Inject IApplicationState       mApplicationState;
 	@Inject	IRecentData             mRecentDataService;
 
@@ -77,14 +78,21 @@ public class RecentlyPlayedListFragment extends Fragment {
 		super.onResume();
 
 		updateList();
-		EventBus.getDefault().register( this );
+		mEventBus.register( this );
 	}
 
 	@Override
 	public void onPause() {
 		super.onPause();
 
-		EventBus.getDefault().unregister( this );
+		mEventBus.unregister( this );
+	}
+
+	@Override
+	public void onDestroyView() {
+		super.onDestroyView();
+
+		mRecentlyPlayedList = null;
 	}
 
 	@SuppressWarnings("unused")

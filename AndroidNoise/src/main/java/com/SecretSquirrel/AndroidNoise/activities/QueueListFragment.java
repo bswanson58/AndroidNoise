@@ -40,6 +40,8 @@ import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 import de.greenrobot.event.EventBus;
 import rx.Subscription;
 import rx.util.functions.Action1;
@@ -52,6 +54,7 @@ public class QueueListFragment extends Fragment  {
 	private ArrayList<PlayQueueTrack>   mQueueList;
 	private ListView                    mQueueListView;
 	private QueueAdapter                mQueueListAdapter;
+	private Parcelable                  mQueueListState;
 	private Subscription                mQueueSubscription;
 	private Messenger                   mMessenger;
 	private Messenger                   mService;
@@ -112,6 +115,7 @@ public class QueueListFragment extends Fragment  {
 
 		if( savedInstanceState != null ) {
 			mQueueList = savedInstanceState.getParcelableArrayList( QUEUE_LIST );
+			mQueueListState = savedInstanceState.getParcelable( LIST_STATE );
 		}
 		if( mQueueList == null ) {
 			mQueueList = new ArrayList<PlayQueueTrack>();
@@ -139,14 +143,17 @@ public class QueueListFragment extends Fragment  {
 				}
 			} );
 
-			if( savedInstanceState != null ) {
-				Parcelable  listState = savedInstanceState.getParcelable( LIST_STATE );
-
-				if( listState != null ) {
-					mQueueListView.onRestoreInstanceState( listState );
-				}
+			if( mQueueListState != null ) {
+				mQueueListView.onRestoreInstanceState( mQueueListState );
 			}
 		}
+
+		return( myView );
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
 
 		if( mApplicationState.getIsConnected()) {
 			bindToEventService();
@@ -155,16 +162,6 @@ public class QueueListFragment extends Fragment  {
 				requestQueueList();
 			}
 		}
-
-		return( myView );
-	}
-
-	@Override
-	public void onSaveInstanceState( Bundle outState ) {
-		super.onSaveInstanceState( outState );
-
-		outState.putParcelableArrayList( QUEUE_LIST, mQueueList );
-		outState.putParcelable( LIST_STATE, mQueueListView.onSaveInstanceState());
 	}
 
 	@Override
@@ -175,13 +172,29 @@ public class QueueListFragment extends Fragment  {
 			mQueueSubscription.unsubscribe();
 			mQueueSubscription = null;
 		}
+
+		unbindEventService();
 	}
 
 	@Override
-	public void onDestroy() {
-		super.onDestroy();
+	public void onDestroyView() {
+		super.onDestroyView();
 
-		unbindEventService();
+		mQueueListView = null;
+	}
+
+	@Override
+	public void onSaveInstanceState( Bundle outState ) {
+		super.onSaveInstanceState( outState );
+
+		outState.putParcelableArrayList( QUEUE_LIST, mQueueList );
+
+		if( mQueueListView != null ) {
+			mQueueListState = mQueueListView.onSaveInstanceState();
+		}
+		if( mQueueListState != null ) {
+			outState.putParcelable( LIST_STATE, mQueueListState );
+		}
 	}
 
 	private void bindToEventService() {
@@ -261,18 +274,22 @@ public class QueueListFragment extends Fragment  {
 		EventBus.getDefault().post( new EventQueueTimeUpdate( totalMilliseconds, remainingMilliseconds ) );
 	}
 
-	private class QueueAdapter extends ArrayAdapter<PlayQueueTrack> {
+	protected class QueueAdapter extends ArrayAdapter<PlayQueueTrack> {
 		private Context                     mContext;
 		private LayoutInflater              mLayoutInflater;
 		private ArrayList<PlayQueueTrack>   mQueueList;
 		private int                         mWillPlayColor;
 		private int                         mHasPlayedColor;
 
-		private class ViewHolder {
-			public View         NowPlaying;
-			public TextView     NameTextView;
-			public TextView     AlbumTextView;
-			public TextView     PlayDuration;
+		protected class ViewHolder {
+			public ViewHolder( View view ) {
+				ButterKnife.inject( this, view );
+			}
+
+			@InjectView( R.id.qli_now_playing )     View         NowPlaying;
+			@InjectView( R.id.qli_item_name )       TextView     NameTextView;
+			@InjectView( R.id.qli_album_name )      TextView     AlbumTextView;
+			@InjectView( R.id.qli_play_duration )   TextView     PlayDuration;
 		}
 
 		public QueueAdapter( Context context, ArrayList<PlayQueueTrack> queueList ) {
@@ -295,13 +312,8 @@ public class QueueListFragment extends Fragment  {
 				retValue = mLayoutInflater.inflate( R.layout.queue_list_item, parent, false );
 
 				if( retValue != null ) {
-					views = new ViewHolder();
+					views = new ViewHolder( retValue );
 					
-					views.NowPlaying = retValue.findViewById( R.id.qli_now_playing );
-					views.NameTextView = (TextView)retValue.findViewById( R.id.qli_item_name );
-					views.AlbumTextView = (TextView)retValue.findViewById( R.id.qli_album_name );
-					views.PlayDuration = (TextView)retValue.findViewById( R.id.qli_play_duration );
-
 					retValue.setTag( views );
 				}
 			}

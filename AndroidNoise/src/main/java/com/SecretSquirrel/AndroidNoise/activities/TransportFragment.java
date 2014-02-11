@@ -20,6 +20,9 @@ import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
 import rx.android.observables.AndroidObservable;
 import rx.util.functions.Action1;
@@ -27,12 +30,14 @@ import rx.util.functions.Action1;
 public class TransportFragment extends Fragment {
 	private static final String     TAG = TransportFragment.class.getName();
 
-	private TextView    mTotalTimeView;
-	private TextView    mRemainingTimeView;
 	private String      mTotalTimeFormat;
 	private String      mRemainingTimeFormat;
 
+	@Inject EventBus    mEventBus;
 	@Inject INoiseQueue mNoiseQueue;
+
+	@InjectView( R.id.tr_total_time )       TextView    mTotalTimeView;
+	@InjectView( R.id.tr_remaining_time )   TextView    mRemainingTimeView;
 
 	public static TransportFragment newInstance() {
 		return( new TransportFragment());
@@ -53,62 +58,67 @@ public class TransportFragment extends Fragment {
 		View    myView = inflater.inflate( R.layout.fragment_transport, container, false );
 
 		if( myView != null ) {
-			myView.findViewById( R.id.play_button ).setOnClickListener( new View.OnClickListener() {
-				@Override
-				public void onClick( View view ) {
-					ExecuteCommand( INoiseQueue.TransportCommand.Play );
-				}
-			} );
-			myView.findViewById( R.id.pause_button ).setOnClickListener( new View.OnClickListener() {
-				@Override
-				public void onClick( View view ) {
-					ExecuteCommand( INoiseQueue.TransportCommand.Pause );
-				}
-			} );
-			myView.findViewById( R.id.stop_button ).setOnClickListener( new View.OnClickListener() {
-				@Override
-				public void onClick( View view ) {
-					ExecuteCommand( INoiseQueue.TransportCommand.Stop );
-				}
-			} );
-			myView.findViewById( R.id.next_track_button ).setOnClickListener( new View.OnClickListener() {
-				@Override
-				public void onClick( View view ) {
-					ExecuteCommand( INoiseQueue.TransportCommand.PlayNext );
-				}
-			} );
-			myView.findViewById( R.id.previous_track_button ).setOnClickListener( new View.OnClickListener() {
-				@Override
-				public void onClick( View view ) {
-					ExecuteCommand( INoiseQueue.TransportCommand.PlayPrevious );
-				}
-			} );
-			myView.findViewById( R.id.repeat_track_button ).setOnClickListener( new View.OnClickListener() {
-				@Override
-				public void onClick( View view ) {
-					ExecuteCommand( INoiseQueue.TransportCommand.Repeat );
-				}
-			} );
-
-			mTotalTimeView = (TextView)myView.findViewById( R.id.tr_total_time );
-			mRemainingTimeView = (TextView)myView.findViewById( R.id.tr_remaining_time );
+			ButterKnife.inject( this, myView );
 		}
 
 		return( myView );
+	}
+
+	@SuppressWarnings( "unused" )
+	@OnClick( R.id.play_button )
+	public void onClickPlay() {
+		ExecuteCommand( INoiseQueue.TransportCommand.Play );
+	}
+
+	@SuppressWarnings( "unused" )
+	@OnClick( R.id.pause_button )
+	public void onClickPause() {
+		ExecuteCommand( INoiseQueue.TransportCommand.Pause );
+	}
+
+	@SuppressWarnings( "unused" )
+	@OnClick( R.id.stop_button )
+	public void onClickStop() {
+		ExecuteCommand( INoiseQueue.TransportCommand.Stop );
+	}
+
+	@SuppressWarnings( "unused" )
+	@OnClick( R.id.next_track_button )
+	public void onClickNextTrack() {
+		ExecuteCommand( INoiseQueue.TransportCommand.PlayNext );
+	}
+
+	@SuppressWarnings( "unused" )
+	@OnClick( R.id.previous_track_button )
+	public void onClickPreviousTrack() {
+		ExecuteCommand( INoiseQueue.TransportCommand.PlayPrevious );
+	}
+
+	@SuppressWarnings( "unused" )
+	@OnClick( R.id.repeat_track_button )
+	public void onClickRepeat() {
+		ExecuteCommand( INoiseQueue.TransportCommand.Repeat );
 	}
 
 	@Override
 	public void onResume() {
 		super.onResume();
 
-		EventBus.getDefault().register( this );
+		mEventBus.register( this );
 	}
 
 	@Override
 	public void onPause() {
 		super.onPause();
 
-		EventBus.getDefault().unregister( this );
+		mEventBus.unregister( this );
+	}
+
+	@Override
+	public void onDestroyView() {
+		super.onDestroyView();
+
+		ButterKnife.reset( this );
 	}
 
 	@SuppressWarnings("unused")

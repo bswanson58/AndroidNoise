@@ -15,6 +15,7 @@ import dagger.Module;
 		injects = {
 				AlbumInfoFragment.class,
 				AlbumListFragment.class,
+				ArtistExtendedInfoFragment.class,
 				ArtistInfoFragment.class,
 				ArtistListFragment.class,
 				FavoritesListFragment.class,
@@ -22,10 +23,12 @@ import dagger.Module;
 				RecentlyPlayedListFragment.class,
 				RecentlyViewedListFragment.class,
 				SearchListFragment.class,
+				SearchQueryFragment.class,
 				ServerListFragment.class,
 				TrackListFragment.class,
 				TransportFragment.class,
-				ShellActivity.class
+				ShellActivity.class,
+				ShellLibraryFragment.class
 		}
 )
 public class ActivitiesModule {

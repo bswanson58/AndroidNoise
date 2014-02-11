@@ -7,7 +7,9 @@ import com.SecretSquirrel.AndroidNoise.dto.Artist;
 import com.SecretSquirrel.AndroidNoise.dto.LibraryFocusArgs;
 import com.SecretSquirrel.AndroidNoise.events.EventAlbumNameRequest;
 import com.SecretSquirrel.AndroidNoise.events.EventAlbumRequest;
+import com.SecretSquirrel.AndroidNoise.events.EventArtistListRequest;
 import com.SecretSquirrel.AndroidNoise.events.EventArtistRequest;
+import com.SecretSquirrel.AndroidNoise.events.EventNavigationUpEnable;
 import com.SecretSquirrel.AndroidNoise.events.EventServerSelected;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseData;
 import com.SecretSquirrel.AndroidNoise.services.ArtistAlbumResolver;
@@ -28,6 +30,7 @@ public class NavigationRequestResponder {
 
 	public interface NavigationRequestListener {
 		void    navigateRequest( int id, LibraryFocusArgs args );
+		void    enableActionUp();
 	}
 
 	@Inject
@@ -48,7 +51,18 @@ public class NavigationRequestResponder {
 	}
 
 	@SuppressWarnings( "unused" )
+	public void onEvent( EventNavigationUpEnable args ) {
+		if( mRequestListener != null ) {
+			mRequestListener.enableActionUp();
+		}
+	}
+
+	@SuppressWarnings( "unused" )
 	public void onEvent( EventServerSelected args ) {
+		notifyListener( ShellActivity.LIBRARY_ITEM_ID, null );
+	}
+
+	public void onEvent( EventArtistListRequest args ) {
 		notifyListener( ShellActivity.LIBRARY_ITEM_ID, null );
 	}
 

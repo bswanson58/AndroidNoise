@@ -4,7 +4,6 @@ package com.SecretSquirrel.AndroidNoise.activities;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -32,6 +31,9 @@ import java.util.Comparator;
 
 import javax.inject.Inject;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
 
 public class FavoritesListFragment extends Fragment
@@ -39,14 +41,15 @@ public class FavoritesListFragment extends Fragment
 	private final String            LIST_STATE      = "favoritesListState";
 	private final String            FAVORITES_LIST  = "favoritesList";
 
-	private ServiceResultReceiver   mServiceResultReceiver;
 	private ArrayList<Favorite>     mFavoritesList;
-	private ListView                mFavoritesListView;
 	private Parcelable              mListViewState;
 	private FavoritesAdapter        mFavoritesListAdapter;
 
 	@Inject	INoiseData              mNoiseData;
 	@Inject EventBus                mEventBus;
+	@Inject ServiceResultReceiver   mServiceResultReceiver;
+
+	@InjectView( R.id.fl_list_view )    ListView    mFavoritesListView;
 
 	public static FavoritesListFragment newInstance() {
 		return( new FavoritesListFragment());
@@ -67,9 +70,6 @@ public class FavoritesListFragment extends Fragment
 		}
 
 		mFavoritesListAdapter = new FavoritesAdapter( getActivity(), mFavoritesList );
-
-		mServiceResultReceiver = new ServiceResultReceiver( new Handler());
-		mServiceResultReceiver.setReceiver( this );
 	}
 
 	@Override
@@ -77,7 +77,7 @@ public class FavoritesListFragment extends Fragment
 		View    myView = inflater.inflate( R.layout.fragment_favorites_list, container, false );
 
 		if( myView != null ) {
-			mFavoritesListView = (ListView) myView.findViewById( R.id.FavoritesListView );
+			ButterKnife.inject( this, myView );
 
 			mFavoritesListView.setAdapter( mFavoritesListAdapter );
 			mFavoritesListView.setOnItemClickListener( new AdapterView.OnItemClickListener() {
@@ -100,11 +100,32 @@ public class FavoritesListFragment extends Fragment
 			}
 		}
 
+		return( myView );
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+
 		if( mFavoritesList.size() == 0 ) {
+			mServiceResultReceiver.setReceiver( this );
+
 			mNoiseData.GetFavoritesList( mServiceResultReceiver );
 		}
+	}
 
-		return( myView );
+	@Override
+	public void onPause() {
+		super.onPause();
+
+		mServiceResultReceiver.clearReceiver();
+	}
+
+	@Override
+	public void onDestroyView() {
+		super.onDestroyView();
+
+		ButterKnife.reset( this );
 	}
 
 	@Override
@@ -119,13 +140,6 @@ public class FavoritesListFragment extends Fragment
 		if( mListViewState != null ) {
 			outState.putParcelable( LIST_STATE, mListViewState );
 		}
-	}
-
-	@Override
-	public void onPause() {
-		super.onPause();
-
-		mServiceResultReceiver.clearReceiver();
 	}
 
 	@Override
@@ -150,18 +164,32 @@ public class FavoritesListFragment extends Fragment
 		mFavoritesListAdapter.notifyDataSetChanged();
 	}
 
-	private class FavoritesAdapter extends ArrayAdapter<Favorite> {
+	protected class FavoritesAdapter extends ArrayAdapter<Favorite> {
 		private Context             mContext;
 		private LayoutInflater      mLayoutInflater;
 		private ArrayList<Favorite> mFavoritesList;
 
-		private class ViewHolder {
-			public Button       PlayButton;
-			public TextView     TitleTextView;
-			public TextView     SubtitleTextView;
-			public View         ArtistIndicatorView;
-			public View         AlbumIndicatorView;
-			public View         TrackIndicatorView;
+		protected class ViewHolder {
+			public ViewHolder( View view ) {
+				ButterKnife.inject( this, view );
+			}
+
+			@InjectView( R.id.play_button )                 Button      PlayButton;
+			@InjectView( R.id.fli_name )                    TextView    TitleTextView;
+			@InjectView( R.id.fli_album_name )              TextView    SubtitleTextView;
+			@InjectView( R.id.fli_type_indicator_artist )   View        ArtistIndicatorView;
+			@InjectView( R.id.fli_type_indicator_album )    View        AlbumIndicatorView;
+			@InjectView( R.id.fli_type_indicator_track )    View        TrackIndicatorView;
+
+			@SuppressWarnings( "unused" )
+			@OnClick( R.id.play_button )
+			public void onClick( View view ) {
+				Favorite    favorite = (Favorite)view.getTag();
+
+				if( favorite != null ) {
+					mEventBus.post( new EventPlayFavorite( favorite ));
+				}
+			}
 		}
 
 		public FavoritesAdapter( Context context, ArrayList<Favorite> favoritesList ) {
@@ -181,24 +209,7 @@ public class FavoritesListFragment extends Fragment
 				retValue = mLayoutInflater.inflate( R.layout.favorite_list_item, parent, false );
 
 				if( retValue != null ) {
-					views = new ViewHolder();
-					views.TitleTextView = (TextView)retValue.findViewById( R.id.fli_name );
-					views.SubtitleTextView = (TextView)retValue.findViewById( R.id.fli_album_name );
-					views.ArtistIndicatorView = retValue.findViewById( R.id.fli_type_indicator_artist );
-					views.AlbumIndicatorView = retValue.findViewById( R.id.fli_type_indicator_album );
-					views.TrackIndicatorView = retValue.findViewById( R.id.fli_type_indicator_track );
-
-					views.PlayButton = (Button) retValue.findViewById( R.id.play_button );
-					views.PlayButton.setOnClickListener( new View.OnClickListener() {
-						@Override
-						public void onClick( View view ) {
-							Favorite    favorite = (Favorite)view.getTag();
-
-							if( favorite != null ) {
-								mEventBus.post( new EventPlayFavorite( favorite ));
-							}
-						}
-					} );
+					views = new ViewHolder( retValue );
 
 					retValue.setTag( views );
 				}

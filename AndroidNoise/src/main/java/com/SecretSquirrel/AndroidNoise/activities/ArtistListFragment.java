@@ -4,7 +4,6 @@ package com.SecretSquirrel.AndroidNoise.activities;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.Parcelable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -44,6 +43,8 @@ import java.util.HashMap;
 
 import javax.inject.Inject;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 import de.greenrobot.event.EventBus;
 
 public class ArtistListFragment extends Fragment
@@ -54,19 +55,20 @@ public class ArtistListFragment extends Fragment
 	private static final String     FILTER_TEXT = "artistListFilterText";
 	private static final String     FILTER_DISPLAYED = "artistListFilterDisplayed";
 
-	private ServiceResultReceiver   mServiceResultReceiver;
 	private ArrayList<Artist>       mArtistList;
-	private ListView                mArtistListView;
-	private TextView                mArtistCount;
 	private Parcelable              mListViewState;
 	private ArtistAdapter           mArtistListAdapter;
-	private ButtonEditText          mFilterEditText;
-	private String                  mFilterText;
-	private View                    mFilterPanel;
 	private boolean                 mFilterPanelDisplayed;
+	private String                  mFilterText;
 	private String                  mArtistCountFormat;
 
 	@Inject	INoiseData              mNoiseData;
+	@Inject ServiceResultReceiver   mServiceResultReceiver;
+
+	@InjectView( R.id.al_artist_list_view ) ListView        mArtistListView;
+	@InjectView( R.id.al_list_count )       TextView        mArtistCount;
+	@InjectView( R.id.al_artist_filter )    ButtonEditText  mFilterEditText;
+	@InjectView( R.id.al_filter_panel )     View            mFilterPanel;
 
 	public static ArtistListFragment newInstance() {
 		return( new ArtistListFragment());
@@ -93,8 +95,6 @@ public class ArtistListFragment extends Fragment
 		}
 
 		mArtistListAdapter = new ArtistAdapter( getActivity(), mArtistList );
-
-		mServiceResultReceiver = new ServiceResultReceiver( new Handler());
 	}
 
 	@Override
@@ -102,7 +102,7 @@ public class ArtistListFragment extends Fragment
 		View    myView = inflater.inflate( R.layout.fragment_artist_list, container, false );
 
 		if( myView != null ) {
-			mArtistListView = (ListView) myView.findViewById( R.id.al_artist_list_view );
+			ButterKnife.inject( this, myView );
 
 			mArtistListView.setAdapter( mArtistListAdapter );
 			mArtistListView.setOnItemClickListener( new AdapterView.OnItemClickListener() {
@@ -116,7 +116,6 @@ public class ArtistListFragment extends Fragment
 				}
 			} );
 
-			mFilterEditText = (ButtonEditText)myView.findViewById( R.id.al_artist_filter );
 			mFilterEditText.addTextChangedListener( new TextWatcher() {
 				@Override
 				public void onTextChanged( CharSequence charSequence, int i, int i2, int i3 ) {
@@ -144,10 +143,7 @@ public class ArtistListFragment extends Fragment
 				mArtistListView.onRestoreInstanceState( mListViewState );
 			}
 
-			mArtistCount = (TextView)myView.findViewById( R.id.al_list_count );
 			updateArtistCount( mArtistListAdapter.getCount());
-
-			mFilterPanel = myView.findViewById( R.id.al_filter_panel );
 			displayFilterPanel( mFilterPanelDisplayed, false );
 		}
 
@@ -173,6 +169,13 @@ public class ArtistListFragment extends Fragment
 
 		mArtistListAdapter.setListWatcher( null );
 		mServiceResultReceiver.clearReceiver();
+	}
+
+	@Override
+	public void onDestroyView() {
+		super.onDestroyView();
+
+		ButterKnife.reset( this );
 	}
 
 	@Override
@@ -299,17 +302,21 @@ public class ArtistListFragment extends Fragment
 		mFilterPanelDisplayed = display;
 	}
 
-	private class ArtistAdapter extends FilteredArrayAdapter<Artist>
-								implements SectionIndexer, Filterable, ListViewFilter.FilterClient<Artist> {
+	protected class ArtistAdapter extends FilteredArrayAdapter<Artist>
+								  implements SectionIndexer, Filterable, ListViewFilter.FilterClient<Artist> {
 		private Context                     mContext;
 		private LayoutInflater              mLayoutInflater;
 		private HashMap<String, Integer>    mAlphaIndexer;
 		private String[]                    mSections;
 
-		private class ViewHolder {
-			public TextView     NameTextView;
-			public TextView     AlbumCountTextView;
-			public TextView     GenreTextView;
+		protected class ViewHolder {
+			public ViewHolder( View view ) {
+				ButterKnife.inject( this, view );
+			}
+
+			@InjectView( R.id.artist_list_item_name )       TextView    NameTextView;
+			@InjectView( R.id.artist_list_item_albumCount ) TextView    AlbumCountTextView;
+			@InjectView( R.id.artist_list_item_genre )      TextView    GenreTextView;
 		}
 
 		public ArtistAdapter( Context context, ArrayList<Artist> artistList ) {
@@ -346,10 +353,7 @@ public class ArtistListFragment extends Fragment
 				retValue = mLayoutInflater.inflate( R.layout.artist_list_item, parent, false );
 
 				if( retValue != null ) {
-					views = new ViewHolder();
-					views.NameTextView = (TextView)retValue.findViewById( R.id.artist_list_item_name );
-					views.AlbumCountTextView = (TextView)retValue.findViewById( R.id.artist_list_item_albumCount );
-					views.GenreTextView = (TextView)retValue.findViewById( R.id.artist_list_item_genre );
+					views = new ViewHolder( retValue );
 
 					retValue.setTag( views );
 				}

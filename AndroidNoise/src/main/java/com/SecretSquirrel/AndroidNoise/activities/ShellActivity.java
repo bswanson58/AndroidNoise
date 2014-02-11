@@ -48,6 +48,7 @@ public class ShellActivity extends ActionBarActivity
 
 	@Inject EventBus                    mEventBus;
 	@Inject IApplicationState           mApplicationState;
+	@SuppressWarnings( "unused" )
 	@Inject	IApplicationServices        mApplicationServices;
 	@Inject	NavigationRequestResponder  mNavigationRequestResponder;
 
@@ -105,6 +106,8 @@ public class ShellActivity extends ActionBarActivity
 
 	@Override
 	public void onBackPressed() {
+		disableActionUp();
+
 		// extend back pressed to the current child fragment stack.
 		if( mCurrentChildFragment != null ){
 			if( mCurrentChildFragment.getChildFragmentManager().getBackStackEntryCount() > 0 ) {
@@ -137,6 +140,16 @@ public class ShellActivity extends ActionBarActivity
 	}
 
 	@Override
+	public void enableActionUp() {
+		mNavigationDrawerFragment.getDrawerToggle().setDrawerIndicatorEnabled( false );
+		getSupportActionBar().setDisplayHomeAsUpEnabled( true );
+	}
+
+	private void disableActionUp() {
+		mNavigationDrawerFragment.getDrawerToggle().setDrawerIndicatorEnabled( true );
+	}
+
+	@Override
 	public boolean canSelectNavigationDrawerItem( int itemId ) {
 		boolean retValue = itemId == SERVERS_ITEM_ID;
 
@@ -149,6 +162,8 @@ public class ShellActivity extends ActionBarActivity
 
 	@Override
 	public void onNavigationDrawerItemSelected( int itemId ) {
+		disableActionUp();
+
 		// update the main content by replacing fragments
 		BaseShellFragment   fragment = null;
 
