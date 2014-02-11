@@ -27,6 +27,8 @@ import java.util.ArrayList;
 
 import javax.inject.Inject;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 import de.greenrobot.event.EventBus;
 import rx.Subscription;
 import rx.android.concurrency.AndroidSchedulers;
@@ -177,14 +179,18 @@ public class ServerListFragment extends Fragment {
 		}
 	}
 
-	private class ServerAdapter extends ArrayAdapter<ServerInformation> {
+	protected class ServerAdapter extends ArrayAdapter<ServerInformation> {
 		private Context                         mContext;
 		private LayoutInflater                  mLayoutInflater;
 		private ArrayList<ServerInformation>    mServerList;
 
-		private class ViewHolder {
-			public TextView     NameTextView;
-			public TextView     AddressTextView;
+		protected class ViewHolder {
+			public ViewHolder( View view ) {
+				ButterKnife.inject( this, view );
+			}
+
+			@InjectView( R.id.sli_name )    TextView    NameTextView;
+			@InjectView( R.id.sli_address ) TextView    AddressTextView;
 		}
 
 		public ServerAdapter( Context context, ArrayList<ServerInformation> serverList ) {
@@ -203,12 +209,9 @@ public class ServerListFragment extends Fragment {
 			if( convertView == null ) {
 				retValue = mLayoutInflater.inflate( R.layout.server_list_item, parent, false );
 
-				views = new ViewHolder();
+				views = new ViewHolder( retValue );
 
 				if( retValue != null ) {
-					views.NameTextView = (TextView) retValue.findViewById( R.id.sli_name );
-					views.AddressTextView = (TextView)retValue.findViewById( R.id.sli_address );
-
 					retValue.setTag( views );
 				}
 			}
