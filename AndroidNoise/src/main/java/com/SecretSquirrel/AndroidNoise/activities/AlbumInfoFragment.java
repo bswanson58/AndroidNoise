@@ -33,6 +33,9 @@ import com.SecretSquirrel.AndroidNoise.support.NoiseUtils;
 
 import javax.inject.Inject;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
 
 public class AlbumInfoFragment extends Fragment
@@ -46,15 +49,17 @@ public class AlbumInfoFragment extends Fragment
 	private Artist                  mArtist;
 	private Album                   mAlbum;
 	private AlbumInfo               mAlbumInfo;
-	private ImageView               mAlbumCover;
-	private TextView                mArtistName;
-	private TextView                mAlbumName;
-	private TextView                mPublishedYear;
-	private TextView                mPublishedYearHeader;
-	private TextView                mTrackCount;
 	private Bitmap                  mUnknownAlbum;
 
+	@Inject EventBus                mEventBus;
 	@Inject	INoiseData              mNoiseData;
+
+	@InjectView( R.id.ai_album_cover_image )ImageView   mAlbumCover;
+	@InjectView( R.id.ai_artist_name )	    TextView    mArtistName;
+	@InjectView( R.id.ai_album_name )	    TextView    mAlbumName;
+	@InjectView( R.id.ai_published )	    TextView    mPublishedYear;
+	@InjectView( R.id.ai_published_header )	TextView    mPublishedYearHeader;
+	@InjectView( R.id.ai_track_count )      TextView    mTrackCount;
 
 	public static AlbumInfoFragment newInstance( Artist artist, Album album ) {
 		AlbumInfoFragment   fragment = new AlbumInfoFragment();
@@ -76,21 +81,7 @@ public class AlbumInfoFragment extends Fragment
 		setHasOptionsMenu( true );
 
 		mServiceResultReceiver = new ServiceResultReceiver( new Handler());
-		mServiceResultReceiver.setReceiver( this );
-
 		mUnknownAlbum = BitmapFactory.decodeResource( getResources(), R.drawable.unknown_album );
-	}
-
-	@Override
-	public void onPause() {
-		super.onPause();
-
-		mServiceResultReceiver.clearReceiver();
-	}
-
-	@Override
-	public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState ) {
-		View myView = inflater.inflate( R.layout.fragment_album_info, container, false );
 
 		if( savedInstanceState != null ) {
 			mArtist = savedInstanceState.getParcelable( ARTIST_KEY );
@@ -106,47 +97,69 @@ public class AlbumInfoFragment extends Fragment
 			}
 		}
 
-		if( myView != null ) {
-			mArtistName = (TextView)myView.findViewById( R.id.ai_artist_name );
-			mArtistName.setOnClickListener( new View.OnClickListener() {
-				@Override
-				public void onClick( View view ) {
-					if( mArtist != null ) {
-						EventBus.getDefault().post( new EventArtistSelected( mArtist ));
-					}
-				}
-			} );
-
-			mAlbumName = (TextView)myView.findViewById( R.id.ai_album_name );
-			mAlbumCover = (ImageView) myView.findViewById( R.id.ai_album_cover_image );
-			mPublishedYear = (TextView)myView.findViewById( R.id.ai_published );
-			mPublishedYearHeader = (TextView)myView.findViewById( R.id.ai_published_header );
-			mTrackCount = (TextView)myView.findViewById( R.id.ai_track_count );
-		}
-
-		if( mAlbum != null ) {
-			if( mAlbumInfo == null ) {
-				mNoiseData.GetAlbumInfo( mAlbum.getAlbumId(), mServiceResultReceiver );
-			}
-		}
-		else {
-			if( Constants.LOG_ERROR ) {
-				Log.e( TAG, "The current album could not be determined." );
-			}
-		}
-
-		if( mArtist != null ) {
-			EventBus.getDefault().post( new EventArtistViewed( mArtist ));
-		}
-		else {
+		if( mArtist == null ) {
 			if( Constants.LOG_ERROR ) {
 				Log.e( TAG, "The current artist could not be determined." );
 			}
 		}
 
+		if( mAlbum == null ) {
+			if( Constants.LOG_ERROR ) {
+				Log.e( TAG, "The current album could not be determined." );
+			}
+		}
+	}
+
+	@Override
+	public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState ) {
+		View myView = inflater.inflate( R.layout.fragment_album_info, container, false );
+
+		ButterKnife.inject( this, myView );
+
 		updateDisplay( false );
 
 		return( myView );
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+
+		if( mArtist != null ) {
+			mEventBus.post( new EventArtistViewed( mArtist ));
+		}
+
+		if(( mAlbum != null ) &&
+		   ( mAlbumInfo == null )) {
+			mServiceResultReceiver.setReceiver( this );
+
+			mNoiseData.GetAlbumInfo( mAlbum.getAlbumId(), mServiceResultReceiver );
+		}
+	}
+
+	@Override
+	public void onPause() {
+		super.onPause();
+
+		mServiceResultReceiver.clearReceiver();
+	}
+
+	@Override
+	public void onDestroyView() {
+		super.onDestroyView();
+
+		ButterKnife.reset( this );
+	}
+
+	@Override
+	public void onSaveInstanceState( Bundle outState ) {
+		super.onSaveInstanceState( outState );
+
+		outState.putParcelable( ARTIST_KEY, mArtist );
+		outState.putParcelable( ALBUM_KEY, mAlbum );
+		if( mAlbumInfo != null ) {
+			outState.putParcelable( ALBUM_INFO_KEY, mAlbumInfo );
+		}
 	}
 
 	@Override
@@ -184,6 +197,14 @@ public class AlbumInfoFragment extends Fragment
 		}
 
 		return( retValue );
+	}
+
+	@SuppressWarnings( "unused" )
+	@OnClick( R.id.ai_artist_name )
+	public void onArtistNameClick() {
+		if( mArtist != null ) {
+			EventBus.getDefault().post( new EventArtistSelected( mArtist ));
+		}
 	}
 
 	@Override
@@ -228,17 +249,6 @@ public class AlbumInfoFragment extends Fragment
 			if( withDefaults ) {
 				mAlbumCover.setImageBitmap( mUnknownAlbum );
 			}
-		}
-	}
-
-	@Override
-	public void onSaveInstanceState( Bundle outState ) {
-		super.onSaveInstanceState( outState );
-
-		outState.putParcelable( ARTIST_KEY, mArtist );
-		outState.putParcelable( ALBUM_KEY, mAlbum );
-		if( mAlbumInfo != null ) {
-			outState.putParcelable( ALBUM_INFO_KEY, mAlbumInfo );
 		}
 	}
 }
