@@ -61,4 +61,5 @@
     <string name="action_filter_artist_list_on">Filter Artists (On)</string>
     <string name="action_filter_album_list">Filter Albums</string>
     <string name="action_filter_album_list_on">Filter Albums (On)</string>
+    <string name="artist_count_format">%1$d artists</string>
 </resources>

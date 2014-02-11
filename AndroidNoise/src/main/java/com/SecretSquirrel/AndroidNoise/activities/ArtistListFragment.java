@@ -64,6 +64,7 @@ public class ArtistListFragment extends Fragment
 	private String                  mFilterText;
 	private View                    mFilterPanel;
 	private boolean                 mFilterPanelDisplayed;
+	private String                  mArtistCountFormat;
 
 	@Inject	INoiseData              mNoiseData;
 
@@ -79,6 +80,8 @@ public class ArtistListFragment extends Fragment
 
 		setHasOptionsMenu( true );
 
+		mArtistCountFormat = getResources().getString( R.string.artist_count_format );
+
 		if( savedInstanceState != null ) {
 			mArtistList = savedInstanceState.getParcelableArrayList( ARTIST_LIST );
 			mListViewState = savedInstanceState.getParcelable( LIST_STATE );
@@ -90,10 +93,8 @@ public class ArtistListFragment extends Fragment
 		}
 
 		mArtistListAdapter = new ArtistAdapter( getActivity(), mArtistList );
-		mArtistListAdapter.setListWatcher( this );
 
 		mServiceResultReceiver = new ServiceResultReceiver( new Handler());
-		mServiceResultReceiver.setReceiver( this );
 	}
 
 	@Override
@@ -144,16 +145,34 @@ public class ArtistListFragment extends Fragment
 			}
 
 			mArtistCount = (TextView)myView.findViewById( R.id.al_list_count );
+			updateArtistCount( mArtistListAdapter.getCount());
 
 			mFilterPanel = myView.findViewById( R.id.al_filter_panel );
 			displayFilterPanel( mFilterPanelDisplayed, false );
 		}
 
+		return( myView );
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+
+		mArtistListAdapter.setListWatcher( this );
+
 		if( mArtistList.size() == 0 ) {
+			mServiceResultReceiver.setReceiver( this );
+
 			mNoiseData.GetArtistList( mServiceResultReceiver );
 		}
+	}
 
-		return( myView );
+	@Override
+	public void onPause() {
+		super.onPause();
+
+		mArtistListAdapter.setListWatcher( null );
+		mServiceResultReceiver.clearReceiver();
 	}
 
 	@Override
@@ -178,17 +197,6 @@ public class ArtistListFragment extends Fragment
 		}
 
 		outState.putBoolean( FILTER_DISPLAYED, mFilterPanelDisplayed );
-	}
-
-	@Override
-	public void onPause() {
-		super.onPause();
-
-		if( mArtistListAdapter != null ) {
-			mArtistListAdapter.setListWatcher( null );
-		}
-
-		mServiceResultReceiver.clearReceiver();
 	}
 
 	@Override
@@ -257,12 +265,16 @@ public class ArtistListFragment extends Fragment
 
 	@Override
 	public void onListChanged( int itemCount ) {
-		if( mArtistCount != null ) {
-			mArtistCount.setText( String.format( "%d artists", itemCount ) );
-		}
+		updateArtistCount( itemCount );
 
 		// update the action menu with the filter state.
-		ActivityCompat.invalidateOptionsMenu( getActivity());
+		ActivityCompat.invalidateOptionsMenu( getActivity() );
+	}
+
+	private void updateArtistCount( int itemCount ) {
+		if( mArtistCount != null ) {
+			mArtistCount.setText( String.format( mArtistCountFormat, itemCount ));
+		}
 	}
 
 	private void displayFilterPanel( boolean display, boolean withAnimation ) {
