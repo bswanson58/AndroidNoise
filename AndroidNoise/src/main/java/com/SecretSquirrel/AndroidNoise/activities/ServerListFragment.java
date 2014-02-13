@@ -134,7 +134,7 @@ public class ServerListFragment extends Fragment {
 				boolean     exists = false;
 
 				for( ServerInformation si : mServerList ) {
-					if( si.getServerAddress().equals( serverInformation.getServerAddress() )) {
+					if( si.getServerAddress().equals( serverInformation.getServerAddress())) {
 						exists = true;
 
 						break;

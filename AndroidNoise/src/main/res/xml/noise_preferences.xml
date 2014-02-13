@@ -10,5 +10,11 @@
             android:summary="@string/setting_use_last_server_summary"
             android:defaultValue="true"/>
 
+        <CheckBoxPreference
+            android:key="@string/setting_prefix_artist_names"
+            android:title="@string/setting_prefix_artist_names_title"
+            android:summary="@string/setting_prefix_artist_names_summary"
+            android:defaultValue="false"/>
+
     </PreferenceCategory>
 </PreferenceScreen>

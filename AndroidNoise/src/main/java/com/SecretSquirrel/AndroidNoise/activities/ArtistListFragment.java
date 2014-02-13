@@ -3,8 +3,10 @@ package com.SecretSquirrel.AndroidNoise.activities;
 // Secret Squirrel Software - Created by bswanson on 12/17/13.
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
@@ -54,6 +56,7 @@ public class ArtistListFragment extends Fragment
 	private static final String     LIST_STATE  = "artistListState";
 	private static final String     FILTER_TEXT = "artistListFilterText";
 	private static final String     FILTER_DISPLAYED = "artistListFilterDisplayed";
+	private static final String     USE_SORT_PREFIXES = "artistList_useSortPrefixes";
 
 	private ArrayList<Artist>       mArtistList;
 	private Parcelable              mListViewState;
@@ -61,6 +64,7 @@ public class ArtistListFragment extends Fragment
 	private boolean                 mFilterPanelDisplayed;
 	private String                  mFilterText;
 	private String                  mArtistCountFormat;
+	private boolean                 mUseSortPrefixes;
 
 	@Inject	INoiseData              mNoiseData;
 	@Inject ServiceResultReceiver   mServiceResultReceiver;
@@ -89,6 +93,7 @@ public class ArtistListFragment extends Fragment
 			mListViewState = savedInstanceState.getParcelable( LIST_STATE );
 			mFilterText = savedInstanceState.getString( FILTER_TEXT );
 			mFilterPanelDisplayed = savedInstanceState.getBoolean( FILTER_DISPLAYED );
+			mUseSortPrefixes = savedInstanceState.getBoolean( USE_SORT_PREFIXES );
 		}
 		if( mArtistList == null ) {
 			mArtistList = new ArrayList<Artist>();
@@ -161,6 +166,15 @@ public class ArtistListFragment extends Fragment
 
 			mNoiseData.GetArtistList( mServiceResultReceiver );
 		}
+		else {
+			SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences( getActivity());
+
+			if( settings.getBoolean( getString( R.string.setting_prefix_artist_names ), false ) != mUseSortPrefixes ) {
+				setArtistPrefixes();
+
+				mArtistListAdapter.notifyDataSetChanged();
+			}
+		}
 	}
 
 	@Override
@@ -200,6 +214,7 @@ public class ArtistListFragment extends Fragment
 		}
 
 		outState.putBoolean( FILTER_DISPLAYED, mFilterPanelDisplayed );
+		outState.putBoolean( USE_SORT_PREFIXES, mUseSortPrefixes );
 	}
 
 	@Override
@@ -251,13 +266,36 @@ public class ArtistListFragment extends Fragment
 		mArtistList.clear();
 		mArtistList.addAll( artistList );
 
+		setArtistPrefixes();
+		mArtistListAdapter.notifyDataSetChanged();
+	}
+
+	private void setArtistPrefixes() {
+		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences( getActivity());
+
+		mUseSortPrefixes = settings.getBoolean( getString( R.string.setting_prefix_artist_names ), false );
+
+		if( mUseSortPrefixes ) {
+			for( Artist artist : mArtistList ) {
+				if( artist.getName().toLowerCase().startsWith( "the " )) {
+					artist.setSortName( artist.getName().substring( 4 ));
+
+					artist.setDisplayName( "(The) " + artist.getSortName());
+				}
+			}
+		}
+		else {
+			for( Artist artist : mArtistList ) {
+				artist.setDisplayName( "" );
+				artist.setSortName( "" );
+			}
+		}
+
 		Collections.sort( mArtistList, new Comparator<Artist>() {
 			public int compare( Artist artist1, Artist artist2 ) {
-				return (artist1.getName().compareToIgnoreCase( artist2.getName()));
+				return( artist1.getSortName().compareToIgnoreCase( artist2.getSortName()));
 			}
 		} );
-
-		mArtistListAdapter.notifyDataSetChanged();
 	}
 
 	private void selectArtist( Artist artist ) {
@@ -276,7 +314,7 @@ public class ArtistListFragment extends Fragment
 
 	private void updateArtistCount( int itemCount ) {
 		if( mArtistCount != null ) {
-			mArtistCount.setText( String.format( mArtistCountFormat, itemCount ));
+			mArtistCount.setText( String.format( mArtistCountFormat, itemCount ) );
 		}
 	}
 
@@ -366,7 +404,7 @@ public class ArtistListFragment extends Fragment
 			   ( position < getCount())) {
 				Artist      artist = getItem( position );
 
-				views.NameTextView.setText( artist.getName());
+				views.NameTextView.setText( artist.getDisplayName());
 				views.AlbumCountTextView.setText( "Albums: " + artist.getAlbumCount());
 				views.GenreTextView.setText( artist.getGenre());
 			}
@@ -383,7 +421,7 @@ public class ArtistListFragment extends Fragment
 			}
 
 			for( int index = 0; index < getCount(); index++ ) {
-				String firstChar = getItem( index ).getName().substring( 0, 1 ).toUpperCase();
+				String firstChar = getItem( index ).getSortName().substring( 0, 1 ).toUpperCase();
 
 				// put only if the key does not exist
 				if(!mAlphaIndexer.containsKey( firstChar )) {
