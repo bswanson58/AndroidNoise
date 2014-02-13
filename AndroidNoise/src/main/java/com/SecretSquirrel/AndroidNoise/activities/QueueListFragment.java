@@ -158,9 +158,7 @@ public class QueueListFragment extends Fragment  {
 		if( mApplicationState.getIsConnected()) {
 			bindToEventService();
 
-			if( mQueueList.size() == 0 ) {
-				requestQueueList();
-			}
+			requestQueueList();
 		}
 	}
 
@@ -198,9 +196,11 @@ public class QueueListFragment extends Fragment  {
 	}
 
 	private void bindToEventService() {
-		mEventHostClient.registerForEvents( mConnection );
+		if(!mIsBound ) {
+			mEventHostClient.registerForEvents( mConnection );
 
-		mIsBound = true;
+			mIsBound = true;
+		}
 	}
 
 	private void unbindEventService() {
