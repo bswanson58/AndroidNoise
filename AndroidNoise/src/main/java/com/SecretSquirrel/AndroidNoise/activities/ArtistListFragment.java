@@ -405,7 +405,7 @@ public class ArtistListFragment extends Fragment
 				Artist      artist = getItem( position );
 
 				views.NameTextView.setText( artist.getDisplayName());
-				views.AlbumCountTextView.setText( "Albums: " + artist.getAlbumCount());
+				views.AlbumCountTextView.setText( String.format( "%d", artist.getAlbumCount()));
 				views.GenreTextView.setText( artist.getGenre());
 			}
 

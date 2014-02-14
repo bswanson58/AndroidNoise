@@ -29,17 +29,20 @@
             android:id="@+id/fli_type_indicator_artist"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
-            android:background="@drawable/ic_artist_icon"/>
+            android:background="@drawable/ic_artist_icon"
+            android:contentDescription="@string/content_description_artist_type"/>
         <ImageView
             android:id="@+id/fli_type_indicator_album"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
-            android:background="@drawable/ic_album_icon"/>
+            android:background="@drawable/ic_album_icon"
+            android:contentDescription="@string/content_description_album_type"/>
         <ImageView
             android:id="@+id/fli_type_indicator_track"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
-            android:background="@drawable/ic_track_icon"/>
+            android:background="@drawable/ic_track_icon"
+            android:contentDescription="@string/content_description_track_type"/>
     </FrameLayout>
 
     <LinearLayout
@@ -53,7 +56,7 @@
             android:layout_width="match_parent"
             android:gravity="bottom"
             android:layout_weight="5"
-            android:text="Beast Of Burden"
+            android:text="@string/test_track_name"
             style="@style/TitleText"/>
 
         <com.SecretSquirrel.AndroidNoise.views.AutoFitTextView
@@ -62,7 +65,7 @@
             android:layout_width="match_parent"
             android:layout_weight="3"
             android:layout_marginLeft="@dimen/noise_sub_item_indent"
-            android:text="(The Rolling Stones/Sticky Fingers)"
+            android:text="@string/test_artist_album_name"
             style="@style/SubTitleText"/>
 
         </LinearLayout>

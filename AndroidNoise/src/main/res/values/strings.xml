@@ -54,6 +54,12 @@
     <string name="artist_count_format">%1$d artists</string>
     <string name="software_version_format">Version: %1$s</string>
 
+    <string name="content_description_artist_image">The band/artist image</string>
+    <string name="content_description_album_cover">The album cover image</string>
+    <string name="content_description_artist_type">This entry describes an artist</string>
+    <string name="content_description_album_type">This entry describes an album</string>
+    <string name="content_description_track_type">This entry describes a track</string>
+
     <string name="setting_use_last_server">use_last_server</string>
     <string name="setting_use_last_server_title">Automatically Select Last Server</string>
     <string name="setting_use_last_server_summary">Automatically select the last Noise server used if it is available on startup</string>
@@ -68,4 +74,13 @@
     <string name="action_filter_artist_list_on">Filter Artists (On)</string>
     <string name="action_filter_album_list">Filter Albums</string>
     <string name="action_filter_album_list_on">Filter Albums (On)</string>
+
+    <string name="test_artist_name">The Rolling Stones</string>
+    <string name="test_album_name">Sticky Fingers</string>
+    <string name="test_track_name">Beast Of Burden</string>
+    <string name="test_artist_album_name">(The Rolling Stones/Sticky Fingers)</string>
+    <string name="test_album_count">17</string>
+    <string name="test_track_count">15</string>
+    <string name="test_genre">classic rock</string>
+    <string name="test_published_year">1997</string>
 </resources>

@@ -27,7 +27,7 @@
             android:layout_height="0dp"
             android:layout_width="fill_parent"
             android:gravity="bottom"
-            android:text="Sticky Fingers"
+            android:text="@string/test_album_name"
             android:layout_weight="5"
             style="@style/TitleText"/>
 
@@ -47,7 +47,7 @@
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
                 android:layout_marginLeft="@dimen/noise_text_spacer"
-                android:text="15"
+                android:text="@string/test_track_count"
                 style="@style/SubTitleText"/>
 
             <TextView
@@ -63,7 +63,7 @@
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
                 android:layout_marginLeft="@dimen/noise_text_spacer"
-                android:text="1998"
+                android:text="@string/test_published_year"
                 style="@style/SubTitleText"/>
         </LinearLayout>
 
