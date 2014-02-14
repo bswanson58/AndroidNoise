@@ -40,18 +40,33 @@
             style="@style/separatorViewVertical"/>
     </LinearLayout>
 
-    <ListView
-        android:id="@+id/sl_server_list_view"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        style="@style/ShortListStyle"/>
+        android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/sl_empty_view"
-        android:layout_height="match_parent"
-        android:layout_width="match_parent"
-        android:gravity="center"
-        android:text="@string/sl_searching_title"
-        style="@style/HeaderText"/>
+        <ListView
+            android:id="@+id/sl_server_list_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/ShortListStyle"/>
+
+        <TextView
+            android:id="@+id/sl_empty_view"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:gravity="center"
+            android:text="@string/sl_searching_title"
+            style="@style/HeaderText"/>
+
+        <TextView
+            android:id="@+id/software_version"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|right"
+            android:layout_margin="9dp"
+            android:text="version 1.2.300"
+            style="@style/SubHeaderText"/>
+
+        </FrameLayout>
 
 </LinearLayout>

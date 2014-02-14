@@ -50,6 +50,8 @@
     <string name="rvl_recently_viewed_title">Recently Viewed</string>
     <string name="tr_total_time_format">Playing Time: %1$d:%2$02d:%3$02d</string>
     <string name="tr_remaining_time_format">Remaining Time: %1$d:%2$02d:%3$02d</string>
+    <string name="artist_count_format">%1$d artists</string>
+    <string name="software_version_format">Version: %1$s</string>
 
     <string name="setting_use_last_server">use_last_server</string>
     <string name="setting_use_last_server_title">Automatically Select Last Server</string>
@@ -65,5 +67,4 @@
     <string name="action_filter_artist_list_on">Filter Artists (On)</string>
     <string name="action_filter_album_list">Filter Albums</string>
     <string name="action_filter_album_list_on">Filter Albums (On)</string>
-    <string name="artist_count_format">%1$d artists</string>
 </resources>

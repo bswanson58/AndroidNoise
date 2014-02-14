@@ -4,6 +4,7 @@ package com.SecretSquirrel.AndroidNoise.activities;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
@@ -113,6 +114,24 @@ public class ServerListFragment extends Fragment {
 					}
 				}
 			} );
+
+			try {
+				PackageManager  manager = getActivity().getPackageManager();
+
+				if( manager != null ) {
+					TextView    versionView = (TextView)myView.findViewById( R.id.software_version );
+					String      softwareVersionFormat = getString( R.string.software_version_format );
+					String      versionName = manager.getPackageInfo(
+												getActivity().getPackageName(), 0 ).versionName;
+
+					versionView.setText( String.format( softwareVersionFormat, versionName ) );
+				}
+			}
+			catch( Exception ex ) {
+				if( Constants.LOG_ERROR ) {
+					Log.e( TAG, "Software version could not be determined." );
+				}
+			}
 		}
 
 		return( myView );
