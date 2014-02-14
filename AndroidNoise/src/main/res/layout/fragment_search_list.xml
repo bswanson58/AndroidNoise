@@ -45,7 +45,9 @@
         <ImageView
             android:layout_height="match_parent"
             android:layout_width="match_parent"
-            android:background="@drawable/search_background"/>
+            android:background="@drawable/search_background"
+            android:contentDescription="@string/content_description_search_list"/>
+
         <ListView
             android:id="@+id/sl_list_view"
             android:layout_width="wrap_content"

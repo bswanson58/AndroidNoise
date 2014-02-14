@@ -276,7 +276,7 @@ public class AlbumListFragment extends Fragment
 	@Override
 	public void onListChanged( int itemCount ) {
 		if( mAlbumCount != null ) {
-			mAlbumCount.setText( String.format( "%d albums", itemCount ) );
+			mAlbumCount.setText( String.format( getString( R.string.album_count_format ), itemCount ));
 		}
 
 		// update the action menu with the filter state.

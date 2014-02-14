@@ -13,7 +13,7 @@
         android:id="@+id/play_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Play"
+        android:text="@string/transport_play"
         style="?android:attr/buttonStyleSmall"
         />
 
@@ -22,7 +22,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@+id/play_button"
-        android:text="Stop"
+        android:text="@string/transport_stop"
         style="?android:attr/buttonStyleSmall"
         />
 
@@ -31,7 +31,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@+id/stop_button"
-        android:text="Pause"
+        android:text="@string/transport_pause"
         style="?android:attr/buttonStyleSmall"
         />
 
@@ -40,7 +40,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@+id/pause_button"
-        android:text="Next"
+        android:text="@string/transport_next_track"
         style="?android:attr/buttonStyleSmall"
         />
 
@@ -49,7 +49,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@+id/next_track_button"
-        android:text="Previous"
+        android:text="@string/transport_previous_track"
         style="?android:attr/buttonStyleSmall"
         />
 
@@ -58,7 +58,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@+id/previous_track_button"
-        android:text="Repeat"
+        android:text="@string/transport_repeat"
         style="?android:attr/buttonStyleSmall"
         />
 
@@ -75,7 +75,7 @@
             android:layout_height="0dp"
             android:layout_width="wrap_content"
             android:layout_weight="1"
-            android:text="Playing Time: 1:14"
+            android:text="@string/test_playing_time"
             android:gravity="center_vertical"
             android:layout_gravity="right"/>
 
@@ -84,7 +84,7 @@
             android:layout_height="0dp"
             android:layout_width="wrap_content"
             android:layout_weight="1"
-            android:text="Remaining Time: 0:45"
+            android:text="@string/test_remaining_time"
             android:gravity="center_vertical"
             android:layout_gravity="right"/>
         </LinearLayout>

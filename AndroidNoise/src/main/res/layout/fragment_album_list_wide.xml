@@ -46,6 +46,7 @@
             android:layout_height="match_parent"
             android:layout_width="match_parent"
             android:background="@drawable/album_background"
+            android:contentDescription="@string/content_description_album_list"
             />
 
         <ListView
@@ -95,7 +96,7 @@
                 android:layout_marginRight="@dimen/noise_base_padding"
                 android:textColor="@color/control_panel_text"
                 android:layout_alignBaseline="@+id/al_album_filter"
-                android:text="47 albums"
+                android:text="@string/test_album_count_titled"
                 />
         </RelativeLayout>
         </RelativeLayout>

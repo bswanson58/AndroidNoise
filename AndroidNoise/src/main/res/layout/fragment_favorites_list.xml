@@ -43,11 +43,12 @@
     <RelativeLayout
         android:layout_height="match_parent"
         android:layout_width="match_parent">
+
         <ImageView
             android:layout_height="match_parent"
             android:layout_width="match_parent"
             android:background="@drawable/favorites_background"
-            />
+            android:contentDescription="@string/content_description_favorites_list"/>
 
         <ListView
             android:id="@+id/fl_list_view"

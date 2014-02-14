@@ -45,7 +45,8 @@
         <ImageView
             android:layout_height="match_parent"
             android:layout_width="match_parent"
-            android:background="@drawable/track_background"/>
+            android:background="@drawable/track_background"
+            android:contentDescription="@string/content_description_track_list"/>
 
         <ListView
             android:id="@+id/TrackListView"

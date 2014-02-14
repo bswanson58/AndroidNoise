@@ -11,7 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_marginLeft="@dimen/noise_base_padding"
         android:layout_marginTop="@dimen/noise_base_padding"
-        android:text="The Rolling Stones"
+        android:text="@string/test_artist_name"
         style="@style/TitleText"/>
 
     <LinearLayout
@@ -40,7 +40,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/ai_divider"
         android:layout_marginLeft="@dimen/noise_base_padding"
-        android:text="Genre"
+        android:text="@string/test_genre"
         style="@style/SubTitleText"/>
 
     <ImageView
@@ -50,7 +50,8 @@
         android:scaleType="fitCenter"
         android:layout_margin="@dimen/noise_base_padding"
         android:adjustViewBounds="true"
-        android:layout_below="@+id/ai_artist_genre"/>
+        android:layout_below="@+id/ai_artist_genre"
+        android:contentDescription="@string/content_description_artist_image"/>
 
     <TextView
         android:id="@+id/ai_album_count_header"
@@ -75,7 +76,7 @@
         android:layout_width="wrap_content"
         android:layout_below="@+id/ai_artist_image"
         android:layout_toRightOf="@+id/ai_album_spacer"
-        android:text="17"
+        android:text="@string/test_album_count"
         style="@style/SubTitleText"/>
 
     <Button

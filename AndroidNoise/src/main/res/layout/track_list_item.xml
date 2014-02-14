@@ -22,7 +22,7 @@
         android:gravity="right"
         android:layout_centerVertical="true"
         android:layout_toRightOf="@+id/play_button"
-        android:text="23"
+        android:text="@string/test_track_number"
         style="@style/TitleText"/>
 
     <TextView
@@ -43,7 +43,7 @@
         android:layout_toLeftOf="@+id/tli_duration"
         android:layout_marginRight="@dimen/noise_base_padding"
         android:layout_centerVertical="true"
-        android:text="Beast Of Burden"
+        android:text="@string/test_track_name"
         style="@style/TitleText"
         />
 
@@ -53,6 +53,6 @@
         android:layout_width="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:text="7:23"
+        android:text="@string/test_duration"
         style="@style/TitleText"/>
 </RelativeLayout>

@@ -14,7 +14,8 @@
         android:scaleType="fitCenter"
         android:layout_marginTop="@dimen/noise_base_padding"
         android:layout_marginLeft="@dimen/noise_base_padding"
-        android:adjustViewBounds="true"/>
+        android:adjustViewBounds="true"
+        android:contentDescription="@string/content_description_artist_image"/>
 
     <com.SecretSquirrel.AndroidNoise.views.AutoFitTextView
         android:id="@+id/aei_artist_name"
@@ -25,7 +26,7 @@
         android:layout_marginRight="@dimen/noise_base_padding"
         android:layout_alignParentRight="true"
         android:gravity="right|bottom"
-        android:text="The Rolling Stones"
+        android:text="@string/test_artist_name"
         style="@style/TitleText"/>
 
     <LinearLayout
@@ -56,7 +57,7 @@
         android:layout_below="@+id/aei_divider"
         android:layout_alignParentRight="true"
         android:layout_marginRight="@dimen/noise_base_padding"
-        android:text="Genre"
+        android:text="@string/test_genre"
         style="@style/SubTitleText"/>
 
     <TextView
@@ -67,7 +68,7 @@
         android:layout_alignParentRight="true"
         android:layout_marginRight="@dimen/noise_base_padding"
         android:autoLink="web"
-        android:text="www.google.com"
+        android:text="@string/test_website"
         />
 
     <WebView

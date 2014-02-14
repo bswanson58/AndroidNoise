@@ -11,14 +11,14 @@
         android:id="@+id/sli_name"
         android:layout_height="wrap_content"
         android:layout_width="fill_parent"
-        android:text="H8-BSwanson"
+        android:text="@string/test_server_name"
         style="@style/TitleText"/>
 
     <TextView
         android:id="@+id/sli_address"
         android:layout_height="wrap_content"
         android:layout_width="fill_parent"
-        android:text="(192.168.1.103)"
         android:layout_marginLeft="@dimen/noise_sub_item_indent"
+        android:text="@string/test_server_address"
         style="@style/SubTitleText" />
 </LinearLayout>

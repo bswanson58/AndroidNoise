@@ -64,7 +64,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|right"
             android:layout_margin="9dp"
-            android:text="version 1.2.300"
+            android:text="@string/test_software_version"
             style="@style/SubHeaderText"/>
 
         </FrameLayout>

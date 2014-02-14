@@ -46,7 +46,8 @@
         <ImageView
             android:layout_height="match_parent"
             android:layout_width="match_parent"
-            android:background="@drawable/artist_background"/>
+            android:background="@drawable/artist_background"
+            android:contentDescription="@string/content_description_artist_list"/>
         
         <ListView
             android:id="@+id/al_artist_list_view"
@@ -94,7 +95,7 @@
                 android:layout_marginRight="@dimen/noise_base_padding"
                 android:textColor="@color/control_panel_text"
                 android:layout_alignBaseline="@+id/al_artist_filter"
-                android:text="930 artists"
+                android:text="@string/test_artist_count_titled"
                 />
 
             </RelativeLayout>

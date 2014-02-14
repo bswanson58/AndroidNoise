@@ -52,13 +52,30 @@
     <string name="tr_total_time_format">Playing Time: %1$d:%2$02d:%3$02d</string>
     <string name="tr_remaining_time_format">Remaining Time: %1$d:%2$02d:%3$02d</string>
     <string name="artist_count_format">%1$d artists</string>
+    <string name="album_count_format">%1$d albums</string>
     <string name="software_version_format">Version: %1$s</string>
+
+    <string name="transport_play">Play</string>
+    <string name="transport_stop">Stop</string>
+    <string name="transport_pause">Pause</string>
+    <string name="transport_previous_track">Previous</string>
+    <string name="transport_next_track">Next</string>
+    <string name="transport_repeat">Repeat</string>
 
     <string name="content_description_artist_image">The band/artist image</string>
     <string name="content_description_album_cover">The album cover image</string>
     <string name="content_description_artist_type">This entry describes an artist</string>
     <string name="content_description_album_type">This entry describes an album</string>
     <string name="content_description_track_type">This entry describes a track</string>
+    <string name="content_description_artist_list">The list of artists in the library</string>
+    <string name="content_description_album_list">The list of albums for an artist</string>
+    <string name="content_description_track_list">The list of tracks for an album</string>
+    <string name="content_description_favorites_list">The list of favorite items</string>
+    <string name="content_description_queue_list">The list of items now playing</string>
+    <string name="content_description_recently_played_list">The list of recently played artists</string>
+    <string name="content_description_recently_viewed_list">The list of recently viewed artists</string>
+    <string name="content_description_search_list">The list of search results</string>
+    <string name="content_description_now_playing">This item is currently playing</string>
 
     <string name="setting_use_last_server">use_last_server</string>
     <string name="setting_use_last_server_title">Automatically Select Last Server</string>
@@ -75,12 +92,22 @@
     <string name="action_filter_album_list">Filter Albums</string>
     <string name="action_filter_album_list_on">Filter Albums (On)</string>
 
+    <string name="test_software_version">Version: 1.2.3</string>
     <string name="test_artist_name">The Rolling Stones</string>
     <string name="test_album_name">Sticky Fingers</string>
     <string name="test_track_name">Beast Of Burden</string>
     <string name="test_artist_album_name">(The Rolling Stones/Sticky Fingers)</string>
+    <string name="test_artist_count_titled">53 artists</string>
     <string name="test_album_count">17</string>
+    <string name="test_album_count_titled">37 albums</string>
     <string name="test_track_count">15</string>
     <string name="test_genre">classic rock</string>
     <string name="test_published_year">1997</string>
+    <string name="test_duration">1:32</string>
+    <string name="test_track_number">12</string>
+    <string name="test_website">www.google.com</string>
+    <string name="test_playing_time">Playing Time: 1:23:45</string>
+    <string name="test_remaining_time">Remaining Time: 0:56:23</string>
+    <string name="test_server_name">H8-BSwanson</string>
+    <string name="test_server_address">(192.168.1.123)</string>
 </resources>

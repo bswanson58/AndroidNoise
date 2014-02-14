@@ -14,7 +14,8 @@
         android:layout_height="wrap_content"
         android:background="@drawable/playing_indicator"
         android:layout_marginRight="@dimen/noise_base_padding"
-        android:layout_gravity="center_vertical"/>
+        android:layout_gravity="center_vertical"
+        android:contentDescription="@string/content_description_now_playing"/>
 
     <LinearLayout
         android:layout_height="match_parent"
@@ -33,7 +34,7 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:gravity="bottom"
-                android:text="Beast Of Burden is a very long"
+                android:text="@string/test_track_name"
                 style="@style/TitleText"/>
 
             <TextView
@@ -42,7 +43,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/noise_base_padding"
                 android:gravity="bottom"
-                android:text="3:15"
+                android:text="@string/test_duration"
                 style="@style/TitleText"/>
 
         </LinearLayout>
@@ -53,7 +54,7 @@
             android:layout_width="match_parent"
             android:layout_marginLeft="@dimen/noise_sub_item_indent"
             android:layout_weight="3"
-            android:text=" (The Rolling Stones/On some album or another)"
+            android:text="@string/test_artist_album_name"
             style="@style/SubTitleText"/>
 
     </LinearLayout>
