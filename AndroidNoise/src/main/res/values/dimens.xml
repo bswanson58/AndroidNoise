@@ -20,4 +20,5 @@
     <dimen name="noise_simple_list_height">85dp</dimen>
 
     <dimen name="noise_list_item_height">72dp</dimen>
+    <dimen name="noise_track_list_item_height">44dp</dimen>
 </resources>
