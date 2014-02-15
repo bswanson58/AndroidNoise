@@ -15,6 +15,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ListView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.SecretSquirrel.AndroidNoise.R;
@@ -221,6 +222,7 @@ public class TrackListFragment extends Fragment
 			@InjectView( R.id.tli_duration )        TextView    DurationTextView;
 			@InjectView( R.id.tli_volume_name )     TextView    VolumeNameView;
 			@InjectView( R.id.tli_favorite )		CheckBox    FavoriteView;
+			@InjectView( R.id.tli_rating )			RatingBar   RatingView;
 
 			@SuppressWarnings( "unused" )
 			@OnClick( R.id.play_button )
@@ -278,6 +280,7 @@ public class TrackListFragment extends Fragment
 				}
 
 				views.FavoriteView.setChecked( track.getIsFavorite());
+				views.RatingView.setRating( track.getRating());
 
 				views.DurationTextView.setText(
 						String.format( "%d:%02d",
