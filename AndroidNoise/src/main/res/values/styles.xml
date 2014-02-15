@@ -72,4 +72,10 @@
     <style name="separatorViewVertical">
         <item name="android:background">@drawable/divider_split_gradient_vertical</item>
     </style>
+
+    <style name="ratingBar" parent="@android:style/Widget.RatingBar">
+        <item name="android:progressDrawable">@drawable/rating_bar</item>
+        <item name="android:minHeight">16dip</item>
+        <item name="android:maxHeight">16dip</item>
+    </style>
 </resources>

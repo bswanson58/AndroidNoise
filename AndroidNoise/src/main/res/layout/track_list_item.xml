@@ -83,8 +83,7 @@
                 android:layout_gravity="center_vertical"
                 android:numStars="5"
                 android:rating="3"
-                style="@*android:style/Widget.RatingBar.Small"
-                />
+                style="@style/ratingBar"/>
 
             <CheckBox
                 android:id="@+id/tli_favorite"
