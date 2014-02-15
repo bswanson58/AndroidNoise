@@ -10,6 +10,33 @@
         android:layout_height="0dp"
         android:layout_weight="1"/>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/noise_base_padding"
+        android:orientation="horizontal"
+        android:weightSum="6">
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+        <View
+            android:layout_width="0dp"
+            android:layout_height="3dp"
+            android:layout_weight="2"
+            android:scaleX="-1"
+            android:alpha="0.5"
+            android:background="@drawable/divider_split_gradient_horizontal"/>
+        <View
+            android:layout_width="0dp"
+            android:layout_height="3dp"
+            android:layout_weight="2"
+            android:alpha="0.5"
+            android:background="@drawable/divider_split_gradient_horizontal"/>
+
+        </LinearLayout>
+
     <FrameLayout
         android:id="@+id/frame_recently_played"
         android:layout_width="match_parent"
