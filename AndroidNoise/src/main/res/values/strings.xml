@@ -107,6 +107,7 @@
     <string name="test_published_year">1997</string>
     <string name="test_duration">1:32</string>
     <string name="test_track_number">12</string>
+    <string name="test_volume_name">- Disc 1</string>
     <string name="test_website">www.google.com</string>
     <string name="test_playing_time">Playing Time: 1:23:45</string>
     <string name="test_remaining_time">Remaining Time: 0:56:23</string>

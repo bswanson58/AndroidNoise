@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -214,12 +215,12 @@ public class TrackListFragment extends Fragment
 				ButterKnife.inject( this, view );
 			}
 
-			@InjectView( R.id.play_button )	        Button       PlayButton;
-			@InjectView( R.id.tli_track_number )    TextView     TrackNumberTextView;
-			@InjectView( R.id.tli_name )            TextView     NameTextView;
-			@InjectView( R.id.tli_duration )        TextView     DurationTextView;
-			@InjectView( R.id.tli_volume_name )     TextView     VolumeNameView;
-			@InjectView( R.id.tli_favorite )        View         FavoriteView;
+			@InjectView( R.id.play_button )	        Button      PlayButton;
+			@InjectView( R.id.tli_track_number )    TextView    TrackNumberTextView;
+			@InjectView( R.id.tli_name )            TextView    NameTextView;
+			@InjectView( R.id.tli_duration )        TextView    DurationTextView;
+			@InjectView( R.id.tli_volume_name )     TextView    VolumeNameView;
+			@InjectView( R.id.tli_favorite )		CheckBox    FavoriteView;
 
 			@SuppressWarnings( "unused" )
 			@OnClick( R.id.play_button )
@@ -276,12 +277,7 @@ public class TrackListFragment extends Fragment
 					views.VolumeNameView.setText( String.format( mVolumeNameFormat, track.getVolumeName()));
 				}
 
-				if( track.getIsFavorite()) {
-					views.FavoriteView.setVisibility( View.VISIBLE );
-				}
-				else {
-					views.FavoriteView.setVisibility( View.INVISIBLE );
-				}
+				views.FavoriteView.setChecked( track.getIsFavorite());
 
 				views.DurationTextView.setText(
 						String.format( "%d:%02d",
