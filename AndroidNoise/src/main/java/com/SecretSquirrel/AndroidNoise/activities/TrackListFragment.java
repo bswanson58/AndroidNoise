@@ -6,6 +6,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -202,9 +203,11 @@ public class TrackListFragment extends Fragment
 	}
 
 	protected class TrackAdapter extends ArrayAdapter<Track> {
-		private Context             mContext;
-		private LayoutInflater      mLayoutInflater;
-		private ArrayList<Track>    mTrackList;
+		private final Context           mContext;
+		private final LayoutInflater    mLayoutInflater;
+		private final ArrayList<Track>  mTrackList;
+		private final String            mTrackNumberFormat;
+		private final String            mVolumeNameFormat;
 
 		protected class ViewHolder {
 			public ViewHolder( View view ) {
@@ -215,6 +218,8 @@ public class TrackListFragment extends Fragment
 			@InjectView( R.id.tli_track_number )    TextView     TrackNumberTextView;
 			@InjectView( R.id.tli_name )            TextView     NameTextView;
 			@InjectView( R.id.tli_duration )        TextView     DurationTextView;
+			@InjectView( R.id.tli_volume_name )     TextView     VolumeNameView;
+			@InjectView( R.id.tli_favorite )        View         FavoriteView;
 
 			@SuppressWarnings( "unused" )
 			@OnClick( R.id.play_button )
@@ -231,6 +236,9 @@ public class TrackListFragment extends Fragment
 			super( context, R.layout.track_list_item, trackList );
 			mContext = context;
 			mTrackList = trackList;
+
+			mTrackNumberFormat = getString( R.string.track_number_format );
+			mVolumeNameFormat = getString( R.string.volume_name_format );
 
 			mLayoutInflater = (LayoutInflater)mContext.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
 		}
@@ -257,9 +265,24 @@ public class TrackListFragment extends Fragment
 			   ( position < mTrackList.size())) {
 				Track track = mTrackList.get( position );
 
-				views.TrackNumberTextView.setText( String.format( "%d", track.getTrackNumber()));
+				views.TrackNumberTextView.setText( String.format( mTrackNumberFormat, track.getTrackNumber()));
 				views.PlayButton.setTag( track );
-				views.NameTextView.setText( track.getName() );
+				views.NameTextView.setText( track.getName());
+
+				if( TextUtils.isEmpty( track.getVolumeName())) {
+					views.VolumeNameView.setText( "" );
+				}
+				else {
+					views.VolumeNameView.setText( String.format( mVolumeNameFormat, track.getVolumeName()));
+				}
+
+				if( track.getIsFavorite()) {
+					views.FavoriteView.setVisibility( View.VISIBLE );
+				}
+				else {
+					views.FavoriteView.setVisibility( View.INVISIBLE );
+				}
+
 				views.DurationTextView.setText(
 						String.format( "%d:%02d",
 								TimeUnit.MILLISECONDS.toMinutes( track.getDurationMilliseconds()),

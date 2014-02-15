@@ -54,6 +54,8 @@
     <string name="artist_count_format">%1$d artists</string>
     <string name="album_count_format">%1$d albums</string>
     <string name="software_version_format">Version: %1$s</string>
+    <string name="track_number_format">Track: %1$d</string>
+    <string name="volume_name_format">- %1$s</string>
 
     <string name="transport_play">Play</string>
     <string name="transport_stop">Stop</string>

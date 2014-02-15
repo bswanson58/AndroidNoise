@@ -99,7 +99,7 @@ public class Track implements Parcelable {
 		return( mVolumeName );
 	}
 
-	public boolean isFavorite() {
+	public boolean getIsFavorite() {
 		return( mIsFavorite );
 	}
 
