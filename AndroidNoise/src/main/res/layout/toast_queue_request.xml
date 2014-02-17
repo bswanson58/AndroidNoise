@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:id="@+id/toast_layout_root"
+              android:orientation="horizontal"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:padding="@dimen/noise_base_padding"
+              android:background="@drawable/toast_queue_border">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:src="@drawable/ic_action_queue"
+        android:contentDescription="@string/content_description_toast_item_queued"/>
+
+    <TextView
+        android:id="@+id/toast_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="@dimen/noise_text_spacer"
+        android:layout_marginRight="@dimen/noise_text_spacer"
+        android:textColor="@color/control_panel_text"
+        android:text="@string/test_track_queued"
+        style="@style/HeaderText"/>
+
+</LinearLayout>

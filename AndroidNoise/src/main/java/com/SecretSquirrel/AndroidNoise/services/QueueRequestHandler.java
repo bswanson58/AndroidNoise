@@ -2,9 +2,7 @@ package com.SecretSquirrel.AndroidNoise.services;
 
 // Secret Squirrel Software - Created by bswanson on 12/23/13.
 
-import android.content.Context;
 import android.os.Bundle;
-import android.widget.Toast;
 
 import com.SecretSquirrel.AndroidNoise.dto.Album;
 import com.SecretSquirrel.AndroidNoise.dto.Artist;
@@ -20,10 +18,8 @@ import com.SecretSquirrel.AndroidNoise.events.EventPlaySearchItem;
 import com.SecretSquirrel.AndroidNoise.events.EventPlayTrack;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseData;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseQueue;
-import com.SecretSquirrel.AndroidNoise.services.ArtistResolver;
-import com.SecretSquirrel.AndroidNoise.services.NoiseRemoteApi;
-import com.SecretSquirrel.AndroidNoise.services.ServiceResultReceiver;
 import com.SecretSquirrel.AndroidNoise.support.Constants;
+import com.SecretSquirrel.AndroidNoise.ui.NotificationManager;
 
 import javax.inject.Inject;
 
@@ -31,18 +27,18 @@ import de.greenrobot.event.EventBus;
 import rx.util.functions.Action1;
 
 public class QueueRequestHandler {
-	private final Context           mContext;
-	private final INoiseQueue       mNoiseQueue;
-	private final INoiseData        mNoiseData;
-	private final EventBus          mEventBus;
+	private final INoiseQueue           mNoiseQueue;
+	private final INoiseData            mNoiseData;
+	private final EventBus              mEventBus;
+	private final NotificationManager   mNotificationManager;
 
 	@Inject
-	public QueueRequestHandler( Context context, EventBus eventBus,
+	public QueueRequestHandler( EventBus eventBus, NotificationManager notificationManager,
 	                            INoiseData noiseData, INoiseQueue noiseQueue ) {
 		mNoiseData = noiseData;
 		mNoiseQueue = noiseQueue;
-		mContext = context;
 		mEventBus = eventBus;
+		mNotificationManager = notificationManager;
 	}
 
 	public void start() {
@@ -95,10 +91,10 @@ public class QueueRequestHandler {
 				@Override
 				public void call( QueuedAlbumResult queuedAlbumResult ) {
 					if( queuedAlbumResult.Success ) {
-						Toast.makeText( mContext, "Album '" + queuedAlbumResult.getAlbum().getName() + "' was queued!", Toast.LENGTH_SHORT ).show();
+						mNotificationManager.NotifyItemQueued( queuedAlbumResult.getAlbum());
 					}
 					else {
-						Toast.makeText( mContext, "An error occurred while queuing album '" + queuedAlbumResult.getAlbum().getName() + "'", Toast.LENGTH_LONG ).show();
+						mNotificationManager.NotifyItemQueued( queuedAlbumResult.getAlbum(), queuedAlbumResult.ErrorMessage );
 					}
 				}
 			} );
@@ -113,10 +109,10 @@ public class QueueRequestHandler {
 				@Override
 				public void call( QueuedTrackResult queuedTrackResult ) {
 					if( queuedTrackResult.Success ) {
-						Toast.makeText( mContext, "Track '" + queuedTrackResult.getTrack().getName() + "' was queued!", Toast.LENGTH_SHORT ).show();
+						mNotificationManager.NotifyItemQueued( queuedTrackResult.getTrack());
 					}
 					else {
-						Toast.makeText( mContext, "An error occurred while queuing album '" + queuedTrackResult.getTrack().getName() + "'", Toast.LENGTH_LONG ).show();
+						mNotificationManager.NotifyItemQueued( queuedTrackResult.getTrack(), queuedTrackResult.ErrorMessage );
 					}
 				}
 			} );

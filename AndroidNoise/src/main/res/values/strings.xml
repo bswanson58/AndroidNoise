@@ -56,6 +56,10 @@
     <string name="software_version_format">Version: %1$s</string>
     <string name="track_number_format">Track: %1$d</string>
     <string name="volume_name_format">- %1$s</string>
+    <string name="track_queued_toast_format">Track \'%1$s\' was queued!</string>
+    <string name="album_queued_toast_format">Album \'%1$s\' was queued!</string>
+    <string name="track_queued_fail_toast_format">An error occurred while queueing track \'%1$s\'</string>
+    <string name="album_queued_fail_toast_format">An error occurred while queueing album \'%1$s\'</string>
 
     <string name="transport_play">Play</string>
     <string name="transport_stop">Stop</string>
@@ -78,6 +82,7 @@
     <string name="content_description_recently_viewed_list">The list of recently viewed artists</string>
     <string name="content_description_search_list">The list of search results</string>
     <string name="content_description_now_playing">This item is currently playing</string>
+    <string name="content_description_toast_item_queued">An item was added to the play queue</string>
 
     <string name="setting_use_last_server">use_last_server</string>
     <string name="setting_use_last_server_title">Automatically Select Last Server</string>
@@ -113,4 +118,5 @@
     <string name="test_remaining_time">Remaining Time: 0:56:23</string>
     <string name="test_server_name">H8-BSwanson</string>
     <string name="test_server_address">(192.168.1.123)</string>
+    <string name="test_track_queued">The track \'Beast Of Burden\' was queued!</string>
 </resources>
