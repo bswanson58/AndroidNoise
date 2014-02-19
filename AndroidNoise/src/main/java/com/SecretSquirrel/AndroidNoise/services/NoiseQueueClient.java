@@ -9,6 +9,9 @@ import com.SecretSquirrel.AndroidNoise.dto.PlayQueueListResult;
 import com.SecretSquirrel.AndroidNoise.dto.QueuedAlbumResult;
 import com.SecretSquirrel.AndroidNoise.dto.QueuedTrackResult;
 import com.SecretSquirrel.AndroidNoise.dto.Track;
+import com.SecretSquirrel.AndroidNoise.events.EventActivityPausing;
+import com.SecretSquirrel.AndroidNoise.events.EventActivityResuming;
+import com.SecretSquirrel.AndroidNoise.events.EventServerSelected;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseQueue;
 import com.SecretSquirrel.AndroidNoise.services.rto.BaseServerResult;
 import com.SecretSquirrel.AndroidNoise.services.noiseApi.RemoteServerQueueApi;
@@ -19,6 +22,7 @@ import java.util.EnumMap;
 import javax.inject.Inject;
 
 import dagger.Lazy;
+import de.greenrobot.event.EventBus;
 import rx.Observable;
 import rx.Observer;
 import rx.Subscription;
@@ -28,14 +32,16 @@ import rx.subscriptions.Subscriptions;
 import rx.util.functions.Action1;
 
 public class NoiseQueueClient implements INoiseQueue {
-	private static final String     TAG = NoiseQueueClient.class.getName();
+	private static final String                         TAG = NoiseQueueClient.class.getName();
 
+	private final EventBus                              mEventBus;
 	private final Lazy<RemoteServerQueueApi>            mServiceProvider;
 	public  final EnumMap<TransportCommand, Integer>    mTransportCommands;
 	private RemoteServerQueueApi                        mService;
 
 	@Inject
-	public NoiseQueueClient( Lazy<RemoteServerQueueApi> queueApi ) {
+	public NoiseQueueClient( EventBus eventBus, Lazy<RemoteServerQueueApi> queueApi ) {
+		mEventBus = eventBus;
 		mServiceProvider = queueApi;
 
 		mTransportCommands = new EnumMap<TransportCommand, Integer>( TransportCommand.class );
@@ -46,6 +52,23 @@ public class NoiseQueueClient implements INoiseQueue {
 		mTransportCommands.put( TransportCommand.PlayNext, 4 );
 		mTransportCommands.put( TransportCommand.PlayPrevious, 5 );
 		mTransportCommands.put( TransportCommand.Repeat, 6 );
+
+		mEventBus.register( this );
+	}
+
+	@SuppressWarnings( "unused" )
+	public void onEvent( EventServerSelected args ) {
+		mService = null;
+	}
+
+	@SuppressWarnings( "unused" )
+	public void onEvent( EventActivityPausing args ) {
+		mEventBus.unregister( this );
+	}
+
+	@SuppressWarnings( "unused" )
+	public void onEvent( EventActivityResuming args ) {
+		mEventBus.register( this );
 	}
 
 	private RemoteServerQueueApi getService() {
