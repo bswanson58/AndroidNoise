@@ -62,6 +62,7 @@ public class NavigationRequestResponder {
 		notifyListener( ShellActivity.LIBRARY_ITEM_ID, null );
 	}
 
+	@SuppressWarnings( "unused" )
 	public void onEvent( EventArtistListRequest args ) {
 		notifyListener( ShellActivity.LIBRARY_ITEM_ID, null );
 	}
