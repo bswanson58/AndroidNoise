@@ -12,10 +12,11 @@ import android.widget.Toast;
 import com.SecretSquirrel.AndroidNoise.R;
 import com.SecretSquirrel.AndroidNoise.dto.Album;
 import com.SecretSquirrel.AndroidNoise.dto.Track;
+import com.SecretSquirrel.AndroidNoise.interfaces.INotificationManager;
 
 import javax.inject.Inject;
 
-public class NotificationManager {
+public class NotificationManager implements INotificationManager {
 	private final Context   mContext;
 	private View            mToastView;
 	private String          mTrackQueuedFormat;
@@ -33,18 +34,22 @@ public class NotificationManager {
 		mFailedAlbumQueuedFormat = mContext.getString( R.string.album_queued_fail_toast_format );
 	}
 
+	@Override
 	public void NotifyItemQueued( Track track ) {
 		makeToastWithText( String.format( mTrackQueuedFormat, track.getName())).show();
 	}
 
+	@Override
 	public void NotifyItemQueued( Track track, String errorMessage ) {
 		makeToastWithText( String.format( mFailedTrackQueuedFormat, track.getName(), errorMessage )).show();
 	}
 
+	@Override
 	public void NotifyItemQueued( Album album ) {
 		makeToastWithText( String.format( mAlbumQueuedFormat, album.getName())).show();
 	}
 
+	@Override
 	public void NotifyItemQueued( Album album, String errorMessage ) {
 		makeToastWithText( String.format( mFailedAlbumQueuedFormat, album.getName(), errorMessage )).show();
 	}
