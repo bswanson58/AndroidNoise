@@ -18,22 +18,23 @@ import com.SecretSquirrel.AndroidNoise.events.EventPlaySearchItem;
 import com.SecretSquirrel.AndroidNoise.events.EventPlayTrack;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseData;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseQueue;
+import com.SecretSquirrel.AndroidNoise.interfaces.INotificationManager;
+import com.SecretSquirrel.AndroidNoise.interfaces.IQueueRequestHandler;
 import com.SecretSquirrel.AndroidNoise.support.Constants;
-import com.SecretSquirrel.AndroidNoise.ui.NotificationManager;
 
 import javax.inject.Inject;
 
 import de.greenrobot.event.EventBus;
 import rx.util.functions.Action1;
 
-public class QueueRequestHandler {
+public class QueueRequestHandler implements IQueueRequestHandler {
 	private final INoiseQueue           mNoiseQueue;
 	private final INoiseData            mNoiseData;
 	private final EventBus              mEventBus;
-	private final NotificationManager   mNotificationManager;
+	private final INotificationManager mNotificationManager;
 
 	@Inject
-	public QueueRequestHandler( EventBus eventBus, NotificationManager notificationManager,
+	public QueueRequestHandler( EventBus eventBus, INotificationManager notificationManager,
 	                            INoiseData noiseData, INoiseQueue noiseQueue ) {
 		mNoiseData = noiseData;
 		mNoiseQueue = noiseQueue;
