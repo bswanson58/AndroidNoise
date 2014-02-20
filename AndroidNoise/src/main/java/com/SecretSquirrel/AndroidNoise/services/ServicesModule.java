@@ -15,7 +15,6 @@ import com.SecretSquirrel.AndroidNoise.services.noiseApi.NoiseApiModule;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import dagger.Lazy;
 import dagger.Module;
 import dagger.Provides;
 
@@ -29,13 +28,13 @@ import dagger.Provides;
 				EventHostService.class
 		}
 )
+@SuppressWarnings( "unused" )
 public class ServicesModule {
-	private ApplicationServices     mApplicationServices;
-
+	private ApplicationServices mApplicationServices;
 	@Provides
 	@Singleton
-	public IApplicationServices provideApplicationServices( Lazy<ApplicationServices> provider ) {
-		mApplicationServices = provider.get();
+	public IApplicationServices provideApplicationServices( ApplicationServices applicationServices ) {
+		mApplicationServices = applicationServices;
 
 		return( mApplicationServices );
 	}
@@ -78,13 +77,8 @@ public class ServicesModule {
 	}
 
 	@Provides
-	public INoiseData provideNoiseDataCache() {
-		INoiseData  retValue = null;
-
-		if( mApplicationServices != null ) {
-			retValue = mApplicationServices.getNoiseData();
-		}
-
-		return( retValue );
+	@Singleton
+	public INoiseData provideNoiseDataCache( NoiseDataCacheClient client ) {
+		return( client );
 	}
 }

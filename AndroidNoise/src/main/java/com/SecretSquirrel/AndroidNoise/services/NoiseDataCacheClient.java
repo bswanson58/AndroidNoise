@@ -6,12 +6,15 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
 
+import com.SecretSquirrel.AndroidNoise.events.EventServerSelected;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseData;
 
 import java.util.Hashtable;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+
+import de.greenrobot.event.EventBus;
 
 public class NoiseDataCacheClient implements INoiseData {
 	private static final int    cCacheSize = 25;
@@ -48,13 +51,27 @@ public class NoiseDataCacheClient implements INoiseData {
 	private Bundle                          mFavoritesList;
 
 	@Inject
-	public NoiseDataCacheClient( @Named( "NoiseDataClient" ) INoiseData downstreamClient ) {
+	public NoiseDataCacheClient( EventBus eventBus,
+	                             @Named( "NoiseDataClient" ) INoiseData downstreamClient ) {
 		mNoiseData = downstreamClient;
 
 		mArtistInfo = new Hashtable<Long, DatedBundle>();
 		mAlbumList = new Hashtable<Long, DatedBundle>();
 		mAlbumInfo = new Hashtable<Long, DatedBundle>();
 		mTrackList = new Hashtable<Long, DatedBundle>();
+
+		eventBus.register( this );
+	}
+
+	@SuppressWarnings( "unused" )
+	public void onEvent( EventServerSelected args ) {
+		mArtistInfo.clear();
+		mAlbumInfo.clear();
+		mAlbumList.clear();
+		mTrackList.clear();
+
+		mArtistList = null;
+		mFavoritesList = null;
 	}
 
 	@Override
