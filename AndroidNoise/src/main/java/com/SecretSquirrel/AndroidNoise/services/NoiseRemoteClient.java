@@ -13,8 +13,8 @@ import com.SecretSquirrel.AndroidNoise.services.rto.BaseServerResult;
 import com.SecretSquirrel.AndroidNoise.services.noiseApi.RemoteServerRestApi;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 
-import dagger.Lazy;
 import de.greenrobot.event.EventBus;
 import rx.Observable;
 import rx.Observer;
@@ -25,14 +25,15 @@ import rx.subscriptions.Subscriptions;
 // Secret Squirrel Software - Created by bswanson on 12/6/13.
 
 public class NoiseRemoteClient implements INoiseServer {
-	private final EventBus                  mEventBus;
-	private final Context                   mContext;
-	private final String                    mServerAddress;
-	private final Lazy<RemoteServerRestApi> mServiceProvider;
-	private RemoteServerRestApi             mService;
+	private final EventBus                      mEventBus;
+	private final Context                       mContext;
+	private final String                        mServerAddress;
+	private final Provider<RemoteServerRestApi> mServiceProvider;
+	private RemoteServerRestApi                 mService;
 
 	@Inject
-	public NoiseRemoteClient( EventBus eventBus, Lazy<RemoteServerRestApi> provider, IApplicationState applicationState, Context context ) {
+	public NoiseRemoteClient( EventBus eventBus, Provider<RemoteServerRestApi> provider,
+	                          IApplicationState applicationState, Context context ) {
 		mEventBus = eventBus;
 		mServerAddress = applicationState.getCurrentServer().getServerAddress();
 		mServiceProvider = provider;
@@ -57,14 +58,12 @@ public class NoiseRemoteClient implements INoiseServer {
 
 	@SuppressWarnings( "unused" )
 	public void onEvent( EventActivityPausing args ) {
-		if( mEventBus != null ) {
-			mEventBus.unregister( this );
-		}
+		mEventBus.unregister( this );
 	}
 
 	@SuppressWarnings( "unused" )
 	public void onEvent( EventActivityResuming args ) {
-		if( mEventBus != null ) {
+		if(!mEventBus.isRegistered( this )) {
 			mEventBus.register( this );
 		}
 	}

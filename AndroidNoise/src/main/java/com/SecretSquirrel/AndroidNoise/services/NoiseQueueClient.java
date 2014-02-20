@@ -20,8 +20,8 @@ import com.SecretSquirrel.AndroidNoise.support.Constants;
 import java.util.EnumMap;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 
-import dagger.Lazy;
 import de.greenrobot.event.EventBus;
 import rx.Observable;
 import rx.Observer;
@@ -35,12 +35,12 @@ public class NoiseQueueClient implements INoiseQueue {
 	private static final String                         TAG = NoiseQueueClient.class.getName();
 
 	private final EventBus                              mEventBus;
-	private final Lazy<RemoteServerQueueApi>            mServiceProvider;
+	private final Provider<RemoteServerQueueApi>        mServiceProvider;
 	public  final EnumMap<TransportCommand, Integer>    mTransportCommands;
 	private RemoteServerQueueApi                        mService;
 
 	@Inject
-	public NoiseQueueClient( EventBus eventBus, Lazy<RemoteServerQueueApi> queueApi ) {
+	public NoiseQueueClient( EventBus eventBus, Provider<RemoteServerQueueApi> queueApi ) {
 		mEventBus = eventBus;
 		mServiceProvider = queueApi;
 
@@ -68,7 +68,9 @@ public class NoiseQueueClient implements INoiseQueue {
 
 	@SuppressWarnings( "unused" )
 	public void onEvent( EventActivityResuming args ) {
-		mEventBus.register( this );
+		if(!mEventBus.isRegistered( this )) {
+			mEventBus.register( this );
+		}
 	}
 
 	private RemoteServerQueueApi getService() {

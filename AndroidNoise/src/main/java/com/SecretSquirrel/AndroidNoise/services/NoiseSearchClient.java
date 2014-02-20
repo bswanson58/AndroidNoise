@@ -10,8 +10,8 @@ import com.SecretSquirrel.AndroidNoise.interfaces.INoiseSearch;
 import com.SecretSquirrel.AndroidNoise.services.noiseApi.RemoteServerSearchApi;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 
-import dagger.Lazy;
 import de.greenrobot.event.EventBus;
 import rx.Observable;
 import rx.Observer;
@@ -20,12 +20,12 @@ import rx.concurrency.Schedulers;
 import rx.subscriptions.Subscriptions;
 
 public class NoiseSearchClient implements INoiseSearch {
-	private final EventBus                      mEventBus;
-	private final Lazy<RemoteServerSearchApi>   mServiceProvider;
-	private RemoteServerSearchApi               mService;
+	private final EventBus                          mEventBus;
+	private final Provider<RemoteServerSearchApi>   mServiceProvider;
+	private RemoteServerSearchApi                   mService;
 
 	@Inject
-	public NoiseSearchClient( EventBus eventBus, Lazy<RemoteServerSearchApi> serviceProvider ) {
+	public NoiseSearchClient( EventBus eventBus, Provider<RemoteServerSearchApi> serviceProvider ) {
 		mEventBus = eventBus;
 		mServiceProvider = serviceProvider;
 
@@ -44,7 +44,9 @@ public class NoiseSearchClient implements INoiseSearch {
 
 	@SuppressWarnings( "unused" )
 	public void onEvent( EventActivityResuming args ) {
-		mEventBus.register( this );
+		if(!mEventBus.isRegistered( this )) {
+			mEventBus.register( this );
+		}
 	}
 
 	private RemoteServerSearchApi getService() {
