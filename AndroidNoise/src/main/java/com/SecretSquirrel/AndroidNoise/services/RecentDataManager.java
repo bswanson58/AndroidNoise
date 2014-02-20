@@ -12,6 +12,7 @@ import com.SecretSquirrel.AndroidNoise.events.EventArtistViewed;
 import com.SecretSquirrel.AndroidNoise.events.EventRecentDataUpdated;
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
 import com.SecretSquirrel.AndroidNoise.interfaces.IRecentData;
+import com.SecretSquirrel.AndroidNoise.interfaces.IRecentDataManager;
 import com.SecretSquirrel.AndroidNoise.support.Constants;
 import com.SecretSquirrel.AndroidNoise.support.NoiseUtils;
 import com.google.gson.Gson;
@@ -28,7 +29,7 @@ import javax.inject.Inject;
 
 import de.greenrobot.event.EventBus;
 
-public class RecentDataManager implements IRecentData {
+public class RecentDataManager implements IRecentData, IRecentDataManager {
 	private final static String     TAG = RecentDataManager.class.getName();
 	private final static String     RECENTLY_VIEWED_FILE_NAME_FORMAT = "recently viewed - %s";
 	private final static String     RECENTLY_PLAYED_FILE_NAME_FORMAT = "recently played - %s";
@@ -51,6 +52,11 @@ public class RecentDataManager implements IRecentData {
 	}
 
 	@Override
+	public IRecentData getRecentData() {
+		return( this );
+	}
+
+	@Override
 	public void start() {
 		mRecentlyViewedList.clear();
 		mRecentlyPlayedList.clear();
@@ -62,7 +68,9 @@ public class RecentDataManager implements IRecentData {
 			loadArtistList( mRecentlyPlayedList, String.format( RECENTLY_PLAYED_FILE_NAME_FORMAT, mCurrentHostName ));
 		}
 
-		mEventBus.register( this );
+		if(!mEventBus.isRegistered( this )) {
+			mEventBus.register( this );
+		}
 	}
 
 	@Override
@@ -94,14 +102,14 @@ public class RecentDataManager implements IRecentData {
 	public void onEvent( EventArtistViewed args ) {
 		mRecentlyViewedList.putMostRecentArtist( args.getArtist());
 
-		mEventBus.post( new EventRecentDataUpdated() );
+		mEventBus.post( new EventRecentDataUpdated());
 	}
 
 	@SuppressWarnings("unused")
 	public void onEvent( EventArtistPlayed args ) {
 		mRecentlyPlayedList.putMostRecentArtist( args.getArtist());
 
-		mEventBus.post( new EventRecentDataUpdated() );
+		mEventBus.post( new EventRecentDataUpdated());
 	}
 
 	private void loadArtistList( RecentArtistList artistList, String fileName ) {

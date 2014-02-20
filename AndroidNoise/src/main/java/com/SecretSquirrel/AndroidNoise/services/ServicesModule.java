@@ -9,8 +9,12 @@ import com.SecretSquirrel.AndroidNoise.interfaces.INoiseData;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseQueue;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseSearch;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseServer;
+import com.SecretSquirrel.AndroidNoise.interfaces.INotificationManager;
+import com.SecretSquirrel.AndroidNoise.interfaces.IQueueRequestHandler;
 import com.SecretSquirrel.AndroidNoise.interfaces.IRecentData;
+import com.SecretSquirrel.AndroidNoise.interfaces.IRecentDataManager;
 import com.SecretSquirrel.AndroidNoise.services.noiseApi.NoiseApiModule;
+import com.SecretSquirrel.AndroidNoise.ui.NotificationManager;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -31,6 +35,7 @@ import dagger.Provides;
 @SuppressWarnings( "unused" )
 public class ServicesModule {
 	private ApplicationServices mApplicationServices;
+
 	@Provides
 	@Singleton
 	public IApplicationServices provideApplicationServices( ApplicationServices applicationServices ) {
@@ -42,6 +47,11 @@ public class ServicesModule {
 	@Provides
 	public ServiceResultReceiver providesServiceResultReceiver() {
 		return( new ServiceResultReceiver( new Handler()));
+	}
+
+	@Provides
+	public INotificationManager provideNotificationManager( NotificationManager manager ) {
+		return( manager );
 	}
 
 	@Provides
@@ -68,6 +78,17 @@ public class ServicesModule {
 		}
 
 		return( retValue );
+	}
+
+	@Provides
+	@Singleton
+	IRecentDataManager providesRecentDataManager( RecentDataManager manager ) {
+		return( manager );
+	}
+
+	@Provides
+	public IQueueRequestHandler provideQueueRequestHandler( QueueRequestHandler handler ) {
+		return( handler );
 	}
 
 	@Provides

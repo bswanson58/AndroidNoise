@@ -3,7 +3,9 @@ package com.SecretSquirrel.AndroidNoise.services;
 import com.SecretSquirrel.AndroidNoise.events.EventActivityPausing;
 import com.SecretSquirrel.AndroidNoise.events.EventServerSelected;
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationServices;
+import com.SecretSquirrel.AndroidNoise.interfaces.IQueueRequestHandler;
 import com.SecretSquirrel.AndroidNoise.interfaces.IRecentData;
+import com.SecretSquirrel.AndroidNoise.interfaces.IRecentDataManager;
 
 import javax.inject.Inject;
 
@@ -13,22 +15,22 @@ import de.greenrobot.event.EventBus;
 // Created by BSwanson on 2/9/14.
 
 public class ApplicationServices implements IApplicationServices {
-	private final Lazy<QueueRequestHandler>         mQueueRequestProvider;
-	private QueueRequestHandler                     mQueueRequestHandler;
-	private final IRecentData                       mRecentDataManager;
+	private final IRecentDataManager            mRecentDataManager;
+	private final Lazy<IQueueRequestHandler>    mQueueRequestProvider;
+	private IQueueRequestHandler                mQueueRequestHandler;
 
 	@Inject
 	public ApplicationServices( EventBus eventBus,
-	                            RecentDataManager recentDataProvider,
-	                            Lazy<QueueRequestHandler> queueRequestProvider ) {
-		mRecentDataManager = recentDataProvider;
+	                            IRecentDataManager recentDataManager,
+	                            Lazy<IQueueRequestHandler> queueRequestProvider ) {
+		mRecentDataManager = recentDataManager;
 		mQueueRequestProvider = queueRequestProvider;
 
 		eventBus.register( this );
 	}
 
 	public IRecentData getRecentDataManager() {
-		return( mRecentDataManager );
+		return( mRecentDataManager.getRecentData());
 	}
 
 	@SuppressWarnings("unused")
