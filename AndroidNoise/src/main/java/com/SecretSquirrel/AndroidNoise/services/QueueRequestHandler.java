@@ -39,14 +39,8 @@ public class QueueRequestHandler {
 		mNoiseQueue = noiseQueue;
 		mEventBus = eventBus;
 		mNotificationManager = notificationManager;
-	}
 
-	public void start() {
 		mEventBus.register( this );
-	}
-
-	public void stop() {
-		mEventBus.unregister( this );
 	}
 
 	@SuppressWarnings( "unused" )
