@@ -33,13 +33,15 @@ public class RecentDataManager implements IRecentData {
 	private final static String     RECENTLY_PLAYED_FILE_NAME_FORMAT = "recently played - %s";
 
 	private final Context           mContext;
+	private final EventBus          mEventBus;
 	private final IApplicationState mApplicationState;
 	private RecentArtistList        mRecentlyPlayedList;
 	private RecentArtistList        mRecentlyViewedList;
 
 	@Inject
-	public RecentDataManager( Context context, IApplicationState applicationState ) {
+	public RecentDataManager( Context context, EventBus eventBus, IApplicationState applicationState ) {
 		mContext = context;
+		mEventBus = eventBus;
 		mApplicationState = applicationState;
 
 		mRecentlyPlayedList = new RecentArtistList( Constants.RECENT_LIST_SIZE );
@@ -55,7 +57,7 @@ public class RecentDataManager implements IRecentData {
 			loadArtistList( mRecentlyPlayedList, String.format( RECENTLY_PLAYED_FILE_NAME_FORMAT, hostName ));
 		}
 
-		EventBus.getDefault().register( this );
+		mEventBus.register( this );
 	}
 
 	@Override
@@ -70,7 +72,7 @@ public class RecentDataManager implements IRecentData {
 
 	@Override
 	public void stop() {
-		EventBus.getDefault().unregister( this );
+		mEventBus.unregister( this );
 	}
 
 	@Override
@@ -87,14 +89,14 @@ public class RecentDataManager implements IRecentData {
 	public void onEvent( EventArtistViewed args ) {
 		mRecentlyViewedList.putMostRecentArtist( args.getArtist() );
 
-		EventBus.getDefault().post( new EventRecentDataUpdated() );
+		mEventBus.post( new EventRecentDataUpdated() );
 	}
 
 	@SuppressWarnings("unused")
 	public void onEvent( EventArtistPlayed args ) {
 		mRecentlyPlayedList.putMostRecentArtist( args.getArtist() );
 
-		EventBus.getDefault().post( new EventRecentDataUpdated() );
+		mEventBus.post( new EventRecentDataUpdated() );
 	}
 
 	private void loadArtistList( RecentArtistList artistList, String fileName ) {
