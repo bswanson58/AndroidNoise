@@ -3,6 +3,7 @@ package com.SecretSquirrel.AndroidNoise.services;
 // Secret Squirrel Software - Created by bswanson on 2/4/14.
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.SecretSquirrel.AndroidNoise.dto.Artist;
@@ -37,6 +38,7 @@ public class RecentDataManager implements IRecentData {
 	private final IApplicationState mApplicationState;
 	private RecentArtistList        mRecentlyPlayedList;
 	private RecentArtistList        mRecentlyViewedList;
+	private String                  mCurrentHostName;
 
 	@Inject
 	public RecentDataManager( Context context, EventBus eventBus, IApplicationState applicationState ) {
@@ -50,11 +52,14 @@ public class RecentDataManager implements IRecentData {
 
 	@Override
 	public void start() {
-		if( mApplicationState.getIsConnected()) {
-			String  hostName = mApplicationState.getCurrentServer().getHostName();
+		mRecentlyViewedList.clear();
+		mRecentlyPlayedList.clear();
 
-			loadArtistList( mRecentlyViewedList, String.format( RECENTLY_VIEWED_FILE_NAME_FORMAT, hostName ));
-			loadArtistList( mRecentlyPlayedList, String.format( RECENTLY_PLAYED_FILE_NAME_FORMAT, hostName ));
+		if( mApplicationState.getIsConnected()) {
+			mCurrentHostName = mApplicationState.getCurrentServer().getHostName();
+
+			loadArtistList( mRecentlyViewedList, String.format( RECENTLY_VIEWED_FILE_NAME_FORMAT, mCurrentHostName ));
+			loadArtistList( mRecentlyPlayedList, String.format( RECENTLY_PLAYED_FILE_NAME_FORMAT, mCurrentHostName ));
 		}
 
 		mEventBus.register( this );
@@ -62,17 +67,17 @@ public class RecentDataManager implements IRecentData {
 
 	@Override
 	public void persistData() {
-		if( mApplicationState.getIsConnected()) {
-			String  hostName = mApplicationState.getCurrentServer().getHostName();
-
-			saveArtistList( mRecentlyViewedList, String.format( RECENTLY_VIEWED_FILE_NAME_FORMAT, hostName ));
-			saveArtistList( mRecentlyPlayedList, String.format( RECENTLY_PLAYED_FILE_NAME_FORMAT, hostName ));
+		if(!TextUtils.isEmpty( mCurrentHostName )) {
+			saveArtistList( mRecentlyViewedList, String.format( RECENTLY_VIEWED_FILE_NAME_FORMAT, mCurrentHostName ));
+			saveArtistList( mRecentlyPlayedList, String.format( RECENTLY_PLAYED_FILE_NAME_FORMAT, mCurrentHostName ));
 		}
 	}
 
 	@Override
 	public void stop() {
 		mEventBus.unregister( this );
+
+		mCurrentHostName = "";
 	}
 
 	@Override
@@ -87,14 +92,14 @@ public class RecentDataManager implements IRecentData {
 
 	@SuppressWarnings("unused")
 	public void onEvent( EventArtistViewed args ) {
-		mRecentlyViewedList.putMostRecentArtist( args.getArtist() );
+		mRecentlyViewedList.putMostRecentArtist( args.getArtist());
 
 		mEventBus.post( new EventRecentDataUpdated() );
 	}
 
 	@SuppressWarnings("unused")
 	public void onEvent( EventArtistPlayed args ) {
-		mRecentlyPlayedList.putMostRecentArtist( args.getArtist() );
+		mRecentlyPlayedList.putMostRecentArtist( args.getArtist());
 
 		mEventBus.post( new EventRecentDataUpdated() );
 	}
