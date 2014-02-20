@@ -92,7 +92,7 @@ public class NoiseRemoteClient implements INoiseServer {
 			@Override
 			public Subscription onSubscribe( Observer<? super BaseServerResult> observer ) {
 				try {
-					observer.onNext( getService().RequestEvents( address ) );
+					observer.onNext( getService().RequestEvents( address ));
 					observer.onCompleted();
 				}
 				catch( Exception ex ) {
@@ -110,7 +110,7 @@ public class NoiseRemoteClient implements INoiseServer {
 			@Override
 			public Subscription onSubscribe( Observer<? super BaseServerResult> observer ) {
 				try {
-					observer.onNext( getService().RevokeEvents( address ) );
+					observer.onNext( getService().RevokeEvents( address ));
 					observer.onCompleted();
 				}
 				catch( Exception ex ) {
