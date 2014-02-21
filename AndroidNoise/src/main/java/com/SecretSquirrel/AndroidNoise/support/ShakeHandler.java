@@ -15,6 +15,10 @@ import javax.inject.Inject;
 import de.greenrobot.event.EventBus;
 
 public class ShakeHandler implements ShakeDetector.Listener {
+	public interface ShakeResponder {
+		void    onShake();
+	}
+
 	private final EventBus      mEventBus;
 	private final SensorManager mSensorManager;
 	private ShakeDetector       mShakeDetector;

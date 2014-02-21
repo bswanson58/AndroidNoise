@@ -14,6 +14,8 @@ import com.SecretSquirrel.AndroidNoise.interfaces.IQueueRequestHandler;
 import com.SecretSquirrel.AndroidNoise.interfaces.IRecentData;
 import com.SecretSquirrel.AndroidNoise.interfaces.IRecentDataManager;
 import com.SecretSquirrel.AndroidNoise.services.noiseApi.NoiseApiModule;
+import com.SecretSquirrel.AndroidNoise.support.RandomTrackSelector;
+import com.SecretSquirrel.AndroidNoise.support.ShakeHandler;
 import com.SecretSquirrel.AndroidNoise.ui.NotificationManager;
 
 import javax.inject.Named;
@@ -101,5 +103,10 @@ public class ServicesModule {
 	@Singleton
 	public INoiseData provideNoiseDataCache( NoiseDataCacheClient client ) {
 		return( client );
+	}
+
+	@Provides
+	public ShakeHandler.ShakeResponder providesShakeResponder( RandomTrackSelector responder ) {
+		return( responder );
 	}
 }
