@@ -44,6 +44,7 @@ public class ServerListFragment extends Fragment {
 	private Subscription                    mLocatorSubscription;
 	private String                          mLastServer;
 
+	@Inject EventBus                        mEventBus;
 	@Inject IApplicationState               mApplicationState;
 
 	public static ServerListFragment newInstance( boolean selectLastServer ) {
@@ -194,7 +195,7 @@ public class ServerListFragment extends Fragment {
 			editor.putString( getString( R.string.setting_last_server_used ), server.getHostName());
 			editor.commit();
 
-			EventBus.getDefault().post( new EventServerSelected( server ));
+			mEventBus.post( new EventServerSelected( server ));
 		}
 	}
 
