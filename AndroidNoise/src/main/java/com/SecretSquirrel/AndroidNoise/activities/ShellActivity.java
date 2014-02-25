@@ -22,6 +22,7 @@ import com.SecretSquirrel.AndroidNoise.ui.NavigationDrawerAdapter;
 import com.SecretSquirrel.AndroidNoise.ui.NavigationDrawerConfiguration;
 import com.SecretSquirrel.AndroidNoise.ui.NavigationDrawerItem;
 import com.SecretSquirrel.AndroidNoise.ui.NavigationMenuItem;
+import com.SecretSquirrel.AndroidNoise.views.SlidingPanelLayout;
 
 import javax.inject.Inject;
 
@@ -64,6 +65,17 @@ public class ShellActivity extends ActionBarActivity
 		IocUtility.inject( this );
 
 		setContentView( R.layout.activity_shell );
+
+		SlidingPanelLayout  panel = (SlidingPanelLayout) findViewById( R.id.transport_panel_layout );
+		panel.setAnchorPoint( 0.8f );
+		panel.setDragView( findViewById( R.id.transport_drawer_drag_handle ));
+		if( getSupportFragmentManager().findFragmentById( R.id.transport_container ) == null ) {
+			getSupportFragmentManager()
+					.beginTransaction()
+					.replace( R.id.transport_container, TransportFragment.newInstance())
+					.commit();
+		}
+
 
 		mNavigationDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById( R.id.navigation_drawer );
 		mNavigationDrawerFragment.setConfiguration( getNavigationDrawerConfiguration() );
