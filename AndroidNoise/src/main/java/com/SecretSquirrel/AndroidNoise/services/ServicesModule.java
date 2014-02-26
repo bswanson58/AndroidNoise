@@ -11,6 +11,7 @@ import com.SecretSquirrel.AndroidNoise.interfaces.INoiseSearch;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseServer;
 import com.SecretSquirrel.AndroidNoise.interfaces.INotificationManager;
 import com.SecretSquirrel.AndroidNoise.interfaces.IQueueRequestHandler;
+import com.SecretSquirrel.AndroidNoise.interfaces.IQueueStatus;
 import com.SecretSquirrel.AndroidNoise.interfaces.IRecentData;
 import com.SecretSquirrel.AndroidNoise.interfaces.IRecentDataManager;
 import com.SecretSquirrel.AndroidNoise.services.noiseApi.NoiseApiModule;
@@ -103,6 +104,17 @@ public class ServicesModule {
 	@Singleton
 	public INoiseData provideNoiseDataCache( NoiseDataCacheClient client ) {
 		return( client );
+	}
+
+	@Provides
+	public IQueueStatus provideQueueStatus() {
+		IQueueStatus    retValue = null;
+
+		if( mApplicationServices != null ) {
+			retValue = mApplicationServices.getQueueStatus();
+		}
+
+		return( retValue );
 	}
 
 	@Provides

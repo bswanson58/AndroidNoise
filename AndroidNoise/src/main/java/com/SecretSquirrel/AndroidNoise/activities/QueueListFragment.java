@@ -2,19 +2,11 @@ package com.SecretSquirrel.AndroidNoise.activities;
 
 // Secret Squirrel Software - Created by bswanson on 12/30/13.
 
-import android.content.ComponentName;
 import android.content.Context;
-import android.content.ServiceConnection;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.IBinder;
-import android.os.Message;
-import android.os.Messenger;
 import android.os.Parcelable;
-import android.os.RemoteException;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,15 +16,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.SecretSquirrel.AndroidNoise.R;
-import com.SecretSquirrel.AndroidNoise.dto.PlayQueueListResult;
 import com.SecretSquirrel.AndroidNoise.dto.PlayQueueTrack;
 import com.SecretSquirrel.AndroidNoise.events.EventAlbumNameRequest;
-import com.SecretSquirrel.AndroidNoise.events.EventQueueTimeUpdate;
-import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
-import com.SecretSquirrel.AndroidNoise.interfaces.INoiseQueue;
-import com.SecretSquirrel.AndroidNoise.services.EventHostClient;
-import com.SecretSquirrel.AndroidNoise.services.EventHostService;
-import com.SecretSquirrel.AndroidNoise.support.Constants;
+import com.SecretSquirrel.AndroidNoise.events.EventQueueUpdated;
+import com.SecretSquirrel.AndroidNoise.interfaces.IQueueStatus;
 import com.SecretSquirrel.AndroidNoise.support.IocUtility;
 
 import java.util.ArrayList;
@@ -43,11 +30,8 @@ import javax.inject.Inject;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import de.greenrobot.event.EventBus;
-import rx.Subscription;
-import rx.util.functions.Action1;
 
 public class QueueListFragment extends Fragment  {
-	private static final String         TAG         = QueueListFragment.class.getName();
 	private static final String         QUEUE_LIST  = "queueList";
 	private static final String         LIST_STATE  = "queueListState";
 
@@ -55,56 +39,12 @@ public class QueueListFragment extends Fragment  {
 	private ListView                    mQueueListView;
 	private QueueAdapter                mQueueListAdapter;
 	private Parcelable                  mQueueListState;
-	private Subscription                mQueueSubscription;
-	private Messenger                   mMessenger;
-	private Messenger                   mService;
-	private boolean                     mIsBound;
 
-	@Inject	INoiseQueue                 mNoiseQueue;
-	@Inject IApplicationState           mApplicationState;
-	@Inject	EventHostClient             mEventHostClient;
+	@Inject EventBus                    mEventBus;
+	@Inject	IQueueStatus                mQueueStatus;
 
 	public static QueueListFragment newInstance() {
 		return( new QueueListFragment());
-	}
-
-	private ServiceConnection mConnection = new ServiceConnection() {
-		public void onServiceConnected( ComponentName className, IBinder service ) {
-			mService = new Messenger( service );
-
-			try {
-				Message message = Message.obtain( null, EventHostService.SERVER_EVENT_REGISTER_CLIENT );
-
-				if( message != null ) {
-					message.replyTo = mMessenger;
-
-					mService.send( message );
-				}
-			} catch( RemoteException ex ) {
-				if( Constants.LOG_ERROR ) {
-					Log.e( TAG, "Sending register client.", ex );
-				}
-			}
-		}
-
-		public void onServiceDisconnected( ComponentName className ) {
-			// This is called when the connection with the service has been unexpectedly disconnected - process crashed.
-			mService = null;
-		}
-	};
-
-	private class IncomingHandler extends Handler {
-		@Override
-		public void handleMessage( Message message ) {
-			switch( message.what ) {
-				case EventHostService.SERVER_EVENT_QUEUE_CHANGED:
-					requestQueueList();
-					break;
-
-				default:
-					super.handleMessage( message );
-			}
-		}
 	}
 
 	@Override
@@ -122,7 +62,6 @@ public class QueueListFragment extends Fragment  {
 		}
 
 		mQueueListAdapter = new QueueAdapter( getActivity(), mQueueList );
-		mMessenger = new Messenger( new IncomingHandler());
 	}
 
 	@Override
@@ -155,23 +94,15 @@ public class QueueListFragment extends Fragment  {
 	public void onResume() {
 		super.onResume();
 
-		if( mApplicationState.getIsConnected()) {
-			bindToEventService();
-
-			requestQueueList();
-		}
+		updateQueueList();
+		mEventBus.register( this );
 	}
 
 	@Override
 	public void onPause() {
 		super.onPause();
 
-		if( mQueueSubscription != null ) {
-			mQueueSubscription.unsubscribe();
-			mQueueSubscription = null;
-		}
-
-		unbindEventService();
+		mEventBus.unregister( this );
 	}
 
 	@Override
@@ -195,83 +126,19 @@ public class QueueListFragment extends Fragment  {
 		}
 	}
 
-	private void bindToEventService() {
-		if(!mIsBound ) {
-			mEventHostClient.registerForEvents( mConnection );
-
-			mIsBound = true;
-		}
+	@SuppressWarnings( "unused" )
+	public void onEvent( EventQueueUpdated args ) {
+		setQueueList( args.getQueueList());
 	}
 
-	private void unbindEventService() {
-		if( mIsBound ) {
-			if( mService != null ) {
-				try {
-					Message message = Message.obtain( null, EventHostService.SERVER_EVENT_UNREGISTER_CLIENT );
-
-					if( message != null ) {
-						message.replyTo = mMessenger;
-
-						mService.send( message );
-					}
-				} catch( RemoteException ex ) {
-					if( Constants.LOG_ERROR ) {
-						Log.e( TAG, "unbindEventService", ex );
-					}
-				}
-			}
-
-			// Detach our existing connection.
-			mEventHostClient.unregisterFromEvents( mConnection );
-			mIsBound = false;
-		}
-	}
-
-	private void requestQueueList() {
-		if( mQueueSubscription != null ) {
-			mQueueSubscription.unsubscribe();
-			mQueueSubscription = null;
-		}
-
-		mQueueSubscription = mNoiseQueue
-				.GetQueuedTrackList( new Action1<PlayQueueListResult>() {
-					                     @Override
-					                     public void call( PlayQueueListResult playQueueListResult ) {
-						                     setQueueList( playQueueListResult.getTracks() );
-					                     }
-				                     }, new Action1<Throwable>() {
-					                     @Override
-					                     public void call( Throwable throwable ) {
-						                     if( Constants.LOG_ERROR ) {
-							                     Log.e( TAG, "GetQueuedTrackList", throwable );
-						                     }
-					                     }
-				                     }
-				);
+	private void updateQueueList() {
+		setQueueList( mQueueStatus.getPlayQueueItems());
 	}
 
 	private void setQueueList( ArrayList<PlayQueueTrack> queueList ) {
 		mQueueList.clear();
 		mQueueList.addAll( queueList );
 		mQueueListAdapter.notifyDataSetChanged();
-
-		if( mQueueSubscription != null ) {
-			mQueueSubscription.unsubscribe();
-			mQueueSubscription = null;
-		}
-
-		long    totalMilliseconds = 0;
-		long    remainingMilliseconds = 0;
-
-		for( PlayQueueTrack track : mQueueList ) {
-			totalMilliseconds += track.getDurationMilliseconds();
-
-			if(!track.getHasPlayed()) {
-				remainingMilliseconds += track.getDurationMilliseconds();
-			}
-		}
-
-		EventBus.getDefault().post( new EventQueueTimeUpdate( totalMilliseconds, remainingMilliseconds ) );
 	}
 
 	protected class QueueAdapter extends ArrayAdapter<PlayQueueTrack> {
