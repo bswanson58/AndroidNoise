@@ -128,16 +128,12 @@ public class QueueListFragment extends Fragment  {
 
 	@SuppressWarnings( "unused" )
 	public void onEvent( EventQueueUpdated args ) {
-		setQueueList( args.getQueueList());
+		updateQueueList();
 	}
 
 	private void updateQueueList() {
-		setQueueList( mQueueStatus.getPlayQueueItems());
-	}
-
-	private void setQueueList( ArrayList<PlayQueueTrack> queueList ) {
 		mQueueList.clear();
-		mQueueList.addAll( queueList );
+		mQueueList.addAll( mQueueStatus.getPlayQueueItems());
 		mQueueListAdapter.notifyDataSetChanged();
 	}
 

@@ -225,7 +225,7 @@ public class QueueListener implements IQueueStatus {
 			}
 		}
 
-		mEventBus.post( new EventQueueUpdated( getPlayQueueItems(), mCurrentlyPlayingTrack ));
+		mEventBus.post( new EventQueueUpdated());
 		mEventBus.post( new EventQueueTimeUpdate( totalMilliseconds, remainingMilliseconds ) );
 	}
 }
