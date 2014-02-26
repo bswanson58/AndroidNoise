@@ -6,6 +6,7 @@ import com.SecretSquirrel.AndroidNoise.events.EventShakeDetected;
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationServices;
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
 import com.SecretSquirrel.AndroidNoise.interfaces.IQueueRequestHandler;
+import com.SecretSquirrel.AndroidNoise.interfaces.IQueueStatus;
 import com.SecretSquirrel.AndroidNoise.interfaces.IRecentData;
 import com.SecretSquirrel.AndroidNoise.interfaces.IRecentDataManager;
 import com.SecretSquirrel.AndroidNoise.support.ShakeHandler;
@@ -25,6 +26,7 @@ public class ApplicationServices implements IApplicationServices {
 	private final Lazy<IQueueRequestHandler>    mQueueRequestProvider;
 	private final ShakeHandler                  mShakeHandler;
 	private final ShakeHandler.ShakeResponder   mShakeResponder;
+	private final QueueListener                 mQueueListener;
 	private IQueueRequestHandler                mQueueRequestHandler;
 	private long                                mLastShakeTime;
 
@@ -34,11 +36,13 @@ public class ApplicationServices implements IApplicationServices {
 	                            IRecentDataManager recentDataManager,
 	                            ShakeHandler shakeHandler,
 	                            ShakeHandler.ShakeResponder shakeResponder,
+	                            QueueListener queueListener,
 	                            Lazy<IQueueRequestHandler> queueRequestProvider ) {
 		mApplicationState = applicationState;
 		mRecentDataManager = recentDataManager;
 		mShakeHandler = shakeHandler;
 		mShakeResponder = shakeResponder;
+		mQueueListener = queueListener;
 		mQueueRequestProvider = queueRequestProvider;
 
 		eventBus.register( this );
@@ -46,6 +50,10 @@ public class ApplicationServices implements IApplicationServices {
 
 	public IRecentData getRecentDataManager() {
 		return( mRecentDataManager.getRecentData());
+	}
+
+	public IQueueStatus getQueueStatus() {
+		return( mQueueListener );
 	}
 
 	@SuppressWarnings("unused")
