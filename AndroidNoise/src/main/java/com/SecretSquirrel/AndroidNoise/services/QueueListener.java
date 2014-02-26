@@ -40,6 +40,7 @@ public class QueueListener implements IQueueStatus {
 	private final EventHostClient       mEventHostClient;
 	private final Messenger             mMessenger;
 	private ArrayList<PlayQueueTrack>   mQueueList;
+	private PlayQueueTrack              mCurrentlyPlayingTrack;
 	private Subscription                mQueueSubscription;
 	private Messenger                   mService;
 	private boolean                     mIsBound;
@@ -111,6 +112,11 @@ public class QueueListener implements IQueueStatus {
 		}
 
 		return( retValue );
+	}
+
+	@Override
+	public PlayQueueTrack getCurrentlyPlayingTrack() {
+		return( mCurrentlyPlayingTrack );
 	}
 
 	@SuppressWarnings( "unused" )
@@ -200,8 +206,7 @@ public class QueueListener implements IQueueStatus {
 
 	private void setQueueList( ArrayList<PlayQueueTrack> queueList ) {
 		mQueueList = queueList;
-
-		mEventBus.post( new EventQueueUpdated( getPlayQueueItems()));
+		mCurrentlyPlayingTrack = null;
 
 		long    totalMilliseconds = 0;
 		long    remainingMilliseconds = 0;
@@ -213,9 +218,14 @@ public class QueueListener implements IQueueStatus {
 				if(!track.getHasPlayed()) {
 					remainingMilliseconds += track.getDurationMilliseconds();
 				}
+
+				if( track.isPlaying()) {
+					mCurrentlyPlayingTrack = track;
+				}
 			}
 		}
 
+		mEventBus.post( new EventQueueUpdated( getPlayQueueItems(), mCurrentlyPlayingTrack ));
 		mEventBus.post( new EventQueueTimeUpdate( totalMilliseconds, remainingMilliseconds ) );
 	}
 }

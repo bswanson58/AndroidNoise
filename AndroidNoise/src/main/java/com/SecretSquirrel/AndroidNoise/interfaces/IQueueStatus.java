@@ -8,4 +8,6 @@ import java.util.ArrayList;
 
 public interface IQueueStatus {
 	ArrayList<PlayQueueTrack>   getPlayQueueItems();
+
+	PlayQueueTrack              getCurrentlyPlayingTrack();
 }

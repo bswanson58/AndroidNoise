@@ -68,12 +68,12 @@ public class ShellActivity extends ActionBarActivity
 
 		SlidingPanelLayout  panel = (SlidingPanelLayout) findViewById( R.id.transport_panel_layout );
 		panel.setAnchorPoint( 0.75f );
-		panel.setPanelHeight( 0 );
 		panel.setDragView( findViewById( R.id.transport_drawer_drag_handle ));
 		if( getSupportFragmentManager().findFragmentById( R.id.transport_container ) == null ) {
 			getSupportFragmentManager()
 					.beginTransaction()
 					.replace( R.id.transport_container, TransportFragment.newInstance())
+					.replace( R.id.transport_drawer_drag_handle, PlayingStatusFragment.newInstance())
 					.commit();
 		}
 
