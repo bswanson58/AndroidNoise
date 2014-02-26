@@ -5,7 +5,9 @@ package com.SecretSquirrel.AndroidNoise.services.rto;
 public class RoPlayQueueTrack {
 	public long		    TrackId;
 	public String	    TrackName;
+	public long		    AlbumId;
 	public String	    AlbumName;
+	public long		    ArtistId;
 	public String	    ArtistName;
 	public int          DurationMilliseconds;
 	public boolean		IsPlaying;
