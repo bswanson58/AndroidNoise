@@ -67,7 +67,6 @@ public class ShellActivity extends ActionBarActivity
 		setContentView( R.layout.activity_shell );
 
 		SlidingPanelLayout  panel = (SlidingPanelLayout) findViewById( R.id.transport_panel_layout );
-		panel.setAnchorPoint( 0.75f );
 		panel.setDragView( findViewById( R.id.transport_drawer_drag_handle ));
 		if( getSupportFragmentManager().findFragmentById( R.id.transport_container ) == null ) {
 			getSupportFragmentManager()

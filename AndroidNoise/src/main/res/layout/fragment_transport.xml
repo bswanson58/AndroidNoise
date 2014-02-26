@@ -4,8 +4,6 @@
               android:orientation="horizontal"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              android:layout_marginLeft="15dp"
-              android:layout_marginRight="15dp"
               android:padding="5dp"
               android:background="@color/control_panel">
 

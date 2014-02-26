@@ -26,7 +26,6 @@ public class ShellQueueFragment extends BaseShellFragment {
 			getChildFragmentManager()
 					.beginTransaction()
 					.replace( R.id.queue_list_frame, QueueListFragment.newInstance())
-					.replace( R.id.transport_commands_frame, TransportFragment.newInstance())
 					.commit();
 		}
 
