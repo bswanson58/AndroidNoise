@@ -37,6 +37,7 @@ public class NoiseQueueClient implements INoiseQueue {
 	private final EventBus                              mEventBus;
 	private final Provider<RemoteServerQueueApi>        mServiceProvider;
 	public  final EnumMap<TransportCommand, Integer>    mTransportCommands;
+	public  final EnumMap<QueueCommand, Integer>        mQueueCommands;
 	private RemoteServerQueueApi                        mService;
 
 	@Inject
@@ -45,13 +46,17 @@ public class NoiseQueueClient implements INoiseQueue {
 		mServiceProvider = queueApi;
 
 		mTransportCommands = new EnumMap<TransportCommand, Integer>( TransportCommand.class );
-
 		mTransportCommands.put( TransportCommand.Play, 1 );
 		mTransportCommands.put( TransportCommand.Stop, 2 );
 		mTransportCommands.put( TransportCommand.Pause, 3 );
 		mTransportCommands.put( TransportCommand.PlayNext, 4 );
 		mTransportCommands.put( TransportCommand.PlayPrevious, 5 );
 		mTransportCommands.put( TransportCommand.Repeat, 6 );
+
+		mQueueCommands = new EnumMap<QueueCommand, Integer>( QueueCommand.class );
+		mQueueCommands.put( QueueCommand.StartPlaying, 1 );
+		mQueueCommands.put( QueueCommand.Clear, 2 );
+		mQueueCommands.put( QueueCommand.ClearPlayed, 3 );
 
 		mEventBus.register( this );
 	}
@@ -189,6 +194,24 @@ public class NoiseQueueClient implements INoiseQueue {
 			public Subscription onSubscribe( Observer<? super BaseServerResult> observer ) {
 				try {
 					observer.onNext( new BaseServerResult( getService().ExecuteTransportCommand( mTransportCommands.get( command ))));
+					observer.onCompleted();
+				}
+				catch( Exception ex ) {
+					observer.onError( ex );
+				}
+
+				return( Subscriptions.empty());
+			}
+		} )).subscribeOn( Schedulers.threadPoolForIO());
+	}
+
+	@Override
+	public Observable<BaseServerResult> ExecuteQueueCommand( final QueueCommand command ) {
+		return( Observable.create( new Observable.OnSubscribeFunc<BaseServerResult>() {
+			@Override
+			public Subscription onSubscribe( Observer<? super BaseServerResult> observer ) {
+				try {
+					observer.onNext( new BaseServerResult( getService().ExecuteQueueCommand( mQueueCommands.get( command ) )));
 					observer.onCompleted();
 				}
 				catch( Exception ex ) {

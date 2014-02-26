@@ -20,4 +20,7 @@ public interface RemoteServerQueueApi {
 
 	@GET( "/Noise/Queue/transportCommand" )
 	public BaseServerResult     ExecuteTransportCommand( @Query( "command") int command );
+
+	@GET( "/Noise/Queue/queueCommand" )
+	public BaseServerResult     ExecuteQueueCommand( @Query( "command") int command );
 }

@@ -7,7 +7,11 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -19,7 +23,9 @@ import com.SecretSquirrel.AndroidNoise.R;
 import com.SecretSquirrel.AndroidNoise.dto.PlayQueueTrack;
 import com.SecretSquirrel.AndroidNoise.events.EventAlbumNameRequest;
 import com.SecretSquirrel.AndroidNoise.events.EventQueueUpdated;
+import com.SecretSquirrel.AndroidNoise.interfaces.INoiseQueue;
 import com.SecretSquirrel.AndroidNoise.interfaces.IQueueStatus;
+import com.SecretSquirrel.AndroidNoise.services.rto.BaseServerResult;
 import com.SecretSquirrel.AndroidNoise.support.IocUtility;
 
 import java.util.ArrayList;
@@ -30,8 +36,12 @@ import javax.inject.Inject;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import de.greenrobot.event.EventBus;
+import rx.android.observables.AndroidObservable;
+import rx.util.functions.Action1;
 
 public class QueueListFragment extends Fragment  {
+	private static final String         TAG = QueueListFragment.class.getName();
+
 	private static final String         QUEUE_LIST  = "queueList";
 	private static final String         LIST_STATE  = "queueListState";
 
@@ -41,6 +51,7 @@ public class QueueListFragment extends Fragment  {
 	private Parcelable                  mQueueListState;
 
 	@Inject EventBus                    mEventBus;
+	@Inject	INoiseQueue                 mNoiseQueue;
 	@Inject	IQueueStatus                mQueueStatus;
 
 	public static QueueListFragment newInstance() {
@@ -52,6 +63,8 @@ public class QueueListFragment extends Fragment  {
 		super.onCreate( savedInstanceState );
 
 		IocUtility.inject( this );
+
+		setHasOptionsMenu( true );
 
 		if( savedInstanceState != null ) {
 			mQueueList = savedInstanceState.getParcelableArrayList( QUEUE_LIST );
@@ -124,6 +137,50 @@ public class QueueListFragment extends Fragment  {
 		if( mQueueListState != null ) {
 			outState.putParcelable( LIST_STATE, mQueueListState );
 		}
+	}
+
+	@Override
+	public void onCreateOptionsMenu( Menu menu, MenuInflater inflater ) {
+		inflater.inflate( R.menu.queue_list, menu );
+
+		super.onCreateOptionsMenu( menu, inflater );
+	}
+
+	@Override
+	public boolean onOptionsItemSelected( MenuItem item ) {
+		boolean retValue = true;
+
+		switch( item.getItemId()) {
+			case R.id.action_queue_start_play:
+				executeCommand( INoiseQueue.QueueCommand.StartPlaying );
+				break;
+
+			case R.id.action_queue_clear:
+				executeCommand( INoiseQueue.QueueCommand.Clear );
+				break;
+
+			case R.id.action_queue_clear_played:
+				executeCommand( INoiseQueue.QueueCommand.ClearPlayed );
+				break;
+
+			default:
+				retValue = super.onOptionsItemSelected( item );
+				break;
+		}
+
+		return( retValue );
+	}
+
+	private void executeCommand( INoiseQueue.QueueCommand command ) {
+		AndroidObservable.fromFragment( this, mNoiseQueue.ExecuteQueueCommand( command ))
+				.subscribe( new Action1<BaseServerResult>() {
+					@Override
+					public void call( BaseServerResult serverResult ) {
+						if(!serverResult.Success ) {
+							Log.e( TAG, "The queue command was not executed: " + serverResult.ErrorMessage );
+						}
+					}
+				} );
 	}
 
 	@SuppressWarnings( "unused" )
