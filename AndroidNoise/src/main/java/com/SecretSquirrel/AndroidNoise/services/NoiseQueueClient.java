@@ -62,6 +62,7 @@ public class NoiseQueueClient implements INoiseQueue {
 		mQueueItemCommands = new EnumMap<QueueItemCommand, Integer>( QueueItemCommand.class );
 		mQueueItemCommands.put( QueueItemCommand.Remove, 1 );
 		mQueueItemCommands.put( QueueItemCommand.PlayNext, 2 );
+		mQueueItemCommands.put( QueueItemCommand.Replay, 3 );
 
 		mEventBus.register( this );
 	}

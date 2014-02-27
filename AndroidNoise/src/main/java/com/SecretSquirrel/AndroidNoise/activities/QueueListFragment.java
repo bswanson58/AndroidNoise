@@ -9,6 +9,7 @@ import android.os.Parcelable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -22,7 +23,7 @@ import android.widget.TextView;
 
 import com.SecretSquirrel.AndroidNoise.R;
 import com.SecretSquirrel.AndroidNoise.dto.PlayQueueTrack;
-import com.SecretSquirrel.AndroidNoise.events.EventAlbumNameRequest;
+import com.SecretSquirrel.AndroidNoise.events.EventAlbumRequest;
 import com.SecretSquirrel.AndroidNoise.events.EventQueueUpdated;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseQueue;
 import com.SecretSquirrel.AndroidNoise.interfaces.IQueueStatus;
@@ -92,9 +93,11 @@ public class QueueListFragment extends Fragment  {
 				public void onItemClick( AdapterView<?> adapterView, View view, int i, long l ) {
 					PlayQueueTrack  track = mQueueList.get( i );
 
-					mEventBus.post( new EventAlbumNameRequest( track.getArtistName(), track.getAlbumName()));
+					mEventBus.post( new EventAlbumRequest( track.getArtistId(), track.getAlbumId()));
 				}
 			} );
+
+			registerForContextMenu( mQueueListView );
 
 			if( mQueueListState != null ) {
 				mQueueListView.onRestoreInstanceState( mQueueListState );
@@ -157,7 +160,7 @@ public class QueueListFragment extends Fragment  {
 
 		item = menu.findItem( R.id.action_queue_clear );
 		if( item != null ) {
-			item.setEnabled( mQueueStatus.areTracksQueued());
+			item.setEnabled( mQueueStatus.areTracksQueued() );
 		}
 
 		item = menu.findItem( R.id.action_queue_start_play );
@@ -170,7 +173,7 @@ public class QueueListFragment extends Fragment  {
 
 	@Override
 	public boolean onOptionsItemSelected( MenuItem item ) {
-		boolean retValue = true;
+		boolean     retValue = true;
 
 		switch( item.getItemId()) {
 			case R.id.action_queue_start_play:
@@ -198,7 +201,71 @@ public class QueueListFragment extends Fragment  {
 				.subscribe( new Action1<BaseServerResult>() {
 					@Override
 					public void call( BaseServerResult serverResult ) {
-						if(!serverResult.Success ) {
+						if( !serverResult.Success ) {
+							Log.e( TAG, "The queue command was not executed: " + serverResult.ErrorMessage );
+						}
+					}
+				} );
+	}
+
+	@Override
+	public void onCreateContextMenu( ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo ) {
+		super.onCreateContextMenu( menu, v, menuInfo );
+
+		MenuInflater inflater = getActivity().getMenuInflater();
+		inflater.inflate( R.menu.queue_list_item, menu );
+
+		menu.setHeaderTitle( getString( R.string.menu_title_queue_list_item ));
+
+		AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
+		if( info != null ) {
+			PlayQueueTrack  track = mQueueListAdapter.getItem( info.position );
+			MenuItem        item = menu.findItem( R.id.action_queue_item_replay );
+
+			if(( item != null ) &&
+			   ( track != null )) {
+				item.setEnabled( track.getHasPlayed());
+			}
+		}
+	}
+
+	@Override
+	public boolean onContextItemSelected( MenuItem item ) {
+		boolean retValue = true;
+		AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+
+		if( info != null ) {
+			PlayQueueTrack track = mQueueListAdapter.getItem( info.position );
+
+			if( track != null ) {
+				switch( item.getItemId()) {
+					case R.id.action_queue_item_remove:
+						executeItemCommand( INoiseQueue.QueueItemCommand.Remove, track );
+						break;
+
+					case R.id.action_queue_item_playNext:
+						executeItemCommand( INoiseQueue.QueueItemCommand.PlayNext, track );
+						break;
+
+					case R.id.action_queue_item_replay:
+						executeItemCommand( INoiseQueue.QueueItemCommand.Replay, track );
+						break;
+					
+					default:
+						retValue = super.onContextItemSelected( item );
+				}
+			}
+		}
+
+		return( retValue );
+	}
+
+	private void executeItemCommand( INoiseQueue.QueueItemCommand command, PlayQueueTrack track ) {
+		AndroidObservable.fromFragment( this, mNoiseQueue.ExecuteQueueItemCommand( command, track.getId()))
+				.subscribe( new Action1<BaseServerResult>() {
+					@Override
+					public void call( BaseServerResult serverResult ) {
+						if( !serverResult.Success ) {
 							Log.e( TAG, "The queue command was not executed: " + serverResult.ErrorMessage );
 						}
 					}

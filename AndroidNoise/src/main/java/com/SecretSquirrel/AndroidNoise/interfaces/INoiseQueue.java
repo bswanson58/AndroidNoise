@@ -23,7 +23,7 @@ public interface INoiseQueue {
 	}
 
 	public enum QueueItemCommand {
-		Remove, PlayNext
+		Remove, PlayNext, Replay
 	}
 
 	public  Subscription                    EnqueueTrack( Track track, Action1<QueuedTrackResult> result );
