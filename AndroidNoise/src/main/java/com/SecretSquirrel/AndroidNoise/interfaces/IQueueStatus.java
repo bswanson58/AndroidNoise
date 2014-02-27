@@ -10,4 +10,6 @@ public interface IQueueStatus {
 	ArrayList<PlayQueueTrack>   getPlayQueueItems();
 
 	PlayQueueTrack              getCurrentlyPlayingTrack();
+	boolean                     areTracksQueued();
+	boolean                     areTracksPlayed();
 }

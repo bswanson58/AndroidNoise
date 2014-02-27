@@ -6,6 +6,7 @@ import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -147,6 +148,27 @@ public class QueueListFragment extends Fragment  {
 	}
 
 	@Override
+	public void onPrepareOptionsMenu( Menu menu ) {
+		MenuItem    item = menu.findItem( R.id.action_queue_clear_played );
+
+		if( item != null ) {
+			item.setEnabled( mQueueStatus.areTracksPlayed());
+		}
+
+		item = menu.findItem( R.id.action_queue_clear );
+		if( item != null ) {
+			item.setEnabled( mQueueStatus.areTracksQueued());
+		}
+
+		item = menu.findItem( R.id.action_queue_start_play );
+		if( item != null ) {
+			item.setEnabled(!mQueueStatus.areTracksQueued());
+		}
+
+		super.onPrepareOptionsMenu( menu );
+	}
+
+	@Override
 	public boolean onOptionsItemSelected( MenuItem item ) {
 		boolean retValue = true;
 
@@ -192,6 +214,8 @@ public class QueueListFragment extends Fragment  {
 		mQueueList.clear();
 		mQueueList.addAll( mQueueStatus.getPlayQueueItems());
 		mQueueListAdapter.notifyDataSetChanged();
+
+		ActivityCompat.invalidateOptionsMenu( getActivity());
 	}
 
 	protected class QueueAdapter extends ArrayAdapter<PlayQueueTrack> {

@@ -6,17 +6,18 @@
     <item
         android:id="@+id/action_queue_start_play"
         android:title="@string/action_queue_start_play"
-        app:showAsAction="withText|ifRoom"
-        />
-    <item
-        android:id="@+id/action_queue_clear"
-        android:title="@string/action_queue_clear"
-        app:showAsAction="withText|ifRoom"
+        app:showAsAction="withText"
         />
 
     <item
         android:id="@+id/action_queue_clear_played"
         android:title="@string/action_queue_clear_played"
+        app:showAsAction="withText|ifRoom"
+        />
+
+    <item
+        android:id="@+id/action_queue_clear"
+        android:title="@string/action_queue_clear"
         app:showAsAction="withText|ifRoom"
         />
 </menu>

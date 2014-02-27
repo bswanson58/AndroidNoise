@@ -44,6 +44,8 @@ public class QueueListener implements IQueueStatus {
 	private Subscription                mQueueSubscription;
 	private Messenger                   mService;
 	private boolean                     mIsBound;
+	private boolean                     mAreTracksQueued;
+	private boolean                     mAreTracksPlayed;
 
 	private ServiceConnection           mConnection = new ServiceConnection() {
 		public void onServiceConnected( ComponentName className, IBinder service ) {
@@ -117,6 +119,16 @@ public class QueueListener implements IQueueStatus {
 	@Override
 	public PlayQueueTrack getCurrentlyPlayingTrack() {
 		return( mCurrentlyPlayingTrack );
+	}
+
+	@Override
+	public boolean areTracksQueued() {
+		return( mAreTracksQueued );
+	}
+
+	@Override
+	public boolean areTracksPlayed() {
+		return( mAreTracksPlayed );
 	}
 
 	@SuppressWarnings( "unused" )
@@ -207,6 +219,8 @@ public class QueueListener implements IQueueStatus {
 	private void setQueueList( ArrayList<PlayQueueTrack> queueList ) {
 		mQueueList = queueList;
 		mCurrentlyPlayingTrack = null;
+		mAreTracksQueued = false;
+		mAreTracksPlayed = false;
 
 		long    totalMilliseconds = 0;
 		long    remainingMilliseconds = 0;
@@ -218,10 +232,15 @@ public class QueueListener implements IQueueStatus {
 				if(!track.getHasPlayed()) {
 					remainingMilliseconds += track.getDurationMilliseconds();
 				}
+				else {
+					mAreTracksPlayed = true;
+				}
 
 				if( track.isPlaying()) {
 					mCurrentlyPlayingTrack = track;
 				}
+
+				mAreTracksQueued = true;
 			}
 		}
 
