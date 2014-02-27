@@ -23,4 +23,7 @@ public interface RemoteServerQueueApi {
 
 	@GET( "/Noise/Queue/queueCommand" )
 	public BaseServerResult     ExecuteQueueCommand( @Query( "command") int command );
+
+	@GET( "/Noise/Queue/queueItemCommand" )
+	public BaseServerResult     ExecuteQueueItemCommand( @Query( "command") int command, @Query( "item" ) long itemId );
 }

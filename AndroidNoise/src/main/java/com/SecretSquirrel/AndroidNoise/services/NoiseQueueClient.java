@@ -38,6 +38,7 @@ public class NoiseQueueClient implements INoiseQueue {
 	private final Provider<RemoteServerQueueApi>        mServiceProvider;
 	public  final EnumMap<TransportCommand, Integer>    mTransportCommands;
 	public  final EnumMap<QueueCommand, Integer>        mQueueCommands;
+	public  final EnumMap<QueueItemCommand, Integer>    mQueueItemCommands;
 	private RemoteServerQueueApi                        mService;
 
 	@Inject
@@ -57,6 +58,10 @@ public class NoiseQueueClient implements INoiseQueue {
 		mQueueCommands.put( QueueCommand.StartPlaying, 1 );
 		mQueueCommands.put( QueueCommand.Clear, 2 );
 		mQueueCommands.put( QueueCommand.ClearPlayed, 3 );
+
+		mQueueItemCommands = new EnumMap<QueueItemCommand, Integer>( QueueItemCommand.class );
+		mQueueItemCommands.put( QueueItemCommand.Remove, 1 );
+		mQueueItemCommands.put( QueueItemCommand.PlayNext, 2 );
 
 		mEventBus.register( this );
 	}
@@ -212,6 +217,24 @@ public class NoiseQueueClient implements INoiseQueue {
 			public Subscription onSubscribe( Observer<? super BaseServerResult> observer ) {
 				try {
 					observer.onNext( new BaseServerResult( getService().ExecuteQueueCommand( mQueueCommands.get( command ) )));
+					observer.onCompleted();
+				}
+				catch( Exception ex ) {
+					observer.onError( ex );
+				}
+
+				return( Subscriptions.empty());
+			}
+		} )).subscribeOn( Schedulers.threadPoolForIO());
+	}
+
+	@Override
+	public Observable<BaseServerResult> ExecuteQueueItemCommand( final QueueItemCommand command, final long itemId ) {
+		return( Observable.create( new Observable.OnSubscribeFunc<BaseServerResult>() {
+			@Override
+			public Subscription onSubscribe( Observer<? super BaseServerResult> observer ) {
+				try {
+					observer.onNext( new BaseServerResult( getService().ExecuteQueueItemCommand( mQueueItemCommands.get( command ), itemId )));
 					observer.onCompleted();
 				}
 				catch( Exception ex ) {

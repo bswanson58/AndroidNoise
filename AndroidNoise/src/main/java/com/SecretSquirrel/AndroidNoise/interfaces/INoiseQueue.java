@@ -22,6 +22,10 @@ public interface INoiseQueue {
 		StartPlaying, Clear, ClearPlayed
 	}
 
+	public enum QueueItemCommand {
+		Remove, PlayNext
+	}
+
 	public  Subscription                    EnqueueTrack( Track track, Action1<QueuedTrackResult> result );
 	public  Subscription                    EnqueueTrack( Track track, Action1<QueuedTrackResult> result, Action1<Throwable> errorAction );
 	public  Observable<QueuedTrackResult>   EnqueueTrack( final Track track );
@@ -35,4 +39,5 @@ public interface INoiseQueue {
 
 	public  Observable<BaseServerResult>    ExecuteTransportCommand( TransportCommand command );
 	public  Observable<BaseServerResult>    ExecuteQueueCommand( QueueCommand command );
+	public  Observable<BaseServerResult>    ExecuteQueueItemCommand( QueueItemCommand command, long itemId );
 }

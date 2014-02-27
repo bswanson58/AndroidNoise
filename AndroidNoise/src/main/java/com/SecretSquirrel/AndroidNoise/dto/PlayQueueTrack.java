@@ -8,6 +8,7 @@ import android.os.Parcelable;
 import com.SecretSquirrel.AndroidNoise.services.rto.RoPlayQueueTrack;
 
 public class PlayQueueTrack implements Parcelable {
+	private long        mId;
 	private long        mTrackId;
 	private String	    mTrackName;
 	private long        mAlbumId;
@@ -31,6 +32,7 @@ public class PlayQueueTrack implements Parcelable {
 	};
 
 	public PlayQueueTrack( RoPlayQueueTrack roTrack ) {
+		mId = roTrack.Id;
 		mTrackId = roTrack.TrackId;
 		mTrackName = roTrack.TrackName;
 		mAlbumId = roTrack.AlbumId;
@@ -45,6 +47,7 @@ public class PlayQueueTrack implements Parcelable {
 	}
 
 	public PlayQueueTrack( Parcel parcel ) {
+		mId = parcel.readLong();
 		mTrackId = parcel.readLong();
 		mTrackName = parcel.readString();
 		mAlbumId = parcel.readLong();
@@ -55,7 +58,12 @@ public class PlayQueueTrack implements Parcelable {
 		mIsPlaying = parcel.readByte() != 0;
 		mHasPlayed = parcel.readByte() != 0;
 		mIsFaulted = parcel.readByte() != 0;
-		mIsStrategySourced = parcel.readByte() != 0;	}
+		mIsStrategySourced = parcel.readByte() != 0;
+	}
+
+	public long getId() {
+		return( mId );
+	}
 
 	public String getTrackName() {
 		return( mTrackName );
@@ -108,6 +116,7 @@ public class PlayQueueTrack implements Parcelable {
 
 	@Override
 	public void writeToParcel( Parcel parcel, int i ) {
+		parcel.writeLong( mId );
 		parcel.writeLong( mTrackId );
 		parcel.writeString( mTrackName );
 		parcel.writeLong( mAlbumId );
