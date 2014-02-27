@@ -7,7 +7,6 @@ import android.os.Parcelable;
 
 import com.SecretSquirrel.AndroidNoise.services.rto.RoServerInformation;
 import com.SecretSquirrel.AndroidNoise.services.rto.ServiceInformation;
-import com.SecretSquirrel.AndroidNoise.support.Constants;
 
 public class ServerInformation implements Parcelable {
 	private ServiceInformation.ServiceState mServiceState;
@@ -30,36 +29,22 @@ public class ServerInformation implements Parcelable {
 		}
 	};
 
-	public ServerInformation( ServiceInformation serviceInformation, ServerVersion version ) {
-		mServerApiVersion = 1;
-
-		mLibraryId = Constants.NULL_ID;
-		mLibraryName = "";
-
-		if( serviceInformation != null ) {
-			mServiceState = serviceInformation.getServiceState();
-			mServerAddress = serviceInformation.getHostAddress();
-			mServerName = serviceInformation.getName();
-			mHostName = serviceInformation.getHostName();
-		}
-
-		mServerVersion = version;
-	}
-
 	public ServerInformation( String serverAddress, RoServerInformation serverInformation ) {
 		mServiceState = ServiceInformation.ServiceState.ServiceResolved;
 
 		mServerAddress = serverAddress;
 		mServerVersion = serverInformation.ServerVersion;
 		mServerName = serverInformation.ServerName;
-		mHostName = serverInformation.ServerName;
 		mServerApiVersion = serverInformation.ApiVersion;
 		mLibraryName = serverInformation.LibraryName;
 		mLibraryId = serverInformation.LibraryId;
 		mLibraryCount = serverInformation.LibraryCount;
+
+		mHostName = "";
 	}
 
 	public ServerInformation( Parcel parcel ) {
+		mServiceState = (ServiceInformation.ServiceState)parcel.readSerializable();
 		mServerAddress = parcel.readString();
 		mHostName = parcel.readString();
 		mServerName = parcel.readString();
@@ -67,15 +52,13 @@ public class ServerInformation implements Parcelable {
 		mLibraryName = parcel.readString();
 		mLibraryId = parcel.readLong();
 		mLibraryCount = parcel.readInt();
-	}
 
-	@Override
-	public int describeContents() {
-		return 0;
+		mServerVersion = parcel.readParcelable( ServerVersion.class.getClassLoader());
 	}
 
 	@Override
 	public void writeToParcel( Parcel parcel, int i ) {
+		parcel.writeSerializable( mServiceState );
 		parcel.writeString( mServerAddress );
 		parcel.writeString( mHostName );
 		parcel.writeString( mServerName );
@@ -83,6 +66,19 @@ public class ServerInformation implements Parcelable {
 		parcel.writeString( mLibraryName );
 		parcel.writeLong( mLibraryId );
 		parcel.writeInt( mLibraryCount );
+
+		mServerVersion.writeToParcel( parcel, i );
+	}
+
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+
+	public void setServiceInformation( ServiceInformation serviceInformation ) {
+		mServiceState = serviceInformation.getServiceState();
+		mServerAddress = serviceInformation.getHostAddress();
+		mHostName = serviceInformation.getHostName();
 	}
 
 	public ServiceInformation.ServiceState getServiceState() {

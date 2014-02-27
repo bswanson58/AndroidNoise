@@ -6,8 +6,8 @@ import com.SecretSquirrel.AndroidNoise.dto.ServerVersion;
 
 public class RoServerInformation {
 	public ServerVersion    ServerVersion;
-	public String           ServerName;
 	public int              ApiVersion;
+	public String           ServerName;
 	public long             LibraryId;
 	public String           LibraryName;
 	public int              LibraryCount;

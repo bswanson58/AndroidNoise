@@ -56,13 +56,14 @@ public class NoiseRemoteService extends IntentService {
 		Bundle  resultData = new Bundle();
 		int     resultCode;
 
+		resultData.putInt( NoiseRemoteApi.RemoteApiParameter, NoiseRemoteApi.GetServerVersion );
+
 		try {
 			RestAdapter         restAdapter = new RestAdapter.Builder().setServer( serverAddress ).build();
 			RemoteServerRestApi service = restAdapter.create( RemoteServerRestApi.class );
 			RoServerVersion     roVersion = service.GetServerVersion();
 			ServerVersion       version = new ServerVersion( roVersion );
 
-			resultData.putInt( NoiseRemoteApi.RemoteApiParameter, NoiseRemoteApi.GetServerVersion );
 			resultData.putParcelable( NoiseRemoteApi.RemoteResultVersion, version );
 			resultData.putString( NoiseRemoteApi.RemoteServerAddress, serverAddress );
 			resultCode = NoiseRemoteApi.RemoteResultSuccess;
@@ -83,13 +84,14 @@ public class NoiseRemoteService extends IntentService {
 		Bundle  resultData = new Bundle();
 		int     resultCode;
 
+		resultData.putInt( NoiseRemoteApi.RemoteApiParameter, NoiseRemoteApi.GetServerInformation );
+
 		try {
 			RestAdapter         restAdapter = new RestAdapter.Builder().setServer( serverAddress ).build();
 			RemoteServerRestApi service = restAdapter.create( RemoteServerRestApi.class );
 			RoServerInformation information = service.GetServerInformation();
 			ServerInformation   serverInformation = new ServerInformation( serverAddress, information );
 
-			resultData.putInt( NoiseRemoteApi.RemoteApiParameter, NoiseRemoteApi.GetServerInformation );
 			resultData.putParcelable( NoiseRemoteApi.ServerInformation, serverInformation );
 			resultData.putString( NoiseRemoteApi.RemoteServerAddress, serverAddress );
 			resultCode = NoiseRemoteApi.RemoteResultSuccess;

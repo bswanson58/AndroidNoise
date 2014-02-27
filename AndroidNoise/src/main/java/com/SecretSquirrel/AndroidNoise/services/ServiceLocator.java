@@ -66,7 +66,7 @@ public class ServiceLocator {
 	private static void onServiceInformation( final ServiceInformation serviceInformation,
 	                                          final Observer<? super ServerInformation> observer,
 	                                          final Context context ) {
-		NoiseRemoteClient   remoteClient = new NoiseRemoteClient( createAdapter(serviceInformation.getHostAddress()),
+		NoiseRemoteClient   remoteClient = new NoiseRemoteClient( createAdapter( serviceInformation.getHostAddress()),
 																  serviceInformation.getHostAddress(), context );
 
 		remoteClient.getServerInformation( new ResultReceiver( null ) {
@@ -76,10 +76,13 @@ public class ServiceLocator {
 					ServerInformation   serverInformation = resultData.getParcelable( NoiseRemoteApi.ServerInformation );
 
 					if( serverInformation != null ) {
+						serverInformation.setServiceInformation( serviceInformation );
+
 						observer.onNext( serverInformation );
 					}
 				}
-			}} );
+			}
+		} );
 	}
 
 	private static RemoteServerRestApi createAdapter( String serverAddress ) {
