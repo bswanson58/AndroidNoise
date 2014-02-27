@@ -60,6 +60,8 @@
     <string name="album_queued_toast_format">Album \'%1$s\' was queued!</string>
     <string name="track_queued_fail_toast_format">An error occurred while queueing track \'%1$s\'</string>
     <string name="album_queued_fail_toast_format">An error occurred while queueing album \'%1$s\'</string>
+    <string name="sli_title_format">%1$s - %2$s</string>
+    <string name="sli_subtitle_format">(%1$s at %2$s)</string>
 
     <string name="transport_play">Play</string>
     <string name="transport_stop">Stop</string>

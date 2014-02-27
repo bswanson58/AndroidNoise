@@ -203,6 +203,8 @@ public class ServerListFragment extends Fragment {
 		private Context                         mContext;
 		private LayoutInflater                  mLayoutInflater;
 		private ArrayList<ServerInformation>    mServerList;
+		private String                          mTitleFormat;
+		private String                          mSubtitleFormat;
 
 		protected class ViewHolder {
 			public ViewHolder( View view ) {
@@ -217,6 +219,9 @@ public class ServerListFragment extends Fragment {
 			super( context, R.layout.server_list_item, serverList );
 			mContext = context;
 			mServerList = serverList;
+
+			mTitleFormat = getString( R.string.sli_title_format );
+			mSubtitleFormat = getString( R.string.sli_subtitle_format );
 
 			mLayoutInflater = (LayoutInflater)mContext.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
 		}
@@ -243,8 +248,8 @@ public class ServerListFragment extends Fragment {
 			   ( position < mServerList.size())) {
 				ServerInformation   serverInfo = mServerList.get( position );
 
-				views.NameTextView.setText( serverInfo.getHostName());
-				views.AddressTextView.setText( String.format( "(%s)", serverInfo.getServerAddress()));
+				views.NameTextView.setText( String.format( mTitleFormat, serverInfo.getHostName(), serverInfo.getLibraryName()));
+				views.AddressTextView.setText( String.format( mSubtitleFormat, serverInfo.getServerName(), serverInfo.getServerAddress() ));
 			}
 
 			return( retValue );
