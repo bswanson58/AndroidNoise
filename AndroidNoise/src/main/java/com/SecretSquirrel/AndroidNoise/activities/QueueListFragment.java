@@ -92,7 +92,7 @@ public class QueueListFragment extends Fragment  {
 				public void onItemClick( AdapterView<?> adapterView, View view, int i, long l ) {
 					PlayQueueTrack  track = mQueueList.get( i );
 
-					EventBus.getDefault().post( new EventAlbumNameRequest( track.getArtistName(), track.getAlbumName()));
+					mEventBus.post( new EventAlbumNameRequest( track.getArtistName(), track.getAlbumName()));
 				}
 			} );
 
