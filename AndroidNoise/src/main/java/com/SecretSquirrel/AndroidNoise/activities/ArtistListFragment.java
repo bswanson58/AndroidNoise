@@ -66,6 +66,7 @@ public class ArtistListFragment extends Fragment
 	private String                  mArtistCountFormat;
 	private boolean                 mUseSortPrefixes;
 
+	@Inject EventBus                mEventBus;
 	@Inject	INoiseData              mNoiseData;
 	@Inject ServiceResultReceiver   mServiceResultReceiver;
 
@@ -300,7 +301,7 @@ public class ArtistListFragment extends Fragment
 
 	private void selectArtist( Artist artist ) {
 		if( artist != null ) {
-			EventBus.getDefault().post( new EventArtistSelected( artist ) );
+			mEventBus.post( new EventArtistSelected( artist ) );
 		}
 	}
 
@@ -309,7 +310,7 @@ public class ArtistListFragment extends Fragment
 		updateArtistCount( itemCount );
 
 		// update the action menu with the filter state.
-		ActivityCompat.invalidateOptionsMenu( getActivity() );
+		ActivityCompat.invalidateOptionsMenu( getActivity());
 	}
 
 	private void updateArtistCount( int itemCount ) {
