@@ -103,9 +103,9 @@
     <string name="action_queue_start_play">Start Playing</string>
     <string name="action_queue_clear">Clear All</string>
     <string name="action_queue_clear_played">Clear Played</string>
-    <string name="action_queue_item_remove">Remove from the queue</string>
-    <string name="action_queue_item_play_next">Play this track next</string>
-    <string name="action_queue_item_replay">Play this track again</string>
+    <string name="action_queue_item_remove">Remove this track</string>
+    <string name="action_queue_item_play_next">Continue play with this track</string>
+    <string name="action_queue_item_replay">Replay this track</string>
 
     <string name="menu_title_queue_list_item">Select an action for the queued item:</string>
 
