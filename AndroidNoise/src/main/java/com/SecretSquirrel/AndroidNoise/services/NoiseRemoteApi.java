@@ -12,25 +12,28 @@ public class NoiseRemoteApi {
 	public static final int     GetServerVersion            = 1;
 	public static final String  RemoteResultVersion         = "remoteResultVersion";
 
+	public static final int     GetServerInformation        = 2;
+	public static final String  ServerInformation           = "serverInformation";
+
 	// Data methods and parameter/return keys.
-	public static final int     GetArtistList               = 1;
+	public static final int     GetArtistList               = 3;
 	public static final String  ArtistList                  = "artistList";
 
-	public static final int     GetAlbumList                = 2;
+	public static final int     GetAlbumList                = 4;
 	public static final String  ArtistId                    = "artistId";
 	public static final String  AlbumList                   = "albumList";
 
-	public static final int     GetTrackList                = 3;
+	public static final int     GetTrackList                = 5;
 	public static final String  AlbumId                     = "albumId";
 	public static final String  TrackList                   = "trackList";
 
-	public static final int     GetFavoritesList            = 4;
+	public static final int     GetFavoritesList            = 6;
 	public static final String  FavoritesList               = "favoritesList";
 
-	public static final int     GetArtistInfo               = 5;
+	public static final int     GetArtistInfo               = 7;
 	public static final String  ArtistInfo                  = "artistInfo";
 
-	public static final int     GetAlbumInfo                = 6;
+	public static final int     GetAlbumInfo                = 8;
 	public static final String  AlbumInfo                   = "albumInfo";
 
 	public static final String  Artist                      = "artist";

@@ -7,8 +7,10 @@ import android.os.ResultReceiver;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.SecretSquirrel.AndroidNoise.dto.ServerInformation;
 import com.SecretSquirrel.AndroidNoise.dto.ServerVersion;
 import com.SecretSquirrel.AndroidNoise.services.noiseApi.RemoteServerRestApi;
+import com.SecretSquirrel.AndroidNoise.services.rto.RoServerInformation;
 import com.SecretSquirrel.AndroidNoise.services.rto.RoServerVersion;
 import com.SecretSquirrel.AndroidNoise.support.Constants;
 
@@ -35,6 +37,10 @@ public class NoiseRemoteService extends IntentService {
 					case NoiseRemoteApi.GetServerVersion:
 						getServerVersion( serverAddress, receiver );
 						break;
+
+					case NoiseRemoteApi.GetServerInformation:
+						getServerInformation( serverAddress, receiver );
+						break;
 				}
 			}
 			else {
@@ -48,7 +54,7 @@ public class NoiseRemoteService extends IntentService {
 
 	private void getServerVersion( String serverAddress, ResultReceiver receiver ) {
 		Bundle  resultData = new Bundle();
-		int     resultCode = NoiseRemoteApi.RemoteResultError;
+		int     resultCode;
 
 		try {
 			RestAdapter         restAdapter = new RestAdapter.Builder().setServer( serverAddress ).build();
@@ -67,6 +73,33 @@ public class NoiseRemoteService extends IntentService {
 
 			if( Constants.LOG_ERROR ) {
 				Log.w( TAG, "getServerVersion", ex );
+			}
+		}
+
+		receiver.send( resultCode, resultData );
+	}
+
+	private void getServerInformation( String serverAddress, ResultReceiver receiver ) {
+		Bundle  resultData = new Bundle();
+		int     resultCode;
+
+		try {
+			RestAdapter         restAdapter = new RestAdapter.Builder().setServer( serverAddress ).build();
+			RemoteServerRestApi service = restAdapter.create( RemoteServerRestApi.class );
+			RoServerInformation information = service.GetServerInformation();
+			ServerInformation   serverInformation = new ServerInformation( serverAddress, information );
+
+			resultData.putInt( NoiseRemoteApi.RemoteApiParameter, NoiseRemoteApi.GetServerInformation );
+			resultData.putParcelable( NoiseRemoteApi.ServerInformation, serverInformation );
+			resultData.putString( NoiseRemoteApi.RemoteServerAddress, serverAddress );
+			resultCode = NoiseRemoteApi.RemoteResultSuccess;
+		}
+		catch( Exception ex ) {
+			resultData.putString( NoiseRemoteApi.RemoteResultErrorMessage, ex.getMessage());
+			resultCode = NoiseRemoteApi.RemoteResultException;
+
+			if( Constants.LOG_ERROR ) {
+				Log.w( TAG, "getServerInformation", ex );
 			}
 		}
 

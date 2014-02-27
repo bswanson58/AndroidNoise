@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.ResultReceiver;
 
+import com.SecretSquirrel.AndroidNoise.dto.ServerInformation;
 import com.SecretSquirrel.AndroidNoise.events.EventActivityPausing;
 import com.SecretSquirrel.AndroidNoise.events.EventActivityResuming;
 import com.SecretSquirrel.AndroidNoise.events.EventServerSelected;
@@ -11,6 +12,7 @@ import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseServer;
 import com.SecretSquirrel.AndroidNoise.services.rto.BaseServerResult;
 import com.SecretSquirrel.AndroidNoise.services.noiseApi.RemoteServerRestApi;
+import com.SecretSquirrel.AndroidNoise.services.rto.RoServerInformation;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -76,11 +78,23 @@ public class NoiseRemoteClient implements INoiseServer {
 		return( mService );
 	}
 
+	@Override
 	public void getServerVersion( ResultReceiver receiver ) {
 		Intent  intent = new Intent( mContext, NoiseRemoteService.class );
 
 		intent.putExtra( NoiseRemoteApi.RemoteServerAddress, mServerAddress );
 		intent.putExtra( NoiseRemoteApi.RemoteApiParameter, NoiseRemoteApi.GetServerVersion );
+		intent.putExtra( NoiseRemoteApi.RemoteCallReceiver, receiver );
+
+		mContext.startService( intent );
+	}
+
+	@Override
+	public void getServerInformation( ResultReceiver receiver ) {
+		Intent  intent = new Intent( mContext, NoiseRemoteService.class );
+
+		intent.putExtra( NoiseRemoteApi.RemoteServerAddress, mServerAddress );
+		intent.putExtra( NoiseRemoteApi.RemoteApiParameter, NoiseRemoteApi.GetServerInformation );
 		intent.putExtra( NoiseRemoteApi.RemoteCallReceiver, receiver );
 
 		mContext.startService( intent );

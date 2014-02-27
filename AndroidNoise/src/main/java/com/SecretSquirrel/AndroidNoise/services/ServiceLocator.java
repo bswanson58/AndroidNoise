@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.os.ResultReceiver;
 
 import com.SecretSquirrel.AndroidNoise.dto.ServerInformation;
-import com.SecretSquirrel.AndroidNoise.dto.ServerVersion;
 import com.SecretSquirrel.AndroidNoise.services.noiseApi.RemoteServerRestApi;
 import com.SecretSquirrel.AndroidNoise.services.rto.ServiceInformation;
 
@@ -70,14 +69,14 @@ public class ServiceLocator {
 		NoiseRemoteClient   remoteClient = new NoiseRemoteClient( createAdapter(serviceInformation.getHostAddress()),
 																  serviceInformation.getHostAddress(), context );
 
-		remoteClient.getServerVersion( new ResultReceiver( null ) {
+		remoteClient.getServerInformation( new ResultReceiver( null ) {
 			@Override
 			protected void onReceiveResult(int resultCode, Bundle resultData) {
 				if( resultCode == NoiseRemoteApi.RemoteResultSuccess ) {
-					ServerVersion   serverVersion = resultData.getParcelable( NoiseRemoteApi.RemoteResultVersion );
+					ServerInformation   serverInformation = resultData.getParcelable( NoiseRemoteApi.ServerInformation );
 
-					if( serverVersion != null ) {
-						observer.onNext( new ServerInformation( serviceInformation, serverVersion ));
+					if( serverInformation != null ) {
+						observer.onNext( serverInformation );
 					}
 				}
 			}} );
