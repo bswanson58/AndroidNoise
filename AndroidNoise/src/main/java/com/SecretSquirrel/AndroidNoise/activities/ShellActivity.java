@@ -73,6 +73,7 @@ public class ShellActivity extends ActionBarActivity
 					.beginTransaction()
 					.replace( R.id.transport_container, TransportFragment.newInstance())
 					.replace( R.id.transport_drawer_drag_handle, PlayingStatusFragment.newInstance())
+					.replace( R.id.transport_playback_information, PlaybackInformationFragment.newInstance())
 					.commit();
 		}
 

@@ -59,6 +59,17 @@ public class NoiseApiModule {
 		return( retValue );
 	}
 
+	@Provides
+	public RemoteServerTransportApi provideTransportApi( IApplicationState applicationState ) {
+		RemoteServerTransportApi    retValue = null;
+
+		if( applicationState.getIsConnected()) {
+			retValue = createAdapter( applicationState.getCurrentServer()).create( RemoteServerTransportApi.class );
+		}
+
+		return( retValue );
+	}
+
 	private RestAdapter createAdapter( ServerInformation serverInformation ) {
 		return( new RestAdapter.Builder()
 				.setServer( serverInformation.getServerAddress())

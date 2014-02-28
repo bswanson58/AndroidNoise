@@ -9,6 +9,7 @@ import com.SecretSquirrel.AndroidNoise.interfaces.INoiseData;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseQueue;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseSearch;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseServer;
+import com.SecretSquirrel.AndroidNoise.interfaces.INoiseTransport;
 import com.SecretSquirrel.AndroidNoise.interfaces.INotificationManager;
 import com.SecretSquirrel.AndroidNoise.interfaces.IQueueRequestHandler;
 import com.SecretSquirrel.AndroidNoise.interfaces.IQueueStatus;
@@ -103,6 +104,11 @@ public class ServicesModule {
 	@Provides
 	@Singleton
 	public INoiseData provideNoiseDataCache( NoiseDataCacheClient client ) {
+		return( client );
+	}
+
+	@Provides
+	public INoiseTransport provideNoiseTransport( NoiseTransportClient client ) {
 		return( client );
 	}
 

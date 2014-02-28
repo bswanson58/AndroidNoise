@@ -39,6 +39,11 @@
                 android:layout_height="wrap_content"
                 android:clickable="true"/>
 
+            <FrameLayout
+                android:id="@+id/transport_playback_information"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
         </LinearLayout>
     </com.SecretSquirrel.AndroidNoise.views.SlidingPanelLayout>
 
