@@ -4,6 +4,7 @@ package com.SecretSquirrel.AndroidNoise.services;
 
 import android.app.Service;
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
@@ -20,6 +21,7 @@ import com.SecretSquirrel.AndroidNoise.support.IocUtility;
 import com.SecretSquirrel.AndroidNoise.support.NetworkUtility;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -77,15 +79,20 @@ public class EventHostService extends Service {
 		return( mMessenger.getBinder());
 	}
 
-	private void publishMessage( int eventCode ) {
+	private void publishMessage( int eventCode, Map<String, String> parameters ) {
 		for( int index = mClients.size() - 1; index >= 0; index-- ) {
 			try {
 				Message message = Message.obtain( null, eventCode );
-//				Bundle  bundle = new Bundle();
 
-//				message.setData( bundle );
-				mClients.get( index ).send( message );
+				if( message != null ) {
+					Bundle  bundle = new Bundle();
 
+					for( String key : parameters.keySet()) {
+						bundle.putString( key, parameters.get( key ));
+					}
+					message.setData( bundle );
+					mClients.get( index ).send( message );
+				}
 			}
 			catch( RemoteException e ) {
 				// The client is dead. Remove it from the list; we are going through the list from back to front so this is safe to do inside the loop.
@@ -192,7 +199,7 @@ public class EventHostService extends Service {
 
 			@Override
 			public NanoHTTPD.Response serve( NanoHTTPD.IHTTPSession session ) {
-				publishMessage( SERVER_EVENT_QUEUE_CHANGED );
+				publishMessage( SERVER_EVENT_QUEUE_CHANGED, session.getParms());
 
 				return( new NanoHTTPD.Response( "OK" ));
 			}
@@ -206,7 +213,7 @@ public class EventHostService extends Service {
 
 			@Override
 			public NanoHTTPD.Response serve( NanoHTTPD.IHTTPSession session ) {
-				publishMessage( SERVER_EVENT_TRANSPORT_CHANGED );
+				publishMessage( SERVER_EVENT_TRANSPORT_CHANGED, session.getParms());
 
 				return( new NanoHTTPD.Response( "OK" ));
 			}
