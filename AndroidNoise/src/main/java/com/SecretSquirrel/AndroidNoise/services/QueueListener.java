@@ -4,6 +4,7 @@ package com.SecretSquirrel.AndroidNoise.services;
 
 import android.content.ComponentName;
 import android.content.ServiceConnection;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
@@ -18,6 +19,7 @@ import com.SecretSquirrel.AndroidNoise.events.EventActivityResuming;
 import com.SecretSquirrel.AndroidNoise.events.EventQueueTimeUpdate;
 import com.SecretSquirrel.AndroidNoise.events.EventQueueUpdated;
 import com.SecretSquirrel.AndroidNoise.events.EventServerSelected;
+import com.SecretSquirrel.AndroidNoise.events.EventTransportUpdate;
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseQueue;
 import com.SecretSquirrel.AndroidNoise.interfaces.IQueueStatus;
@@ -46,6 +48,7 @@ public class QueueListener implements IQueueStatus {
 	private boolean                     mIsBound;
 	private boolean                     mAreTracksQueued;
 	private boolean                     mAreTracksPlayed;
+	private int                         mServerSequence;
 
 	private ServiceConnection           mConnection = new ServiceConnection() {
 		public void onServiceConnected( ComponentName className, IBinder service ) {
@@ -78,6 +81,10 @@ public class QueueListener implements IQueueStatus {
 			switch( message.what ) {
 				case EventHostService.SERVER_EVENT_QUEUE_CHANGED:
 					requestQueueList();
+					break;
+
+				case EventHostService.SERVER_EVENT_TRANSPORT_CHANGED:
+					publishTransportEvent( message.getData());
 					break;
 
 				default:
@@ -153,8 +160,9 @@ public class QueueListener implements IQueueStatus {
 	@SuppressWarnings( "unused" )
 	public void onEvent( EventServerSelected args ) {
 		if( mApplicationState.getIsConnected()) {
-			bindToEventService();
+			mServerSequence = 0;
 
+			bindToEventService();
 			requestQueueList();
 		}
 	}
@@ -246,5 +254,29 @@ public class QueueListener implements IQueueStatus {
 
 		mEventBus.post( new EventQueueUpdated());
 		mEventBus.post( new EventQueueTimeUpdate( totalMilliseconds, remainingMilliseconds ) );
+	}
+
+	private void publishTransportEvent( Bundle data ) {
+		int serverSequence = Integer.parseInt( data.getString( "sequence" ));
+
+		if( serverSequence >= mServerSequence ) {
+			EventTransportUpdate    transportUpdate = new EventTransportUpdate( Integer.parseInt( data.getString( "state" )),
+																				Long.parseLong( data.getString( "time" ) ),
+																				Long.parseLong( data.getString( "track" ) ),
+																				Long.parseLong( data.getString( "position" ) ),
+																				Long.parseLong( data.getString( "length" )));
+			mServerSequence = serverSequence;
+			mEventBus.post( transportUpdate );
+
+			if( Constants.LOG_DEBUG ) {
+				Log.i( TAG, String.format( "TransportUpdate - Sequence: %s, State: %s, Position: %s",
+											data.getString( "sequence" ), data.getString( "state" ), data.getString( "position" )));
+			}
+		}
+		else {
+			if( Constants.LOG_DEBUG ) {
+				Log.i( TAG, String.format( "TransportUpdate - out of sequence message received: %d", serverSequence ));
+			}
+		}
 	}
 }

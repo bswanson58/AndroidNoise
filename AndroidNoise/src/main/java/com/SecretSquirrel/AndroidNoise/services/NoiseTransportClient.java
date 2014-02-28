@@ -3,12 +3,14 @@ package com.SecretSquirrel.AndroidNoise.services;
 // Created by BSwanson on 2/27/14.
 
 import com.SecretSquirrel.AndroidNoise.dto.ServerTimeSync;
+import com.SecretSquirrel.AndroidNoise.dto.TransportState;
 import com.SecretSquirrel.AndroidNoise.events.EventActivityPausing;
 import com.SecretSquirrel.AndroidNoise.events.EventActivityResuming;
 import com.SecretSquirrel.AndroidNoise.events.EventServerSelected;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseTransport;
 import com.SecretSquirrel.AndroidNoise.services.noiseApi.RemoteServerTransportApi;
 import com.SecretSquirrel.AndroidNoise.services.rto.RoTimeSync;
+import com.SecretSquirrel.AndroidNoise.services.rto.RoTransportState;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -72,6 +74,31 @@ public class NoiseTransportClient implements INoiseTransport {
 					}
 					else {
 						observer.onError( new Exception( roTimeSync.ErrorMessage ));
+					}
+				}
+				catch( Exception ex ) {
+					observer.onError( ex );
+				}
+
+				return( Subscriptions.empty());
+			}
+		} ).subscribeOn( Schedulers.threadPoolForIO() ));
+	}
+
+	@Override
+	public Observable<TransportState> GetTransportState() {
+		return( Observable.create( new Observable.OnSubscribeFunc<TransportState>() {
+			@Override
+			public Subscription onSubscribe( Observer<? super TransportState> observer ) {
+				try {
+					RoTransportState    roState = getService().GetTransportState();
+
+					if( roState.Success ) {
+						observer.onNext( new TransportState( roState ));
+						observer.onCompleted();
+					}
+					else {
+						observer.onError( new Exception( roState.ErrorMessage ));
 					}
 				}
 				catch( Exception ex ) {
