@@ -124,6 +124,7 @@ public class PlaybackInformationFragment extends Fragment
 	public void onResume() {
 		super.onResume();
 
+		clearDisplay();
 		mServiceResultReceiver.setReceiver( this );
 
 		if( mApplicationState.getIsConnected()) {
@@ -294,9 +295,7 @@ public class PlaybackInformationFragment extends Fragment
 			}
 		}
 		else {
-			mStatusView.setText( "Play Something!" );
-			mArtistName.setText( "" );
-			mAlbumName.setText( "" );
+			clearDisplay();
 		}
 	}
 
