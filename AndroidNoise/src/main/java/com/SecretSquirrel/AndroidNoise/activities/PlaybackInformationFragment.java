@@ -9,16 +9,21 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.TextView;
 
 import com.SecretSquirrel.AndroidNoise.R;
+import com.SecretSquirrel.AndroidNoise.dto.PlayQueueTrack;
 import com.SecretSquirrel.AndroidNoise.dto.ServerTimeSync;
 import com.SecretSquirrel.AndroidNoise.dto.TransportState;
+import com.SecretSquirrel.AndroidNoise.events.EventQueueUpdated;
 import com.SecretSquirrel.AndroidNoise.events.EventServerSelected;
 import com.SecretSquirrel.AndroidNoise.events.EventTransportUpdate;
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseTransport;
+import com.SecretSquirrel.AndroidNoise.interfaces.IQueueStatus;
 import com.SecretSquirrel.AndroidNoise.support.IocUtility;
+import com.SecretSquirrel.AndroidNoise.views.SlidingPanelLayout;
 
 import java.util.concurrent.TimeUnit;
 
@@ -52,9 +57,11 @@ public class PlaybackInformationFragment extends Fragment {
 
 	@Inject	EventBus            mEventBus;
 	@Inject	IApplicationState   mApplicationState;
+	@Inject	IQueueStatus        mQueueStatus;
 	@Inject	INoiseTransport     mNoiseTransport;
 
 	@InjectView( R.id.pi_track_position )	TextView    mPlaybackPosition;
+	@InjectView( R.id.pi_status )	        TextView    mStatusView;
 
 	public static PlaybackInformationFragment newInstance() {
 		return( new PlaybackInformationFragment());
@@ -75,6 +82,14 @@ public class PlaybackInformationFragment extends Fragment {
 
 		if( myView != null ) {
 			ButterKnife.inject( this, myView );
+
+			ViewParent    parent = container.getParent();
+			if( parent instanceof SlidingPanelLayout ) {
+				SlidingPanelLayout  slidingPanel = (SlidingPanelLayout)parent;
+				View                dragHandle = myView.findViewById( R.id.pi_drag_handle );
+
+				slidingPanel.setDragView( dragHandle );
+			}
 		}
 
 		return( myView );
@@ -105,6 +120,11 @@ public class PlaybackInformationFragment extends Fragment {
 		if( mApplicationState.getIsConnected()) {
 			syncTime();
 		}
+	}
+
+	@SuppressWarnings( "unused" )
+	public void onEvent( EventQueueUpdated args ) {
+		updateDisplay();
 	}
 
 	@SuppressWarnings( "unused" )
@@ -160,18 +180,21 @@ public class PlaybackInformationFragment extends Fragment {
 	private void updateDisplay() {
 		switch( mPlayState ) {
 			case 1: // Stopped
-				mPlaybackPosition.setText( "Stopped" );
+				mStatusView.setText( "Play Something!" );
+				mPlaybackPosition.setText( "" );
 				break;
 
 			case 2: // Playing
 				long    timeOffset = System.currentTimeMillis() - mLastReceived;
 				long    currentPosition = mLastPosition + timeOffset - mServerTimeOffset;
 
-				mPlaybackPosition.setText( String.format( "Playing: %s", formatPlayingTime( currentPosition )));
+				mPlaybackPosition.setText( formatPlayingTime( currentPosition ));
+				displayTrackStatus( "Now Playing: %s" );
 				break;
 
 			case 3: // Paused
-				mPlaybackPosition.setText( String.format( "Paused: %s", formatPlayingTime( mLastPosition )));
+				mPlaybackPosition.setText( formatPlayingTime( mLastPosition ));
+				displayTrackStatus( "Paused: %s" );
 				break;
 		}
 	}
@@ -180,5 +203,16 @@ public class PlaybackInformationFragment extends Fragment {
 		return(	String.format( "%d:%02d", TimeUnit.MILLISECONDS.toMinutes( currentPosition ),
 										  TimeUnit.MILLISECONDS.toSeconds( currentPosition ) -
 											TimeUnit.MINUTES.toSeconds( TimeUnit.MILLISECONDS.toMinutes( currentPosition ))));
+	}
+
+	private void displayTrackStatus( String header ) {
+		PlayQueueTrack currentTrack = mQueueStatus.getCurrentlyPlayingTrack();
+
+		if( currentTrack != null ) {
+			mStatusView.setText( String.format( header, currentTrack.getTrackName()));
+		}
+		else {
+			mStatusView.setText( "Play Something!" );
+		}
 	}
 }
