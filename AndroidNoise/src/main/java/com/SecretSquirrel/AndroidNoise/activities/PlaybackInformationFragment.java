@@ -2,6 +2,8 @@ package com.SecretSquirrel.AndroidNoise.activities;
 
 // Created by BSwanson on 2/27/14.
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -10,9 +12,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.SecretSquirrel.AndroidNoise.R;
+import com.SecretSquirrel.AndroidNoise.dto.ArtistInfo;
 import com.SecretSquirrel.AndroidNoise.dto.PlayQueueTrack;
 import com.SecretSquirrel.AndroidNoise.dto.ServerTimeSync;
 import com.SecretSquirrel.AndroidNoise.dto.TransportState;
@@ -20,8 +24,11 @@ import com.SecretSquirrel.AndroidNoise.events.EventQueueUpdated;
 import com.SecretSquirrel.AndroidNoise.events.EventServerSelected;
 import com.SecretSquirrel.AndroidNoise.events.EventTransportUpdate;
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
+import com.SecretSquirrel.AndroidNoise.interfaces.INoiseData;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseTransport;
 import com.SecretSquirrel.AndroidNoise.interfaces.IQueueStatus;
+import com.SecretSquirrel.AndroidNoise.services.NoiseRemoteApi;
+import com.SecretSquirrel.AndroidNoise.services.ServiceResultReceiver;
 import com.SecretSquirrel.AndroidNoise.support.IocUtility;
 import com.SecretSquirrel.AndroidNoise.views.SlidingPanelLayout;
 
@@ -35,16 +42,19 @@ import de.greenrobot.event.EventBus;
 import rx.android.observables.AndroidObservable;
 import rx.util.functions.Action1;
 
-public class PlaybackInformationFragment extends Fragment {
+public class PlaybackInformationFragment extends Fragment
+										 implements ServiceResultReceiver.Receiver {
 	private static final String TAG = PlaybackInformationFragment.class.getName();
 
 	private long                mServerTimeOffset;
-	private long                mCurrentTrack;
 	private long                mLastPosition;
 	private long                mLastReceived;
 	private long                mTrackLength;
 	private int                 mPlayState;
 	private Handler             mTimerHandler;
+	private PlayQueueTrack      mCurrentlyPlaying;
+	private ArtistInfo          mArtistInfo;
+	private Bitmap              mUnknownArtist;
 
 	private Runnable            mTimerRunnable = new Runnable() {
 		@Override
@@ -55,13 +65,18 @@ public class PlaybackInformationFragment extends Fragment {
 		}
 	};
 
-	@Inject	EventBus            mEventBus;
-	@Inject	IApplicationState   mApplicationState;
-	@Inject	IQueueStatus        mQueueStatus;
-	@Inject	INoiseTransport     mNoiseTransport;
+	@Inject	EventBus                mEventBus;
+	@Inject	IApplicationState       mApplicationState;
+	@Inject	IQueueStatus            mQueueStatus;
+	@Inject	INoiseData              mNoiseData;
+	@Inject	INoiseTransport         mNoiseTransport;
+	@Inject	ServiceResultReceiver   mServiceResultReceiver;
 
 	@InjectView( R.id.pi_track_position )	TextView    mPlaybackPosition;
 	@InjectView( R.id.pi_status )	        TextView    mStatusView;
+	@InjectView( R.id.pi_artist_image ) 	ImageView   mArtistImage;
+	@InjectView( R.id.pi_artist_name )      TextView    mArtistName;
+	@InjectView( R.id.pi_album_name )       TextView    mAlbumName;
 
 	public static PlaybackInformationFragment newInstance() {
 		return( new PlaybackInformationFragment());
@@ -74,6 +89,7 @@ public class PlaybackInformationFragment extends Fragment {
 		IocUtility.inject( this );
 
 		mTimerHandler = new Handler();
+		mUnknownArtist = BitmapFactory.decodeResource( getResources(), R.drawable.unknown_artist );
 	}
 
 	@Override
@@ -99,18 +115,23 @@ public class PlaybackInformationFragment extends Fragment {
 	public void onResume() {
 		super.onResume();
 
+		mServiceResultReceiver.setReceiver( this );
+
 		if( mApplicationState.getIsConnected()) {
 			syncTime();
 		}
 
 		mTimerHandler.postDelayed( mTimerRunnable, 100 );
 		mEventBus.register( this );
+
+		updateStateInfo();
 	}
 
 	@Override
 	public void onPause() {
 		super.onPause();
 
+		mServiceResultReceiver.clearReceiver();
 		mTimerHandler.removeCallbacks( mTimerRunnable );
 		mEventBus.unregister( this );
 	}
@@ -124,13 +145,12 @@ public class PlaybackInformationFragment extends Fragment {
 
 	@SuppressWarnings( "unused" )
 	public void onEvent( EventQueueUpdated args ) {
-		updateDisplay();
+		updateStateInfo();
 	}
 
 	@SuppressWarnings( "unused" )
 	public void onEvent( EventTransportUpdate args ) {
 		mPlayState = args.getPlayState();
-		mCurrentTrack = args.getCurrentTrack();
 		mLastPosition = args.getCurrentPosition();
 		mTrackLength = args.getTrackLength();
 		mLastReceived = args.getTimeReceived();
@@ -145,7 +165,7 @@ public class PlaybackInformationFragment extends Fragment {
 					public void call( ServerTimeSync timeSync ) {
 						//mServerTimeOffset = timeSync.getTimeDifference();
 
-						getCurrentState();
+						getCurrentTransportState();
 					}
 				}, new Action1<Throwable>() {
 		            @Override
@@ -155,18 +175,17 @@ public class PlaybackInformationFragment extends Fragment {
 	            } );
 	}
 
-	private void getCurrentState() {
+	private void getCurrentTransportState() {
 		AndroidObservable.fromFragment( this, mNoiseTransport.GetTransportState())
 				.subscribe( new Action1<TransportState>() {
 					            @Override
 					            public void call( TransportState state ) {
 						            mPlayState = state.getPlayState();
-						            mCurrentTrack = state.getCurrentTrack();
 						            mLastPosition = state.getCurrentTrackPosition();
 						            mTrackLength = state.getCurrentTrackLength();
 						            mLastReceived = state.getReceivedTime();
 
-						            updateDisplay();
+						            updateStateInfo();
 					            }
 				            }, new Action1<Throwable>() {
 					            @Override
@@ -177,11 +196,44 @@ public class PlaybackInformationFragment extends Fragment {
 				);
 	}
 
+	private void retrieveArtistInfo() {
+		if( mCurrentlyPlaying != null ) {
+			mNoiseData.GetArtistInfo( mCurrentlyPlaying.getArtistId(), mServiceResultReceiver );
+		}
+	}
+
+	@Override
+	public void onReceiveResult( int resultCode, Bundle resultData ) {
+		if( resultCode == NoiseRemoteApi.RemoteResultSuccess ) {
+			mArtistInfo = resultData.getParcelable( NoiseRemoteApi.ArtistInfo );
+		}
+
+		updateDisplay();
+	}
+
+	private void updateStateInfo() {
+		PlayQueueTrack  currentTrack = mQueueStatus.getCurrentlyPlayingTrack();
+
+		if( currentTrack != null ) {
+			if(( mCurrentlyPlaying != null ) &&
+			   ( mCurrentlyPlaying.getId() != currentTrack.getId())) {
+				mArtistInfo = null;
+			}
+		}
+
+		mCurrentlyPlaying = currentTrack;
+
+		if( mArtistInfo == null ) {
+			retrieveArtistInfo();
+		}
+
+		updateDisplay();
+	}
+
 	private void updateDisplay() {
 		switch( mPlayState ) {
 			case 1: // Stopped
-				mStatusView.setText( "Play Something!" );
-				mPlaybackPosition.setText( "" );
+				clearDisplay();
 				break;
 
 			case 2: // Playing
@@ -206,13 +258,36 @@ public class PlaybackInformationFragment extends Fragment {
 	}
 
 	private void displayTrackStatus( String header ) {
-		PlayQueueTrack currentTrack = mQueueStatus.getCurrentlyPlayingTrack();
+		if( mCurrentlyPlaying != null ) {
+			mStatusView.setText( String.format( header, mCurrentlyPlaying.getTrackName() ));
+			mArtistName.setText( mCurrentlyPlaying.getArtistName());
+			mAlbumName.setText( mCurrentlyPlaying.getAlbumName());
 
-		if( currentTrack != null ) {
-			mStatusView.setText( String.format( header, currentTrack.getTrackName()));
+			if( mArtistInfo != null ) {
+				Bitmap  artistImage = mArtistInfo.getArtistImage();
+
+				if( artistImage == null ) {
+					artistImage = mUnknownArtist;
+				}
+
+				mArtistImage.setImageBitmap( artistImage );
+			}
+			else {
+				mArtistImage.setImageBitmap( null );
+			}
 		}
 		else {
 			mStatusView.setText( "Play Something!" );
+			mArtistName.setText( "" );
+			mAlbumName.setText( "" );
 		}
+	}
+
+	private void clearDisplay() {
+		mStatusView.setText( "Play Something!" );
+		mPlaybackPosition.setText( "" );
+		mArtistName.setText( "" );
+		mAlbumName.setText( "" );
+		mArtistImage.setImageBitmap( null );
 	}
 }

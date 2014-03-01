@@ -134,7 +134,7 @@ public class ArtistInfoFragment extends Fragment
 		}
 
 		mEventBus.post( new EventNavigationUpEnable());
-		mEventBus.post( new EventArtistViewed( mArtist ) );
+		mEventBus.post( new EventArtistViewed( mArtist ));
 	}
 
 	@Override
