@@ -20,6 +20,7 @@ import com.SecretSquirrel.AndroidNoise.dto.ArtistInfo;
 import com.SecretSquirrel.AndroidNoise.dto.PlayQueueTrack;
 import com.SecretSquirrel.AndroidNoise.dto.ServerTimeSync;
 import com.SecretSquirrel.AndroidNoise.dto.TransportState;
+import com.SecretSquirrel.AndroidNoise.events.EventArtistRequest;
 import com.SecretSquirrel.AndroidNoise.events.EventQueueUpdated;
 import com.SecretSquirrel.AndroidNoise.events.EventServerSelected;
 import com.SecretSquirrel.AndroidNoise.events.EventTransportUpdate;
@@ -38,6 +39,7 @@ import javax.inject.Inject;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
 import rx.android.observables.AndroidObservable;
 import rx.util.functions.Action1;
@@ -163,6 +165,14 @@ public class PlaybackInformationFragment extends Fragment
 		mLastReceived = args.getTimeReceived();
 
 		updateDisplay();
+	}
+
+	@SuppressWarnings( "unused" )
+	@OnClick( R.id.pi_artist_image )
+	public void onClickArtistImage() {
+		if( mCurrentlyPlaying != null ) {
+			mEventBus.post( new EventArtistRequest( mCurrentlyPlaying.getArtistId()));
+		}
 	}
 
 	private void syncTime() {
