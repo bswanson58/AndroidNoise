@@ -100,11 +100,18 @@ public class PlaybackInformationFragment extends Fragment
 			ButterKnife.inject( this, myView );
 
 			ViewParent    parent = container.getParent();
-			if( parent instanceof SlidingPanelLayout ) {
-				SlidingPanelLayout  slidingPanel = (SlidingPanelLayout)parent;
-				View                dragHandle = myView.findViewById( R.id.pi_drag_handle );
+			while( parent != null ) {
+				if( parent instanceof SlidingPanelLayout ) {
+					SlidingPanelLayout  slidingPanel = (SlidingPanelLayout)parent;
+					View                dragHandle = myView.findViewById( R.id.pi_drag_handle );
 
-				slidingPanel.setDragView( dragHandle );
+					slidingPanel.setDragView( dragHandle );
+
+					break;
+				}
+				else {
+					parent = parent.getParent();
+				}
 			}
 		}
 
