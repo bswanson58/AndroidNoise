@@ -26,6 +26,7 @@ import com.SecretSquirrel.AndroidNoise.ui.NavigationMenuItem;
 import javax.inject.Inject;
 
 import de.greenrobot.event.EventBus;
+import timber.log.Timber;
 
 import static android.content.Intent.ACTION_MAIN;
 import static android.content.Intent.CATEGORY_LAUNCHER;

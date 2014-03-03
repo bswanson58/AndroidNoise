@@ -38,4 +38,5 @@ dependencies {
     compile 'com.squareup:javawriter:2.4.0@jar'
     compile 'com.squareup.dagger:dagger-compiler:1.2.0@jar'
     compile 'com.squareup:seismic:1.0.0@jar'
+    compile 'com.jakewharton.timber:timber:2.2.2@jar'
 }
