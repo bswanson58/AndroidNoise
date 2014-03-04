@@ -32,6 +32,6 @@ public interface RemoteServerDataApi {
 	@GET( "/Noise/Data/favorites" )
 	RoFavoritesListResult GetFavoritesList();
 
-	@GET( "Noise/Data/artistTracks" )
+	@GET( "/Noise/Data/artistTracks" )
 	RoArtistTracksResult GetArtistTracks( @Query( "artist" ) long artistId );
 }
