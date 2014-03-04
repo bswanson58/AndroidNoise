@@ -3,6 +3,7 @@ package com.SecretSquirrel.AndroidNoise.dto;// Created by BSwanson on 3/3/14.
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.SecretSquirrel.AndroidNoise.services.rto.RoArtistTrack;
 import com.SecretSquirrel.AndroidNoise.services.rto.RoArtistTracksResult;
 
 import java.util.ArrayList;
@@ -26,7 +27,11 @@ public class ArtistTrackList implements Parcelable {
 	public ArtistTrackList( RoArtistTracksResult roTrackList ) {
 		mArtistId = roTrackList.ArtistId;
 		mAlbumCount = roTrackList.AlbumCount;
+		mTracks = new ArrayList<ArtistTrack>();
 
+		for( RoArtistTrack track : roTrackList.Tracks ) {
+			mTracks.add( new ArtistTrack( track ));
+		}
 	}
 
 	public ArtistTrackList( Parcel parcel ) {

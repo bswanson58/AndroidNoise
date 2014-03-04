@@ -5,12 +5,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.ResultReceiver;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.SecretSquirrel.AndroidNoise.dto.Album;
 import com.SecretSquirrel.AndroidNoise.dto.AlbumInfo;
 import com.SecretSquirrel.AndroidNoise.dto.Artist;
 import com.SecretSquirrel.AndroidNoise.dto.ArtistInfo;
+import com.SecretSquirrel.AndroidNoise.dto.ArtistTrackList;
 import com.SecretSquirrel.AndroidNoise.dto.Favorite;
 import com.SecretSquirrel.AndroidNoise.dto.Track;
 import com.SecretSquirrel.AndroidNoise.services.noiseApi.RemoteServerDataApi;
@@ -30,12 +30,11 @@ import com.SecretSquirrel.AndroidNoise.support.Constants;
 import java.util.ArrayList;
 
 import retrofit.RestAdapter;
+import timber.log.Timber;
 
 // Secret Squirrel Software - Created by bswanson on 12/6/13.
 
 public class NoiseDataService extends IntentService {
-	private static final String     TAG = NoiseDataService.class.getName();
-
 	public NoiseDataService() {
 		super( "NoiseDataService" );
 	}
@@ -123,9 +122,7 @@ public class NoiseDataService extends IntentService {
 			resultData.putString( NoiseRemoteApi.RemoteResultErrorMessage, ex.getMessage());
 			resultCode = NoiseRemoteApi.RemoteResultException;
 
-			if( Constants.LOG_ERROR ) {
-				Log.w( TAG, "getArtistList", ex );
-			}
+			Timber.e( "getArtistList", ex );
 		}
 
 		receiver.send( resultCode, resultData );
@@ -157,9 +154,7 @@ public class NoiseDataService extends IntentService {
 			resultData.putString( NoiseRemoteApi.RemoteResultErrorMessage, ex.getMessage());
 			resultCode = NoiseRemoteApi.RemoteResultException;
 
-			if( Constants.LOG_ERROR ) {
-				Log.w( TAG, "getAlbumList", ex );
-			}
+			Timber.e( "getAlbumList", ex );
 		}
 
 		receiver.send( resultCode, resultData );
@@ -191,9 +186,7 @@ public class NoiseDataService extends IntentService {
 			resultData.putString( NoiseRemoteApi.RemoteResultErrorMessage, ex.getMessage());
 			resultCode = NoiseRemoteApi.RemoteResultException;
 
-			if( Constants.LOG_ERROR ) {
-				Log.w( TAG, "getTrackList", ex );
-			}
+			Timber.e( "getTrackList", ex );
 		}
 
 		receiver.send( resultCode, resultData );
@@ -225,9 +218,7 @@ public class NoiseDataService extends IntentService {
 			resultData.putString( NoiseRemoteApi.RemoteResultErrorMessage, ex.getMessage());
 			resultCode = NoiseRemoteApi.RemoteResultException;
 
-			if( Constants.LOG_ERROR ) {
-				Log.w( TAG, "getFavoritesList", ex );
-			}
+			Timber.e( "getFavoritesList", ex );
 		}
 
 		receiver.send( resultCode, resultData );
@@ -253,9 +244,7 @@ public class NoiseDataService extends IntentService {
 			resultData.putString( NoiseRemoteApi.RemoteResultErrorMessage, ex.getMessage());
 			resultCode = NoiseRemoteApi.RemoteResultException;
 
-			if( Constants.LOG_ERROR ) {
-				Log.w( TAG, "getArtistInfo", ex );
-			}
+			Timber.e( "getArtistInfo", ex );
 		}
 
 		receiver.send( resultCode, resultData );
@@ -281,9 +270,7 @@ public class NoiseDataService extends IntentService {
 			resultData.putString( NoiseRemoteApi.RemoteResultErrorMessage, ex.getMessage());
 			resultCode = NoiseRemoteApi.RemoteResultException;
 
-			if( Constants.LOG_ERROR ) {
-				Log.w( TAG, "getAlbumInfo", ex );
-			}
+			Timber.e( "getAlbumInfo", ex );
 		}
 
 		receiver.send( resultCode, resultData );
@@ -299,7 +286,7 @@ public class NoiseDataService extends IntentService {
 
 			if( result.Success ) {
 				resultCode = NoiseRemoteApi.RemoteResultSuccess;
-//				resultData.putParcelable( NoiseRemoteApi.ArtistTrackList, result.Tracks );
+				resultData.putParcelable( NoiseRemoteApi.ArtistTrackList, new ArtistTrackList( result ));
 			}
 			else {
 				resultData.putString( NoiseRemoteApi.RemoteResultErrorMessage, result.ErrorMessage );
@@ -309,9 +296,7 @@ public class NoiseDataService extends IntentService {
 			resultData.putString( NoiseRemoteApi.RemoteResultErrorMessage, ex.getMessage());
 			resultCode = NoiseRemoteApi.RemoteResultException;
 
-			if( Constants.LOG_ERROR ) {
-				Log.w( TAG, "getArtistTracks", ex );
-			}
+			Timber.e( "getArtistTracks", ex );
 		}
 
 		receiver.send( resultCode, resultData );
