@@ -11,10 +11,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.SecretSquirrel.AndroidNoise.R;
+import com.SecretSquirrel.AndroidNoise.dto.Album;
 import com.SecretSquirrel.AndroidNoise.dto.Artist;
 import com.SecretSquirrel.AndroidNoise.dto.ArtistTrack;
 import com.SecretSquirrel.AndroidNoise.dto.ArtistTrackList;
@@ -32,6 +34,7 @@ import javax.inject.Inject;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
 import timber.log.Timber;
 
@@ -39,12 +42,12 @@ public class ArtistTracksFragment extends Fragment
 								  implements ServiceResultReceiver.Receiver {
 	private static final String     ARTIST_KEY  = "artistTracksArtist";
 	private static final String     TRACKS_LIST = "artistTracksList";
-	private static final String     ALBUM_COUNT = "artistTracksAlbumCount";
+	private static final String     ALBUMS_LIST = "artistAlbumsList";
 	private static final String     LIST_STATE  = "artistTracksListState";
 
 	private Artist                  mCurrentArtist;
 	private ArrayList<ArtistTrack>  mTracks;
-	private long                    mAlbumCount;
+	private ArrayList<Album>        mAlbums;
 	private ArtistTracksAdapter     mListAdapter;
 	private Parcelable              mTracksListViewState;
 
@@ -76,7 +79,7 @@ public class ArtistTracksFragment extends Fragment
 		if( savedInstanceState != null ) {
 			mCurrentArtist = savedInstanceState.getParcelable( ARTIST_KEY );
 			mTracks = savedInstanceState.getParcelableArrayList( TRACKS_LIST );
-			mAlbumCount = savedInstanceState.getLong( ALBUM_COUNT );
+			mAlbums = savedInstanceState.getParcelableArrayList( ALBUMS_LIST );
 		}
 		else {
 			Bundle  args = getArguments();
@@ -88,6 +91,9 @@ public class ArtistTracksFragment extends Fragment
 
 		if( mTracks == null ) {
 			mTracks = new ArrayList<ArtistTrack>();
+		}
+		if( mAlbums == null ) {
+			mAlbums = new ArrayList<Album>();
 		}
 
 		mListAdapter = new ArtistTracksAdapter( getActivity(), mTracks );
@@ -125,6 +131,12 @@ public class ArtistTracksFragment extends Fragment
 			mNoiseData.GetArtistTracks( mCurrentArtist.getArtistId(), mReceiver );
 		}
 
+		if( mAlbums.size() == 0 ) {
+			mReceiver.setReceiver( this );
+
+			mNoiseData.GetAlbumList( mCurrentArtist.getArtistId(), mReceiver );
+		}
+
 		mEventBus.post( new EventNavigationUpEnable());
 	}
 
@@ -148,6 +160,7 @@ public class ArtistTracksFragment extends Fragment
 
 		outState.putParcelable( ARTIST_KEY, mCurrentArtist );
 		outState.putParcelableArrayList( TRACKS_LIST, mTracks );
+		outState.putParcelableArrayList( ALBUMS_LIST, mAlbums );
 
 		if( mTracksListView != null ) {
 			mTracksListViewState = mTracksListView.onSaveInstanceState();
@@ -190,6 +203,11 @@ public class ArtistTracksFragment extends Fragment
 					Timber.i( "Received an artist tracks list for the wrong artist." );
 				}
 			}
+			else if( callCode == NoiseRemoteApi.GetAlbumList ) {
+				ArrayList<Album>    albumList = resultData.getParcelableArrayList( NoiseRemoteApi.AlbumList );
+
+				setAlbumList( albumList );
+			}
 			else {
 				Timber.i( "Requested an artist tracks list, but received %d", callCode );
 			}
@@ -202,7 +220,6 @@ public class ArtistTracksFragment extends Fragment
 	private void setTracksList( ArtistTrackList trackList ) {
 		mTracks.clear();
 		mTracks.addAll( trackList.getTracks());
-		mAlbumCount = trackList.getAlbumCount();
 
 		Collections.sort( mTracks, new Comparator<ArtistTrack>() {
 			public int compare( ArtistTrack track1, ArtistTrack track2 ) {
@@ -213,16 +230,37 @@ public class ArtistTracksFragment extends Fragment
 		mListAdapter.notifyDataSetChanged();
 	}
 
+	private void setAlbumList( ArrayList<Album> albumList ) {
+		if( albumList != null ) {
+			mAlbums = albumList;
+		}
+
+		mListAdapter.notifyDataSetChanged();
+	}
+
 	protected class ArtistTracksAdapter extends ArrayAdapter<ArtistTrack> {
 		private final Context   mContext;
 		private LayoutInflater  mLayoutInflater;
+		private String          mMultipleAlbums;
 
 		protected class ViewHolder {
+			@InjectView( R.id.play_button )     View        PlayButton;
+			@InjectView( R.id.atl_track_name )  TextView    TrackNameTextView;
+			@InjectView( R.id.atl_album_name )  TextView    AlbumNameTextView;
+
 			public ViewHolder( View view ) {
 				ButterKnife.inject( this, view );
 			}
 
-			@InjectView( R.id.atl_track_name )  TextView TrackNameTextView;
+			@SuppressWarnings( "unused" )
+			@OnClick( R.id.play_button )
+			public void onClickPlay( Button button ) {
+				ArtistTrack track = (ArtistTrack)button.getTag();
+
+				if( track != null ) {
+//					mEventBus.post( new EventPlayTrack( ));
+				}
+			}
 		}
 
 		public ArtistTracksAdapter( Context context, ArrayList<ArtistTrack> trackList ) {
@@ -230,6 +268,21 @@ public class ArtistTracksFragment extends Fragment
 			mContext = context;
 
 			mLayoutInflater = (LayoutInflater)mContext.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+			mMultipleAlbums = getString( R.string.atl_multiple_albums );
+		}
+
+		private Album getAlbum( long albumId ) {
+			Album   retValue = null;
+
+			for( Album album : mAlbums ) {
+				if( album.getAlbumId() == albumId ) {
+					retValue = album;
+
+					break;
+				}
+			}
+
+			return( retValue );
 		}
 
 		@Override
@@ -254,7 +307,24 @@ public class ArtistTracksFragment extends Fragment
 			   ( position < getCount())) {
 				ArtistTrack     track = getItem( position );
 
-				views.TrackNameTextView.setText( track.getTrackName() );
+				views.TrackNameTextView.setText( track.getTrackName());
+
+				if( track.getTracks().size() == 1 ) {
+					Album   album = getAlbum( track.getTracks().get( 0 ).getAlbumId());
+
+					views.PlayButton.setVisibility( View.VISIBLE );
+
+					if( album != null ) {
+						views.AlbumNameTextView.setText( album.getName());
+					}
+					else {
+						views.AlbumNameTextView.setText( "" );
+					}
+				}
+				else {
+					views.PlayButton.setVisibility( View.INVISIBLE );
+					views.AlbumNameTextView.setText( mMultipleAlbums );
+				}
 			}
 
 			return( retValue );

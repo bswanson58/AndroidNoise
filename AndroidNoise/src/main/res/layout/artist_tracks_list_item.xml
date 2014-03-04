@@ -9,10 +9,42 @@
               android:paddingBottom="@dimen/noise_base_padding"
     >
 
-    <TextView
-        android:id="@+id/atl_track_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/test_track_name"
-        style="@style/TitleText"/>
+    <Button
+        android:id="@+id/play_button"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_marginRight="@dimen/noise_base_padding"
+        android:layout_gravity="center_vertical"
+        style="@style/PlayButtonStyle"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="7"
+            android:orientation="horizontal">
+
+            <com.SecretSquirrel.AndroidNoise.views.AutoFitTextView
+                android:id="@+id/atl_track_name"
+                android:layout_height="match_parent"
+                android:layout_width="match_parent"
+                android:gravity="center_vertical"
+                android:text="@string/test_track_name"
+                style="@style/TitleText"/>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/atl_album_name"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="3"
+            android:layout_marginLeft="@dimen/noise_base_padding"
+            android:text="@string/test_album_name"
+            style="@style/SubTitleText"/>
+
+    </LinearLayout>
 </LinearLayout>
