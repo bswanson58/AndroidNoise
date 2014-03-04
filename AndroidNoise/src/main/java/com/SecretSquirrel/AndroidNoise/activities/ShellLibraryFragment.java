@@ -17,7 +17,6 @@ import com.SecretSquirrel.AndroidNoise.dto.LibraryFocusArgs;
 import com.SecretSquirrel.AndroidNoise.events.EventAlbumSelected;
 import com.SecretSquirrel.AndroidNoise.events.EventArtistInfoRequest;
 import com.SecretSquirrel.AndroidNoise.events.EventArtistSelected;
-import com.SecretSquirrel.AndroidNoise.events.EventArtistTracksRequest;
 import com.SecretSquirrel.AndroidNoise.support.IocUtility;
 
 import javax.inject.Inject;
@@ -31,7 +30,6 @@ public class ShellLibraryFragment extends BaseShellFragment {
 	private static final int    LIBRARY_STATE_ARTIST        = 2;
 	private static final int    LIBRARY_STATE_ARTIST_INFO   = 3;
 	private static final int    LIBRARY_STATE_ALBUM         = 4;
-	private static final int    LIBRARY_STATE_ARTIST_TRACKS = 5;
 
 	private static final String LIBRARY_CURRENT_ARTIST      = "ShellLibraryFragment_CurrentArtist";
 	private static final String LIBRARY_CURRENT_ARTIST_INFO = "ShellLibraryFragment_CurrentArtistInfo";
@@ -120,10 +118,6 @@ public class ShellLibraryFragment extends BaseShellFragment {
 
 				case LIBRARY_STATE_ALBUM:
 					fragment = AlbumFragment.newInstance( mCurrentArtist, mCurrentAlbum, mExternalRequest );
-					break;
-
-				case LIBRARY_STATE_ARTIST_TRACKS:
-					fragment = ArtistTracksFragment.newInstance( mCurrentArtist );
 					break;
 			}
 
@@ -232,22 +226,6 @@ public class ShellLibraryFragment extends BaseShellFragment {
 					.beginTransaction()
 					.setCustomAnimations( android.R.anim.fade_in, android.R.anim.fade_out )
 					.replace( R.id.LibraryShellFrame, ArtistExtendedInfoFragment.newInstance( mCurrentArtist, mCurrentArtistInfo ))
-					.addToBackStack( null )
-					.commit();
-
-			ActivityCompat.invalidateOptionsMenu( getActivity());
-		}
-	}
-
-	@SuppressWarnings( "unused" )
-	public void onEvent( EventArtistTracksRequest args ) {
-		if( mCurrentArtist != null ) {
-			mCurrentState = LIBRARY_STATE_ARTIST_TRACKS;
-
-			getChildFragmentManager()
-					.beginTransaction()
-					.setCustomAnimations( android.R.anim.fade_in, android.R.anim.fade_out )
-					.replace( R.id.LibraryShellFrame, ArtistTracksFragment.newInstance( mCurrentArtist ))
 					.addToBackStack( null )
 					.commit();
 

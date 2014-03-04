@@ -2,7 +2,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".ArtistActivity" >
-    
+
+    <item android:id="@+id/action_artist_detail"
+          android:title="@string/action_artist_detail_albums"
+          android:orderInCategory="99"
+          app:showAsAction="withText|ifRoom"
+        />
+
     <item android:id="@+id/action_settings"
         android:title="@string/action_settings"
         android:orderInCategory="100"

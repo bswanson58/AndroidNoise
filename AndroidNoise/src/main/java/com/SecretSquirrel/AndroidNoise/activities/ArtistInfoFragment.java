@@ -21,7 +21,6 @@ import com.SecretSquirrel.AndroidNoise.dto.Artist;
 import com.SecretSquirrel.AndroidNoise.dto.ArtistInfo;
 import com.SecretSquirrel.AndroidNoise.events.EventArtistInfoRequest;
 import com.SecretSquirrel.AndroidNoise.events.EventArtistListRequest;
-import com.SecretSquirrel.AndroidNoise.events.EventArtistTracksRequest;
 import com.SecretSquirrel.AndroidNoise.events.EventArtistViewed;
 import com.SecretSquirrel.AndroidNoise.events.EventNavigationUpEnable;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseData;
@@ -121,14 +120,6 @@ public class ArtistInfoFragment extends Fragment
 		if(( mArtist != null ) &&
 		   ( mArtistInfo != null )) {
 			mEventBus.post( new EventArtistInfoRequest( mArtist, mArtistInfo ) );
-		}
-	}
-
-	@SuppressWarnings( "unused" )
-	@OnClick( R.id.ai_artist_tracks )
-	public void onTracksClick() {
-		if( mArtist != null ) {
-			mEventBus.post( new EventArtistTracksRequest());
 		}
 	}
 
