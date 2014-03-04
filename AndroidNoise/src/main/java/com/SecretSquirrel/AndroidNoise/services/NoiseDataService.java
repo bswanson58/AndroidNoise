@@ -122,7 +122,7 @@ public class NoiseDataService extends IntentService {
 			resultData.putString( NoiseRemoteApi.RemoteResultErrorMessage, ex.getMessage());
 			resultCode = NoiseRemoteApi.RemoteResultException;
 
-			Timber.e( "getArtistList", ex );
+			Timber.e( ex, "getArtistList" );
 		}
 
 		receiver.send( resultCode, resultData );
@@ -154,7 +154,7 @@ public class NoiseDataService extends IntentService {
 			resultData.putString( NoiseRemoteApi.RemoteResultErrorMessage, ex.getMessage());
 			resultCode = NoiseRemoteApi.RemoteResultException;
 
-			Timber.e( "getAlbumList", ex );
+			Timber.e( ex, "getAlbumList" );
 		}
 
 		receiver.send( resultCode, resultData );
@@ -186,7 +186,7 @@ public class NoiseDataService extends IntentService {
 			resultData.putString( NoiseRemoteApi.RemoteResultErrorMessage, ex.getMessage());
 			resultCode = NoiseRemoteApi.RemoteResultException;
 
-			Timber.e( "getTrackList", ex );
+			Timber.e( ex, "getTrackList" );
 		}
 
 		receiver.send( resultCode, resultData );
@@ -218,7 +218,7 @@ public class NoiseDataService extends IntentService {
 			resultData.putString( NoiseRemoteApi.RemoteResultErrorMessage, ex.getMessage());
 			resultCode = NoiseRemoteApi.RemoteResultException;
 
-			Timber.e( "getFavoritesList", ex );
+			Timber.e( ex, "getFavoritesList" );
 		}
 
 		receiver.send( resultCode, resultData );
@@ -244,7 +244,7 @@ public class NoiseDataService extends IntentService {
 			resultData.putString( NoiseRemoteApi.RemoteResultErrorMessage, ex.getMessage());
 			resultCode = NoiseRemoteApi.RemoteResultException;
 
-			Timber.e( "getArtistInfo", ex );
+			Timber.e( ex, "getArtistInfo" );
 		}
 
 		receiver.send( resultCode, resultData );
@@ -270,7 +270,7 @@ public class NoiseDataService extends IntentService {
 			resultData.putString( NoiseRemoteApi.RemoteResultErrorMessage, ex.getMessage());
 			resultCode = NoiseRemoteApi.RemoteResultException;
 
-			Timber.e( "getAlbumInfo", ex );
+			Timber.e( ex, "getAlbumInfo" );
 		}
 
 		receiver.send( resultCode, resultData );
@@ -296,7 +296,7 @@ public class NoiseDataService extends IntentService {
 			resultData.putString( NoiseRemoteApi.RemoteResultErrorMessage, ex.getMessage());
 			resultCode = NoiseRemoteApi.RemoteResultException;
 
-			Timber.e( "getArtistTracks", ex );
+			Timber.e( ex, "getArtistTracks" );
 		}
 
 		receiver.send( resultCode, resultData );
