@@ -7,12 +7,12 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.SecretSquirrel.AndroidNoise.R;
@@ -43,11 +43,10 @@ import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
 import rx.android.observables.AndroidObservable;
 import rx.util.functions.Action1;
+import timber.log.Timber;
 
 public class PlaybackInformationFragment extends Fragment
 										 implements ServiceResultReceiver.Receiver {
-	private static final String TAG = PlaybackInformationFragment.class.getName();
-
 	private long                mServerTimeOffset;
 	private long                mLastPosition;
 	private long                mLastReceived;
@@ -75,6 +74,7 @@ public class PlaybackInformationFragment extends Fragment
 	@Inject	ServiceResultReceiver   mServiceResultReceiver;
 
 	@InjectView( R.id.pi_track_position )	TextView    mPlaybackPosition;
+	@InjectView( R.id.pi_progress )	        ProgressBar mPlaybackProgress;
 	@InjectView( R.id.pi_status )	        TextView    mStatusView;
 	@InjectView( R.id.pi_artist_image ) 	ImageView   mArtistImage;
 	@InjectView( R.id.pi_artist_name )      TextView    mArtistName;
@@ -188,7 +188,7 @@ public class PlaybackInformationFragment extends Fragment
 				}, new Action1<Throwable>() {
 		            @Override
 		            public void call( Throwable throwable ) {
-			            Log.e( TAG, "The ServerTimeSync call failed: " + throwable );
+			            Timber.e( "The ServerTimeSync call failed: " + throwable );
 		            }
 	            } );
 	}
@@ -208,7 +208,7 @@ public class PlaybackInformationFragment extends Fragment
 				            }, new Action1<Throwable>() {
 					            @Override
 					            public void call( Throwable throwable ) {
-						            Log.e( TAG, "The GetTransportState call failed: " + throwable );
+						            Timber.e( "The GetTransportState call failed: " + throwable );
 					            }
 				            }
 				);
@@ -258,13 +258,11 @@ public class PlaybackInformationFragment extends Fragment
 				long    timeOffset = System.currentTimeMillis() - mLastReceived;
 				long    currentPosition = mLastPosition + timeOffset - mServerTimeOffset;
 
-				mPlaybackPosition.setText( formatPlayingTime( currentPosition ));
-				displayTrackStatus( "Now Playing: %s" );
+				displayTrackStatus( "Now Playing: %s", formatPlayingTime( currentPosition ), currentPosition );
 				break;
 
 			case 3: // Paused
-				mPlaybackPosition.setText( formatPlayingTime( mLastPosition ));
-				displayTrackStatus( "Paused: %s" );
+				displayTrackStatus( "Paused: %s", formatPlayingTime( mLastPosition ), mLastPosition );
 				break;
 		}
 	}
@@ -275,7 +273,7 @@ public class PlaybackInformationFragment extends Fragment
 											TimeUnit.MINUTES.toSeconds( TimeUnit.MILLISECONDS.toMinutes( currentPosition ))));
 	}
 
-	private void displayTrackStatus( String header ) {
+	private void displayTrackStatus( String header, String playbackTime, long currentPosition ) {
 		if( mCurrentlyPlaying != null ) {
 			mStatusView.setText( String.format( header, mCurrentlyPlaying.getTrackName() ));
 			mArtistName.setText( mCurrentlyPlaying.getArtistName());
@@ -293,6 +291,11 @@ public class PlaybackInformationFragment extends Fragment
 			else {
 				mArtistImage.setImageBitmap( null );
 			}
+
+			mPlaybackPosition.setText( playbackTime );
+			mPlaybackProgress.setMax((int)mTrackLength );
+			mPlaybackProgress.setProgress((int)currentPosition );
+			mPlaybackProgress.setVisibility( View.VISIBLE );
 		}
 		else {
 			clearDisplay();
@@ -305,5 +308,6 @@ public class PlaybackInformationFragment extends Fragment
 		mArtistName.setText( "" );
 		mAlbumName.setText( "" );
 		mArtistImage.setImageBitmap( null );
+		mPlaybackProgress.setVisibility( View.INVISIBLE );
 	}
 }
