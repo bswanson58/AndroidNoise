@@ -18,6 +18,7 @@ import dagger.Module;
 				ArtistExtendedInfoFragment.class,
 				ArtistInfoFragment.class,
 				ArtistListFragment.class,
+				ArtistTracksFragment.class,
 				FavoritesListFragment.class,
 				PlaybackInformationFragment.class,
 				QueueListFragment.class,
