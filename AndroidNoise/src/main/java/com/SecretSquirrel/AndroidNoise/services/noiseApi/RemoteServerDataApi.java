@@ -2,6 +2,7 @@ package com.SecretSquirrel.AndroidNoise.services.noiseApi;
 
 // Secret Squirrel Software - Created by bswanson on 12/11/13.
 
+import com.SecretSquirrel.AndroidNoise.services.rto.RoArtistTracksResult;
 import com.SecretSquirrel.AndroidNoise.services.rto.RoAlbumInfoResult;
 import com.SecretSquirrel.AndroidNoise.services.rto.RoAlbumListResult;
 import com.SecretSquirrel.AndroidNoise.services.rto.RoArtistInfoResult;
@@ -30,4 +31,7 @@ public interface RemoteServerDataApi {
 
 	@GET( "/Noise/Data/favorites" )
 	RoFavoritesListResult GetFavoritesList();
+
+	@GET( "Noise/Data/artistTracks" )
+	RoArtistTracksResult GetArtistTracks( @Query( "artist" ) long artistId );
 }

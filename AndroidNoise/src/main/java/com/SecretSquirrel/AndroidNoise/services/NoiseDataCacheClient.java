@@ -48,6 +48,7 @@ public class NoiseDataCacheClient implements INoiseData {
 	private Hashtable<Long, DatedBundle>    mAlbumList;
 	private Hashtable<Long, DatedBundle>    mAlbumInfo;
 	private Hashtable<Long, DatedBundle>    mTrackList;
+	private Hashtable<Long, DatedBundle>    mArtistTracks;
 	private Bundle                          mFavoritesList;
 
 	@Inject
@@ -59,6 +60,7 @@ public class NoiseDataCacheClient implements INoiseData {
 		mAlbumList = new Hashtable<Long, DatedBundle>();
 		mAlbumInfo = new Hashtable<Long, DatedBundle>();
 		mTrackList = new Hashtable<Long, DatedBundle>();
+		mArtistTracks = new Hashtable<Long, DatedBundle>();
 
 		eventBus.register( this );
 	}
@@ -69,6 +71,7 @@ public class NoiseDataCacheClient implements INoiseData {
 		mAlbumInfo.clear();
 		mAlbumList.clear();
 		mTrackList.clear();
+		mArtistTracks.clear();
 
 		mArtistList = null;
 		mFavoritesList = null;
@@ -105,11 +108,11 @@ public class NoiseDataCacheClient implements INoiseData {
 			receiver.send( NoiseRemoteApi.RemoteResultSuccess, bundle.getBundle());
 		}
 		else {
-			mNoiseData.GetArtistInfo( forArtist, new ResultReceiver( new Handler()) {
+			mNoiseData.GetArtistInfo( forArtist, new ResultReceiver( new Handler() ) {
 				@Override
 				public void onReceiveResult( int resultCode, Bundle resultData ) {
 					if( resultCode == NoiseRemoteApi.RemoteResultSuccess ) {
-						mArtistInfo.put( forArtist, new DatedBundle( resultData ));
+						mArtistInfo.put( forArtist, new DatedBundle( resultData ) );
 						trimCache( mArtistInfo );
 
 						receiver.send( resultCode, resultData );
@@ -118,7 +121,33 @@ public class NoiseDataCacheClient implements INoiseData {
 						receiver.send( resultCode, null );
 					}
 				}
-			});
+			} );
+		}
+	}
+
+	@Override
+	public void GetArtistTracks( final long forArtist, final ResultReceiver receiver ) {
+		if( mArtistTracks.containsKey( forArtist )) {
+			DatedBundle bundle = mArtistTracks.get( forArtist );
+
+			bundle.updateLastAccess();
+			receiver.send( NoiseRemoteApi.RemoteResultSuccess, bundle.getBundle());
+		}
+		else {
+			mNoiseData.GetArtistTracks( forArtist, new ResultReceiver( new Handler() ) {
+				@Override
+				public void onReceiveResult( int resultCode, Bundle resultData ) {
+					if( resultCode == NoiseRemoteApi.RemoteResultSuccess ) {
+						mArtistTracks.put( forArtist, new DatedBundle( resultData ));
+						trimCache( mArtistTracks );
+
+						receiver.send( resultCode, resultData );
+					}
+					else {
+						receiver.send( resultCode, null );
+					}
+				}
+			} );
 		}
 	}
 
@@ -131,11 +160,11 @@ public class NoiseDataCacheClient implements INoiseData {
 			receiver.send( NoiseRemoteApi.RemoteResultSuccess, bundle.getBundle() );
 		}
 		else {
-			mNoiseData.GetAlbumList( forArtist, new ResultReceiver( new Handler()) {
+			mNoiseData.GetAlbumList( forArtist, new ResultReceiver( new Handler() ) {
 				@Override
 				public void onReceiveResult( int resultCode, Bundle resultData ) {
 					if( resultCode == NoiseRemoteApi.RemoteResultSuccess ) {
-						mAlbumList.put( forArtist, new DatedBundle( resultData ));
+						mAlbumList.put( forArtist, new DatedBundle( resultData ) );
 						trimCache( mAlbumList );
 
 						receiver.send( resultCode, resultData );
@@ -144,7 +173,7 @@ public class NoiseDataCacheClient implements INoiseData {
 						receiver.send( resultCode, null );
 					}
 				}
-			});
+			} );
 		}
 	}
 
@@ -157,11 +186,11 @@ public class NoiseDataCacheClient implements INoiseData {
 			receiver.send( NoiseRemoteApi.RemoteResultSuccess, bundle.getBundle());
 		}
 		else {
-			mNoiseData.GetAlbumInfo( forAlbum, new ResultReceiver( new Handler()) {
+			mNoiseData.GetAlbumInfo( forAlbum, new ResultReceiver( new Handler() ) {
 				@Override
 				public void onReceiveResult( int resultCode, Bundle resultData ) {
 					if( resultCode == NoiseRemoteApi.RemoteResultSuccess ) {
-						mAlbumInfo.put( forAlbum, new DatedBundle( resultData ));
+						mAlbumInfo.put( forAlbum, new DatedBundle( resultData ) );
 						trimCache( mAlbumInfo );
 
 						receiver.send( resultCode, resultData );
@@ -170,7 +199,7 @@ public class NoiseDataCacheClient implements INoiseData {
 						receiver.send( resultCode, null );
 					}
 				}
-			});
+			} );
 		}
 	}
 
@@ -183,11 +212,11 @@ public class NoiseDataCacheClient implements INoiseData {
 			receiver.send( NoiseRemoteApi.RemoteResultSuccess, bundle.getBundle());
 		}
 		else {
-			mNoiseData.GetTrackList( forAlbum, new ResultReceiver( new Handler()) {
+			mNoiseData.GetTrackList( forAlbum, new ResultReceiver( new Handler() ) {
 				@Override
 				public void onReceiveResult( int resultCode, Bundle resultData ) {
 					if( resultCode == NoiseRemoteApi.RemoteResultSuccess ) {
-						mTrackList.put( forAlbum, new DatedBundle( resultData ));
+						mTrackList.put( forAlbum, new DatedBundle( resultData ) );
 						trimCache( mTrackList );
 
 						receiver.send( resultCode, resultData );
@@ -196,7 +225,7 @@ public class NoiseDataCacheClient implements INoiseData {
 						receiver.send( resultCode, null );
 					}
 				}
-			});
+			} );
 		}
 	}
 

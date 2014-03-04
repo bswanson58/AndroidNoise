@@ -20,6 +20,7 @@ import com.SecretSquirrel.AndroidNoise.services.rto.RoAlbumListResult;
 import com.SecretSquirrel.AndroidNoise.services.rto.RoArtist;
 import com.SecretSquirrel.AndroidNoise.services.rto.RoArtistInfoResult;
 import com.SecretSquirrel.AndroidNoise.services.rto.RoArtistListResult;
+import com.SecretSquirrel.AndroidNoise.services.rto.RoArtistTracksResult;
 import com.SecretSquirrel.AndroidNoise.services.rto.RoFavorite;
 import com.SecretSquirrel.AndroidNoise.services.rto.RoFavoritesListResult;
 import com.SecretSquirrel.AndroidNoise.services.rto.RoTrack;
@@ -53,13 +54,13 @@ public class NoiseDataService extends IntentService {
 						break;
 
 					case NoiseRemoteApi.GetAlbumList:
-						long    forArtist = intent.getLongExtra( NoiseRemoteApi.ArtistId, 0 );
+						long    forArtist = intent.getLongExtra( NoiseRemoteApi.ArtistId, Constants.NULL_ID );
 
 						getAlbumList( forArtist, serverAddress, receiver );
 						break;
 
 					case NoiseRemoteApi.GetTrackList:
-						long    forAlbum = intent.getLongExtra( NoiseRemoteApi.AlbumId, 0 );
+						long    forAlbum = intent.getLongExtra( NoiseRemoteApi.AlbumId, Constants.NULL_ID );
 
 						getTrackList( forAlbum, serverAddress, receiver );
 						break;
@@ -69,15 +70,22 @@ public class NoiseDataService extends IntentService {
 						break;
 
 					case NoiseRemoteApi.GetArtistInfo:
-						forArtist = intent.getLongExtra( NoiseRemoteApi.ArtistId, 0 );
+						forArtist = intent.getLongExtra( NoiseRemoteApi.ArtistId, Constants.NULL_ID );
 
 						getArtistInfo( forArtist, serverAddress, receiver );
 						break;
 
 					case NoiseRemoteApi.GetAlbumInfo:
-						forAlbum = intent.getLongExtra( NoiseRemoteApi.AlbumId, 0 );
+						forAlbum = intent.getLongExtra( NoiseRemoteApi.AlbumId, Constants.NULL_ID );
 
 						getAlbumInfo( forAlbum, serverAddress, receiver );
+						break;
+
+					case NoiseRemoteApi.GetArtistTracks:
+						forArtist = intent.getLongExtra( NoiseRemoteApi.ArtistId, Constants.NULL_ID );
+
+						getArtistTracks( forArtist, serverAddress, receiver );
+						break;
 				}
 			}
 			else {
@@ -235,7 +243,7 @@ public class NoiseDataService extends IntentService {
 
 			if( result.Success ) {
 				resultCode = NoiseRemoteApi.RemoteResultSuccess;
-				resultData.putParcelable( NoiseRemoteApi.ArtistInfo, new ArtistInfo( result.ArtistInfo ));
+				resultData.putParcelable( NoiseRemoteApi.ArtistInfo, new ArtistInfo( result.ArtistInfo ) );
 			}
 			else {
 				resultData.putString( NoiseRemoteApi.RemoteResultErrorMessage, result.ErrorMessage );
@@ -275,6 +283,34 @@ public class NoiseDataService extends IntentService {
 
 			if( Constants.LOG_ERROR ) {
 				Log.w( TAG, "getAlbumInfo", ex );
+			}
+		}
+
+		receiver.send( resultCode, resultData );
+	}
+
+	private void getArtistTracks( long forArtist, String serverAddress, ResultReceiver receiver ) {
+		Bundle  resultData = buildResultBundle( NoiseRemoteApi.GetArtistTracks );
+		int     resultCode = NoiseRemoteApi.RemoteResultError;
+
+		try {
+			RemoteServerDataApi     service = buildDataService( serverAddress );
+			RoArtistTracksResult    result = service.GetArtistTracks( forArtist );
+
+			if( result.Success ) {
+				resultCode = NoiseRemoteApi.RemoteResultSuccess;
+//				resultData.putParcelable( NoiseRemoteApi.ArtistTrackList, result.Tracks );
+			}
+			else {
+				resultData.putString( NoiseRemoteApi.RemoteResultErrorMessage, result.ErrorMessage );
+			}
+		}
+		catch( Exception ex ) {
+			resultData.putString( NoiseRemoteApi.RemoteResultErrorMessage, ex.getMessage());
+			resultCode = NoiseRemoteApi.RemoteResultException;
+
+			if( Constants.LOG_ERROR ) {
+				Log.w( TAG, "getArtistTracks", ex );
 			}
 		}
 

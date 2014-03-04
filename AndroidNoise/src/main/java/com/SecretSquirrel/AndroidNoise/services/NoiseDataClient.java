@@ -36,6 +36,15 @@ public class NoiseDataClient implements INoiseData {
 	}
 
 	@Override
+	public void GetArtistTracks( long forArtist, ResultReceiver receiver ) {
+		Intent  intent = setupApi( NoiseRemoteApi.GetArtistTracks, receiver );
+
+		intent.putExtra( NoiseRemoteApi.ArtistId, forArtist );
+
+		mContext.startService( intent );
+	}
+
+	@Override
 	public void GetAlbumList( long forArtist, ResultReceiver receiver ) {
 		Intent  intent = setupApi( NoiseRemoteApi.GetAlbumList, receiver );
 

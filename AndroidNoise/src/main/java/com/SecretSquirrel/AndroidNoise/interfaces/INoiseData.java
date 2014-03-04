@@ -11,4 +11,5 @@ public interface INoiseData {
 	public  void    GetAlbumInfo( long forAlbum, ResultReceiver receiver );
 	public  void    GetTrackList( long forAlbum, ResultReceiver receiver );
 	public  void    GetFavoritesList( ResultReceiver receiver );
+	public  void    GetArtistTracks( long forArtist, ResultReceiver receiver );
 }

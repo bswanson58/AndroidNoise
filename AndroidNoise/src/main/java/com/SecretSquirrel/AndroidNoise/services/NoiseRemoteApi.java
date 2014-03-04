@@ -36,6 +36,9 @@ public class NoiseRemoteApi {
 	public static final int     GetAlbumInfo                = 8;
 	public static final String  AlbumInfo                   = "albumInfo";
 
+	public static final int     GetArtistTracks             = 9;
+	public static final String  ArtistTrackList             = "artistTrackList";
+
 	public static final String  Artist                      = "artist";
 	public static final String  Album                       = "album";
 
