@@ -5,13 +5,32 @@ package com.SecretSquirrel.AndroidNoise.events;
 import com.SecretSquirrel.AndroidNoise.dto.Track;
 
 public class EventPlayTrack {
-	private Track   mTrack;
+	private long    mArtistId;
+	private long    mTrackId;
+	private String  mTrackName;
 
 	public EventPlayTrack( Track track ) {
-		mTrack = track;
+		mArtistId = track.getArtistId();
+		mTrackId = track.getTrackId();
+		mTrackName = track.getName();
 	}
 
-	public Track getTrack() {
-		return mTrack;
+	public EventPlayTrack( long artistId, long trackId, String trackName ) {
+		mArtistId = artistId;
+		mTrackId = trackId;
+		mTrackName = trackName;
+	}
+
+	public long getArtistId() {
+		return( mArtistId );
+	}
+
+	public long getTrackId() {
+		return( mTrackId );
+	}
+
+	public String getTrackName() {
+		return( mTrackName );
 	}
 }
+

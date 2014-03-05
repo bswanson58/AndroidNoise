@@ -6,6 +6,8 @@ import com.SecretSquirrel.AndroidNoise.dto.Album;
 import com.SecretSquirrel.AndroidNoise.dto.Track;
 
 public interface INotificationManager {
+	void    NotifyItemQueued( String itemName );
+	void    NotifyItemQueued( String itemName, String errorMessage );
 	void    NotifyItemQueued( Track track );
 	void    NotifyItemQueued( Track track, String errorMessage );
 	void    NotifyItemQueued( Album album );

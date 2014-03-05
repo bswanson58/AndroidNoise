@@ -26,6 +26,9 @@ public interface INoiseQueue {
 		Remove, PlayNext, Replay
 	}
 
+	public  Subscription                    EnqueueTrack( final long trackId, Action1<QueuedTrackResult> result );
+	public  Observable<QueuedTrackResult>   EnqueueTrack( final long trackId );
+
 	public  Subscription                    EnqueueTrack( Track track, Action1<QueuedTrackResult> result );
 	public  Subscription                    EnqueueTrack( Track track, Action1<QueuedTrackResult> result, Action1<Throwable> errorAction );
 	public  Observable<QueuedTrackResult>   EnqueueTrack( final Track track );

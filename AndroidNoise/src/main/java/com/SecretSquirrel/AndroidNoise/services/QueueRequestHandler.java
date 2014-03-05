@@ -55,11 +55,7 @@ public class QueueRequestHandler implements IQueueRequestHandler {
 
 	@SuppressWarnings( "unused" )
 	public void onEvent( EventPlayTrack args ) {
-		Track track = args.getTrack();
-
-		if( track != null ) {
-			PlayTrack( track );
-		}
+		playTrack( args.getArtistId(), args.getTrackId(), args.getTrackName());
 	}
 
 	@SuppressWarnings( "unused" )
@@ -114,6 +110,22 @@ public class QueueRequestHandler implements IQueueRequestHandler {
 
 			notifyArtistPlayed( track.getArtistId());
 		}
+	}
+
+	private void playTrack( long artistId, long trackId, final String trackName ) {
+		mNoiseQueue.EnqueueTrack( trackId, new Action1<QueuedTrackResult>() {
+			@Override
+			public void call( QueuedTrackResult queuedTrackResult ) {
+				if( queuedTrackResult.Success ) {
+					mNotificationManager.NotifyItemQueued( trackName );
+				}
+				else {
+					mNotificationManager.NotifyItemQueued( trackName, queuedTrackResult.ErrorMessage );
+				}
+			}
+		} );
+
+		notifyArtistPlayed( artistId );
 	}
 
 	private void PlayFavorite( Favorite favorite ) {

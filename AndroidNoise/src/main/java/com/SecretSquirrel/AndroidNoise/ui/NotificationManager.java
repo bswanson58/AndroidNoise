@@ -35,6 +35,16 @@ public class NotificationManager implements INotificationManager {
 	}
 
 	@Override
+	public void NotifyItemQueued( String itemName ) {
+		makeToastWithText( String.format( mTrackQueuedFormat, itemName )).show();
+	}
+
+	@Override
+	public void NotifyItemQueued( String itemName, String errorMessage ) {
+		makeToastWithText( String.format( mFailedTrackQueuedFormat, itemName, errorMessage )).show();
+	}
+
+	@Override
 	public void NotifyItemQueued( Track track ) {
 		makeToastWithText( String.format( mTrackQueuedFormat, track.getName())).show();
 	}

@@ -21,6 +21,7 @@ import com.SecretSquirrel.AndroidNoise.dto.Artist;
 import com.SecretSquirrel.AndroidNoise.dto.ArtistTrack;
 import com.SecretSquirrel.AndroidNoise.dto.ArtistTrackList;
 import com.SecretSquirrel.AndroidNoise.events.EventNavigationUpEnable;
+import com.SecretSquirrel.AndroidNoise.events.EventPlayTrack;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseData;
 import com.SecretSquirrel.AndroidNoise.services.NoiseRemoteApi;
 import com.SecretSquirrel.AndroidNoise.services.ServiceResultReceiver;
@@ -258,7 +259,9 @@ public class ArtistTracksFragment extends Fragment
 				ArtistTrack track = (ArtistTrack)button.getTag();
 
 				if( track != null ) {
-//					mEventBus.post( new EventPlayTrack( ));
+					mEventBus.post( new EventPlayTrack( mCurrentArtist.getArtistId(),
+														track.getTracks().get( 0 ).getTrackId(),
+														track.getTrackName()));
 				}
 			}
 		}
@@ -325,6 +328,8 @@ public class ArtistTracksFragment extends Fragment
 					views.PlayButton.setVisibility( View.INVISIBLE );
 					views.AlbumNameTextView.setText( mMultipleAlbums );
 				}
+
+				views.PlayButton.setTag( track );
 			}
 
 			return( retValue );
