@@ -4,6 +4,5 @@ package com.SecretSquirrel.AndroidNoise.services.rto;
 
 public class RoArtistTracksResult extends BaseServerResult {
 	public long             ArtistId;
-	public long             AlbumCount;
 	public RoArtistTrack[]  Tracks;
 }
