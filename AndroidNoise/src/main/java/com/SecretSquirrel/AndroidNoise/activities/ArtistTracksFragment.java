@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -20,6 +21,7 @@ import com.SecretSquirrel.AndroidNoise.dto.Album;
 import com.SecretSquirrel.AndroidNoise.dto.Artist;
 import com.SecretSquirrel.AndroidNoise.dto.ArtistTrack;
 import com.SecretSquirrel.AndroidNoise.dto.ArtistTrackList;
+import com.SecretSquirrel.AndroidNoise.events.EventArtistTrackAlbumRequest;
 import com.SecretSquirrel.AndroidNoise.events.EventNavigationUpEnable;
 import com.SecretSquirrel.AndroidNoise.events.EventPlayTrack;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseData;
@@ -112,6 +114,15 @@ public class ArtistTracksFragment extends Fragment
 			ButterKnife.inject( this, myView );
 
 			mTracksListView.setAdapter( mListAdapter );
+
+			mTracksListView.setOnItemClickListener( new AdapterView.OnItemClickListener() {
+				@Override
+				public void onItemClick( AdapterView<?> adapterView, View view, int i, long l ) {
+					ArtistTrack track = mListAdapter.getItem( i );
+
+					mEventBus.post( new EventArtistTrackAlbumRequest( mCurrentArtist, track ));
+				}
+			} );
 
 			if(( savedInstanceState != null ) &&
 			   ( mTracksListViewState != null )) {

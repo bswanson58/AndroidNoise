@@ -13,7 +13,14 @@ import android.view.ViewGroup;
 
 import com.SecretSquirrel.AndroidNoise.R;
 import com.SecretSquirrel.AndroidNoise.dto.Artist;
+import com.SecretSquirrel.AndroidNoise.events.EventArtistTrackAlbumRequest;
+import com.SecretSquirrel.AndroidNoise.support.IocUtility;
 
+import javax.inject.Inject;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+import de.greenrobot.event.EventBus;
 import timber.log.Timber;
 
 public class ArtistFragment extends Fragment {
@@ -27,6 +34,11 @@ public class ArtistFragment extends Fragment {
 	private Artist                  mCurrentArtist;
 	private boolean                 mIsExternalRequest;
 	private int                     mDetailFragment;
+
+	@Inject	EventBus                mEventBus;
+
+	@InjectView( R.id.as_frame_album_list ) View    mUnderlay;
+	@InjectView( R.id.as_frame_overlay )    View    mOverlay;
 
 	public static ArtistFragment newInstance( Artist artist, boolean externalRequest ) {
 		ArtistFragment  fragment = new ArtistFragment();
@@ -42,6 +54,8 @@ public class ArtistFragment extends Fragment {
 	@Override
 	public void onCreate( Bundle savedInstanceState ) {
 		super.onCreate( savedInstanceState );
+
+		IocUtility.inject( this );
 
 		setHasOptionsMenu( true );
 
@@ -70,17 +84,42 @@ public class ArtistFragment extends Fragment {
 	public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState ) {
 		View                myView = inflater.inflate( R.layout.fragment_artist_shell, container, false );
 
+		if( myView != null ) {
+			ButterKnife.inject( this, myView );
+		}
+
 		if( mCurrentArtist != null ) {
-			if( getChildFragmentManager().findFragmentById( R.id.frame_artist_info ) == null ) {
+  			if( getChildFragmentManager().findFragmentById( R.id.as_frame_artist_info ) == null ) {
 				getChildFragmentManager()
 						.beginTransaction()
-						.replace( R.id.frame_artist_info, ArtistInfoFragment.newInstance( mCurrentArtist, mIsExternalRequest ))
-						.replace( R.id.frame_album_list, createDetailFragment())
+						.replace( R.id.as_frame_artist_info, ArtistInfoFragment.newInstance( mCurrentArtist, mIsExternalRequest ))
+						.replace( R.id.as_frame_album_list, createDetailFragment())
 						.commit();
 			}
 		}
 
 		return( myView );
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+
+		mEventBus.register( this );
+	}
+
+	@Override
+	public void onPause() {
+		super.onPause();
+
+		mEventBus.unregister( this );
+	}
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+
+		ButterKnife.reset( this );
 	}
 
 	@Override
@@ -132,6 +171,25 @@ public class ArtistFragment extends Fragment {
 		return( retValue );
 	}
 
+	@SuppressWarnings( "unused" )
+	public void onEvent( EventArtistTrackAlbumRequest args ) {
+		if( args.getDisplayView()) {
+			Fragment    fragment = ArtistTracksAlbumsFragment.newInstance( args.getArtist(), args.getTrack());
+
+			getChildFragmentManager()
+					.beginTransaction()
+					.replace( R.id.as_frame_overlay, fragment )
+					.commit();
+
+			mOverlay.setVisibility( View.VISIBLE );
+			mUnderlay.setVisibility( View.INVISIBLE );
+		}
+		else {
+			mOverlay.setVisibility( View.INVISIBLE );
+			mUnderlay.setVisibility( View.VISIBLE );
+		}
+	}
+
 	private void swapDetailFragment() {
 		if( mDetailFragment == DETAIL_ALBUM_LIST ) {
 			mDetailFragment = DETAIL_TRACK_LIST;
@@ -142,7 +200,7 @@ public class ArtistFragment extends Fragment {
 
 		getChildFragmentManager()
 				.beginTransaction()
-				.replace( R.id.frame_album_list, createDetailFragment())
+				.replace( R.id.as_frame_album_list, createDetailFragment())
 				.commit();
 	}
 
