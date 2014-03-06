@@ -19,7 +19,6 @@ import com.SecretSquirrel.AndroidNoise.support.IocUtility;
 import javax.inject.Inject;
 
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 import de.greenrobot.event.EventBus;
 import timber.log.Timber;
 
@@ -34,11 +33,9 @@ public class ArtistFragment extends Fragment {
 	private Artist                  mCurrentArtist;
 	private boolean                 mIsExternalRequest;
 	private int                     mDetailFragment;
+	private Fragment                mOverlayFragment;
 
 	@Inject	EventBus                mEventBus;
-
-	@InjectView( R.id.as_frame_album_list ) View    mUnderlay;
-	@InjectView( R.id.as_frame_overlay )    View    mOverlay;
 
 	public static ArtistFragment newInstance( Artist artist, boolean externalRequest ) {
 		ArtistFragment  fragment = new ArtistFragment();
@@ -83,10 +80,6 @@ public class ArtistFragment extends Fragment {
 	@Override
 	public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState ) {
 		View                myView = inflater.inflate( R.layout.fragment_artist_shell, container, false );
-
-		if( myView != null ) {
-			ButterKnife.inject( this, myView );
-		}
 
 		if( mCurrentArtist != null ) {
   			if( getChildFragmentManager().findFragmentById( R.id.as_frame_artist_info ) == null ) {
@@ -174,19 +167,24 @@ public class ArtistFragment extends Fragment {
 	@SuppressWarnings( "unused" )
 	public void onEvent( EventArtistTrackAlbumRequest args ) {
 		if( args.getDisplayView()) {
-			Fragment    fragment = ArtistTracksAlbumsFragment.newInstance( args.getArtist(), args.getTrack());
+			mOverlayFragment = ArtistTracksAlbumsFragment.newInstance( args.getArtist(), args.getTrack());
 
 			getChildFragmentManager()
 					.beginTransaction()
-					.replace( R.id.as_frame_overlay, fragment )
+					.setCustomAnimations( R.anim.fragment_slide_in, R.anim.fragment_slide_out )
+					.replace( R.id.as_frame_overlay, mOverlayFragment )
 					.commit();
-
-			mOverlay.setVisibility( View.VISIBLE );
-			mUnderlay.setVisibility( View.INVISIBLE );
 		}
 		else {
-			mOverlay.setVisibility( View.INVISIBLE );
-			mUnderlay.setVisibility( View.VISIBLE );
+			if( mOverlayFragment != null ) {
+				getChildFragmentManager()
+						.beginTransaction()
+						.setCustomAnimations( R.anim.fragment_slide_in, R.anim.fragment_slide_out )
+						.remove( mOverlayFragment )
+						.commit();
+
+				mOverlayFragment = null;
+			}
 		}
 	}
 

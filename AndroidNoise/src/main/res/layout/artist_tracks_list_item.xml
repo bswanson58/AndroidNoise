@@ -7,7 +7,7 @@
               android:layout_marginTop="@dimen/noise_base_padding"
               android:layout_marginBottom="@dimen/noise_base_padding"
               android:paddingBottom="@dimen/noise_base_padding"
-    >
+              android:descendantFocusability="blocksDescendants">
 
     <Button
         android:id="@+id/play_button"
