@@ -176,15 +176,19 @@ public class ArtistFragment extends Fragment {
 					.commit();
 		}
 		else {
-			if( mOverlayFragment != null ) {
-				getChildFragmentManager()
-						.beginTransaction()
-						.setCustomAnimations( R.anim.fragment_slide_in, R.anim.fragment_slide_out )
-						.remove( mOverlayFragment )
-						.commit();
+			closeOverlay();
+		}
+	}
 
-				mOverlayFragment = null;
-			}
+	private void closeOverlay() {
+		if( mOverlayFragment != null ) {
+			getChildFragmentManager()
+					.beginTransaction()
+					.setCustomAnimations( R.anim.fragment_slide_in, R.anim.fragment_slide_out )
+					.remove( mOverlayFragment )
+					.commit();
+
+			mOverlayFragment = null;
 		}
 	}
 
@@ -194,6 +198,8 @@ public class ArtistFragment extends Fragment {
 		}
 		else {
 			mDetailFragment = DETAIL_ALBUM_LIST;
+
+			closeOverlay();
 		}
 
 		getChildFragmentManager()
