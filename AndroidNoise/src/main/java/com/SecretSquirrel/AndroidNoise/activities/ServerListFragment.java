@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import com.SecretSquirrel.AndroidNoise.R;
 import com.SecretSquirrel.AndroidNoise.dto.ServerInformation;
+import com.SecretSquirrel.AndroidNoise.events.EventLibraryManagementRequest;
 import com.SecretSquirrel.AndroidNoise.events.EventServerSelected;
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
 import com.SecretSquirrel.AndroidNoise.support.Constants;
@@ -30,6 +31,7 @@ import javax.inject.Inject;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
 import rx.Subscription;
 import rx.android.concurrency.AndroidSchedulers;
@@ -213,6 +215,17 @@ public class ServerListFragment extends Fragment {
 
 			@InjectView( R.id.sli_name )    TextView    NameTextView;
 			@InjectView( R.id.sli_address ) TextView    AddressTextView;
+			@InjectView( R.id.sli_manage )  View        ManageView;
+
+			@SuppressWarnings( "unused" )
+			@OnClick( R.id.sli_manage )
+			public void onClick( View view ) {
+				ServerInformation   serverInformation = (ServerInformation)view.getTag();
+
+				if( serverInformation != null ) {
+					mEventBus.post( new EventLibraryManagementRequest( serverInformation ) );
+				}
+			}
 		}
 
 		public ServerAdapter( Context context, ArrayList<ServerInformation> serverList ) {
@@ -249,7 +262,9 @@ public class ServerListFragment extends Fragment {
 				ServerInformation   serverInfo = mServerList.get( position );
 
 				views.NameTextView.setText( String.format( mTitleFormat, serverInfo.getHostName(), serverInfo.getLibraryName()));
-				views.AddressTextView.setText( String.format( mSubtitleFormat, serverInfo.getServerName(), serverInfo.getServerAddress() ));
+				views.AddressTextView.setText( String.format( mSubtitleFormat, serverInfo.getServerName(), serverInfo.getServerAddress()));
+
+				views.ManageView.setTag( serverInfo );
 			}
 
 			return( retValue );

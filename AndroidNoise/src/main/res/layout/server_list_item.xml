@@ -5,7 +5,8 @@
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:paddingTop="@dimen/noise_base_padding"
-              android:paddingBottom="@dimen/noise_base_padding">
+              android:paddingBottom="@dimen/noise_base_padding"
+              android:descendantFocusability="blocksDescendants">
 
     <TextView
         android:id="@+id/sli_name"
@@ -21,4 +22,10 @@
         android:layout_marginLeft="@dimen/noise_sub_item_indent"
         android:text="@string/test_server_address"
         style="@style/SubTitleText" />
+
+    <Button
+        android:id="@+id/sli_manage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Manage"/>
 </LinearLayout>

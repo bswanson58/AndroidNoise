@@ -22,6 +22,7 @@ import dagger.Module;
 				ArtistTracksFragment.class,
 				ArtistTracksAlbumsFragment.class,
 				FavoritesListFragment.class,
+				LibraryConfiguration.class,
 				PlaybackInformationFragment.class,
 				QueueListFragment.class,
 				RecentlyPlayedListFragment.class,
@@ -32,7 +33,8 @@ import dagger.Module;
 				TrackListFragment.class,
 				TransportFragment.class,
 				ShellActivity.class,
-				ShellLibraryFragment.class
+				ShellLibraryFragment.class,
+				ShellServerFragment.class
 		}
 )
 public class ActivitiesModule {
