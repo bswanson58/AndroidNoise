@@ -7,6 +7,8 @@ import android.view.inputmethod.InputMethodManager;
 
 import com.SecretSquirrel.AndroidNoise.R;
 
+import java.util.concurrent.TimeUnit;
+
 // Created by BSwanson on 1/26/14.
 
 public class NoiseUtils {
@@ -25,6 +27,14 @@ public class NoiseUtils {
 		}
 
 		return (retValue);
+	}
+
+	public static String formatTrackDuration( long duration ) {
+		return( String.format( "%d:%02d",
+				TimeUnit.MILLISECONDS.toMinutes( duration ),
+				TimeUnit.MILLISECONDS.toSeconds( duration ) -
+						TimeUnit.MINUTES.toSeconds( TimeUnit.MILLISECONDS.toMinutes( duration ))));
+
 	}
 
 	public static void hideKeyboard( Activity activity ) {

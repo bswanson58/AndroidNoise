@@ -48,6 +48,18 @@ public class TrackAssociation implements Parcelable {
 		return( mAlbumId );
 	}
 
+	public int getTrackNumber() {
+		return( mTrackNumber );
+	}
+
+	public String getVolumeName() {
+		return( mVolumeName );
+	}
+
+	public long getDurationMilliseconds() {
+		return( mDuration );
+	}
+
 	@Override
 	public int describeContents() {
 		return 0;

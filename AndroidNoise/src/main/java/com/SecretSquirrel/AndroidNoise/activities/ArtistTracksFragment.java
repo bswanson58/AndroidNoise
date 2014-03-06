@@ -21,6 +21,7 @@ import com.SecretSquirrel.AndroidNoise.dto.Album;
 import com.SecretSquirrel.AndroidNoise.dto.Artist;
 import com.SecretSquirrel.AndroidNoise.dto.ArtistTrack;
 import com.SecretSquirrel.AndroidNoise.dto.ArtistTrackList;
+import com.SecretSquirrel.AndroidNoise.dto.TrackAssociation;
 import com.SecretSquirrel.AndroidNoise.events.EventArtistTrackAlbumRequest;
 import com.SecretSquirrel.AndroidNoise.events.EventNavigationUpEnable;
 import com.SecretSquirrel.AndroidNoise.events.EventPlayTrack;
@@ -28,6 +29,7 @@ import com.SecretSquirrel.AndroidNoise.interfaces.INoiseData;
 import com.SecretSquirrel.AndroidNoise.services.NoiseRemoteApi;
 import com.SecretSquirrel.AndroidNoise.services.ServiceResultReceiver;
 import com.SecretSquirrel.AndroidNoise.support.IocUtility;
+import com.SecretSquirrel.AndroidNoise.support.NoiseUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -120,7 +122,9 @@ public class ArtistTracksFragment extends Fragment
 				public void onItemClick( AdapterView<?> adapterView, View view, int i, long l ) {
 					ArtistTrack track = mListAdapter.getItem( i );
 
-					mEventBus.post( new EventArtistTrackAlbumRequest( mCurrentArtist, track ));
+					if( track.getTracks().size() > 1 ) {
+						mEventBus.post( new EventArtistTrackAlbumRequest( mCurrentArtist, track ));
+					}
 				}
 			} );
 
@@ -251,14 +255,17 @@ public class ArtistTracksFragment extends Fragment
 	}
 
 	protected class ArtistTracksAdapter extends ArrayAdapter<ArtistTrack> {
-		private final Context   mContext;
-		private LayoutInflater  mLayoutInflater;
-		private String          mMultipleAlbums;
+		private final Context           mContext;
+		private final LayoutInflater    mLayoutInflater;
+		private final String            mMultipleAlbums;
+		private final String            mPublishedYearFormat;
 
 		protected class ViewHolder {
 			@InjectView( R.id.play_button )     View        PlayButton;
 			@InjectView( R.id.atl_track_name )  TextView    TrackNameTextView;
 			@InjectView( R.id.atl_album_name )  TextView    AlbumNameTextView;
+			@InjectView( R.id.atl_duration )    TextView    DurationView;
+			@InjectView( R.id.atl_published )   TextView    PublishedView;
 
 			public ViewHolder( View view ) {
 				ButterKnife.inject( this, view );
@@ -281,8 +288,10 @@ public class ArtistTracksFragment extends Fragment
 			super( context, R.layout.artist_tracks_list_item, trackList );
 			mContext = context;
 
-			mLayoutInflater = (LayoutInflater)mContext.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
 			mMultipleAlbums = getString( R.string.atl_multiple_albums );
+			mPublishedYearFormat = getString( R.string.published_year_format );
+
+			mLayoutInflater = (LayoutInflater)mContext.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
 		}
 
 		private Album getAlbum( long albumId ) {
@@ -317,6 +326,12 @@ public class ArtistTracksFragment extends Fragment
 				views = (ViewHolder)retValue.getTag();
 			}
 
+			displayListItem( views, position );
+
+			return( retValue );
+		}
+
+		private void displayListItem( ViewHolder views, int position ) {
 			if(( views != null ) &&
 			   ( position < getCount())) {
 				ArtistTrack     track = getItem( position );
@@ -324,26 +339,41 @@ public class ArtistTracksFragment extends Fragment
 				views.TrackNameTextView.setText( track.getTrackName());
 
 				if( track.getTracks().size() == 1 ) {
-					Album   album = getAlbum( track.getTracks().get( 0 ).getAlbumId());
+					TrackAssociation    association = track.getTracks().get( 0 );
+					Album               album = getAlbum( association.getAlbumId());
 
 					views.PlayButton.setVisibility( View.VISIBLE );
 
 					if( album != null ) {
 						views.AlbumNameTextView.setText( album.getName());
+
+						if( album.getHasPublishedYear()) {
+							views.PublishedView.setText(
+									String.format( mPublishedYearFormat,
+											NoiseUtils.FormatPublishedYear( getActivity(), album.getPublishedYear())));
+						}
+						else {
+							views.PublishedView.setText( "" );
+						}
 					}
 					else {
 						views.AlbumNameTextView.setText( "" );
+						views.PublishedView.setText( "" );
 					}
+
+					views.DurationView.setText( NoiseUtils.formatTrackDuration( association.getDurationMilliseconds()));
 				}
 				else {
 					views.PlayButton.setVisibility( View.INVISIBLE );
+
+					views.PublishedView.setText( "" );
+					views.DurationView.setText( "" );
+
 					views.AlbumNameTextView.setText( mMultipleAlbums );
 				}
 
 				views.PlayButton.setTag( track );
 			}
-
-			return( retValue );
 		}
 	}
 }

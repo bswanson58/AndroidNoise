@@ -3,6 +3,7 @@ package com.SecretSquirrel.AndroidNoise.activities;// Created by BSwanson on 3/5
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,7 @@ import com.SecretSquirrel.AndroidNoise.interfaces.INoiseData;
 import com.SecretSquirrel.AndroidNoise.services.NoiseRemoteApi;
 import com.SecretSquirrel.AndroidNoise.services.ServiceResultReceiver;
 import com.SecretSquirrel.AndroidNoise.support.IocUtility;
+import com.SecretSquirrel.AndroidNoise.support.NoiseUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -184,14 +186,21 @@ public class ArtistTracksAlbumsFragment extends Fragment
 	protected class AlbumListAdapter extends ArrayAdapter<TrackAssociation> {
 		private Context         mContext;
 		private LayoutInflater  mLayoutInflater;
+		private final String    mTrackNumberFormat;
+		private final String    mVolumeNameFormat;
+		private final String    mPublishedYearFormat;
 
 		protected class ViewHolder {
 			public ViewHolder( View view ) {
 				ButterKnife.inject( this, view );
 			}
 
-			@InjectView( R.id.play_button )     Button      PlayButton;
-			@InjectView( R.id.ati_album_name )  TextView    AlbumNameView;
+			@InjectView( R.id.play_button )         Button      PlayButton;
+			@InjectView( R.id.ati_album_name )      TextView    AlbumNameView;
+			@InjectView( R.id.ati_track_number )    TextView    TrackNumberView;
+			@InjectView( R.id.ati_volume_name )     TextView    VolumeNameView;
+			@InjectView( R.id.ati_duration )        TextView    DurationView;
+			@InjectView( R.id.ati_published )       TextView    PublishedView;
 
 			@SuppressWarnings( "unused" )
 			@OnClick( R.id.play_button )
@@ -209,6 +218,10 @@ public class ArtistTracksAlbumsFragment extends Fragment
 		public AlbumListAdapter( Context context, List<TrackAssociation> albumList ) {
 			super( context, R.layout.artist_track_album_item, albumList );
 			mContext = context;
+
+			mTrackNumberFormat = getString( R.string.track_number_format );
+			mVolumeNameFormat = getString( R.string.volume_name_format );
+			mPublishedYearFormat = getString( R.string.published_year_format );
 
 			mLayoutInflater = (LayoutInflater)mContext.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
 		}
@@ -231,6 +244,12 @@ public class ArtistTracksAlbumsFragment extends Fragment
 				views = (ViewHolder)retValue.getTag();
 			}
 
+			displayListItem( views, position );
+
+			return( retValue );
+		}
+
+		private void displayListItem( ViewHolder views, int position ) {
 			if(( views != null ) &&
 			   ( position < getCount())) {
 				TrackAssociation    track = getItem( position );
@@ -238,12 +257,30 @@ public class ArtistTracksAlbumsFragment extends Fragment
 
 				if( album != null ) {
 					views.AlbumNameView.setText( album.getName());
+
+					if( album.getHasPublishedYear()) {
+						views.PublishedView.setText(
+								String.format( mPublishedYearFormat,
+										NoiseUtils.FormatPublishedYear( getActivity(), album.getPublishedYear())));
+					}
+					else {
+						views.PublishedView.setText( "" );
+					}
 				}
+
+				views.TrackNumberView.setText( String.format( mTrackNumberFormat, track.getTrackNumber()));
+
+				if( TextUtils.isEmpty( track.getVolumeName() )) {
+					views.VolumeNameView.setText( "" );
+				}
+				else {
+					views.VolumeNameView.setText( String.format( mVolumeNameFormat, track.getVolumeName()));
+				}
+
+				views.DurationView.setText( NoiseUtils.formatTrackDuration( track.getDurationMilliseconds()));
 
 				views.PlayButton.setTag( track );
 			}
-
-			return( retValue );
 		}
 
 		private Album getAlbum( long albumId ) {

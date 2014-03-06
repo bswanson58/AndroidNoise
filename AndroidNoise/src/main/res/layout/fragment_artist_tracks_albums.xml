@@ -1,51 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:layout_margin="@dimen/noise_base_padding"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="15dp"
+                android:layout_marginRight="15dp"
+                android:layout_marginLeft="3dp"
+                android:background="@drawable/drop_shadow"
     >
 
-    <RelativeLayout
+    <TextView
+        android:id="@+id/ata_track_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/noise_base_padding"
+        android:layout_marginTop="@dimen/noise_base_padding"
+        android:text="@string/test_track_name"
+        style="@style/TitleText"/>
+
+    <TextView
+        android:id="@+id/ata_header"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/noise_base_padding"
+        android:paddingLeft="@dimen/noise_base_padding"
+        android:layout_below="@id/ata_track_name"
+        android:text="@string/artist_tracks_albums_subtitle"
+        style="@style/SubHeaderText"/>
+
+    <Button
+        android:id="@+id/ata_close"
+        android:layout_width="38dp"
+        android:layout_height="38dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="@dimen/noise_base_padding"
+        android:layout_marginTop="@dimen/noise_base_padding"
+        android:background="@android:drawable/btn_dialog"
+        />
+
+    <ListView
+        android:id="@+id/ata_album_list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/drop_shadow"
-        >
+        android:layout_height="fill_parent"
+        android:layout_below="@id/ata_header"
+        style="@style/ShortListStyle"/>
 
-        <TextView
-            android:id="@+id/ata_track_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/noise_base_padding"
-            android:layout_marginTop="@dimen/noise_base_padding"
-            android:text="@string/test_track_name"
-            style="@style/TitleText"/>
-        <TextView
-            android:id="@+id/ata_header"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/noise_base_padding"
-            android:layout_below="@id/ata_track_name"
-            android:text="is contained on the following albums:"
-            style="@style/SubHeaderText"/>
-
-        <Button
-            android:id="@+id/ata_close"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="@dimen/noise_base_padding"
-            android:layout_marginTop="@dimen/noise_base_padding"
-            android:text="Close"/>
-
-        <ListView
-            android:id="@+id/ata_album_list"
-            android:layout_width="match_parent"
-            android:layout_height="fill_parent"
-            android:layout_below="@id/ata_header"
-            style="@style/ShortListStyle"/>
-
-    </RelativeLayout>
-
-</LinearLayout>
+</RelativeLayout>
