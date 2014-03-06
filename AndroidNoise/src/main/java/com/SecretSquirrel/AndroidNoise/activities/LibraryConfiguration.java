@@ -74,10 +74,6 @@ public class LibraryConfiguration extends Fragment {
 
 		if( mLibraries == null ) {
 			mLibraries = new ArrayList<Library>();
-
-			mLibraries.add( new Library( "Tiny Noise"));
-			mLibraries.add( new Library( "Ranch Noise"));
-			mLibraries.add( new Library( "Default Noise"));
 		}
 
 		mLibraryAdapter = new LibraryAdapter( getActivity(), mLibraries );
@@ -160,7 +156,7 @@ public class LibraryConfiguration extends Fragment {
 				Library library = (Library)getItem( position );
 
 				if( library != null ) {
-					views.LibraryName.setText( library.Name );
+					views.LibraryName.setText( library.getLibraryName());
 				}
 			}
 
