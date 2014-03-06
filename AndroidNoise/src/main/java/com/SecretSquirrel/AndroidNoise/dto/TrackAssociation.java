@@ -10,6 +10,9 @@ import com.SecretSquirrel.AndroidNoise.services.rto.RoTrackAssociation;
 public class TrackAssociation implements Parcelable {
 	private long    mTrackId;
 	private long    mAlbumId;
+	private long    mDuration;
+	private int     mTrackNumber;
+	private String  mVolumeName;
 
 	/** Static field used to regenerate object, individually or as arrays */
 	public static final Parcelable.Creator<TrackAssociation> CREATOR = new Parcelable.Creator<TrackAssociation>() {
@@ -24,11 +27,17 @@ public class TrackAssociation implements Parcelable {
 	public TrackAssociation( RoTrackAssociation roAssociation ) {
 		mTrackId = roAssociation.TrackId;
 		mAlbumId = roAssociation.AlbumId;
+		mDuration = roAssociation.Duration;
+		mTrackNumber = roAssociation.TrackNumber;
+		mVolumeName = roAssociation.VolumeName;
 	}
 
 	public TrackAssociation( Parcel parcel ) {
 		mTrackId = parcel.readLong();
 		mAlbumId = parcel.readLong();
+		mDuration = parcel.readLong();
+		mTrackNumber = parcel.readInt();
+		mVolumeName = parcel.readString();
 	}
 
 	public long getTrackId() {
@@ -48,5 +57,8 @@ public class TrackAssociation implements Parcelable {
 	public void writeToParcel( Parcel parcel, int i ) {
 		parcel.writeLong( mTrackId );
 		parcel.writeLong( mAlbumId );
+		parcel.writeLong( mDuration );
+		parcel.writeInt( mTrackNumber );
+		parcel.writeString( mVolumeName );
 	}
 }

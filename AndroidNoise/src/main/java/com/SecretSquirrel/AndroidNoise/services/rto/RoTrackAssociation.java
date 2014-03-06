@@ -5,4 +5,7 @@ package com.SecretSquirrel.AndroidNoise.services.rto;
 public class RoTrackAssociation {
 	public long     AlbumId;
 	public long     TrackId;
+	public long     Duration;
+	public int      TrackNumber;
+	public String   VolumeName;
 }
