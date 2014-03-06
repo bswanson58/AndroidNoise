@@ -91,6 +91,9 @@ public class ArtistFragment extends Fragment {
 			}
 		}
 
+		// Retrieve the overlay fragment in case we are recovering from a configuration change.
+		mOverlayFragment = getChildFragmentManager().findFragmentById( R.id.as_frame_overlay );
+
 		return( myView );
 	}
 
