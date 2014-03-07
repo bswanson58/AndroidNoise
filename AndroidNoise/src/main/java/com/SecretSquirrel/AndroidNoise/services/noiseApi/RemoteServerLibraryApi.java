@@ -12,7 +12,7 @@ import retrofit.http.POST;
 import retrofit.http.PUT;
 import retrofit.http.Query;
 
-public interface RemoteSeverLibraryApi {
+public interface RemoteServerLibraryApi {
 	@GET( "/Noise/Library/libraryList" )
 	RoLibraryListResult getLibraries();
 

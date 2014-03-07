@@ -6,6 +6,7 @@ import android.os.Handler;
 
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationServices;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseData;
+import com.SecretSquirrel.AndroidNoise.interfaces.INoiseLibrary;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseQueue;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseSearch;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseServer;
@@ -70,6 +71,11 @@ public class ServicesModule {
 
 	@Provides
 	public INoiseSearch providesNoiseSearch( NoiseSearchClient client ) {
+		return( client );
+	}
+
+	@Provides
+	public INoiseLibrary providesNoiseLibrary( NoiseLibraryClient client ) {
 		return( client );
 	}
 

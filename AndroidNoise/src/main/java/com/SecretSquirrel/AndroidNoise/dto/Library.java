@@ -38,4 +38,16 @@ public class Library {
 	public boolean isIsDefaultLibrary() {
 		return( mIsDefaultLibrary );
 	}
+
+	public RoLibrary asRoLibrary() {
+		RoLibrary   retValue = new RoLibrary();
+
+		retValue.LibraryId = mLibraryId;
+		retValue.LibraryName = mLibraryName;
+		retValue.DatabaseName = mDatabaseName;
+		retValue.MediaLocation = mMediaLocation;
+		retValue.IsDefaultLibrary = mIsDefaultLibrary;
+
+		return( retValue );
+	}
 }

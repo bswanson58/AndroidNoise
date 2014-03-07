@@ -17,9 +17,12 @@ import com.SecretSquirrel.AndroidNoise.R;
 import com.SecretSquirrel.AndroidNoise.dto.Library;
 import com.SecretSquirrel.AndroidNoise.dto.ServerInformation;
 import com.SecretSquirrel.AndroidNoise.events.EventLibraryManagementRequest;
+import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
+import com.SecretSquirrel.AndroidNoise.interfaces.INoiseLibrary;
 import com.SecretSquirrel.AndroidNoise.support.IocUtility;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -28,6 +31,8 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
+import rx.android.observables.AndroidObservable;
+import rx.util.functions.Action1;
 import timber.log.Timber;
 
 public class LibraryConfiguration extends Fragment {
@@ -38,6 +43,8 @@ public class LibraryConfiguration extends Fragment {
 	private LibraryAdapter      mLibraryAdapter;
 
 	@Inject	EventBus            mEventBus;
+	@Inject	INoiseLibrary       mNoiseLibrary;
+	@Inject	IApplicationState   mApplicationState;
 
 	@InjectView( R.id.lm_library_selector )	Spinner mLibrarySelector;
 
@@ -92,10 +99,45 @@ public class LibraryConfiguration extends Fragment {
 		return( myView );
 	}
 
+	@Override
+	public void onResume() {
+		super.onResume();
+
+		if( mServer != null ) {
+			mApplicationState.setCurrentServer( mServer );
+
+			if( mLibraries.size() == 0 ) {
+				getLibraries();
+			}
+		}
+	}
+
 	@SuppressWarnings( "unused" )
 	@OnClick( R.id.lm_close )
 	public void onClickClose() {
 		mEventBus.post( new EventLibraryManagementRequest());
+	}
+
+	private void getLibraries() {
+		AndroidObservable.fromFragment( this, mNoiseLibrary.getLibraries())
+				.subscribe( new Action1<Library[]>() {
+					@Override
+					public void call( Library[] libraries ) {
+						updateLibraries( libraries );
+					}
+				}, new Action1<Throwable>() {
+					            @Override
+					            public void call( Throwable throwable ) {
+						            Timber.e( throwable, "getLibraries" );
+					            }
+				            } );
+	}
+
+	private void updateLibraries( Library[] libraries ) {
+		mLibraries.clear();
+		mLibraries.addAll( Arrays.asList( libraries ));
+
+		mLibraryAdapter.notifyDataSetChanged();
 	}
 
 	protected class LibraryAdapter extends BaseAdapter implements SpinnerAdapter {

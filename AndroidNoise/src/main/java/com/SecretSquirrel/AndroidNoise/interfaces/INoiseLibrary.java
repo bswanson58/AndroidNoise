@@ -11,9 +11,9 @@ public interface INoiseLibrary {
 	public Observable<Library[]> getLibraries();
 
 	public  Observable<BaseServerResult>    syncLibrary();
-	public  Observable<BaseServerResult>    selectLibrary( Library library );
+	public  Observable<BaseServerResult>    selectLibrary( final Library library );
 
-	public  Observable<BaseServerResult>    updateLibrary( Library library );
-	public  Observable<Library>             createLibrary( Library library );
+	public  Observable<BaseServerResult>    updateLibrary( final Library library );
+	public  Observable<Library>             createLibrary( final Library library );
 
 }

@@ -70,6 +70,17 @@ public class NoiseApiModule {
 		return( retValue );
 	}
 
+	@Provides
+	public RemoteServerLibraryApi provideLibraryApi( IApplicationState applicationState ) {
+		RemoteServerLibraryApi  retValue = null;
+
+		if( applicationState.getIsConnected()) {
+			retValue = createAdapter( applicationState.getCurrentServer()).create( RemoteServerLibraryApi.class );
+		}
+
+		return( retValue );
+	}
+
 	private RestAdapter createAdapter( ServerInformation serverInformation ) {
 		return( new RestAdapter.Builder()
 				.setServer( serverInformation.getServerAddress())
