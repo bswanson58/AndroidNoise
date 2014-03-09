@@ -8,10 +8,12 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.SecretSquirrel.AndroidNoise.R;
 import com.SecretSquirrel.AndroidNoise.dto.Library;
@@ -19,6 +21,7 @@ import com.SecretSquirrel.AndroidNoise.dto.ServerInformation;
 import com.SecretSquirrel.AndroidNoise.events.EventLibraryManagementRequest;
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseLibrary;
+import com.SecretSquirrel.AndroidNoise.services.rto.BaseServerResult;
 import com.SecretSquirrel.AndroidNoise.support.IocUtility;
 
 import java.util.ArrayList;
@@ -41,6 +44,7 @@ public class LibraryConfiguration extends Fragment {
 	private ServerInformation   mServer;
 	private ArrayList<Library>  mLibraries;
 	private LibraryAdapter      mLibraryAdapter;
+	private long                mSelectedLibrary;
 
 	@Inject	EventBus            mEventBus;
 	@Inject	INoiseLibrary       mNoiseLibrary;
@@ -75,7 +79,10 @@ public class LibraryConfiguration extends Fragment {
 			}
 		}
 
-		if( mServer == null ) {
+		if( mServer != null ) {
+			mSelectedLibrary = mServer.getLibraryId();
+		}
+		else {
 			Timber.e( "ServerInformation was not set." );
 		}
 
@@ -94,9 +101,36 @@ public class LibraryConfiguration extends Fragment {
 			ButterKnife.inject( this, myView );
 
 			mLibrarySelector.setAdapter( mLibraryAdapter );
+			mLibrarySelector.setOnItemSelectedListener( new AdapterView.OnItemSelectedListener() {
+				@Override
+				public void onItemSelected( AdapterView<?> adapterView, View view, int i, long l ) {
+					selectLibrary( mLibraries.get( i ) );
+				}
+
+				@Override
+				public void onNothingSelected( AdapterView<?> adapterView ) {
+
+				}
+			} );
 		}
 
 		return( myView );
+	}
+
+	private void setSelectedLibrary( long libraryId ) {
+		int position = -1;
+
+		for( Library library : mLibraries ) {
+			position++;
+
+			if( library.getLibraryId() == libraryId ) {
+				mSelectedLibrary = library.getLibraryId();
+
+				break;
+			}
+		}
+
+		mLibrarySelector.setSelection( position );
 	}
 
 	@Override
@@ -133,11 +167,36 @@ public class LibraryConfiguration extends Fragment {
 				            } );
 	}
 
+	private void selectLibrary( final Library library ) {
+		if( library.getLibraryId() != mSelectedLibrary ) {
+			AndroidObservable.fromFragment( this, mNoiseLibrary.selectLibrary( library ))
+					.subscribe( new Action1<BaseServerResult>() {
+						            @Override
+						            public void call( BaseServerResult result ) {
+							            if( result.Success ) {
+								            setSelectedLibrary( library.getLibraryId());
+								            mServer.updateLibrary( library.getLibraryId(), library.getLibraryName());
+							            }
+							            else {
+								            Toast.makeText( getActivity(), "Could not select library", Toast.LENGTH_LONG ).show();
+							            }
+						            }
+					            }, new Action1<Throwable>() {
+						            @Override
+						            public void call( Throwable throwable ) {
+							            Timber.e( throwable, "selectLibrary" );
+						            }
+					            }
+					);
+		}
+	}
+
 	private void updateLibraries( Library[] libraries ) {
 		mLibraries.clear();
 		mLibraries.addAll( Arrays.asList( libraries ));
 
 		mLibraryAdapter.notifyDataSetChanged();
+		setSelectedLibrary( mSelectedLibrary );
 	}
 
 	protected class LibraryAdapter extends BaseAdapter implements SpinnerAdapter {

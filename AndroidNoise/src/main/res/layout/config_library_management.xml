@@ -10,6 +10,7 @@
         android:id="@+id/lm_library_selector"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:minWidth="200dp"
         android:layout_margin="@dimen/noise_base_padding"
         />
 

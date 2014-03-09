@@ -112,4 +112,9 @@ public class ServerInformation implements Parcelable {
 	public String getLibraryName() {
 		return( mLibraryName );
 	}
+
+	public void updateLibrary( long libraryId, String libraryName ) {
+		mLibraryId = libraryId;
+		mLibraryName = libraryName;
+	}
 }
