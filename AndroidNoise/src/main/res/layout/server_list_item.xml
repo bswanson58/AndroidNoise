@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
@@ -8,10 +8,21 @@
               android:paddingBottom="@dimen/noise_base_padding"
               android:descendantFocusability="blocksDescendants">
 
+    <Button
+        android:id="@+id/sli_manage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="@dimen/noise_base_padding"
+        android:background="@drawable/configure"
+        />
+
     <TextView
         android:id="@+id/sli_name"
         android:layout_height="wrap_content"
         android:layout_width="fill_parent"
+        android:layout_marginLeft="@dimen/noise_base_padding"
+        android:layout_toLeftOf="@id/sli_manage"
         android:text="@string/test_server_name"
         style="@style/TitleText"/>
 
@@ -19,13 +30,11 @@
         android:id="@+id/sli_address"
         android:layout_height="wrap_content"
         android:layout_width="fill_parent"
-        android:layout_marginLeft="@dimen/noise_sub_item_indent"
+        android:layout_below="@id/sli_name"
+        android:layout_toLeftOf="@id/sli_manage"
+        android:layout_marginLeft="@dimen/noise_base_padding"
+        android:paddingLeft="@dimen/noise_sub_item_indent"
         android:text="@string/test_server_address"
         style="@style/SubTitleText" />
 
-    <Button
-        android:id="@+id/sli_manage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Manage"/>
-</LinearLayout>
+</RelativeLayout>
