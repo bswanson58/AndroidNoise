@@ -108,13 +108,17 @@ public class LibraryConfiguration extends Fragment {
 				}
 
 				@Override
-				public void onNothingSelected( AdapterView<?> adapterView ) {
-
-				}
+				public void onNothingSelected( AdapterView<?> adapterView ) { }
 			} );
 		}
 
 		return( myView );
+	}
+
+	@SuppressWarnings( "unused" )
+	@OnClick( R.id.lm_sync_library )
+	public void onClickSync() {
+		syncLibrary();
 	}
 
 	private void setSelectedLibrary( long libraryId ) {
@@ -149,22 +153,23 @@ public class LibraryConfiguration extends Fragment {
 	@SuppressWarnings( "unused" )
 	@OnClick( R.id.lm_close )
 	public void onClickClose() {
-		mEventBus.post( new EventLibraryManagementRequest());
+		mEventBus.post( new EventLibraryManagementRequest() );
 	}
 
 	private void getLibraries() {
 		AndroidObservable.fromFragment( this, mNoiseLibrary.getLibraries())
 				.subscribe( new Action1<Library[]>() {
-					@Override
-					public void call( Library[] libraries ) {
-						updateLibraries( libraries );
-					}
-				}, new Action1<Throwable>() {
+					            @Override
+					            public void call( Library[] libraries ) {
+						            updateLibraries( libraries );
+					            }
+				            }, new Action1<Throwable>() {
 					            @Override
 					            public void call( Throwable throwable ) {
 						            Timber.e( throwable, "getLibraries" );
 					            }
-				            } );
+				            }
+				);
 	}
 
 	private void selectLibrary( final Library library ) {
@@ -189,6 +194,27 @@ public class LibraryConfiguration extends Fragment {
 					            }
 					);
 		}
+	}
+
+	private void syncLibrary() {
+		AndroidObservable.fromFragment( this, mNoiseLibrary.syncLibrary())
+				.subscribe( new Action1<BaseServerResult>() {
+					            @Override
+					            public void call( BaseServerResult result ) {
+						            if( result.Success ) {
+							            Toast.makeText( getActivity(), "Library update has been started.", Toast.LENGTH_LONG ).show();
+						            }
+						            else {
+							            Toast.makeText( getActivity(), "Could not start library update.", Toast.LENGTH_LONG ).show();
+						            }
+					            }
+				            }, new Action1<Throwable>() {
+					            @Override
+					            public void call( Throwable throwable ) {
+						            Timber.e( throwable, "syncLibrary" );
+					            }
+				            }
+				);
 	}
 
 	private void updateLibraries( Library[] libraries ) {
