@@ -23,24 +23,10 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
 
-        <LinearLayout
+        <FrameLayout
+            android:id="@+id/transport_panel"
             android:layout_width="match_parent"
-            android:layout_height="256dp"
-            android:orientation="vertical"
-            android:clickable="true">
-            <FrameLayout
-                android:id="@+id/transport_playback_information"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:clickable="true"/>
-            <FrameLayout
-                android:id="@+id/transport_controls"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:clickable="true"/>
-
-        </LinearLayout>
-
+            android:layout_height="wrap_content"/>
 
     </com.SecretSquirrel.AndroidNoise.views.SlidingPanelLayout>
 

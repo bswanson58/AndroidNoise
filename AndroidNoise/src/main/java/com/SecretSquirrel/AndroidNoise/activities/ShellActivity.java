@@ -68,8 +68,7 @@ public class ShellActivity extends ActionBarActivity
 
 		getSupportFragmentManager()
 				.beginTransaction()
-				.replace( R.id.transport_playback_information, PlaybackInformationFragment.newInstance())
-				.replace( R.id.transport_controls, TransportFragment.newInstance())
+				.replace( R.id.transport_panel, PlaybackShellFragment.newInstance())
 				.commit();
 
 		mNavigationDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById( R.id.navigation_drawer );
