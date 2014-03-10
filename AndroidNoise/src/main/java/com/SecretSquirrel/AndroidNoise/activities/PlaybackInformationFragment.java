@@ -306,8 +306,14 @@ public class PlaybackInformationFragment extends Fragment
 
 				if( mDisplayRemaining ) {
 					currentPosition = mTrackLength - currentProgress;
+					if( currentPosition < 0 ) {
+						currentPosition = 0;
+					}
 				}
 				else {
+					if( currentProgress > mTrackLength ) {
+						currentProgress = mTrackLength;
+					}
 					currentPosition = currentProgress;
 				}
 				displayStatus( mPlaybackPlayingFormat, NoiseUtils.formatPlaybackPosition( currentPosition, mDisplayRemaining ), currentProgress );
