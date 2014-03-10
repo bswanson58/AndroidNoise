@@ -2,10 +2,12 @@ package com.SecretSquirrel.AndroidNoise.activities;
 
 // Created by BSwanson on 2/27/14.
 
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -59,6 +61,9 @@ public class PlaybackInformationFragment extends Fragment
 	private ArtistInfo          mArtistInfo;
 	private AlbumInfo           mAlbumInfo;
 	private Bitmap              mUnknownArtist;
+	private boolean             mDisplayRemaining;
+	private String              mPlaybackPlayingFormat;
+	private String              mPlaybackPausedFormat;
 
 	private Runnable            mTimerRunnable = new Runnable() {
 		@Override
@@ -97,6 +102,9 @@ public class PlaybackInformationFragment extends Fragment
 
 		mTimerHandler = new Handler();
 		mUnknownArtist = BitmapFactory.decodeResource( getResources(), R.drawable.unknown_artist );
+
+		mPlaybackPlayingFormat = getString( R.string.playback_now_playing );
+		mPlaybackPausedFormat = getString( R.string.playback_paused );
 	}
 
 	@Override
@@ -144,6 +152,10 @@ public class PlaybackInformationFragment extends Fragment
 
 		displayStatus();
 		displayTrackInformation();
+
+		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences( getActivity());
+
+		mDisplayRemaining = settings.getBoolean( getString( R.string.setting_playback_countdown ), false );
 	}
 
 	@Override
@@ -282,27 +294,40 @@ public class PlaybackInformationFragment extends Fragment
 	}
 
 	private void displayStatus() {
+		long    currentPosition;
+
 		switch( mPlayState ) {
 			case 1: // Stopped
 				clearDisplay();
 				break;
 
 			case 2: // Playing
-				long    timeOffset = System.currentTimeMillis() - mLastReceived;
-				long    currentPosition = mLastPosition + timeOffset - mServerTimeOffset;
+				long    currentProgress = mLastPosition + ( System.currentTimeMillis() - mLastReceived ) - mServerTimeOffset;
 
-				displayStatus( "Now Playing: %s", NoiseUtils.formatTrackDuration( currentPosition ), currentPosition );
+				if( mDisplayRemaining ) {
+					currentPosition = mTrackLength - currentProgress;
+				}
+				else {
+					currentPosition = currentProgress;
+				}
+				displayStatus( mPlaybackPlayingFormat, NoiseUtils.formatPlaybackPosition( currentPosition, mDisplayRemaining ), currentProgress );
 				break;
 
 			case 3: // Paused
-				displayStatus( "Paused: %s", NoiseUtils.formatTrackDuration( mLastPosition ), mLastPosition );
+				if( mDisplayRemaining ) {
+					currentPosition = mTrackLength - mLastPosition;
+				}
+				else {
+					currentPosition = mLastPosition;
+				}
+				displayStatus( mPlaybackPausedFormat, NoiseUtils.formatPlaybackPosition( currentPosition, mDisplayRemaining ), mLastPosition );
 				break;
 		}
 	}
 
 	private void displayStatus( String header, String playbackTime, long currentPosition ) {
 		if( mCurrentlyPlaying != null ) {
-			mStatusView.setText( String.format( header, mCurrentlyPlaying.getTrackName() ));
+			mStatusView.setText( String.format( header, mCurrentlyPlaying.getTrackName()));
 
 			mPlaybackPosition.setText( playbackTime );
 			mPlaybackProgress.setMax((int)mTrackLength );

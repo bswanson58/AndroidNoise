@@ -65,6 +65,8 @@
     <string name="published_year_format">Published: %1$s</string>
     <string name="atl_multiple_albums">(available on multiple albums - tap to display)</string>
     <string name="artist_tracks_albums_subtitle">is contained on the following albums:</string>
+    <string name="playback_now_playing">Now Playing: %1$s</string>
+    <string name="playback_paused">Paused: %1$s</string>
 
     <string name="transport_play">Play</string>
     <string name="transport_stop">Stop</string>
@@ -97,6 +99,10 @@
     <string name="setting_prefix_artist_names">prefix_artist_names</string>
     <string name="setting_prefix_artist_names_title">Sort Artist List Without Prefixes</string>
     <string name="setting_prefix_artist_names_summary">Sort the artist list without common name prefixes (such as \'The\' )</string>
+
+    <string name="setting_playback_countdown">use_playback_countdown</string>
+    <string name="setting_playback_countdown_title">Display playback time remaining</string>
+    <string name="setting_playback_countdown_summary">Display time remaining instead of the position for the currently playing track</string>
 
     <string name="action_play_album">Play Album</string>
     <string name="action_filter_artist_list">Filter Artists</string>

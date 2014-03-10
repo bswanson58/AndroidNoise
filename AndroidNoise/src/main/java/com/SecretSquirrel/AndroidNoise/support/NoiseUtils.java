@@ -29,6 +29,16 @@ public class NoiseUtils {
 		return (retValue);
 	}
 
+	public static String formatPlaybackPosition( long duration, boolean countdown ) {
+		String  retValue = formatTrackDuration( duration );
+
+		if( countdown ) {
+			retValue = "-" + retValue;
+		}
+
+		return( retValue );
+	}
+
 	public static String formatTrackDuration( long duration ) {
 		return( String.format( "%d:%02d",
 				TimeUnit.MILLISECONDS.toMinutes( duration ),

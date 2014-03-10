@@ -16,5 +16,10 @@
             android:summary="@string/setting_prefix_artist_names_summary"
             android:defaultValue="false"/>
 
+        <CheckBoxPreference
+            android:key="@string/setting_playback_countdown"
+            android:title="@string/setting_playback_countdown_title"
+            android:summary="@string/setting_playback_countdown_summary"
+            android:defaultValue="false"/>
     </PreferenceCategory>
 </PreferenceScreen>
