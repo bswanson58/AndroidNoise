@@ -5,13 +5,44 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent">
 
-    <com.SecretSquirrel.AndroidNoise.views.VerticalSeekBar
-        android:id="@+id/pac_volume"
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:layout_width="60dp"
         android:layout_height="match_parent"
         android:layout_alignParentRight="true"
-        android:indeterminate="false"
-        android:layout_margin="@dimen/noise_base_padding"
-        />
+        android:layout_marginTop="@dimen/noise_base_padding"
+        android:layout_marginRight="@dimen/noise_base_padding"
+        >
+
+        <TextView
+            android:id="@+id/pac_volume_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:text="@string/playback_audio_volume_title"
+            style="@style/SubHeaderText"/>
+
+        <com.SecretSquirrel.AndroidNoise.views.VerticalSeekBar
+            android:id="@+id/pac_volume"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:layout_above="@id/pac_volume_title"
+            android:indeterminate="false"
+            />
+
+        <View
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginTop="@dimen/noise_base_padding"
+            android:background="@drawable/ic_volume_high"/>
+
+        <View
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_above="@id/pac_volume_title"
+            android:layout_marginBottom="@dimen/noise_base_padding"
+            android:background="@drawable/ic_volume_low"/>
+        </RelativeLayout>
 
 </RelativeLayout>

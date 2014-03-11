@@ -1,3 +1,56 @@
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Layer_1" x="0px" y="0px" width="32px" height="32px" viewBox="0 0 32 32" enable-background="new 0 0 32 32" xml:space="preserve">
-<path id="volume1" d="M4.999,12.054v7.896h4.495l6.729,5.521l0.004-18.943l-6.729,5.526H4.999L4.999,12.054z M18.807,11.146  c-0.395-0.389-1.021-0.389-1.416,0.003C17,11.54,17,12.172,17.393,12.564v-0.002c0.863,0.864,1.396,2.05,1.396,3.366  c0,1.313-0.531,2.496-1.395,3.358C17,19.679,17,20.31,17.393,20.706c0.193,0.195,0.449,0.293,0.707,0.293s0.521-0.098,0.709-0.293  c1.221-1.221,1.979-2.916,1.979-4.775C20.789,14.063,20.027,12.366,18.807,11.146z"/>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.1"
+   id="Layer_1"
+   x="0px"
+   y="0px"
+   width="27"
+   height="27"
+   viewBox="0 0 27 27"
+   enable-background="new 0 0 32 32"
+   xml:space="preserve"
+   inkscape:version="0.48.4 r9939"
+   sodipodi:docname="volume_low.svg"
+   inkscape:export-filename="D:\Sandbox\AndroidNoise\AndroidNoise\design\volume_low.png"
+   inkscape:export-xdpi="333.32999"
+   inkscape:export-ydpi="333.32999"><metadata
+   id="metadata2999"><rdf:RDF><cc:Work
+       rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
+         rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title></dc:title></cc:Work></rdf:RDF></metadata><defs
+   id="defs2997" /><sodipodi:namedview
+   pagecolor="#ffffff"
+   bordercolor="#666666"
+   borderopacity="1"
+   objecttolerance="10"
+   gridtolerance="10"
+   guidetolerance="10"
+   inkscape:pageopacity="0"
+   inkscape:pageshadow="2"
+   inkscape:window-width="1695"
+   inkscape:window-height="987"
+   id="namedview2995"
+   showgrid="false"
+   fit-margin-top="4"
+   fit-margin-left="4"
+   fit-margin-right="8"
+   fit-margin-bottom="4"
+   inkscape:zoom="7.375"
+   inkscape:cx="-6.1515427"
+   inkscape:cy="13.470999"
+   inkscape:window-x="1393"
+   inkscape:window-y="70"
+   inkscape:window-maximized="0"
+   inkscape:current-layer="Layer_1" />
+<path
+   id="volume1"
+   d="m 3.9999997,9.5829992 v 7.8959998 h 4.495 l 6.7290003,5.521 0.004,-18.9429998 -6.7290003,5.526 h -4.499 l 0,0 z M 17.808,8.6749992 c -0.395,-0.389 -1.021,-0.389 -1.416,0.003 -0.391,0.391 -0.391,1.023 0.002,1.4149998 v -0.002 c 0.863,0.864 1.396,2.05 1.396,3.366 0,1.313 -0.531,2.496 -1.395,3.358 -0.394,0.393 -0.394,1.024 -0.001,1.42 0.193,0.195 0.449,0.293 0.707,0.293 0.258,0 0.521,-0.098 0.709,-0.293 1.221,-1.221 1.979,-2.916 1.979,-4.775 10e-4,-1.868 -0.761,-3.5649998 -1.981,-4.7849998 z"
+   inkscape:connector-curvature="0"
+   style="fill:#000000;fill-opacity:0.62745098" />
 </svg>

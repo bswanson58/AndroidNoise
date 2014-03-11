@@ -67,6 +67,7 @@
     <string name="artist_tracks_albums_subtitle">is contained on the following albums:</string>
     <string name="playback_now_playing">Now Playing: %1$s</string>
     <string name="playback_paused">Paused: %1$s</string>
+    <string name="playback_audio_volume_title">Volume</string>
 
     <string name="transport_play">Play</string>
     <string name="transport_stop">Stop</string>
