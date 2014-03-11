@@ -18,6 +18,7 @@ import com.SecretSquirrel.AndroidNoise.R;
 import com.SecretSquirrel.AndroidNoise.dto.AlbumInfo;
 import com.SecretSquirrel.AndroidNoise.dto.ArtistInfo;
 import com.SecretSquirrel.AndroidNoise.dto.PlayQueueTrack;
+import com.SecretSquirrel.AndroidNoise.events.EventAlbumRequest;
 import com.SecretSquirrel.AndroidNoise.events.EventArtistRequest;
 import com.SecretSquirrel.AndroidNoise.events.EventQueueUpdated;
 import com.SecretSquirrel.AndroidNoise.events.EventServerSelected;
@@ -115,10 +116,18 @@ public class PlaybackInformationFragment extends Fragment
 	}
 
 	@SuppressWarnings( "unused" )
-	@OnClick( R.id.pi_artist_image )
-	public void onClickArtistImage() {
+	@OnClick( R.id.pi_artist_name )
+	public void onClickArtistName() {
 		if( mCurrentlyPlaying != null ) {
 			mEventBus.post( new EventArtistRequest( mCurrentlyPlaying.getArtistId()));
+		}
+	}
+
+	@SuppressWarnings( "unused" )
+	@OnClick( R.id.pi_album_name )
+	public void onClickAlbumName() {
+		if( mCurrentlyPlaying != null ) {
+			mEventBus.post( new EventAlbumRequest( mCurrentlyPlaying.getArtistId(), mCurrentlyPlaying.getAlbumId()));
 		}
 	}
 
