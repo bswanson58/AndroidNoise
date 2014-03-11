@@ -7,15 +7,21 @@
               android:clickable="true">
 
     <FrameLayout
+        android:id="@+id/transport_playback_status"
+        android:layout_width="match_parent"
+        android:layout_height="34dp"
+        android:clickable="true"/>
+
+    <FrameLayout
         android:id="@+id/transport_playback_information"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="166dp"
         android:clickable="true"/>
 
     <FrameLayout
         android:id="@+id/transport_controls"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="56dp"
         android:clickable="true"/>
 
 </LinearLayout>

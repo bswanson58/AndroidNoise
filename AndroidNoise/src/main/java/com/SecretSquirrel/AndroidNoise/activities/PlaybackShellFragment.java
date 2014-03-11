@@ -17,7 +17,8 @@ public class PlaybackShellFragment extends Fragment {
 	public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState ) {
 		getChildFragmentManager()
 				.beginTransaction()
-				.replace( R.id.transport_playback_information, PlaybackInformationFragment.newInstance())
+				.replace( R.id.transport_playback_status, PlaybackStatusFragment.newInstance())
+				.replace( R.id.transport_playback_information, PlaybackPagerFragment.newInstance())
 				.replace( R.id.transport_controls, TransportFragment.newInstance())
 				.commit();
 
