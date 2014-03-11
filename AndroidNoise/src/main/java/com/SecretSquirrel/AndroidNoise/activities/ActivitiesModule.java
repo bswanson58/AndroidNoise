@@ -23,6 +23,7 @@ import dagger.Module;
 				ArtistTracksAlbumsFragment.class,
 				FavoritesListFragment.class,
 				LibraryConfiguration.class,
+				PlaybackAudioFragment.class,
 				PlaybackInformationFragment.class,
 				PlaybackStatusFragment.class,
 				QueueListFragment.class,

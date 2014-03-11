@@ -2,6 +2,7 @@ package com.SecretSquirrel.AndroidNoise.services;
 
 // Created by BSwanson on 2/27/14.
 
+import com.SecretSquirrel.AndroidNoise.dto.AudioState;
 import com.SecretSquirrel.AndroidNoise.dto.ServerTimeSync;
 import com.SecretSquirrel.AndroidNoise.dto.TransportState;
 import com.SecretSquirrel.AndroidNoise.events.EventActivityPausing;
@@ -9,6 +10,8 @@ import com.SecretSquirrel.AndroidNoise.events.EventActivityResuming;
 import com.SecretSquirrel.AndroidNoise.events.EventServerSelected;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseTransport;
 import com.SecretSquirrel.AndroidNoise.services.noiseApi.RemoteServerTransportApi;
+import com.SecretSquirrel.AndroidNoise.services.rto.AudioStateResult;
+import com.SecretSquirrel.AndroidNoise.services.rto.BaseServerResult;
 import com.SecretSquirrel.AndroidNoise.services.rto.RoTimeSync;
 import com.SecretSquirrel.AndroidNoise.services.rto.RoTransportState;
 
@@ -61,12 +64,12 @@ public class NoiseTransportClient implements INoiseTransport {
 	}
 
 	@Override
-	public Observable<ServerTimeSync> SyncServerTime() {
+	public Observable<ServerTimeSync> syncServerTime() {
 		return( Observable.create( new Observable.OnSubscribeFunc<ServerTimeSync>() {
 			@Override
 			public Subscription onSubscribe( Observer<? super ServerTimeSync> observer ) {
 				try {
-					RoTimeSync  roTimeSync = getService().SyncServerTime( System.currentTimeMillis());
+					RoTimeSync  roTimeSync = getService().syncServerTime( System.currentTimeMillis() );
 
 					if( roTimeSync.Success ) {
 						observer.onNext( new ServerTimeSync( roTimeSync ));
@@ -86,12 +89,12 @@ public class NoiseTransportClient implements INoiseTransport {
 	}
 
 	@Override
-	public Observable<TransportState> GetTransportState() {
+	public Observable<TransportState> getTransportState() {
 		return( Observable.create( new Observable.OnSubscribeFunc<TransportState>() {
 			@Override
 			public Subscription onSubscribe( Observer<? super TransportState> observer ) {
 				try {
-					RoTransportState    roState = getService().GetTransportState();
+					RoTransportState    roState = getService().getTransportState();
 
 					if( roState.Success ) {
 						observer.onNext( new TransportState( roState ));
@@ -99,6 +102,56 @@ public class NoiseTransportClient implements INoiseTransport {
 					}
 					else {
 						observer.onError( new Exception( roState.ErrorMessage ));
+					}
+				}
+				catch( Exception ex ) {
+					observer.onError( ex );
+				}
+
+				return( Subscriptions.empty());
+			}
+		} ).subscribeOn( Schedulers.threadPoolForIO() ));
+	}
+
+	@Override
+	public Observable<AudioState> getAudioState() {
+		return( Observable.create( new Observable.OnSubscribeFunc<AudioState>() {
+			@Override
+			public Subscription onSubscribe( Observer<? super AudioState> observer ) {
+				try {
+					AudioStateResult    result = getService().getAudioState();
+
+					if( result.Success ) {
+						observer.onNext( new AudioState( result.AudioState ));
+						observer.onCompleted();
+					}
+					else {
+						observer.onError( new Exception( result.ErrorMessage ));
+					}
+				}
+				catch( Exception ex ) {
+					observer.onError( ex );
+				}
+
+				return( Subscriptions.empty());
+			}
+		} ).subscribeOn( Schedulers.threadPoolForIO() ));
+	}
+
+	@Override
+	public Observable<BaseServerResult> setAudioState( final AudioState state ) {
+		return( Observable.create( new Observable.OnSubscribeFunc<BaseServerResult>() {
+			@Override
+			public Subscription onSubscribe( Observer<? super BaseServerResult> observer ) {
+				try {
+					BaseServerResult    result = getService().setAudioState( state.asRoAudioState());
+
+					if( result.Success ) {
+						observer.onNext( result );
+						observer.onCompleted();
+					}
+					else {
+						observer.onError( new Exception( result.ErrorMessage ));
 					}
 				}
 				catch( Exception ex ) {

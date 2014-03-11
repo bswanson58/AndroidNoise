@@ -10,8 +10,11 @@ import android.widget.SeekBar;
 
 // from: http://stackoverflow.com/questions/18395064/android-vertical-seek-bar-like-google-play-music-app
 
-@SuppressWarnings( "unused" )
+@SuppressWarnings("unused")
 public class VerticalSeekBar extends SeekBar {
+	protected OnSeekBarChangeListener changeListener;
+	protected int x, y, z, w;
+
 	public VerticalSeekBar( Context context ) {
 		super( context );
 	}
@@ -24,16 +27,23 @@ public class VerticalSeekBar extends SeekBar {
 		super( context, attrs );
 	}
 
-	protected void onSizeChanged( int w, int h, int oldw, int oldh ) {
+	@Override
+	protected synchronized void onSizeChanged( int w, int h, int oldw, int oldh ) {
 		super.onSizeChanged( h, w, oldh, oldw );
+
+		this.x = w;
+		this.y = h;
+		this.z = oldw;
+		this.w = oldh;
 	}
 
 	@Override
-	protected synchronized void onMeasure( int widthMeasureSpec, int heightMeasureSpec ) {
+	protected void onMeasure( int widthMeasureSpec, int heightMeasureSpec ) {
 		super.onMeasure( heightMeasureSpec, widthMeasureSpec );
 		setMeasuredDimension( getMeasuredHeight(), getMeasuredWidth() );
 	}
 
+	@Override
 	protected void onDraw( Canvas c ) {
 		c.rotate( -90 );
 		c.translate( -getHeight(), 0 );
@@ -49,16 +59,51 @@ public class VerticalSeekBar extends SeekBar {
 
 		switch( event.getAction() ) {
 			case MotionEvent.ACTION_DOWN:
-			case MotionEvent.ACTION_MOVE:
+				setSelected( true );
+				setPressed( true );
+				if( changeListener != null ) {
+					changeListener.onStartTrackingTouch( this );
+				}
+				break;
 			case MotionEvent.ACTION_UP:
-				setProgress( getMax() - (int) (getMax() * event.getY() / getHeight()) );
+				setSelected( false );
+				setPressed( false );
+				if( changeListener != null ) {
+					changeListener.onStopTrackingTouch( this );
+				}
+				break;
+			case MotionEvent.ACTION_MOVE:
+				int progress = getMax() - (int) (getMax() * event.getY() / getHeight());
+				setProgress( progress );
 				onSizeChanged( getWidth(), getHeight(), 0, 0 );
-
+				if( changeListener != null ) {
+					changeListener.onProgressChanged( this, progress, true );
+				}
 				break;
 
 			case MotionEvent.ACTION_CANCEL:
 				break;
 		}
 		return true;
+	}
+
+	@Override
+	public synchronized void setOnSeekBarChangeListener( OnSeekBarChangeListener listener ) {
+		changeListener = listener;
+	}
+
+	@Override
+	public synchronized void setProgress( int progress ) {
+		if( progress >= 0 ) {
+			super.setProgress( progress );
+		}
+
+		else {
+			super.setProgress( 0 );
+		}
+		onSizeChanged( x, y, z, w );
+		if( changeListener != null ) {
+			changeListener.onProgressChanged( this, progress, false );
+		}
 	}
 }

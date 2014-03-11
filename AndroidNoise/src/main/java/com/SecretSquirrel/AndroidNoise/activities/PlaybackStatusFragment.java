@@ -160,7 +160,7 @@ public class PlaybackStatusFragment extends Fragment {
 	}
 
 	private void syncTime() {
-		AndroidObservable.fromFragment( this, mNoiseTransport.SyncServerTime() )
+		AndroidObservable.fromFragment( this, mNoiseTransport.syncServerTime() )
 				.subscribe( new Action1<ServerTimeSync>() {
 					            @Override
 					            public void call( ServerTimeSync timeSync ) {
@@ -178,7 +178,7 @@ public class PlaybackStatusFragment extends Fragment {
 	}
 
 	private void getCurrentTransportState() {
-		AndroidObservable.fromFragment( this, mNoiseTransport.GetTransportState())
+		AndroidObservable.fromFragment( this, mNoiseTransport.getTransportState())
 				.subscribe( new Action1<TransportState>() {
 					            @Override
 					            public void call( TransportState state ) {
@@ -192,7 +192,7 @@ public class PlaybackStatusFragment extends Fragment {
 				            }, new Action1<Throwable>() {
 					            @Override
 					            public void call( Throwable throwable ) {
-						            Timber.e( "The GetTransportState call failed: " + throwable );
+						            Timber.e( "The getTransportState call failed: " + throwable );
 					            }
 				            }
 				);
