@@ -13,7 +13,6 @@ import com.SecretSquirrel.AndroidNoise.R;
 
 public class PlaybackPagerFragment extends Fragment {
 	private PageAdapter     mPageAdapter;
-	private ViewPager       mPager;
 
 	public static PlaybackPagerFragment newInstance() {
 		return( new PlaybackPagerFragment());
@@ -31,8 +30,9 @@ public class PlaybackPagerFragment extends Fragment {
 		View    myView = inflater.inflate( R.layout.fragment_playback_pager, container, false );
 
 		if( myView != null ) {
-			mPager = (ViewPager)myView.findViewById( R.id.pp_container );
-			mPager.setAdapter( mPageAdapter );
+			ViewPager   viewPager = (ViewPager)myView.findViewById( R.id.pp_container );
+
+			viewPager.setAdapter( mPageAdapter );
 		}
 
 		return( myView );
@@ -45,7 +45,7 @@ public class PlaybackPagerFragment extends Fragment {
 
 		@Override
 		public int getCount() {
-			return( 2 );
+			return( 3 );
 		}
 
 		@Override
@@ -60,8 +60,12 @@ public class PlaybackPagerFragment extends Fragment {
 				case 1:
 					fragment = PlaybackAudioFragment.newInstance();
 					break;
+
+				case 2:
+					fragment = PlaybackStrategyFragment.newInstance();
 			}
 
 			return( fragment );
 		}
-	}}
+	}
+}
