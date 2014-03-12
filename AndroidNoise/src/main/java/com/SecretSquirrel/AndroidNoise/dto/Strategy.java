@@ -5,6 +5,9 @@ package com.SecretSquirrel.AndroidNoise.dto;
 import com.SecretSquirrel.AndroidNoise.services.rto.RoQueueStrategy;
 
 public class Strategy {
+	public static final int ParameterTypeArtist = 1;
+	public static final int ParameterTypeGenre = 2;
+
 	private int         mStrategyId;
 	private String      mStrategyName;
 	private String      mStrategyDescription;
