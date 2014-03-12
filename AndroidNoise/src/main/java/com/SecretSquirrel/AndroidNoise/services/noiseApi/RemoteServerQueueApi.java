@@ -1,9 +1,10 @@
 package com.SecretSquirrel.AndroidNoise.services.noiseApi;
 
-// Secret Squirrel Software - Created by bswanson on 12/19/13.
+// Secret Squirrel Software - Created by BSwanson on 12/19/13.
 
 import com.SecretSquirrel.AndroidNoise.services.rto.BaseServerResult;
 import com.SecretSquirrel.AndroidNoise.services.rto.RoPlayQueueListResult;
+import com.SecretSquirrel.AndroidNoise.services.rto.StrategyInformationResult;
 
 import retrofit.http.GET;
 import retrofit.http.Query;
@@ -26,4 +27,11 @@ public interface RemoteServerQueueApi {
 
 	@GET( "/Noise/Queue/queueItemCommand" )
 	public BaseServerResult     ExecuteQueueItemCommand( @Query( "command") int command, @Query( "item" ) long itemId );
+
+	@GET( "/Noise/Queue/queueStrategyInformation" )
+	public StrategyInformationResult GetQueueStrategyInformation();
+
+	@GET( "/noise/Queue/setQueueStrategy" )
+	public BaseServerResult     SetQueueStrategies( @Query( "playStrategy" ) int playStrategyId, @Query( "playParameter" ) long playStrategyParameter,
+	                                                @Query( "exhaustedStrategy" ) int exhaustedStrategy, @Query( "exhaustedParameter" ) long exhaustedStrategyParameter );
 }

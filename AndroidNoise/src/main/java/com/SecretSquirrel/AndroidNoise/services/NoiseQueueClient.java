@@ -1,11 +1,12 @@
 package com.SecretSquirrel.AndroidNoise.services;
 
-// Secret Squirrel Software - Created by bswanson on 12/17/13.
+// Secret Squirrel Software - Created by BSwanson on 12/17/13.
 
 import com.SecretSquirrel.AndroidNoise.dto.Album;
 import com.SecretSquirrel.AndroidNoise.dto.PlayQueueListResult;
 import com.SecretSquirrel.AndroidNoise.dto.QueuedAlbumResult;
 import com.SecretSquirrel.AndroidNoise.dto.QueuedTrackResult;
+import com.SecretSquirrel.AndroidNoise.dto.StrategyInformation;
 import com.SecretSquirrel.AndroidNoise.dto.Track;
 import com.SecretSquirrel.AndroidNoise.events.EventActivityPausing;
 import com.SecretSquirrel.AndroidNoise.events.EventActivityResuming;
@@ -13,6 +14,7 @@ import com.SecretSquirrel.AndroidNoise.events.EventServerSelected;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseQueue;
 import com.SecretSquirrel.AndroidNoise.services.rto.BaseServerResult;
 import com.SecretSquirrel.AndroidNoise.services.noiseApi.RemoteServerQueueApi;
+import com.SecretSquirrel.AndroidNoise.services.rto.StrategyInformationResult;
 
 import java.util.EnumMap;
 
@@ -257,6 +259,51 @@ public class NoiseQueueClient implements INoiseQueue {
 			public Subscription onSubscribe( Observer<? super BaseServerResult> observer ) {
 				try {
 					observer.onNext( new BaseServerResult( getService().ExecuteQueueItemCommand( mQueueItemCommands.get( command ), itemId )));
+					observer.onCompleted();
+				}
+				catch( Exception ex ) {
+					observer.onError( ex );
+				}
+
+				return( Subscriptions.empty());
+			}
+		} )).subscribeOn( Schedulers.threadPoolForIO());
+	}
+
+	@Override
+	public Observable<StrategyInformation> GetStrategyInformation() {
+		return( Observable.create( new Observable.OnSubscribeFunc<StrategyInformation>() {
+			@Override
+			public Subscription onSubscribe( Observer<? super StrategyInformation> observer ) {
+				try {
+					StrategyInformationResult   result = getService().GetQueueStrategyInformation();
+
+					if( result.Success ) {
+						observer.onNext( new StrategyInformation( result.StrategyInformation ));
+						observer.onCompleted();
+					}
+					else {
+						observer.onError( new Throwable( result.ErrorMessage ));
+					}
+				}
+				catch( Exception ex ) {
+					observer.onError( ex );
+				}
+
+				return( Subscriptions.empty());
+			}
+		} )).subscribeOn( Schedulers.threadPoolForIO());
+	}
+
+	@Override
+	public Observable<BaseServerResult> SetStrategyInformation( final int playStrategyId, final long playStrategyParameter,
+	                                                            final int exhaustedStrategyId, final long exhaustedStrategyParameter ) {
+		return( Observable.create( new Observable.OnSubscribeFunc<BaseServerResult>() {
+			@Override
+			public Subscription onSubscribe( Observer<? super BaseServerResult> observer ) {
+				try {
+					observer.onNext( new BaseServerResult( getService().SetQueueStrategies( playStrategyId, playStrategyParameter,
+																							exhaustedStrategyId, exhaustedStrategyParameter )));
 					observer.onCompleted();
 				}
 				catch( Exception ex ) {

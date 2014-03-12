@@ -1,11 +1,12 @@
 package com.SecretSquirrel.AndroidNoise.interfaces;
 
-// Secret Squirrel Software - Created by bswanson on 12/17/13.
+// Secret Squirrel Software - Created by BSwanson on 12/17/13.
 
 import com.SecretSquirrel.AndroidNoise.dto.Album;
 import com.SecretSquirrel.AndroidNoise.dto.PlayQueueListResult;
 import com.SecretSquirrel.AndroidNoise.dto.QueuedAlbumResult;
 import com.SecretSquirrel.AndroidNoise.dto.QueuedTrackResult;
+import com.SecretSquirrel.AndroidNoise.dto.StrategyInformation;
 import com.SecretSquirrel.AndroidNoise.dto.Track;
 import com.SecretSquirrel.AndroidNoise.services.rto.BaseServerResult;
 
@@ -43,4 +44,8 @@ public interface INoiseQueue {
 	public  Observable<BaseServerResult>    ExecuteTransportCommand( TransportCommand command );
 	public  Observable<BaseServerResult>    ExecuteQueueCommand( QueueCommand command );
 	public  Observable<BaseServerResult>    ExecuteQueueItemCommand( QueueItemCommand command, long itemId );
+
+	public  Observable<StrategyInformation> GetStrategyInformation();
+	public  Observable<BaseServerResult>    SetStrategyInformation( int playStrategyId, long playStrategyParameter,
+	                                                                int exhaustedStrategyId, long exhaustedStrategyParameter );
 }
