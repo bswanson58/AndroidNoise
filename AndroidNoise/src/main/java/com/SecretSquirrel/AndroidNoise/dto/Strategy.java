@@ -5,7 +5,7 @@ package com.SecretSquirrel.AndroidNoise.dto;
 import com.SecretSquirrel.AndroidNoise.services.rto.RoQueueStrategy;
 
 public class Strategy {
-	private long        mStrategyId;
+	private int         mStrategyId;
 	private String      mStrategyName;
 	private String      mStrategyDescription;
 	private boolean     mRequiresParameter;
@@ -21,7 +21,7 @@ public class Strategy {
 		mParameterTitle = roStrategy.ParameterTitle;
 	}
 
-	public long getStrategyId() {
+	public int getStrategyId() {
 		return( mStrategyId );
 	}
 

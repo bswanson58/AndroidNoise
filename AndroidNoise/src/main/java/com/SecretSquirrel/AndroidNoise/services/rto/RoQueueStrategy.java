@@ -6,7 +6,7 @@ public class RoQueueStrategy {
 	public final int    ParameterTypeArtist = 1;
 	public final int    ParameterTypeGenre = 2;
 
-	public long     StrategyId;
+	public int      StrategyId;
 	public String   StrategyName;
 	public String   StrategyDescription;
 	public boolean  RequiresParameter;

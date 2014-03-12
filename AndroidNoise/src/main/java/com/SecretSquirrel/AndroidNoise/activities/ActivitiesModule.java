@@ -26,6 +26,7 @@ import dagger.Module;
 				PlaybackAudioFragment.class,
 				PlaybackInformationFragment.class,
 				PlaybackStatusFragment.class,
+				PlaybackStrategyFragment.class,
 				QueueListFragment.class,
 				RecentlyPlayedListFragment.class,
 				RecentlyViewedListFragment.class,
