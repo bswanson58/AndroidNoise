@@ -17,6 +17,7 @@ public class StrategyInformation {
 	private ArrayList<Strategy>             mPlayStrategies;
 	private ArrayList<Strategy>             mExhaustedStrategies;
 	private ArrayList<StrategyParameter>    mGenreParameters;
+	private ArrayList<StrategyParameter>    mArtistParameters;
 
 	public StrategyInformation( RoStrategyInformation roStrategyInformation ) {
 		mPlayStrategyId = roStrategyInformation.PlayStrategy;
@@ -37,6 +38,11 @@ public class StrategyInformation {
 		mGenreParameters = new ArrayList<StrategyParameter>();
 		for( RoStrategyParameter roParameter : roStrategyInformation.GenreParameters ) {
 			mGenreParameters.add( new StrategyParameter( roParameter ));
+		}
+
+		mArtistParameters = new ArrayList<StrategyParameter>();
+		for( RoStrategyParameter roParameter : roStrategyInformation.ArtistParameters ) {
+			mArtistParameters.add( new StrategyParameter( roParameter ));
 		}
 	}
 
@@ -66,5 +72,9 @@ public class StrategyInformation {
 
 	public List<StrategyParameter> getGenreParameters() {
 		return( mGenreParameters );
+	}
+
+	public List<StrategyParameter> getArtistParameters() {
+		return( mArtistParameters );
 	}
 }

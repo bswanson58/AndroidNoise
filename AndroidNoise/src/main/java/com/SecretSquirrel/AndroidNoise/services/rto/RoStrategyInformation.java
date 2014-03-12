@@ -10,4 +10,5 @@ public class RoStrategyInformation {
 	public RoQueueStrategy[]        PlayStrategies;
 	public RoQueueStrategy[]        ExhaustedStrategies;
 	public RoStrategyParameter[]    GenreParameters;
+	public RoStrategyParameter[]    ArtistParameters;
 }

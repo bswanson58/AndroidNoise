@@ -39,6 +39,7 @@ import timber.log.Timber;
 public class PlaybackStrategyFragment extends Fragment {
 	private ArrayList<Strategy>             mPlayStrategies;
 	private ArrayList<Strategy>             mExhaustedStrategies;
+	private ArrayList<StrategyParameter>    mArtistParameters;
 	private ArrayList<StrategyParameter>    mGenreParameters;
 	private ArrayList<StrategyParameter>    mPlayParameters;
 	private ArrayList<StrategyParameter>    mExhaustedParameters;
@@ -80,6 +81,7 @@ public class PlaybackStrategyFragment extends Fragment {
 		mExhaustedStrategies = new ArrayList<Strategy>();
 		mExhaustedStrategyAdapter = new StrategyAdapter( getActivity(), mExhaustedStrategies );
 
+		mArtistParameters = new ArrayList<StrategyParameter>();
 		mGenreParameters = new ArrayList<StrategyParameter>();
 
 		mPlayParameters = new ArrayList<StrategyParameter>();
@@ -159,10 +161,9 @@ public class PlaybackStrategyFragment extends Fragment {
 			mExhaustedParameterSelector.setOnItemSelectedListener( new AdapterView.OnItemSelectedListener() {
 				@Override
 				public void onItemSelected( AdapterView<?> adapterView, View view, int i, long l ) {
-					StrategyParameter   parameter = mExhaustedParameters.get( i );
+					StrategyParameter parameter = mExhaustedParameters.get( i );
 
-					if(( parameter != null ) &&
-					   ( parameter.getParameterId() != mCurrentExhaustedParameter )) {
+					if( (parameter != null) && (parameter.getParameterId() != mCurrentExhaustedParameter) ) {
 						mCurrentExhaustedParameter = parameter.getParameterId();
 
 						setStrategyIfValid();
@@ -272,6 +273,9 @@ public class PlaybackStrategyFragment extends Fragment {
 		mExhaustedStrategies.addAll( strategyInformation.getExhaustedStrategies());
 		mExhaustedStrategyAdapter.notifyDataSetChanged();
 
+		mArtistParameters.clear();
+		mArtistParameters.addAll( strategyInformation.getArtistParameters());
+		
 		mGenreParameters.clear();
 		mGenreParameters.addAll( strategyInformation.getGenreParameters());
 	}
@@ -344,6 +348,7 @@ public class PlaybackStrategyFragment extends Fragment {
 				break;
 
 			case Strategy.ParameterTypeArtist:
+				list.addAll( mArtistParameters );
 				break;
 		}
 	}
