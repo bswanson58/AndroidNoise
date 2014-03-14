@@ -12,15 +12,16 @@ import com.SecretSquirrel.AndroidNoise.services.rto.ServiceInformation;
 
 import retrofit.RestAdapter;
 import rx.Observable;
-import rx.Observer;
+import rx.Subscriber;
 import rx.Subscription;
-import rx.schedulers.Schedulers;
-import rx.util.functions.Action1;
+import rx.functions.Action0;
+import rx.functions.Action1;
+import rx.subscriptions.Subscriptions;
 import timber.log.Timber;
 
 public class ServiceLocator {
-	public final static String                  NOISE_TYPE = "_Noise._Tcp.local.";
-	public final static String                  HOSTNAME = "NoiseRemote";
+	private final static String     NOISE_TYPE = "_Noise._Tcp.local.";
+	private final static String     HOSTNAME = "NoiseRemote";
 
 	public static Observable<ServerInformation> createServiceLocator( final Context context ) {
 		ServiceLocator  locator = new ServiceLocator();
@@ -31,46 +32,42 @@ public class ServiceLocator {
 	protected ServiceLocator() { }
 
 	private Observable<ServerInformation> createLocator( final Context context ) {
-		return( Observable.create( new Observable.OnSubscribeFunc<ServerInformation>() {
-			@Override
-			public Subscription onSubscribe( final Observer<? super ServerInformation> observer ) {
-				final Subscription locatorSubscription = ServiceLocatorObservable
-						.createServiceLocator( context, NOISE_TYPE, HOSTNAME )
-							.subscribe( new Action1<ServiceInformation>() {
-	                                @Override
-	                                public void call( ServiceInformation s ) {
-	                                    // Only return results on services Resolved or Deleted.
-	                                    if( s.getServiceState() != ServiceInformation.ServiceState.ServiceAdded ) {
-	                                        onServiceInformation( s, observer, context );
-	                                    }
-	                                }
-	                            }, new Action1<Throwable>() {
-									@Override
-									public void call( Throwable throwable ) {
-										observer.onError( throwable );
-									}
-								}
-						);
-
-				return( new Subscription() {
+		return( Observable
+				.create( new Observable.OnSubscribe<ServerInformation>() {
 					@Override
-					public void unsubscribe() {
-						locatorSubscription.unsubscribe();
+					public void call( final Subscriber<? super ServerInformation> subscriber ) {
+						final Subscription locatorSubscription = ServiceLocatorObservable
+								.createServiceLocator( context, NOISE_TYPE, HOSTNAME )
+								.subscribe( new Action1<ServiceInformation>() {
+									            @Override
+									            public void call( ServiceInformation s ) {
+										            // Only return results on services Resolved or Deleted.
+										            if((!subscriber.isUnsubscribed()) &&
+												      (( s.getServiceState() == ServiceInformation.ServiceState.ServiceResolved ) ||
+													   ( s.getServiceState() == ServiceInformation.ServiceState.ServiceDeleted ))) {
+											            onServiceInformation( s, subscriber, context );
+										            }
+									            }
+								            }, new Action1<Throwable>() {
+									            @Override
+									            public void call( Throwable throwable ) {
+										            subscriber.onError( throwable );
+									            }
+								            }
+								);
 
-						observer.onCompleted();
+						subscriber.add( Subscriptions.create( new Action0() {
+							@Override
+							public void call() {
+								locatorSubscription.unsubscribe();
+							}
+						} ));
 					}
-
-					@Override
-					public boolean isUnsubscribed() {
-						return( locatorSubscription.isUnsubscribed());
-					}
-				});
-			}
-		} )).subscribeOn( Schedulers.io());
+				} ));
 	}
 
 	private static void onServiceInformation( final ServiceInformation serviceInformation,
-	                                          final Observer<? super ServerInformation> observer,
+	                                          final Subscriber<? super ServerInformation> subscriber,
 	                                          final Context context ) {
 		Timber.d( "Retrieving server information for %s", serviceInformation.getHostAddress());
 
@@ -86,7 +83,9 @@ public class ServiceLocator {
 					if( serverInformation != null ) {
 						serverInformation.setServiceInformation( serviceInformation );
 
-						observer.onNext( serverInformation );
+						if(!subscriber.isUnsubscribed()) {
+							subscriber.onNext( serverInformation );
+						}
 					}
 				}
 			}
@@ -94,7 +93,7 @@ public class ServiceLocator {
 	}
 
 	private static RemoteServerRestApi createAdapter( String serverAddress ) {
-		RestAdapter restAdapter = new RestAdapter.Builder().setServer( serverAddress ).build();
+		RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint( serverAddress ).build();
 
 		return( restAdapter.create( RemoteServerRestApi.class ));
 	}
