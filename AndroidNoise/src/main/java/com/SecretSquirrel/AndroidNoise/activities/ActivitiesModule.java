@@ -24,6 +24,7 @@ import dagger.Module;
 				FavoritesListFragment.class,
 				LibraryConfiguration.class,
 				PlaybackAudioFragment.class,
+				PlaybackExhaustedStrategyFragment.class,
 				PlaybackInformationFragment.class,
 				PlaybackStatusFragment.class,
 				PlaybackPlayStrategyFragment.class,

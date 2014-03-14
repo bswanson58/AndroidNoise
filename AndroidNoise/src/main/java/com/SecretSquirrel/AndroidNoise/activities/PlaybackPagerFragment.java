@@ -45,7 +45,7 @@ public class PlaybackPagerFragment extends Fragment {
 
 		@Override
 		public int getCount() {
-			return( 3 );
+			return( 4 );
 		}
 
 		@Override
@@ -63,6 +63,11 @@ public class PlaybackPagerFragment extends Fragment {
 
 				case 2:
 					fragment = PlaybackPlayStrategyFragment.newInstance();
+					break;
+
+				case 3:
+					fragment = PlaybackExhaustedStrategyFragment.newInstance();
+					break;
 			}
 
 			return( fragment );

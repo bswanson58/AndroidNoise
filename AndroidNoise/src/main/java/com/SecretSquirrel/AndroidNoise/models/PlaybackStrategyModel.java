@@ -98,6 +98,36 @@ public class PlaybackStrategyModel {
 		return( mPlayParameters );
 	}
 
+	public int getCurrentExhaustedStrategy() {
+		return( mCurrentExhaustedStrategy );
+	}
+
+	public void setCurrentExhaustedStrategy( int playStrategy ) {
+		mCurrentExhaustedStrategy = playStrategy;
+
+		setStrategyIfValid();
+		notifySubscribers();
+	}
+
+	public List<Strategy> getExhaustedStrategies() {
+		return( mExhaustedStrategies );
+	}
+
+	public long getCurrentExhaustedParameter() {
+		return( mCurrentExhaustedParameter );
+	}
+
+	public void setCurrentExhaustedParameter( long parameter ) {
+		mCurrentExhaustedParameter = parameter;
+
+		setStrategyIfValid();
+		notifySubscribers();
+	}
+
+	public List<StrategyParameter> getExhaustedParameters() {
+		return( mExhaustedParameters );
+	}
+
 	private Boolean getSubject() {
 		return( mInitialized );
 	}
