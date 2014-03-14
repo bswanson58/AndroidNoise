@@ -2,10 +2,8 @@ package com.SecretSquirrel.AndroidNoise.services;
 
 import android.content.Context;
 import android.net.wifi.WifiManager;
-import android.util.Log;
 
 import com.SecretSquirrel.AndroidNoise.services.rto.ServiceInformation;
-import com.SecretSquirrel.AndroidNoise.support.Constants;
 import com.SecretSquirrel.AndroidNoise.support.NetworkUtility;
 import com.SecretSquirrel.AndroidNoise.support.ThreadExecutor;
 
@@ -17,20 +15,21 @@ import javax.jmdns.ServiceEvent;
 import javax.jmdns.ServiceInfo;
 
 import rx.Observable;
-import rx.Observer;
-import rx.Subscription;
+import rx.Subscriber;
+import rx.functions.Action0;
 import rx.schedulers.Schedulers;
+import rx.subjects.ReplaySubject;
+import rx.subscriptions.Subscriptions;
 import timber.log.Timber;
 
 // Created by BSwanson on 1/2/14.
 
 public class ServiceLocatorObservable implements javax.jmdns.ServiceListener {
-	private String                                  mServiceType;
-	private String                                  mHostName;
-	private Subscription                            mSubscription;
-	private Observer<? super ServiceInformation>    mObserver;
-	private JmDNS                                   mZeroConfig;
-	private static WifiManager.MulticastLock        mLock;
+	private String                              mServiceType;
+	private String                              mHostName;
+	private JmDNS                               mZeroConfig;
+	private ReplaySubject<ServiceInformation>   mSubject;
+	private static WifiManager.MulticastLock    mLock;
 
 	public static Observable<ServiceInformation> createServiceLocator(  Context context, String forServiceType, String hostName ) {
 		ServiceLocatorObservable    locator = new ServiceLocatorObservable();
@@ -44,38 +43,23 @@ public class ServiceLocatorObservable implements javax.jmdns.ServiceListener {
 		mServiceType = forServiceType;
 		mHostName = hostName;
 
-		mSubscription = new Subscription() {
-			@Override
-			public void unsubscribe() {
-				if( mObserver != null ) {
-					mObserver.onCompleted();
-					mObserver = null;
-				}
+		mSubject = ReplaySubject.create();
+		mSubject.subscribeOn( Schedulers.io());
 
-				stopProbe();
-			}
+		return( Observable
+					.create( new Observable.OnSubscribe<ServiceInformation>() {
+						@Override
+						public void call( Subscriber<? super ServiceInformation> subscriber ) {
+							startProbe( context );
 
-			@Override
-			public boolean isUnsubscribed() {
-				return( mObserver == null );
-			}
-		};
-
-		return( Observable.create( new Observable.OnSubscribeFunc<ServiceInformation>() {
-				@Override
-				public Subscription onSubscribe( Observer<? super ServiceInformation> observer ) {
-					if( mLock == null ) {
-						mObserver = observer;
-
-						startProbe( context );
-					}
-					else {
-						observer.onError( new Exception( "Only one subscription may be made to an active service locator" ));
-					}
-
-					return( mSubscription );
-				}
-			} ).subscribeOn( Schedulers.io()));
+							subscriber.add( Subscriptions.create( new Action0() {
+									@Override
+									public void call() {
+										stopProbe();
+									}
+								} ));
+						}
+					} ).multicast( mSubject ).refCount());
 	}
 
 	private void startProbe( Context context ) {
@@ -94,38 +78,48 @@ public class ServiceLocatorObservable implements javax.jmdns.ServiceListener {
 				mZeroConfig.addServiceListener( mServiceType, this );
 			}
 			catch( Exception ex ) {
-				mObserver.onError( ex );
+				mSubject.onError( ex );
 
 				Timber.e( ex, "failure starting ZeroConf probe." );
 
 				stopProbe();
 			}
 		}
+		else {
+			mSubject.onError( new Throwable( "Wifi lock is in use." ));
+		}
 	}
 
 	private void stopProbe() {
-		if( mZeroConfig != null ) {
-			mZeroConfig.removeServiceListener( mServiceType, this );
+		try {
+			if( mZeroConfig != null ) {
+				mZeroConfig.removeServiceListener( mServiceType, this );
 
-			ThreadExecutor.runTask( new Runnable() {
-				@Override
-				public void run() {
-				try {
-					if( mZeroConfig != null ) {
-						mZeroConfig.close();
-						mZeroConfig = null;
+				ThreadExecutor.runTask( new Runnable() {
+					@Override
+					public void run() {
+						try {
+							if( mZeroConfig != null ) {
+								mZeroConfig.close();
+								mZeroConfig = null;
+							}
+						}
+						catch( IOException ex ) {
+							Timber.e( ex, "ZeroConf error stopping probe" );
+						}
 					}
-				}
-				catch( IOException ex ) {
-					Timber.e( ex, "ZeroConf error stopping probe" );
-				}
-				}
-			} );
-		}
+				} );
+			}
 
-		if( mLock != null ) {
-			mLock.release();
-			mLock = null;
+			if( mLock != null ) {
+				mLock.release();
+				mLock = null;
+
+				Timber.d( "Wifi lock released." );
+			}
+		}
+		catch( Exception ex ) {
+			Timber.e( ex, "Attempting to stop ZeroConf probe." );
 		}
 	}
 
@@ -148,9 +142,7 @@ public class ServiceLocatorObservable implements javax.jmdns.ServiceListener {
 	}
 
 	private void publishEvent( ServiceInformation.ServiceState state, String serviceName ) {
-		if( mObserver != null ) {
-			mObserver.onNext( new ServiceInformation( state, getServiceInfo( serviceName )));
-		}
+		mSubject.onNext( new ServiceInformation( state, getServiceInfo( serviceName )));
 	}
 
 	private ServiceInfo getServiceInfo( String forName ) {
