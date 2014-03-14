@@ -2,16 +2,14 @@ package com.SecretSquirrel.AndroidNoise.models;
 
 // Created by BSwanson on 3/12/14.
 
-import android.content.Context;
-
 import com.SecretSquirrel.AndroidNoise.dto.Strategy;
 import com.SecretSquirrel.AndroidNoise.dto.StrategyInformation;
 import com.SecretSquirrel.AndroidNoise.dto.StrategyParameter;
 import com.SecretSquirrel.AndroidNoise.events.EventServerSelected;
+import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseQueue;
 import com.SecretSquirrel.AndroidNoise.services.rto.BaseServerResult;
 import com.SecretSquirrel.AndroidNoise.support.Constants;
-import com.SecretSquirrel.AndroidNoise.support.IocUtility;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,29 +17,31 @@ import java.util.List;
 import javax.inject.Inject;
 
 import de.greenrobot.event.EventBus;
+import rx.Observable;
+import rx.functions.Action1;
 import rx.subjects.BehaviorSubject;
-import rx.util.functions.Action1;
 import timber.log.Timber;
 
 public class PlaybackStrategyModel {
-	private ArrayList<Strategy>             mPlayStrategies;
-	private ArrayList<Strategy>             mExhaustedStrategies;
-	private ArrayList<StrategyParameter>    mArtistParameters;
-	private ArrayList<StrategyParameter>    mGenreParameters;
-	private ArrayList<StrategyParameter>    mPlayParameters;
-	private ArrayList<StrategyParameter>    mExhaustedParameters;
-	private int                             mCurrentPlayStrategy;
-	private long                            mCurrentPlayParameter;
-	private int                             mCurrentExhaustedStrategy;
-	private long                            mCurrentExhaustedParameter;
-	private BehaviorSubject<Object>         mOnStrategyChanged;
-
-	@Inject	EventBus                        mEventBus;
-	@Inject	INoiseQueue                     mNoiseQueue;
+	private final EventBus                      mEventBus;
+	private final INoiseQueue                   mNoiseQueue;
+	private final ArrayList<Strategy>           mPlayStrategies;
+	private final ArrayList<Strategy>           mExhaustedStrategies;
+	private final ArrayList<StrategyParameter>  mArtistParameters;
+	private final ArrayList<StrategyParameter>  mGenreParameters;
+	private final ArrayList<StrategyParameter>  mPlayParameters;
+	private final ArrayList<StrategyParameter>  mExhaustedParameters;
+	private final BehaviorSubject<Boolean>      mOnStrategyChanged;
+	private boolean                             mInitialized;
+	private int                                 mCurrentPlayStrategy;
+	private long                                mCurrentPlayParameter;
+	private int                                 mCurrentExhaustedStrategy;
+	private long                                mCurrentExhaustedParameter;
 
 	@Inject
-	public PlaybackStrategyModel( Context context ) {
-		IocUtility.inject( context, this );
+	public PlaybackStrategyModel( EventBus eventBus, IApplicationState applicationState, INoiseQueue noiseQueue ) {
+		mEventBus = eventBus;
+		mNoiseQueue = noiseQueue;
 
 		mPlayStrategies = new ArrayList<Strategy>();
 		mExhaustedStrategies = new ArrayList<Strategy>();
@@ -56,14 +56,56 @@ public class PlaybackStrategyModel {
 		mCurrentExhaustedParameter = Constants.NULL_ID;
 
 		mOnStrategyChanged = BehaviorSubject.create( getSubject());
+
+		mEventBus.register( this );
+
+		if( applicationState.getIsConnected()) {
+			getStrategyInformation();
+		}
 	}
 
-	private Object getSubject() {
-		return( this );
+	public Observable<Boolean> getStrategyChangedObservable() {
+		return( mOnStrategyChanged.asObservable());
+	}
+
+	public int getCurrentPlayStrategy() {
+		return( mCurrentPlayStrategy );
+	}
+
+	public void setCurrentPlayStrategy( int playStrategy ) {
+		mCurrentPlayStrategy = playStrategy;
+
+		setStrategyIfValid();
+		notifySubscribers();
+	}
+
+	public List<Strategy> getPlayStrategies() {
+		return( mPlayStrategies );
+	}
+
+	public long getCurrentPlayParameter() {
+		return( mCurrentPlayParameter );
+	}
+
+	public void setCurrentPlayParameter( long parameter ) {
+		mCurrentPlayParameter = parameter;
+
+		setStrategyIfValid();
+		notifySubscribers();
+	}
+
+	public List<StrategyParameter> getPlayParameters() {
+		return( mPlayParameters );
+	}
+
+	private Boolean getSubject() {
+		return( mInitialized );
 	}
 
 	@SuppressWarnings( "unused" )
 	public void onEvent( EventServerSelected args ) {
+		mInitialized = false;
+
 		getStrategyInformation();
 	}
 
@@ -73,8 +115,6 @@ public class PlaybackStrategyModel {
 					            @Override
 					            public void call( StrategyInformation strategyInformation ) {
 						            updateStrategyInformation( strategyInformation );
-
-						            updateDisplay();
 					            }
 				            }, new Action1<Throwable>() {
 					            @Override
@@ -123,16 +163,16 @@ public class PlaybackStrategyModel {
 				.subscribe( new Action1<BaseServerResult>() {
 					            @Override
 					            public void call( BaseServerResult result ) {
-						            if( !result.Success ) {
-							            //Toast.makeText( getActivity(), "Setting the strategy failed.", Toast.LENGTH_LONG ).show();
-						            }
-					            }
-				            }, new Action1<Throwable>() {
-					            @Override
-					            public void call( Throwable throwable ) {
-						            Timber.e( "The GetStrategyInformation call failed: " + throwable );
+					            if( !result.Success ) {
+						            Timber.e( "Setting the queue strategy failed." );
 					            }
 				            }
+			            }, new Action1<Throwable>() {
+				            @Override
+				            public void call( Throwable throwable ) {
+					            Timber.e( "The SetStrategyInformation call failed: " + throwable );
+				            }
+			            }
 				);
 	}
 
@@ -154,14 +194,15 @@ public class PlaybackStrategyModel {
 
 		mGenreParameters.clear();
 		mGenreParameters.addAll( strategyInformation.getGenreParameters());
+
+		updateStrategyParameters();
+
+		mInitialized = true;
+		notifySubscribers();
 	}
 
-	private void updateDisplay() {
-		int position = -1;
-
+	private void updateStrategyParameters() {
 		for( Strategy strategy : mPlayStrategies ) {
-			position++;
-
 			if( strategy.getStrategyId() == mCurrentPlayStrategy ) {
 				if( strategy.getRequiresParameter()) {
 					updateParameterList( mPlayParameters, strategy.getParameterType() );
@@ -174,10 +215,7 @@ public class PlaybackStrategyModel {
 			}
 		}
 
-		position = -1;
 		for( Strategy strategy : mExhaustedStrategies ) {
-			position++;
-
 			if( strategy.getStrategyId() == mCurrentExhaustedStrategy ) {
 				if( strategy.getRequiresParameter()) {
 					updateParameterList( mExhaustedParameters, strategy.getParameterType() );
@@ -203,5 +241,9 @@ public class PlaybackStrategyModel {
 				list.addAll( mArtistParameters );
 				break;
 		}
+	}
+
+	private void notifySubscribers() {
+		mOnStrategyChanged.onNext( getSubject());
 	}
 }

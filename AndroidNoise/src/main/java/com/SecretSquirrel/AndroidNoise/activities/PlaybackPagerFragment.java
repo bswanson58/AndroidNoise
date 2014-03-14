@@ -62,7 +62,7 @@ public class PlaybackPagerFragment extends Fragment {
 					break;
 
 				case 2:
-					fragment = PlaybackStrategyFragment.newInstance();
+					fragment = PlaybackPlayStrategyFragment.newInstance();
 			}
 
 			return( fragment );

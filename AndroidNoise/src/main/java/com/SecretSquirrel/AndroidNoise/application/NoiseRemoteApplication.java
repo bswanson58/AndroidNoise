@@ -6,6 +6,7 @@ import android.app.Application;
 
 import com.SecretSquirrel.AndroidNoise.BuildConfig;
 import com.SecretSquirrel.AndroidNoise.activities.ActivitiesModule;
+import com.SecretSquirrel.AndroidNoise.models.ModelsModule;
 import com.SecretSquirrel.AndroidNoise.services.ServicesModule;
 import com.SecretSquirrel.AndroidNoise.services.noiseApi.NoiseApiModule;
 import com.SecretSquirrel.AndroidNoise.support.IocUtility;
@@ -39,6 +40,7 @@ public class NoiseRemoteApplication extends Application
 				new ApplicationModule( this ),
 				ServicesModule.class,
 				NoiseApiModule.class,
+				ModelsModule.class,
 				ActivitiesModule.class
 			);
 	}
