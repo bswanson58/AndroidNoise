@@ -1,4 +1,4 @@
-package com.SecretSquirrel.AndroidNoise.activityModels;
+package com.SecretSquirrel.AndroidNoise.models;
 
 // Created by BSwanson on 3/12/14.
 

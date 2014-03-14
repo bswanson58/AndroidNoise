@@ -1,6 +1,6 @@
-package com.SecretSquirrel.AndroidNoise.model;
+package com.SecretSquirrel.AndroidNoise.application;
 
-// Secret Squirrel Software - Created by bswanson on 12/9/13.
+// Secret Squirrel Software - Created by BSwanson on 12/9/13.
 
 import android.content.Context;
 import android.content.Intent;

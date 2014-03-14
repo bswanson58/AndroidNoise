@@ -2,7 +2,7 @@ package com.SecretSquirrel.AndroidNoise.activities;
 
 // Secret Squirrel Software - Created by bswanson on 2/7/14.
 
-import com.SecretSquirrel.AndroidNoise.model.ApplicationModule;
+import com.SecretSquirrel.AndroidNoise.application.ApplicationModule;
 import com.SecretSquirrel.AndroidNoise.services.ServicesModule;
 
 import dagger.Module;

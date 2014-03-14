@@ -4,7 +4,7 @@ package com.SecretSquirrel.AndroidNoise.services.noiseApi;
 
 import com.SecretSquirrel.AndroidNoise.dto.ServerInformation;
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
-import com.SecretSquirrel.AndroidNoise.model.ApplicationModule;
+import com.SecretSquirrel.AndroidNoise.application.ApplicationModule;
 
 import dagger.Module;
 import dagger.Provides;

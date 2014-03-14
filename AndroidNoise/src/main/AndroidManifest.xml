@@ -14,7 +14,7 @@
     <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
 
     <application
-        android:name="com.SecretSquirrel.AndroidNoise.model.NoiseRemoteApplication"
+        android:name="com.SecretSquirrel.AndroidNoise.application.NoiseRemoteApplication"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
