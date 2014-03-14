@@ -23,11 +23,10 @@ import javax.inject.Provider;
 
 import de.greenrobot.event.EventBus;
 import rx.Observable;
-import rx.Observer;
+import rx.Subscriber;
 import rx.Subscription;
-import rx.android.concurrency.AndroidSchedulers;
-import rx.concurrency.Schedulers;
-import rx.subscriptions.Subscriptions;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 import rx.util.functions.Action1;
 import timber.log.Timber;
 
@@ -104,19 +103,17 @@ public class NoiseQueueClient implements INoiseQueue {
 
 	@Override
 	public Observable<QueuedTrackResult> EnqueueTrack( final long trackId ) {
-		return Observable.create( new Observable.OnSubscribeFunc<QueuedTrackResult>() {
+		return Observable.create( new Observable.OnSubscribe<QueuedTrackResult>() {
 			@Override
-			public Subscription onSubscribe( Observer<? super QueuedTrackResult> observer ) {
+			public void call( Subscriber<? super QueuedTrackResult> subscriber ) {
 				try {
-					observer.onNext( new QueuedTrackResult( trackId, getService().EnqueueTrack( trackId )));
-					observer.onCompleted();
+					subscriber.onNext( new QueuedTrackResult( trackId, getService().EnqueueTrack( trackId ) ) );
+					subscriber.onCompleted();
 				} catch( Exception e ) {
-					observer.onError( e );
+					subscriber.onError( e );
 				}
-
-				return Subscriptions.empty();
 			}
-		}).subscribeOn( Schedulers.threadPoolForIO());
+		}).subscribeOn( Schedulers.io());
 	}
 
 	@Override
@@ -140,19 +137,17 @@ public class NoiseQueueClient implements INoiseQueue {
 
 	@Override
 	public Observable<QueuedTrackResult> EnqueueTrack( final Track track ) {
-		return Observable.create( new Observable.OnSubscribeFunc<QueuedTrackResult>() {
+		return Observable.create( new Observable.OnSubscribe<QueuedTrackResult>() {
 			@Override
-			public Subscription onSubscribe( Observer<? super QueuedTrackResult> observer ) {
+			public void call( Subscriber<? super QueuedTrackResult> subscriber ) {
 				try {
-					observer.onNext( new QueuedTrackResult( track, getService().EnqueueTrack( track.getTrackId())));
-					observer.onCompleted();
+					subscriber.onNext( new QueuedTrackResult( track, getService().EnqueueTrack( track.getTrackId() ) ) );
+					subscriber.onCompleted();
 				} catch( Exception e ) {
-					observer.onError( e );
+					subscriber.onError( e );
 				}
-
-				return Subscriptions.empty();
 			}
-		}).subscribeOn( Schedulers.threadPoolForIO());
+		}).subscribeOn( Schedulers.io());
 	}
 
 	@Override
@@ -176,19 +171,17 @@ public class NoiseQueueClient implements INoiseQueue {
 
 	@Override
 	public Observable<QueuedAlbumResult> EnqueueAlbum( final Album album ) {
-		return Observable.create( new Observable.OnSubscribeFunc<QueuedAlbumResult>() {
+		return Observable.create( new Observable.OnSubscribe<QueuedAlbumResult>() {
 			@Override
-			public Subscription onSubscribe( Observer<? super QueuedAlbumResult> observer) {
+			public void call( Subscriber<? super QueuedAlbumResult> subscriber ) {
 				try {
-					observer.onNext( new QueuedAlbumResult( album, getService().EnqueueAlbum( album.getAlbumId())));
-					observer.onCompleted();
+					subscriber.onNext( new QueuedAlbumResult( album, getService().EnqueueAlbum( album.getAlbumId() ) ) );
+					subscriber.onCompleted();
 				} catch( Exception e ) {
-					observer.onError( e );
+					subscriber.onError( e );
 				}
-
-				return Subscriptions.empty();
 			}
-		}).subscribeOn( Schedulers.threadPoolForIO());
+		}).subscribeOn( Schedulers.io());
 	}
 
 	@Override
@@ -200,118 +193,107 @@ public class NoiseQueueClient implements INoiseQueue {
 
 	@Override
 	public Observable<PlayQueueListResult> GetQueuedTrackList() {
-		return( Observable.create( new Observable.OnSubscribeFunc<PlayQueueListResult>() {
+		return( Observable.create( new Observable.OnSubscribe<PlayQueueListResult>() {
 			@Override
-			public Subscription onSubscribe( Observer<? super PlayQueueListResult> observer ) {
+			public void call( Subscriber<? super PlayQueueListResult> subscriber ) {
 				try {
-					observer.onNext( new PlayQueueListResult( getService().GetQueuedTrackList()));
-					observer.onCompleted();
+					subscriber.onNext( new PlayQueueListResult( getService().GetQueuedTrackList() ) );
+					subscriber.onCompleted();
 				}
 				catch( Exception ex ) {
-					observer.onError( ex );
+					subscriber.onError( ex );
 				}
-
-				return( Subscriptions.empty());
 			}
-		} )).subscribeOn( Schedulers.threadPoolForIO());
+		} )).subscribeOn( Schedulers.io());
 	}
 
 	@Override
 	public Observable<BaseServerResult> ExecuteTransportCommand( final TransportCommand command ) {
-		return( Observable.create( new Observable.OnSubscribeFunc<BaseServerResult>() {
+		return( Observable.create( new Observable.OnSubscribe<BaseServerResult>() {
 			@Override
-			public Subscription onSubscribe( Observer<? super BaseServerResult> observer ) {
+			public void call( Subscriber<? super BaseServerResult> subscriber ) {
 				try {
-					observer.onNext( new BaseServerResult( getService().ExecuteTransportCommand( mTransportCommands.get( command ))));
-					observer.onCompleted();
+					subscriber.onNext( new BaseServerResult( getService().ExecuteTransportCommand( mTransportCommands.get( command ) ) ) );
+					subscriber.onCompleted();
 				}
 				catch( Exception ex ) {
-					observer.onError( ex );
+					subscriber.onError( ex );
 				}
-
-				return( Subscriptions.empty());
 			}
-		} )).subscribeOn( Schedulers.threadPoolForIO());
+		} )).subscribeOn( Schedulers.io());
 	}
 
 	@Override
 	public Observable<BaseServerResult> ExecuteQueueCommand( final QueueCommand command ) {
-		return( Observable.create( new Observable.OnSubscribeFunc<BaseServerResult>() {
+		return( Observable.create( new Observable.OnSubscribe<BaseServerResult>() {
 			@Override
-			public Subscription onSubscribe( Observer<? super BaseServerResult> observer ) {
+			public void call( Subscriber<? super BaseServerResult> subscriber ) {
 				try {
-					observer.onNext( new BaseServerResult( getService().ExecuteQueueCommand( mQueueCommands.get( command ) )));
-					observer.onCompleted();
+					subscriber.onNext( new BaseServerResult( getService().ExecuteQueueCommand( mQueueCommands.get( command ) ) ) );
+					subscriber.onCompleted();
 				}
 				catch( Exception ex ) {
-					observer.onError( ex );
+					subscriber.onError( ex );
 				}
-
-				return( Subscriptions.empty());
 			}
-		} )).subscribeOn( Schedulers.threadPoolForIO());
+		} )).subscribeOn( Schedulers.io());
 	}
 
 	@Override
 	public Observable<BaseServerResult> ExecuteQueueItemCommand( final QueueItemCommand command, final long itemId ) {
-		return( Observable.create( new Observable.OnSubscribeFunc<BaseServerResult>() {
+		return( Observable.create( new Observable.OnSubscribe<BaseServerResult>() {
 			@Override
-			public Subscription onSubscribe( Observer<? super BaseServerResult> observer ) {
+			public void call( Subscriber<? super BaseServerResult> subscriber ) {
 				try {
-					observer.onNext( new BaseServerResult( getService().ExecuteQueueItemCommand( mQueueItemCommands.get( command ), itemId )));
-					observer.onCompleted();
+					subscriber.onNext( new BaseServerResult( getService().ExecuteQueueItemCommand( mQueueItemCommands.get( command ), itemId )));
+					subscriber.onCompleted();
 				}
 				catch( Exception ex ) {
-					observer.onError( ex );
+					subscriber.onError( ex );
 				}
-
-				return( Subscriptions.empty());
 			}
-		} )).subscribeOn( Schedulers.threadPoolForIO());
+		} )).subscribeOn( Schedulers.io());
 	}
 
 	@Override
 	public Observable<StrategyInformation> GetStrategyInformation() {
-		return( Observable.create( new Observable.OnSubscribeFunc<StrategyInformation>() {
+		return( Observable.create( new Observable.OnSubscribe<StrategyInformation>() {
 			@Override
-			public Subscription onSubscribe( Observer<? super StrategyInformation> observer ) {
+			public void call( Subscriber<? super StrategyInformation> subscriber ) {
 				try {
 					StrategyInformationResult   result = getService().GetQueueStrategyInformation();
 
 					if( result.Success ) {
-						observer.onNext( new StrategyInformation( result.StrategyInformation ));
-						observer.onCompleted();
+						subscriber.onNext( new StrategyInformation( result.StrategyInformation ) );
+						subscriber.onCompleted();
 					}
 					else {
-						observer.onError( new Throwable( result.ErrorMessage ));
+						subscriber.onError( new Throwable( result.ErrorMessage ) );
 					}
 				}
 				catch( Exception ex ) {
-					observer.onError( ex );
+					subscriber.onError( ex );
 				}
-
-				return( Subscriptions.empty());
 			}
-		} )).subscribeOn( Schedulers.threadPoolForIO());
+		} )).subscribeOn( Schedulers.io());
 	}
 
 	@Override
 	public Observable<BaseServerResult> SetStrategyInformation( final int playStrategyId, final long playStrategyParameter,
 	                                                            final int exhaustedStrategyId, final long exhaustedStrategyParameter ) {
-		return( Observable.create( new Observable.OnSubscribeFunc<BaseServerResult>() {
+		return( Observable.create( new Observable.OnSubscribe<BaseServerResult>() {
 			@Override
-			public Subscription onSubscribe( Observer<? super BaseServerResult> observer ) {
+			public void call( Subscriber<? super BaseServerResult> subscriber ) {
 				try {
-					observer.onNext( new BaseServerResult( getService().SetQueueStrategies( playStrategyId, playStrategyParameter,
-																							exhaustedStrategyId, exhaustedStrategyParameter )));
-					observer.onCompleted();
+					subscriber.onNext( new BaseServerResult( getService()
+							.SetQueueStrategies( playStrategyId, playStrategyParameter,
+												 exhaustedStrategyId, exhaustedStrategyParameter )));
+					subscriber.onCompleted();
 				}
 				catch( Exception ex ) {
-					observer.onError( ex );
+					subscriber.onError( ex );
 				}
-
-				return( Subscriptions.empty());
 			}
-		} )).subscribeOn( Schedulers.threadPoolForIO());
+		} )).subscribeOn( Schedulers.io());
 	}
 }

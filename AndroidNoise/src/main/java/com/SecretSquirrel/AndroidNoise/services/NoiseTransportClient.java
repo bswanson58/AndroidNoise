@@ -20,10 +20,8 @@ import javax.inject.Provider;
 
 import de.greenrobot.event.EventBus;
 import rx.Observable;
-import rx.Observer;
-import rx.Subscription;
-import rx.concurrency.Schedulers;
-import rx.subscriptions.Subscriptions;
+import rx.Subscriber;
+import rx.schedulers.Schedulers;
 
 public class NoiseTransportClient implements INoiseTransport {
 	private final EventBus                              mEventBus;
@@ -65,101 +63,93 @@ public class NoiseTransportClient implements INoiseTransport {
 
 	@Override
 	public Observable<ServerTimeSync> syncServerTime() {
-		return( Observable.create( new Observable.OnSubscribeFunc<ServerTimeSync>() {
+		return( Observable.create( new Observable.OnSubscribe<ServerTimeSync>() {
 			@Override
-			public Subscription onSubscribe( Observer<? super ServerTimeSync> observer ) {
+			public void call( Subscriber<? super ServerTimeSync> subscriber ) {
 				try {
 					RoTimeSync  roTimeSync = getService().syncServerTime( System.currentTimeMillis() );
 
 					if( roTimeSync.Success ) {
-						observer.onNext( new ServerTimeSync( roTimeSync ));
-						observer.onCompleted();
+						subscriber.onNext( new ServerTimeSync( roTimeSync ));
+						subscriber.onCompleted();
 					}
 					else {
-						observer.onError( new Exception( roTimeSync.ErrorMessage ));
+						subscriber.onError( new Exception( roTimeSync.ErrorMessage ));
 					}
 				}
 				catch( Exception ex ) {
-					observer.onError( ex );
+					subscriber.onError( ex );
 				}
-
-				return( Subscriptions.empty());
 			}
-		} ).subscribeOn( Schedulers.threadPoolForIO() ));
+		} ).subscribeOn( Schedulers.io()));
 	}
 
 	@Override
 	public Observable<TransportState> getTransportState() {
-		return( Observable.create( new Observable.OnSubscribeFunc<TransportState>() {
+		return( Observable.create( new Observable.OnSubscribe<TransportState>() {
 			@Override
-			public Subscription onSubscribe( Observer<? super TransportState> observer ) {
+			public void call( Subscriber<? super TransportState> subscriber ) {
 				try {
 					RoTransportState    roState = getService().getTransportState();
 
 					if( roState.Success ) {
-						observer.onNext( new TransportState( roState ));
-						observer.onCompleted();
+						subscriber.onNext( new TransportState( roState ) );
+						subscriber.onCompleted();
 					}
 					else {
-						observer.onError( new Exception( roState.ErrorMessage ));
+						subscriber.onError( new Exception( roState.ErrorMessage ) );
 					}
 				}
 				catch( Exception ex ) {
-					observer.onError( ex );
+					subscriber.onError( ex );
 				}
-
-				return( Subscriptions.empty());
 			}
-		} ).subscribeOn( Schedulers.threadPoolForIO() ));
+		} ).subscribeOn( Schedulers.io()));
 	}
 
 	@Override
 	public Observable<AudioState> getAudioState() {
-		return( Observable.create( new Observable.OnSubscribeFunc<AudioState>() {
+		return( Observable.create( new Observable.OnSubscribe<AudioState>() {
 			@Override
-			public Subscription onSubscribe( Observer<? super AudioState> observer ) {
+			public void call( Subscriber<? super AudioState> subscriber ) {
 				try {
 					AudioStateResult    result = getService().getAudioState();
 
 					if( result.Success ) {
-						observer.onNext( new AudioState( result.AudioState ));
-						observer.onCompleted();
+						subscriber.onNext( new AudioState( result.AudioState ) );
+						subscriber.onCompleted();
 					}
 					else {
-						observer.onError( new Exception( result.ErrorMessage ));
+						subscriber.onError( new Exception( result.ErrorMessage ) );
 					}
 				}
 				catch( Exception ex ) {
-					observer.onError( ex );
+					subscriber.onError( ex );
 				}
-
-				return( Subscriptions.empty());
 			}
-		} ).subscribeOn( Schedulers.threadPoolForIO() ));
+		} ).subscribeOn( Schedulers.io()));
 	}
 
 	@Override
 	public Observable<BaseServerResult> setAudioState( final AudioState state ) {
-		return( Observable.create( new Observable.OnSubscribeFunc<BaseServerResult>() {
+		return( Observable.create( new Observable.OnSubscribe<BaseServerResult>() {
 			@Override
-			public Subscription onSubscribe( Observer<? super BaseServerResult> observer ) {
+			public void call( Subscriber<? super BaseServerResult> subscriber ) {
 				try {
 					BaseServerResult    result = getService().setAudioState( state.asRoAudioState());
 
 					if( result.Success ) {
-						observer.onNext( result );
-						observer.onCompleted();
+						subscriber.onNext( result );
+						subscriber.onCompleted();
 					}
 					else {
-						observer.onError( new Exception( result.ErrorMessage ));
+						subscriber.onError( new Exception( result.ErrorMessage ) );
 					}
 				}
 				catch( Exception ex ) {
-					observer.onError( ex );
+					subscriber.onError( ex );
 				}
-
-				return( Subscriptions.empty());
 			}
-		} ).subscribeOn( Schedulers.threadPoolForIO() ));
+		} ).subscribeOn( Schedulers.io()));
 	}
 }

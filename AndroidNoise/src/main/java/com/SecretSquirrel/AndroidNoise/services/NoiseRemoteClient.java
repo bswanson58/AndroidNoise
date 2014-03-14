@@ -17,12 +17,10 @@ import javax.inject.Provider;
 
 import de.greenrobot.event.EventBus;
 import rx.Observable;
-import rx.Observer;
-import rx.Subscription;
-import rx.concurrency.Schedulers;
-import rx.subscriptions.Subscriptions;
+import rx.Subscriber;
+import rx.schedulers.Schedulers;
 
-// Secret Squirrel Software - Created by bswanson on 12/6/13.
+// Secret Squirrel Software - Created by BSwanson on 12/6/13.
 
 public class NoiseRemoteClient implements INoiseServer {
 	private final EventBus                      mEventBus;
@@ -100,37 +98,33 @@ public class NoiseRemoteClient implements INoiseServer {
 
 	@Override
 	public Observable<BaseServerResult> requestEvents( final String address ) {
-		return( Observable.create( new Observable.OnSubscribeFunc<BaseServerResult>() {
+		return( Observable.create( new Observable.OnSubscribe<BaseServerResult>() {
 			@Override
-			public Subscription onSubscribe( Observer<? super BaseServerResult> observer ) {
+			public void call( Subscriber<? super BaseServerResult> subscriber ) {
 				try {
-					observer.onNext( getService().RequestEvents( address ));
-					observer.onCompleted();
+					subscriber.onNext( getService().RequestEvents( address ));
+					subscriber.onCompleted();
 				}
 				catch( Exception ex ) {
-					observer.onError( ex );
+					subscriber.onError( ex );
 				}
-
-				return( Subscriptions.empty());
 			}
-		} ).subscribeOn( Schedulers.threadPoolForIO()));
+		} ).subscribeOn( Schedulers.io()));
 	}
 
 	@Override
 	public Observable<BaseServerResult> revokeEvents( final String address ) {
-		return( Observable.create( new Observable.OnSubscribeFunc<BaseServerResult>() {
+		return( Observable.create( new Observable.OnSubscribe<BaseServerResult>() {
 			@Override
-			public Subscription onSubscribe( Observer<? super BaseServerResult> observer ) {
+			public void call( Subscriber<? super BaseServerResult> subscriber ) {
 				try {
-					observer.onNext( getService().RevokeEvents( address ));
-					observer.onCompleted();
+					subscriber.onNext( getService().RevokeEvents( address ) );
+					subscriber.onCompleted();
 				}
 				catch( Exception ex ) {
-					observer.onError( ex );
+					subscriber.onError( ex );
 				}
-
-				return( Subscriptions.empty());
 			}
-		} ).subscribeOn( Schedulers.threadPoolForIO()));
+		} ).subscribeOn( Schedulers.io()));
 	}
 }

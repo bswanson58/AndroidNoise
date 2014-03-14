@@ -353,7 +353,6 @@ public class PlaybackStrategyFragment extends Fragment {
 		}
 	}
 
-
 	protected class StrategyAdapter extends BaseAdapter implements SpinnerAdapter {
 		private final LayoutInflater    mLayoutInflater;
 		private final List<Strategy>    mStrategyList;

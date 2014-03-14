@@ -1,6 +1,6 @@
 package com.SecretSquirrel.AndroidNoise.services;
 
-// Secret Squirrel Software - Created by bswanson on 1/3/14.
+// Secret Squirrel Software - Created by BSwanson on 1/3/14.
 
 import android.content.Context;
 import android.os.Bundle;
@@ -14,7 +14,7 @@ import retrofit.RestAdapter;
 import rx.Observable;
 import rx.Observer;
 import rx.Subscription;
-import rx.concurrency.Schedulers;
+import rx.schedulers.Schedulers;
 import rx.util.functions.Action1;
 
 public class ServiceLocator {
@@ -58,9 +58,14 @@ public class ServiceLocator {
 
 						observer.onCompleted();
 					}
+
+					@Override
+					public boolean isUnsubscribed() {
+						return( locatorSubscription.isUnsubscribed());
+					}
 				});
 			}
-		} )).subscribeOn( Schedulers.threadPoolForIO());
+		} )).subscribeOn( Schedulers.io());
 	}
 
 	private static void onServiceInformation( final ServiceInformation serviceInformation,

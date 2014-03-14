@@ -16,10 +16,8 @@ import javax.inject.Provider;
 
 import de.greenrobot.event.EventBus;
 import rx.Observable;
-import rx.Observer;
-import rx.Subscription;
-import rx.concurrency.Schedulers;
-import rx.subscriptions.Subscriptions;
+import rx.Subscriber;
+import rx.schedulers.Schedulers;
 
 public class NoiseLibraryClient implements INoiseLibrary {
 	private final EventBus                          mEventBus;
@@ -60,9 +58,9 @@ public class NoiseLibraryClient implements INoiseLibrary {
 	}
 	@Override
 	public Observable<Library[]> getLibraries() {
-		return( Observable.create( new Observable.OnSubscribeFunc<Library[]>() {
+		return( Observable.create( new Observable.OnSubscribe<Library[]>() {
 			@Override
-			public Subscription onSubscribe( Observer<? super Library[]> observer ) {
+			public void call( Subscriber<? super Library[]> subscriber ) {
 				try {
 					RoLibraryListResult result = getService().getLibraries();
 
@@ -73,98 +71,88 @@ public class NoiseLibraryClient implements INoiseLibrary {
 							libraries[index] = new Library( result.Libraries[index]);
 						}
 
-						observer.onNext( libraries );
-						observer.onCompleted();
+						subscriber.onNext( libraries );
+						subscriber.onCompleted();
 					}
 					else {
-						observer.onError( new Exception( String.format( "getLibraries failed: %s", result.ErrorMessage )));
+						subscriber.onError( new Exception( String.format( "getLibraries failed: %s", result.ErrorMessage )));
 					}
 				}
 				catch( Exception ex ) {
-					observer.onError( ex );
+					subscriber.onError( ex );
 				}
-
-				return( Subscriptions.empty());
 			}
-		} ).subscribeOn( Schedulers.threadPoolForIO()));
+		} ).subscribeOn( Schedulers.io() ));
 	}
 
 	@Override
 	public Observable<BaseServerResult> syncLibrary() {
-		return( Observable.create( new Observable.OnSubscribeFunc<BaseServerResult>() {
+		return( Observable.create( new Observable.OnSubscribe<BaseServerResult>() {
 			@Override
-			public Subscription onSubscribe( Observer<? super BaseServerResult> observer ) {
+			public void call( Subscriber<? super BaseServerResult> subscriber ) {
 				try {
-					observer.onNext( getService().syncLibrary());
-					observer.onCompleted();
+					subscriber.onNext( getService().syncLibrary() );
+					subscriber.onCompleted();
 				}
 				catch( Exception ex ) {
-					observer.onError( ex );
+					subscriber.onError( ex );
 				}
-
-				return( Subscriptions.empty());
 			}
-		} ).subscribeOn( Schedulers.threadPoolForIO()));
+		} ).subscribeOn( Schedulers.io()));
 	}
 
 	@Override
 	public Observable<BaseServerResult> selectLibrary( final Library library ) {
-		return( Observable.create( new Observable.OnSubscribeFunc<BaseServerResult>() {
+		return( Observable.create( new Observable.OnSubscribe<BaseServerResult>() {
 			@Override
-			public Subscription onSubscribe( Observer<? super BaseServerResult> observer ) {
+			public void call( Subscriber<? super BaseServerResult> subscriber ) {
 				try {
-					observer.onNext( getService().selectLibrary( library.getLibraryId()));
-					observer.onCompleted();
+					subscriber.onNext( getService().selectLibrary( library.getLibraryId() ) );
+					subscriber.onCompleted();
 				}
 				catch( Exception ex ) {
-					observer.onError( ex );
+					subscriber.onError( ex );
 				}
-
-				return( Subscriptions.empty());
 			}
-		} ).subscribeOn( Schedulers.threadPoolForIO()));
+		} ).subscribeOn( Schedulers.io()));
 	}
 
 	@Override
 	public Observable<BaseServerResult> updateLibrary( final Library library ) {
-		return( Observable.create( new Observable.OnSubscribeFunc<BaseServerResult>() {
+		return( Observable.create( new Observable.OnSubscribe<BaseServerResult>() {
 			@Override
-			public Subscription onSubscribe( Observer<? super BaseServerResult> observer ) {
+			public void call( Subscriber<? super BaseServerResult> subscriber ) {
 				try {
-					observer.onNext( getService().updateLibrary( library.asRoLibrary()));
-					observer.onCompleted();
+					subscriber.onNext( getService().updateLibrary( library.asRoLibrary() ) );
+					subscriber.onCompleted();
 				}
 				catch( Exception ex ) {
-					observer.onError( ex );
+					subscriber.onError( ex );
 				}
-
-				return( Subscriptions.empty());
 			}
-		} ).subscribeOn( Schedulers.threadPoolForIO()));
+		} ).subscribeOn( Schedulers.io()));
 	}
 
 	@Override
 	public Observable<Library> createLibrary( final Library library ) {
-		return( Observable.create( new Observable.OnSubscribeFunc<Library>() {
+		return( Observable.create( new Observable.OnSubscribe<Library>() {
 			@Override
-			public Subscription onSubscribe( Observer<? super Library> observer ) {
+			public void call( Subscriber<? super Library> subscriber ) {
 				try {
 					RoLibraryListResult result = getService().createLibrary( library.asRoLibrary());
 
 					if( result.Success ) {
-						observer.onNext( new Library( result.Libraries[0]));
-						observer.onCompleted();
+						subscriber.onNext( new Library( result.Libraries[0]));
+						subscriber.onCompleted();
 					}
 					else {
-						observer.onError( new Exception( String.format( "createLibrary failed: %s", result.ErrorMessage )));
+						subscriber.onError( new Exception( String.format( "createLibrary failed: %s", result.ErrorMessage )));
 					}
 				}
 				catch( Exception ex ) {
-					observer.onError( ex );
+					subscriber.onError( ex );
 				}
-
-				return( Subscriptions.empty());
 			}
-		} ).subscribeOn( Schedulers.threadPoolForIO() ));
+		} ).subscribeOn( Schedulers.io()));
 	}
 }

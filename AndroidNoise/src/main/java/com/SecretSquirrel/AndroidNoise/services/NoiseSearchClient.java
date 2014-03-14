@@ -15,8 +15,9 @@ import javax.inject.Provider;
 import de.greenrobot.event.EventBus;
 import rx.Observable;
 import rx.Observer;
+import rx.Subscriber;
 import rx.Subscription;
-import rx.concurrency.Schedulers;
+import rx.schedulers.Schedulers;
 import rx.subscriptions.Subscriptions;
 
 public class NoiseSearchClient implements INoiseSearch {
@@ -59,19 +60,17 @@ public class NoiseSearchClient implements INoiseSearch {
 
 	@Override
 	public Observable<SearchResult> Search( final String searchTerms ) {
-		return( Observable.create( new Observable.OnSubscribeFunc<SearchResult>() {
+		return( Observable.create( new Observable.OnSubscribe<SearchResult>() {
 			@Override
-			public Subscription onSubscribe( Observer<? super SearchResult> observer ) {
+			public void call( Subscriber<? super SearchResult> subscriber ) {
 				try {
-					observer.onNext( new SearchResult( getService().Search( searchTerms )));
-					observer.onCompleted();
+					subscriber.onNext( new SearchResult( getService().Search( searchTerms ) ) );
+					subscriber.onCompleted();
 				}
 				catch( Exception ex ) {
-					observer.onError( ex );
+					subscriber.onError( ex );
 				}
-
-				return( Subscriptions.empty());
 			}
-		} ).subscribeOn( Schedulers.threadPoolForIO()));
+		} ).subscribeOn( Schedulers.io()));
 	}
 }

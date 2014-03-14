@@ -19,7 +19,7 @@ import javax.jmdns.ServiceInfo;
 import rx.Observable;
 import rx.Observer;
 import rx.Subscription;
-import rx.concurrency.Schedulers;
+import rx.schedulers.Schedulers;
 
 // Created by BSwanson on 1/2/14.
 
@@ -55,6 +55,11 @@ public class ServiceLocatorObservable implements javax.jmdns.ServiceListener {
 
 				stopProbe();
 			}
+
+			@Override
+			public boolean isUnsubscribed() {
+				return( mObserver == null );
+			}
 		};
 
 		return( Observable.create( new Observable.OnSubscribeFunc<ServiceInformation>() {
@@ -71,7 +76,7 @@ public class ServiceLocatorObservable implements javax.jmdns.ServiceListener {
 
 					return( mSubscription );
 				}
-			} ).subscribeOn( Schedulers.threadPoolForIO()));
+			} ).subscribeOn( Schedulers.io()));
 	}
 
 	private void startProbe( Context context ) {
