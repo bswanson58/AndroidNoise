@@ -2,25 +2,22 @@ package com.SecretSquirrel.AndroidNoise.activities;
 
 // Secret Squirrel Software - Created by BSwanson on 3/14/14.
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.BaseAdapter;
 import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 
 import com.SecretSquirrel.AndroidNoise.R;
+import com.SecretSquirrel.AndroidNoise.adapters.PlaybackParameterAdapter;
+import com.SecretSquirrel.AndroidNoise.adapters.PlaybackStrategyAdapter;
 import com.SecretSquirrel.AndroidNoise.dto.Strategy;
 import com.SecretSquirrel.AndroidNoise.dto.StrategyParameter;
 import com.SecretSquirrel.AndroidNoise.models.PlaybackStrategyModel;
 import com.SecretSquirrel.AndroidNoise.support.IocUtility;
-
-import java.util.List;
 
 import javax.inject.Inject;
 
@@ -31,9 +28,9 @@ import rx.functions.Action1;
 import timber.log.Timber;
 
 public class PlaybackPlayStrategyFragment extends Fragment {
-	private StrategyAdapter         mPlayStrategyAdapter;
-	private ParameterAdapter        mPlayParameterAdapter;
-	private Subscription            mModelSubscription;
+	private PlaybackStrategyAdapter     mPlayStrategyAdapter;
+	private PlaybackParameterAdapter    mPlayParameterAdapter;
+	private Subscription                mModelSubscription;
 
 	@Inject	PlaybackStrategyModel   mPlaybackStrategy;
 
@@ -52,13 +49,13 @@ public class PlaybackPlayStrategyFragment extends Fragment {
 
 		IocUtility.inject( this );
 
-		mPlayStrategyAdapter = new StrategyAdapter( getActivity(), mPlaybackStrategy.getPlayStrategies());
-		mPlayParameterAdapter = new ParameterAdapter( getActivity(), mPlaybackStrategy.getPlayParameters());
+		mPlayStrategyAdapter = new PlaybackStrategyAdapter( getActivity(), mPlaybackStrategy.getPlayStrategies());
+		mPlayParameterAdapter = new PlaybackParameterAdapter( getActivity(), mPlaybackStrategy.getPlayParameters());
 	}
 
 	@Override
 	public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState ) {
-		View    myView = inflater.inflate( R.layout.fragment_playback_strategy, container, false );
+		View    myView = inflater.inflate( R.layout.fragment_play_strategy, container, false );
 
 		if( myView != null ) {
 			ButterKnife.inject( this, myView );
@@ -87,7 +84,7 @@ public class PlaybackPlayStrategyFragment extends Fragment {
 
 					if(( parameter != null ) &&
 					   ( parameter.getParameterId() != mPlaybackStrategy.getCurrentPlayParameter())) {
-						mPlaybackStrategy.setCurrentPlayParameter( parameter.getParameterId());
+						mPlaybackStrategy.setCurrentPlayParameter( parameter.getParameterId() );
 					}
 				}
 
@@ -158,98 +155,6 @@ public class PlaybackPlayStrategyFragment extends Fragment {
 
 				break;
 			}
-		}
-	}
-
-	protected class StrategyAdapter extends BaseAdapter implements SpinnerAdapter {
-		private final LayoutInflater    mLayoutInflater;
-		private final List<Strategy>    mStrategyList;
-
-		public StrategyAdapter( Context context, List<Strategy> strategies ) {
-			mStrategyList = strategies;
-
-			mLayoutInflater = (LayoutInflater)context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
-		}
-
-		@Override
-		public int getCount() {
-			return( mStrategyList.size());
-		}
-
-		@Override
-		public Object getItem( int i ) {
-			return( mStrategyList.get( i ));
-		}
-
-		@Override
-		public long getItemId( int i ) {
-			return( i );
-		}
-
-		@Override
-		public View getView( int position, View convertView, ViewGroup parent ) {
-			View        retValue = convertView;
-
-			if( convertView == null ) {
-				retValue = mLayoutInflater.inflate( R.layout.simple_spinner_item, parent, false );
-			}
-
-			if( retValue != null ) {
-				Strategy    strategy = (Strategy)getItem( position );
-				TextView    textView = (TextView)retValue.findViewById( R.id.si_text );
-
-				if( textView != null ) {
-					textView.setText( strategy.getStrategyName());
-				}
-			}
-
-			return( retValue );
-		}
-	}
-
-	protected class ParameterAdapter extends BaseAdapter implements SpinnerAdapter {
-		private final LayoutInflater            mLayoutInflater;
-		private final List<StrategyParameter>   mParameterList;
-
-		public ParameterAdapter( Context context, List<StrategyParameter> parameters ) {
-			mParameterList = parameters;
-
-			mLayoutInflater = (LayoutInflater)context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
-		}
-
-		@Override
-		public int getCount() {
-			return( mParameterList.size());
-		}
-
-		@Override
-		public Object getItem( int i ) {
-			return( mParameterList.get( i ));
-		}
-
-		@Override
-		public long getItemId( int i ) {
-			return( i );
-		}
-
-		@Override
-		public View getView( int position, View convertView, ViewGroup parent ) {
-			View        retValue = convertView;
-
-			if( convertView == null ) {
-				retValue = mLayoutInflater.inflate( R.layout.simple_spinner_item, parent, false );
-			}
-
-			if( retValue != null ) {
-				StrategyParameter   parameter = (StrategyParameter)getItem( position );
-				TextView            textView = (TextView)retValue.findViewById( R.id.si_text );
-
-				if( textView != null ) {
-					textView.setText( parameter.getParameterTitle() );
-				}
-			}
-
-			return( retValue );
 		}
 	}
 }
