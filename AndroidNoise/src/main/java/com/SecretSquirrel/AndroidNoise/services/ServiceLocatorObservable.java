@@ -20,12 +20,11 @@ import rx.Observable;
 import rx.Observer;
 import rx.Subscription;
 import rx.schedulers.Schedulers;
+import timber.log.Timber;
 
 // Created by BSwanson on 1/2/14.
 
 public class ServiceLocatorObservable implements javax.jmdns.ServiceListener {
-	private final static String                     TAG = ServiceLocatorObservable.class.getName();
-
 	private String                                  mServiceType;
 	private String                                  mHostName;
 	private Subscription                            mSubscription;
@@ -85,9 +84,7 @@ public class ServiceLocatorObservable implements javax.jmdns.ServiceListener {
 				WifiManager wifiManager = (WifiManager) context.getSystemService( Context.WIFI_SERVICE );
 				InetAddress address = NetworkUtility.getWirelessIpAddress( wifiManager );
 
-				if( Constants.LOG_DEBUG ) {
-					Log.d( TAG, String.format( "Local address is: %s", address.toString()));
-				}
+				Timber.d( "Starting ZeroConfig probe, local address is: %s", address.toString());
 
 				mLock = wifiManager.createMulticastLock( String.format( "%s lock", mHostName ));
 				mLock.setReferenceCounted( true );
@@ -98,6 +95,8 @@ public class ServiceLocatorObservable implements javax.jmdns.ServiceListener {
 			}
 			catch( Exception ex ) {
 				mObserver.onError( ex );
+
+				Timber.e( ex, "failure starting ZeroConf probe." );
 
 				stopProbe();
 			}
@@ -118,9 +117,7 @@ public class ServiceLocatorObservable implements javax.jmdns.ServiceListener {
 					}
 				}
 				catch( IOException ex ) {
-					if( Constants.LOG_ERROR ) {
-						Log.e( TAG, String.format( "ZeroConf error on close: %s", ex ));
-					}
+					Timber.e( ex, "ZeroConf error stopping probe" );
 				}
 				}
 			} );
@@ -133,25 +130,19 @@ public class ServiceLocatorObservable implements javax.jmdns.ServiceListener {
 	}
 
 	public void serviceAdded( ServiceEvent event ) {
-		if( Constants.LOG_DEBUG ) {
-			Log.w( TAG, String.format( "Service Added (event=\n%s\n)", event.toString()));
-		}
+		Timber.d( "Service Added (event=\n%s\n)", event.toString());
 
 		publishEvent( ServiceInformation.ServiceState.ServiceAdded, event.getName());
 	}
 
 	public void serviceRemoved( ServiceEvent event ) {
-		if( Constants.LOG_DEBUG ) {
-			Log.w( TAG, String.format( "Service Removed( event=\n%s\n)", event.toString()));
-		}
+		Timber.d( "Service Removed( event=\n%s\n)", event.toString());
 
 		publishEvent( ServiceInformation.ServiceState.ServiceDeleted, event.getName() );
 	}
 
 	public void serviceResolved( ServiceEvent event ) {
-		if( Constants.LOG_DEBUG ) {
-			Log.w( TAG, String.format( "Service Resolved (event=\n%s\n)", event.toString()));
-		}
+		Timber.d( "Service Resolved (event=\n%s\n)", event.toString());
 
 		publishEvent( ServiceInformation.ServiceState.ServiceResolved, event.getName());
 	}

@@ -16,6 +16,7 @@ import rx.Observer;
 import rx.Subscription;
 import rx.schedulers.Schedulers;
 import rx.util.functions.Action1;
+import timber.log.Timber;
 
 public class ServiceLocator {
 	public final static String                  NOISE_TYPE = "_Noise._Tcp.local.";
@@ -71,6 +72,8 @@ public class ServiceLocator {
 	private static void onServiceInformation( final ServiceInformation serviceInformation,
 	                                          final Observer<? super ServerInformation> observer,
 	                                          final Context context ) {
+		Timber.d( "Retrieving server information for %s", serviceInformation.getHostAddress());
+
 		NoiseRemoteClient   remoteClient = new NoiseRemoteClient( createAdapter( serviceInformation.getHostAddress()),
 																  serviceInformation.getHostAddress(), context );
 
