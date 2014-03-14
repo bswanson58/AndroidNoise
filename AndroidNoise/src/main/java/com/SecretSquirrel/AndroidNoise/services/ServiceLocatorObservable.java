@@ -130,19 +130,19 @@ public class ServiceLocatorObservable implements javax.jmdns.ServiceListener {
 	}
 
 	public void serviceAdded( ServiceEvent event ) {
-		Timber.d( "Service Added (event=\n%s\n)", event.toString());
+		Timber.d( "Service Added: %s", event.getName());
 
 		publishEvent( ServiceInformation.ServiceState.ServiceAdded, event.getName());
 	}
 
 	public void serviceRemoved( ServiceEvent event ) {
-		Timber.d( "Service Removed( event=\n%s\n)", event.toString());
+		Timber.d( "Service Removed: %s", event.getName());
 
 		publishEvent( ServiceInformation.ServiceState.ServiceDeleted, event.getName() );
 	}
 
 	public void serviceResolved( ServiceEvent event ) {
-		Timber.d( "Service Resolved (event=\n%s\n)", event.toString());
+		Timber.d( "Service Resolved: %s, host: %s, address: %s:%d", event.getName(), event.getInfo().getServer(), event.getInfo().getHostAddresses()[0], event.getInfo().getPort());
 
 		publishEvent( ServiceInformation.ServiceState.ServiceResolved, event.getName());
 	}
