@@ -26,8 +26,8 @@ import rx.Observable;
 import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 import rx.schedulers.Schedulers;
-import rx.util.functions.Action1;
 import timber.log.Timber;
 
 public class NoiseQueueClient implements INoiseQueue {

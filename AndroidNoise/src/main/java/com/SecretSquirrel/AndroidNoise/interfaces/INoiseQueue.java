@@ -12,7 +12,7 @@ import com.SecretSquirrel.AndroidNoise.services.rto.BaseServerResult;
 
 import rx.Observable;
 import rx.Subscription;
-import rx.util.functions.Action1;
+import rx.functions.Action1;
 
 public interface INoiseQueue {
 	public enum TransportCommand {
