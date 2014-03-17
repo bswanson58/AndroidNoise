@@ -24,6 +24,7 @@ import javax.inject.Inject;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import timber.log.Timber;
 
@@ -101,6 +102,7 @@ public class PlaybackExhaustedStrategyFragment extends Fragment {
 		super.onResume();
 
 		mModelSubscription = mPlaybackStrategy.getStrategyChangedObservable()
+				.observeOn( AndroidSchedulers.mainThread())
 				.subscribe( new Action1<Boolean>() {
 					            @Override
 					            public void call( Boolean isInitialized ) {
