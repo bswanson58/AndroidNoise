@@ -66,10 +66,12 @@ public class ShellActivity extends ActionBarActivity
 
 		setContentView( R.layout.activity_shell );
 
-		getSupportFragmentManager()
-				.beginTransaction()
-				.replace( R.id.transport_panel, PlaybackShellFragment.newInstance())
-				.commit();
+		if( getSupportFragmentManager().findFragmentById( R.id.transport_panel ) == null ) {
+			getSupportFragmentManager()
+					.beginTransaction()
+					.replace( R.id.transport_panel, PlaybackShellFragment.newInstance())
+					.commit();
+		}
 
 		mNavigationDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById( R.id.navigation_drawer );
 		mNavigationDrawerFragment.setConfiguration( getNavigationDrawerConfiguration() );
