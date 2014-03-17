@@ -12,7 +12,7 @@ import android.view.ViewGroup;
 import com.SecretSquirrel.AndroidNoise.R;
 
 public class PlaybackPagerFragment extends Fragment {
-	private PageAdapter     mPageAdapter;
+	private PlaybackPageAdapter     mPageAdapter;
 
 	public static PlaybackPagerFragment newInstance() {
 		return( new PlaybackPagerFragment());
@@ -22,7 +22,7 @@ public class PlaybackPagerFragment extends Fragment {
 	public void onCreate( Bundle savedInstanceState ) {
 		super.onCreate( savedInstanceState );
 
-		mPageAdapter = new PageAdapter( getChildFragmentManager());
+		mPageAdapter = new PlaybackPageAdapter( getChildFragmentManager());
 	}
 
 	@Override
@@ -30,7 +30,7 @@ public class PlaybackPagerFragment extends Fragment {
 		View    myView = inflater.inflate( R.layout.fragment_playback_pager, container, false );
 
 		if( myView != null ) {
-			ViewPager   viewPager = (ViewPager)myView.findViewById( R.id.pp_container );
+			ViewPager   viewPager = (ViewPager)myView.findViewById( R.id.pp_view_pager );
 
 			viewPager.setAdapter( mPageAdapter );
 		}
@@ -38,8 +38,8 @@ public class PlaybackPagerFragment extends Fragment {
 		return( myView );
 	}
 
-	public static class PageAdapter extends FragmentPagerAdapter {
-		public PageAdapter( FragmentManager fragmentManager ) {
+	protected class PlaybackPageAdapter extends FragmentPagerAdapter {
+		public PlaybackPageAdapter( FragmentManager fragmentManager ) {
 			super( fragmentManager );
 		}
 
