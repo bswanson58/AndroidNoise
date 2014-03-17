@@ -12,6 +12,8 @@ import android.view.ViewGroup;
 import com.SecretSquirrel.AndroidNoise.R;
 
 public class PlaybackPagerFragment extends Fragment {
+	private static final int PAGE_COUNT     = 4;
+	
 	private PlaybackPageAdapter     mPageAdapter;
 
 	public static PlaybackPagerFragment newInstance() {
@@ -33,6 +35,7 @@ public class PlaybackPagerFragment extends Fragment {
 			ViewPager   viewPager = (ViewPager)myView.findViewById( R.id.pp_view_pager );
 
 			viewPager.setAdapter( mPageAdapter );
+			viewPager.setOffscreenPageLimit( PAGE_COUNT );
 		}
 
 		return( myView );
@@ -45,14 +48,14 @@ public class PlaybackPagerFragment extends Fragment {
 
 		@Override
 		public int getCount() {
-			return( 4 );
+			return( PAGE_COUNT );
 		}
 
 		@Override
 		public Fragment getItem( int position ) {
 			Fragment    fragment = null;
 
-			switch (position) {
+			switch( position ) {
 				case 0:
 					fragment = PlaybackInformationFragment.newInstance();
 					break;
