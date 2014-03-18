@@ -12,6 +12,8 @@ import com.SecretSquirrel.AndroidNoise.services.rto.BaseServerResult;
 import com.SecretSquirrel.AndroidNoise.support.Constants;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -76,6 +78,7 @@ public class PlaybackStrategyModel {
 		mCurrentPlayStrategy = playStrategy;
 
 		setStrategyIfValid();
+		updateStrategyParameters();
 		notifySubscribers();
 	}
 
@@ -106,6 +109,7 @@ public class PlaybackStrategyModel {
 		mCurrentExhaustedStrategy = playStrategy;
 
 		setStrategyIfValid();
+		updateStrategyParameters();
 		notifySubscribers();
 	}
 
@@ -212,18 +216,38 @@ public class PlaybackStrategyModel {
 
 		mPlayStrategies.clear();
 		mPlayStrategies.addAll( strategyInformation.getPlayStrategies() );
+		Collections.sort( mPlayStrategies, new Comparator<Strategy>() {
+			public int compare( Strategy parameter1, Strategy parameter2 ) {
+				return (parameter1.getStrategyName().compareToIgnoreCase( parameter2.getStrategyName()));
+			}
+		} );
 
 		mCurrentExhaustedStrategy = strategyInformation.getExhaustedStrategyId();
 		mCurrentExhaustedParameter = strategyInformation.getExhaustedStrategyParameter();
 
 		mExhaustedStrategies.clear();
-		mExhaustedStrategies.addAll( strategyInformation.getExhaustedStrategies() );
+		mExhaustedStrategies.addAll( strategyInformation.getExhaustedStrategies());
+		Collections.sort( mExhaustedStrategies, new Comparator<Strategy>() {
+			public int compare( Strategy parameter1, Strategy parameter2 ) {
+				return (parameter1.getStrategyName().compareToIgnoreCase( parameter2.getStrategyName()));
+			}
+		} );
 
 		mArtistParameters.clear();
-		mArtistParameters.addAll( strategyInformation.getArtistParameters());
+		mArtistParameters.addAll( strategyInformation.getArtistParameters() );
+		Collections.sort( mArtistParameters, new Comparator<StrategyParameter>() {
+			public int compare( StrategyParameter parameter1, StrategyParameter parameter2 ) {
+				return (parameter1.getParameterTitle().compareToIgnoreCase( parameter2.getParameterTitle()));
+			}
+		} );
 
 		mGenreParameters.clear();
 		mGenreParameters.addAll( strategyInformation.getGenreParameters());
+		Collections.sort( mGenreParameters, new Comparator<StrategyParameter>() {
+			public int compare( StrategyParameter parameter1, StrategyParameter parameter2 ) {
+				return (parameter1.getParameterTitle().compareToIgnoreCase( parameter2.getParameterTitle()));
+			}
+		} );
 
 		updateStrategyParameters();
 
@@ -235,9 +259,10 @@ public class PlaybackStrategyModel {
 		for( Strategy strategy : mPlayStrategies ) {
 			if( strategy.getStrategyId() == mCurrentPlayStrategy ) {
 				if( strategy.getRequiresParameter()) {
-					updateParameterList( mPlayParameters, strategy.getParameterType() );
+					updateParameterList( mPlayParameters, strategy.getParameterType());
 				}
 				else {
+					mPlayParameters.clear();
 					mCurrentPlayParameter = Constants.NULL_ID;
 				}
 
@@ -248,9 +273,10 @@ public class PlaybackStrategyModel {
 		for( Strategy strategy : mExhaustedStrategies ) {
 			if( strategy.getStrategyId() == mCurrentExhaustedStrategy ) {
 				if( strategy.getRequiresParameter()) {
-					updateParameterList( mExhaustedParameters, strategy.getParameterType() );
+					updateParameterList( mExhaustedParameters, strategy.getParameterType());
 				}
 				else {
+					mExhaustedParameters.clear();
 					mCurrentExhaustedParameter = Constants.NULL_ID;
 				}
 

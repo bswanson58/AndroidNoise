@@ -16,8 +16,8 @@ import com.SecretSquirrel.AndroidNoise.dto.StrategyParameter;
 import java.util.List;
 
 public class PlaybackParameterAdapter extends BaseAdapter implements SpinnerAdapter {
-	private final LayoutInflater mLayoutInflater;
-	private final List<StrategyParameter> mParameterList;
+	private final LayoutInflater            mLayoutInflater;
+	private final List<StrategyParameter>   mParameterList;
 
 	public PlaybackParameterAdapter( Context context, List<StrategyParameter> parameters ) {
 		mParameterList = parameters;
@@ -53,7 +53,7 @@ public class PlaybackParameterAdapter extends BaseAdapter implements SpinnerAdap
 			TextView textView = (TextView)retValue.findViewById( R.id.si_text );
 
 			if( textView != null ) {
-				textView.setText( parameter.getParameterTitle() );
+				textView.setText( parameter.getParameterTitle());
 			}
 		}
 

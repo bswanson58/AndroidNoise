@@ -30,6 +30,22 @@
         <item name="android:textColor">@color/HeaderText</item>
     </style>
 
+    <style name="CategoryText" parent="BaseText">
+        <item name="android:textSize">36sp</item>
+        <item name="android:textColor">#C0C0C0</item>
+    </style>
+
+    <style name="SpinnerText" parent="BaseText">
+        <item name="android:textSize">32sp</item>
+        <item name="android:textColor">@color/TitleText</item>
+        <item name="android:paddingRight">@dimen/noise_base_padding</item>
+        <item name="android:paddingLeft">@dimen/noise_base_padding</item>
+    </style>
+
+    <style name="SpinnerTitleText" parent="BaseText">
+        <item name="android:textSize">32sp</item>
+    </style>
+
     <style name="LongListStyle" parent="@android:style/Widget.ListView">
         <item name="android:layout_margin">7dp</item>
         <item name="android:listSelector">@drawable/list_selector</item>
