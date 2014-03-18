@@ -1,13 +1,12 @@
 package com.SecretSquirrel.AndroidNoise.activities;
 
-// Secret Squirrel Software - Created by bswanson on 12/18/13.
+// Secret Squirrel Software - Created by BSwanson on 12/18/13.
 
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,11 +26,11 @@ import com.SecretSquirrel.AndroidNoise.services.ServiceResultReceiver;
 import com.SecretSquirrel.AndroidNoise.support.ChainedComparator;
 import com.SecretSquirrel.AndroidNoise.support.Constants;
 import com.SecretSquirrel.AndroidNoise.support.IocUtility;
+import com.SecretSquirrel.AndroidNoise.support.NoiseUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
@@ -39,10 +38,10 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
+import timber.log.Timber;
 
 public class TrackListFragment extends Fragment
 							   implements ServiceResultReceiver.Receiver {
-	private static final String     TAG         = TrackListFragment.class.getName();
 	private static final String     ALBUM_KEY   = "trackListAlbumId";
 	private static final String     TRACK_LIST  = "trackList";
 	private static final String     LIST_STATE  = "trackListState";
@@ -96,9 +95,7 @@ public class TrackListFragment extends Fragment
 		mTrackListAdapter = new TrackAdapter( getActivity(), mTrackList );
 
 		if( mCurrentAlbum == Constants.NULL_ID ) {
-			if( Constants.LOG_ERROR ) {
-				Log.e( TAG, "The current album could not be determined. " );
-			}
+			Timber.e( "The current album could not be determined. " );
 		}
 	}
 
@@ -281,12 +278,7 @@ public class TrackListFragment extends Fragment
 
 				views.FavoriteView.setChecked( track.getIsFavorite());
 				views.RatingView.setRating( track.getRating());
-
-				views.DurationTextView.setText(
-						String.format( "%d:%02d",
-								TimeUnit.MILLISECONDS.toMinutes( track.getDurationMilliseconds()),
-								TimeUnit.MILLISECONDS.toSeconds( track.getDurationMilliseconds()) -
-								TimeUnit.MINUTES.toSeconds( TimeUnit.MILLISECONDS.toMinutes( track.getDurationMilliseconds()))));
+				views.DurationTextView.setText( NoiseUtils.formatTrackDuration( track.getDurationMilliseconds()));
 			}
 
 			return( retValue );
