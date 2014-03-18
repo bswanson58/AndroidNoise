@@ -33,7 +33,7 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import de.greenrobot.event.EventBus;
 import rx.android.observables.AndroidObservable;
-import rx.util.functions.Action1;
+import rx.functions.Action1;
 import timber.log.Timber;
 
 public class PlaybackStatusFragment extends Fragment {

@@ -34,8 +34,8 @@ import butterknife.InjectView;
 import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
 import rx.Subscription;
-import rx.android.concurrency.AndroidSchedulers;
-import rx.util.functions.Action1;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 
 public class ServerListFragment extends Fragment {
 	private static final String             TAG = ServerListFragment.class.getName();

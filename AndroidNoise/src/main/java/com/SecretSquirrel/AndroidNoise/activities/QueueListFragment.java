@@ -39,7 +39,7 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import de.greenrobot.event.EventBus;
 import rx.android.observables.AndroidObservable;
-import rx.util.functions.Action1;
+import rx.functions.Action1;
 
 public class QueueListFragment extends Fragment  {
 	private static final String         TAG = QueueListFragment.class.getName();

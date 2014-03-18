@@ -25,7 +25,7 @@ import com.SecretSquirrel.AndroidNoise.support.Constants;
 import javax.inject.Inject;
 
 import de.greenrobot.event.EventBus;
-import rx.util.functions.Action1;
+import rx.functions.Action1;
 
 public class QueueRequestHandler implements IQueueRequestHandler {
 	private final INoiseQueue           mNoiseQueue;

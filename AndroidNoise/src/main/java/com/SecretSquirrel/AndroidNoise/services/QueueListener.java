@@ -31,7 +31,7 @@ import javax.inject.Inject;
 
 import de.greenrobot.event.EventBus;
 import rx.Subscription;
-import rx.util.functions.Action1;
+import rx.functions.Action1;
 
 public class QueueListener implements IQueueStatus {
 	private final String                TAG = QueueListener.class.getName();

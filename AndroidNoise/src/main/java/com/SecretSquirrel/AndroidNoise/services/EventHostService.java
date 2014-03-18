@@ -26,7 +26,7 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import rx.Subscription;
-import rx.util.functions.Action1;
+import rx.functions.Action1;
 
 public class EventHostService extends Service {
 	private static final String TAG                             = EventHostService.class.getName();

@@ -40,7 +40,7 @@ import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
 import rx.Subscription;
 import rx.android.observables.AndroidObservable;
-import rx.util.functions.Action1;
+import rx.functions.Action1;
 
 public class SearchListFragment extends Fragment {
 	private final String                TAG = SearchListFragment.class.getName();
