@@ -117,7 +117,7 @@ public class ShellLibraryFragment extends BaseShellFragment {
 					break;
 
 				case LIBRARY_STATE_ALBUM:
-					fragment = AlbumFragment.newInstance( mCurrentArtist, mCurrentAlbum, mExternalRequest );
+					fragment = AlbumPagerFragment.newInstance( mCurrentArtist, mCurrentAlbum, mExternalRequest );
 					break;
 			}
 
@@ -205,7 +205,7 @@ public class ShellLibraryFragment extends BaseShellFragment {
 			getChildFragmentManager()
 					.beginTransaction()
 					.setCustomAnimations( android.R.anim.fade_in, android.R.anim.fade_out )
-					.replace( R.id.LibraryShellFrame, AlbumFragment.newInstance( mCurrentArtist, mCurrentAlbum, false ))
+					.replace( R.id.LibraryShellFrame, AlbumPagerFragment.newInstance( mCurrentArtist, mCurrentAlbum, false ))
 					.addToBackStack( null )
 					.commit();
 

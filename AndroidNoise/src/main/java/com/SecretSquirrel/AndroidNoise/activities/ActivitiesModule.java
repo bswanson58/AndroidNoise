@@ -15,6 +15,7 @@ import dagger.Module;
 		injects = {
 				AlbumInfoFragment.class,
 				AlbumListFragment.class,
+				AlbumPagerFragment.class,
 				ArtistExtendedInfoFragment.class,
 				ArtistFragment.class,
 				ArtistInfoFragment.class,
