@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.SecretSquirrel.AndroidNoise.R;
+import com.viewpagerindicator.PageIndicator;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -42,6 +43,11 @@ public class PlaybackPagerFragment extends Fragment {
 
 			mViewPager.setAdapter( mPageAdapter );
 			mViewPager.setOffscreenPageLimit( PAGE_COUNT );
+
+			//Bind the page indicator to the adapter
+			PageIndicator pageIndicator = (PageIndicator)myView.findViewById( R.id.pp_view_pager_indicator );
+
+			pageIndicator.setViewPager( mViewPager );
 
 			if( savedInstanceState != null ) {
 				mViewPager.setCurrentItem( savedInstanceState.getInt( CURRENT_PAGE ), false );

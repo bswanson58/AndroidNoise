@@ -9,6 +9,7 @@ buildscript {
 apply plugin: 'android'
 
 repositories {
+    maven { url "http://dl.bintray.com/populov/maven" }
     mavenCentral()
 }
 
@@ -39,4 +40,5 @@ dependencies {
     compile 'com.squareup:seismic:1.0.0@jar'
     compile 'com.jakewharton.timber:timber:2.2.2@jar'
     compile 'com.squareup.retrofit:retrofit:1.4.1@jar'
+    compile 'com.viewpagerindicator:library:2.4.1@aar'
 }
