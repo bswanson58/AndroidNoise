@@ -1,12 +1,11 @@
 package com.SecretSquirrel.AndroidNoise.activities;
 
-// Secret Squirrel Software - Created by bswanson on 12/18/13.
+// Secret Squirrel Software - Created by BSwanson on 12/18/13.
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -28,7 +27,6 @@ import com.SecretSquirrel.AndroidNoise.events.EventPlayAlbum;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseData;
 import com.SecretSquirrel.AndroidNoise.services.NoiseRemoteApi;
 import com.SecretSquirrel.AndroidNoise.services.ServiceResultReceiver;
-import com.SecretSquirrel.AndroidNoise.support.Constants;
 import com.SecretSquirrel.AndroidNoise.support.IocUtility;
 import com.SecretSquirrel.AndroidNoise.support.NoiseUtils;
 
@@ -38,10 +36,10 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
+import timber.log.Timber;
 
 public class AlbumInfoFragment extends Fragment
 							   implements ServiceResultReceiver.Receiver {
-	private static final String     TAG              = AlbumInfoFragment.class.getName();
 	private static final String     ARTIST_KEY       = "AlbumInfoFragment_Artist";
 	private static final String     ALBUM_KEY        = "AlbumInfoFragment_Album";
 	private static final String     ALBUM_INFO_KEY   = "AlbumInfoFragment_AlbumInfo";
@@ -104,15 +102,11 @@ public class AlbumInfoFragment extends Fragment
 		}
 
 		if( mArtist == null ) {
-			if( Constants.LOG_ERROR ) {
-				Log.e( TAG, "The current artist could not be determined." );
-			}
+			Timber.e( "The current artist could not be determined." );
 		}
 
 		if( mAlbum == null ) {
-			if( Constants.LOG_ERROR ) {
-				Log.e( TAG, "The current album could not be determined." );
-			}
+			Timber.e( "The current album could not be determined." );
 		}
 	}
 
@@ -163,6 +157,7 @@ public class AlbumInfoFragment extends Fragment
 	public void onSaveInstanceState( Bundle outState ) {
 		super.onSaveInstanceState( outState );
 
+		outState.putBoolean( EXTERNAL_REQUEST, mIsExternalRequest );
 		outState.putParcelable( ARTIST_KEY, mArtist );
 		outState.putParcelable( ALBUM_KEY, mAlbum );
 		if( mAlbumInfo != null ) {
