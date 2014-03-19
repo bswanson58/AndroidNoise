@@ -3,9 +3,13 @@ package com.SecretSquirrel.AndroidNoise.activities;
 // Secret Squirrel Software - Created by bswanson on 2/7/14.
 
 import com.SecretSquirrel.AndroidNoise.application.ApplicationModule;
+import com.SecretSquirrel.AndroidNoise.models.LibraryState;
 import com.SecretSquirrel.AndroidNoise.services.ServicesModule;
 
+import javax.inject.Singleton;
+
 import dagger.Module;
+import dagger.Provides;
 
 @Module(
 		includes = {
@@ -43,4 +47,9 @@ import dagger.Module;
 		}
 )
 public class ActivitiesModule {
+	@Singleton
+	@Provides
+	public LibraryState providesLibraryState() {
+		return( new LibraryState());
+	}
 }

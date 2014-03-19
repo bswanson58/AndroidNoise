@@ -25,6 +25,7 @@ import com.SecretSquirrel.AndroidNoise.events.EventArtistViewed;
 import com.SecretSquirrel.AndroidNoise.events.EventNavigationUpEnable;
 import com.SecretSquirrel.AndroidNoise.events.EventPlayAlbum;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseData;
+import com.SecretSquirrel.AndroidNoise.models.LibraryState;
 import com.SecretSquirrel.AndroidNoise.services.NoiseRemoteApi;
 import com.SecretSquirrel.AndroidNoise.services.ServiceResultReceiver;
 import com.SecretSquirrel.AndroidNoise.support.IocUtility;
@@ -36,6 +37,8 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
+import rx.Subscription;
+import rx.functions.Action1;
 import timber.log.Timber;
 
 public class AlbumInfoFragment extends Fragment
@@ -50,10 +53,12 @@ public class AlbumInfoFragment extends Fragment
 	private AlbumInfo               mAlbumInfo;
 	private Bitmap                  mUnknownAlbum;
 	private boolean                 mIsExternalRequest;
+	private Subscription            mStateChangedSubscription;
 
 	@Inject EventBus                mEventBus;
 	@Inject	INoiseData              mNoiseData;
 	@Inject ServiceResultReceiver   mServiceResultReceiver;
+	@Inject	LibraryState            mLibraryState;
 
 	@InjectView( R.id.ai_album_cover_image )ImageView   mAlbumCover;
 	@InjectView( R.id.ai_artist_name )	    TextView    mArtistName;
@@ -80,8 +85,6 @@ public class AlbumInfoFragment extends Fragment
 		super.onCreate( savedInstanceState );
 
 		IocUtility.inject( this );
-
-		setHasOptionsMenu( true );
 
 		mUnknownAlbum = BitmapFactory.decodeResource( getResources(), R.drawable.unknown_album );
 
@@ -137,6 +140,19 @@ public class AlbumInfoFragment extends Fragment
 		}
 
 		mEventBus.post( new EventNavigationUpEnable());
+
+		mStateChangedSubscription = mLibraryState.getStateChange()
+				.subscribe( new Action1<Boolean>() {
+					            @Override
+					            public void call( Boolean _ ) {
+						            setHasOptionsMenu( mLibraryState.getCurrentAlbumId() == mAlbum.getAlbumId());
+					            }
+				            }, new Action1<Throwable>() {
+					            @Override
+					            public void call( Throwable throwable ) {
+						            Timber.e( "LibraryState getStateChanged: " + throwable );
+					            }
+				            } );
 	}
 
 	@Override
@@ -144,6 +160,11 @@ public class AlbumInfoFragment extends Fragment
 		super.onPause();
 
 		mServiceResultReceiver.clearReceiver();
+
+		if( mStateChangedSubscription != null ) {
+			mStateChangedSubscription.unsubscribe();
+			mStateChangedSubscription = null;
+		}
 	}
 
 	@Override

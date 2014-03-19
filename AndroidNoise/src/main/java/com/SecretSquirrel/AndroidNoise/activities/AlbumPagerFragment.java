@@ -15,6 +15,7 @@ import com.SecretSquirrel.AndroidNoise.R;
 import com.SecretSquirrel.AndroidNoise.dto.Album;
 import com.SecretSquirrel.AndroidNoise.dto.Artist;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseData;
+import com.SecretSquirrel.AndroidNoise.models.LibraryState;
 import com.SecretSquirrel.AndroidNoise.services.NoiseRemoteApi;
 import com.SecretSquirrel.AndroidNoise.services.ServiceResultReceiver;
 import com.SecretSquirrel.AndroidNoise.support.IocUtility;
@@ -35,7 +36,6 @@ public class AlbumPagerFragment extends Fragment
 								implements ServiceResultReceiver.Receiver{
 	private static final String     ARTIST = "albumPager_artist";
 	private static final String     ALBUM = "albumPager_firstAlbum";
-	private static final String     ALBUM_LIST = "albumPager_albumList";
 	private static final String     EXTERNAL_REQUEST = "albumPager_externalRequest";
 
 	private Artist                  mCurrentArtist;
@@ -45,9 +45,10 @@ public class AlbumPagerFragment extends Fragment
 
 	@Inject	INoiseData              mNoiseData;
 	@Inject	ServiceResultReceiver   mReceiver;
+	@Inject	LibraryState            mLibraryState;
 
-	@InjectView( R.id.ap_view_pager )	        ViewPager       mViewPager;
-	@InjectView( R.id.ap_view_pager_indicator )	UnderlinePageIndicator mPageIndicator;
+	@InjectView( R.id.ap_view_pager )	        ViewPager               mViewPager;
+	@InjectView( R.id.ap_view_pager_indicator )	UnderlinePageIndicator  mPageIndicator;
 
 	public static AlbumPagerFragment newInstance( Artist artist, Album album, boolean isExternalRequest ) {
 		AlbumPagerFragment  fragment = new AlbumPagerFragment();
@@ -70,7 +71,6 @@ public class AlbumPagerFragment extends Fragment
 		if( savedInstanceState != null ) {
 			mCurrentArtist = savedInstanceState.getParcelable( ARTIST );
 			mCurrentAlbum = savedInstanceState.getParcelable( ALBUM );
-			mAlbumList = savedInstanceState.getParcelableArrayList( ALBUM_LIST );
 			mIsExternalRequest = savedInstanceState.getBoolean( EXTERNAL_REQUEST );
 		}
 		else {
@@ -87,7 +87,10 @@ public class AlbumPagerFragment extends Fragment
 			Timber.e( "Current Artist could not be determined." );
 		}
 
-		if( mCurrentAlbum == null ) {
+		if( mCurrentAlbum != null ) {
+			mLibraryState.setCurrentAlbum( mCurrentAlbum );
+		}
+		else {
 			Timber.e( "Current Album could not be determined." );
 		}
 
@@ -102,7 +105,6 @@ public class AlbumPagerFragment extends Fragment
 
 		if( myView != null ) {
 			ButterKnife.inject( this, myView  );
-
 		}
 
 		return( myView );
@@ -162,6 +164,8 @@ public class AlbumPagerFragment extends Fragment
 			@Override
 			public void onPageSelected( int i ) {
 				mCurrentAlbum = mAlbumList.get( i );
+
+				mLibraryState.setCurrentAlbum( mCurrentAlbum );
 			}
 
 			@Override

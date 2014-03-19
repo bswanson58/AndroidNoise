@@ -14,7 +14,7 @@
 
     <com.viewpagerindicator.UnderlinePageIndicator
         android:id="@+id/ap_view_pager_indicator"
-        android:layout_height="3dp"
+        android:layout_height="5dp"
         android:layout_width="match_parent"
         app:selectedColor="@color/TitleText"
         app:fadeDelay="1000"
