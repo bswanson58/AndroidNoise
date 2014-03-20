@@ -11,6 +11,7 @@ import javax.inject.Singleton;
 import dagger.Module;
 import dagger.Provides;
 
+@SuppressWarnings( "unused" )
 @Module(
 		includes = {
 				ServicesModule.class,
@@ -27,6 +28,7 @@ import dagger.Provides;
 				ArtistTracksFragment.class,
 				ArtistTracksAlbumsFragment.class,
 				FavoritesListFragment.class,
+				LibraryActivity.class,
 				LibraryConfiguration.class,
 				PlaybackAudioFragment.class,
 				PlaybackExhaustedStrategyFragment.class,
@@ -40,7 +42,7 @@ import dagger.Provides;
 				SearchQueryFragment.class,
 				ServerActivity.class,
 				ServerListFragment.class,
-				ShellActivity.class,
+				LibraryActivity.class,
 				ShellLibraryFragment.class,
 				ShellServerFragment.class,
 				TrackListFragment.class,

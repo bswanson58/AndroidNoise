@@ -1,6 +1,6 @@
 package com.SecretSquirrel.AndroidNoise.activities;
 
-// Secret Squirrel Software - Created by bswanson on 12/23/13.
+// Secret Squirrel Software - Created by BSwanson on 12/23/13.
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -16,18 +16,17 @@ import javax.inject.Inject;
 
 import de.greenrobot.event.EventBus;
 
-public class ShellServerFragment extends BaseShellFragment {
+public class ShellServerFragment extends Fragment {
 	private static final String SELECT_LAST_SERVER = "serverFragmentSelectLastServer";
 
 	private Fragment    mOverlay;
 
 	@Inject	EventBus    mEventBus;
 
-	public static ShellServerFragment newInstance( int fragmentId, boolean selectLastServer ) {
+	public static ShellServerFragment newInstance( boolean selectLastServer ) {
 		ShellServerFragment     fragment = new ShellServerFragment();
 		Bundle                  args = new Bundle();
 
-		args.putInt( SHELL_FRAGMENT_KEY, fragmentId );
 		args.putBoolean( SELECT_LAST_SERVER, selectLastServer );
 		fragment.setArguments( args );
 

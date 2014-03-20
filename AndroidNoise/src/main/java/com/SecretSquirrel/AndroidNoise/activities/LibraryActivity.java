@@ -28,9 +28,9 @@ import de.greenrobot.event.EventBus;
 import static android.content.Intent.ACTION_MAIN;
 import static android.content.Intent.CATEGORY_LAUNCHER;
 
-public class ShellActivity extends ActionBarActivity
-						   implements NavigationDrawerFragment.NavigationDrawerCallbacks,
-									  NavigationRequestResponder.NavigationRequestListener {
+public class LibraryActivity extends ActionBarActivity
+							 implements NavigationDrawerFragment.NavigationDrawerCallbacks,
+									    NavigationRequestResponder.NavigationRequestListener {
 	public static final int     LIBRARY_ITEM_ID     = 101;
 	public static final int     FAVORITES_ITEM_ID   = 102;
 	public static final int     QUEUE_ITEM_ID       = 103;
@@ -60,7 +60,7 @@ public class ShellActivity extends ActionBarActivity
 
 		IocUtility.inject( this );
 
-		setContentView( R.layout.activity_shell );
+		setContentView( R.layout.activity_library_shell );
 
 		if( getSupportFragmentManager().findFragmentById( R.id.transport_panel ) == null ) {
 			getSupportFragmentManager()
@@ -214,7 +214,7 @@ public class ShellActivity extends ActionBarActivity
 			// Only show items in the action bar relevant to this screen
 			// if the drawer is not showing. Otherwise, let the drawer
 			// decide what to show in the action bar.
-			getMenuInflater().inflate( R.menu.shell, menu );
+			getMenuInflater().inflate( R.menu.library_activity, menu );
 			restoreActionBar();
 
 			return( true );
@@ -257,7 +257,7 @@ public class ShellActivity extends ActionBarActivity
 				NavigationMenuItem.create( SERVERS_ITEM_ID, getString( R.string.title_server_section ), "ic_action_servers", true, this )};
 
 		retValue.setApplicationNameId( R.string.app_name );
-		retValue.setGlobalMenuId( R.menu.global );
+		retValue.setGlobalMenuId( R.menu.library_activity );
 		retValue.setNavigationDrawerId( R.id.navigation_drawer );
 		retValue.setNavigationItems( menu );
 		retValue.setDrawerLayoutId( R.id.drawer_layout );
@@ -278,9 +278,8 @@ public class ShellActivity extends ActionBarActivity
 
 	/**
 	 * Dev tools and the play store (and others?) launch with a different intent, and so
-	 * lead to a redundant instance of this activity being spawned. <a
-	 * href="http://stackoverflow.com/questions/17702202/find-out-whether-the-current-activity-will-be-task-root-eventually-after-pendin"
-	 * >Details</a>.
+	 * lead to a redundant instance of this activity being spawned.
+	 * from: http://stackoverflow.com/questions/17702202/find-out-whether-the-current-activity-will-be-task-root-eventually-after-pendin
 	 */
 	private boolean isWrongInstance() {
 		if(!isTaskRoot()) {

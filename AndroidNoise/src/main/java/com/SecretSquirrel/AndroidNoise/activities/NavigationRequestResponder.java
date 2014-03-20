@@ -59,12 +59,12 @@ public class NavigationRequestResponder {
 
 	@SuppressWarnings( "unused" )
 	public void onEvent( EventServerSelected args ) {
-		notifyListener( ShellActivity.LIBRARY_ITEM_ID, null );
+		notifyListener( LibraryActivity.LIBRARY_ITEM_ID, null );
 	}
 
 	@SuppressWarnings( "unused" )
 	public void onEvent( EventArtistListRequest args ) {
-		notifyListener( ShellActivity.LIBRARY_ITEM_ID, null );
+		notifyListener( LibraryActivity.LIBRARY_ITEM_ID, null );
 	}
 
 	@SuppressWarnings( "unused" )
@@ -76,7 +76,7 @@ public class NavigationRequestResponder {
 			public void onReceiveResult( int resultCode, Bundle resultData ) {
 				Artist artist = resultData.getParcelable( NoiseRemoteApi.Artist );
 
-				notifyListener( ShellActivity.LIBRARY_ITEM_ID, new LibraryFocusArgs( artist ));
+				notifyListener( LibraryActivity.LIBRARY_ITEM_ID, new LibraryFocusArgs( artist ));
 			}
 		} );
 	}
@@ -113,7 +113,7 @@ public class NavigationRequestResponder {
 		Artist  artist = args.getParcelable( NoiseRemoteApi.Artist );
 		Album album = args.getParcelable( NoiseRemoteApi.Album );
 
-		notifyListener( ShellActivity.LIBRARY_ITEM_ID, new LibraryFocusArgs( artist, album ) );
+		notifyListener( LibraryActivity.LIBRARY_ITEM_ID, new LibraryFocusArgs( artist, album ) );
 	}
 
 	private void notifyListener( int id, LibraryFocusArgs args ) {

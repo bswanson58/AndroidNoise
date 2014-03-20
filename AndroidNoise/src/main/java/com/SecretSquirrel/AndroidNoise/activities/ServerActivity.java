@@ -15,6 +15,7 @@ import com.SecretSquirrel.AndroidNoise.R;
 import com.SecretSquirrel.AndroidNoise.events.EventActivityPausing;
 import com.SecretSquirrel.AndroidNoise.events.EventActivityResuming;
 import com.SecretSquirrel.AndroidNoise.events.EventServerSelected;
+import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationServices;
 import com.SecretSquirrel.AndroidNoise.support.IocUtility;
 
 import javax.inject.Inject;
@@ -25,9 +26,10 @@ import static android.content.Intent.ACTION_MAIN;
 import static android.content.Intent.CATEGORY_LAUNCHER;
 
 public class ServerActivity extends ActionBarActivity {
-	private boolean         mSelectLastServer;
+	@Inject	EventBus                mEventBus;
 
-	@Inject	EventBus        mEventBus;
+	@SuppressWarnings( "unused" )
+	@Inject	IApplicationServices    mApplicationServices;
 
 	@Override
 	protected void onCreate( Bundle savedInstanceState ) {
@@ -40,15 +42,15 @@ public class ServerActivity extends ActionBarActivity {
 
 		IocUtility.inject( this );
 
-		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences( this );
-		mSelectLastServer = settings.getBoolean( getString( R.string.setting_use_last_server ), false );
-
-		setContentView( R.layout.server_shell );
+		setContentView( R.layout.activity_server_shell );
 
 		if( getSupportFragmentManager().findFragmentById( R.id.container ) == null ) {
+			SharedPreferences   settings = PreferenceManager.getDefaultSharedPreferences( this );
+			boolean             selectLastServer = settings.getBoolean( getString( R.string.setting_use_last_server ), false );
+
 			getSupportFragmentManager()
 					.beginTransaction()
-					.replace( R.id.container, ShellServerFragment.newInstance( 104, mSelectLastServer ))
+					.replace( R.id.container, ShellServerFragment.newInstance( selectLastServer ))
 					.commit();
 		}
 	}
@@ -71,7 +73,7 @@ public class ServerActivity extends ActionBarActivity {
 
 	@SuppressWarnings( "unused" )
 	public void onEvent( EventServerSelected args ) {
-		Intent  intent = new Intent( this, ShellActivity.class );
+		Intent  intent = new Intent( this, LibraryActivity.class );
 
 		// don't come back here...
 		intent.addFlags( Intent.FLAG_ACTIVITY_NEW_TASK );
@@ -112,9 +114,8 @@ public class ServerActivity extends ActionBarActivity {
 
 	/**
 	 * Dev tools and the play store (and others?) launch with a different intent, and so
-	 * lead to a redundant instance of this activity being spawned. <a
-	 * href="http://stackoverflow.com/questions/17702202/find-out-whether-the-current-activity-will-be-task-root-eventually-after-pendin"
-	 * >Details</a>.
+	 * lead to a redundant instance of this activity being spawned.
+	 * from: http://stackoverflow.com/questions/17702202/find-out-whether-the-current-activity-will-be-task-root-eventually-after-pendin
 	 */
 	private boolean isWrongInstance() {
 		if(!isTaskRoot()) {
