@@ -80,7 +80,14 @@ public class ShellActivity extends ActionBarActivity
 		mSelectLastServer = settings.getBoolean( getString( R.string.setting_use_last_server ), false );
 
 		if( savedInstanceState == null ) {
-			mNavigationDrawerFragment.selectId( SERVERS_ITEM_ID );
+			if( mApplicationState.getIsConnected()) {
+				mNavigationDrawerFragment.selectId( LIBRARY_ITEM_ID );
+			}
+			else {
+				Intent  intent = new Intent( this, ServerActivity.class );
+
+				startActivity( intent );
+			}
 		}
 		else {
 			mCurrentChildFragment = (BaseShellFragment)getSupportFragmentManager().findFragmentById( R.id.container );

@@ -38,12 +38,13 @@ import dagger.Provides;
 				RecentlyViewedListFragment.class,
 				SearchListFragment.class,
 				SearchQueryFragment.class,
+				ServerActivity.class,
 				ServerListFragment.class,
-				TrackListFragment.class,
-				TransportFragment.class,
 				ShellActivity.class,
 				ShellLibraryFragment.class,
-				ShellServerFragment.class
+				ShellServerFragment.class,
+				TrackListFragment.class,
+				TransportFragment.class
 		}
 )
 public class ActivitiesModule {

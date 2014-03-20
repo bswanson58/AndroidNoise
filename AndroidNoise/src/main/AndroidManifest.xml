@@ -30,7 +30,7 @@
             android:label="AndroidNoise:EventHostService"/>
 
         <activity
-            android:name="com.SecretSquirrel.AndroidNoise.activities.ShellActivity"
+            android:name="com.SecretSquirrel.AndroidNoise.activities.ServerActivity"
             android:label="@string/title_activity_shell"
             android:launchMode="singleTop">
             <intent-filter>
@@ -39,6 +39,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity android:name="com.SecretSquirrel.AndroidNoise.activities.ShellActivity"
+                  android:label="@string/title_activity_shell"
+                  android:launchMode="singleTop"/>
 
         <activity android:name=".activities.SettingsActivity"
                   android:label="Noise Settings"/>
