@@ -1,8 +1,6 @@
 package com.SecretSquirrel.AndroidNoise.activities;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
@@ -26,7 +24,6 @@ import com.SecretSquirrel.AndroidNoise.ui.NavigationMenuItem;
 import javax.inject.Inject;
 
 import de.greenrobot.event.EventBus;
-import timber.log.Timber;
 
 import static android.content.Intent.ACTION_MAIN;
 import static android.content.Intent.CATEGORY_LAUNCHER;
@@ -37,15 +34,14 @@ public class ShellActivity extends ActionBarActivity
 	public static final int     LIBRARY_ITEM_ID     = 101;
 	public static final int     FAVORITES_ITEM_ID   = 102;
 	public static final int     QUEUE_ITEM_ID       = 103;
-	public static final int     SERVERS_ITEM_ID     = 104;
-	public static final int     SEARCH_ITEM_ID      = 105;
-	public static final int     RECENT_ITEM_ID      = 106;
+	public static final int     SEARCH_ITEM_ID      = 104;
+	public static final int     RECENT_ITEM_ID      = 105;
+	public static final int     SERVERS_ITEM_ID     = 106;
 
 	// Fragment managing the behaviors, interactions and presentation of the navigation drawer.
 	private NavigationDrawerFragment    mNavigationDrawerFragment;
 	private BaseShellFragment           mCurrentChildFragment;
 	private LibraryFocusArgs            mLibraryFocusArgs;
-	private boolean                     mSelectLastServer;
 
 	@Inject EventBus                    mEventBus;
 	@Inject IApplicationState           mApplicationState;
@@ -76,17 +72,12 @@ public class ShellActivity extends ActionBarActivity
 		mNavigationDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById( R.id.navigation_drawer );
 		mNavigationDrawerFragment.setConfiguration( getNavigationDrawerConfiguration() );
 
-		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences( this );
-		mSelectLastServer = settings.getBoolean( getString( R.string.setting_use_last_server ), false );
-
 		if( savedInstanceState == null ) {
 			if( mApplicationState.getIsConnected()) {
 				mNavigationDrawerFragment.selectId( LIBRARY_ITEM_ID );
 			}
 			else {
-				Intent  intent = new Intent( this, ServerActivity.class );
-
-				startActivity( intent );
+				launchServerActivity();
 			}
 		}
 		else {
@@ -100,12 +91,9 @@ public class ShellActivity extends ActionBarActivity
 
 		mEventBus.post( new EventActivityResuming());
 
-		// If we cannot resume operation, display the server select screen.
+		// If we cannot resume operation, display the server selection screen.
 		if(!mApplicationState.canResumeWithCurrentServer()) {
-			if(( mCurrentChildFragment == null ) ||
-		       ( mCurrentChildFragment.getFragmentId() != SERVERS_ITEM_ID )) {
-				mNavigationDrawerFragment.selectId( SERVERS_ITEM_ID );
-			}
+			launchServerActivity();
 		}
 
 		mNavigationRequestResponder.setListener( this );
@@ -166,13 +154,7 @@ public class ShellActivity extends ActionBarActivity
 
 	@Override
 	public boolean canSelectNavigationDrawerItem( int itemId ) {
-		boolean retValue = itemId == SERVERS_ITEM_ID;
-
-		if( mApplicationState.getIsConnected()) {
-			retValue = true;
-		}
-
-		return( retValue );
+		return( true );
 	}
 
 	@Override
@@ -183,10 +165,6 @@ public class ShellActivity extends ActionBarActivity
 		BaseShellFragment   fragment = null;
 
 		switch( itemId ) {
-			case SERVERS_ITEM_ID:
-				fragment = ShellServerFragment.newInstance( SERVERS_ITEM_ID, mSelectLastServer );
-				mSelectLastServer = false;
-				break;
 			case LIBRARY_ITEM_ID:
 				fragment = ShellLibraryFragment.newInstance( LIBRARY_ITEM_ID, mLibraryFocusArgs );
 				mLibraryFocusArgs = null;
@@ -203,16 +181,13 @@ public class ShellActivity extends ActionBarActivity
 			case RECENT_ITEM_ID:
 				fragment = ShellRecentFragment.newInstance( RECENT_ITEM_ID );
 				break;
+			case SERVERS_ITEM_ID:
+				launchServerActivity();
+				break;
 		}
 
 		if( fragment != null ) {
 			FragmentManager fragmentManager = getSupportFragmentManager();
-
-			// If we are leaving the servers screen, clear the back stack.
-			if(( mCurrentChildFragment != null ) &&
-			   ( mCurrentChildFragment.getFragmentId() == SERVERS_ITEM_ID )) {
-				fragmentManager.popBackStack( null, FragmentManager.POP_BACK_STACK_INCLUSIVE );
-			}
 
 			fragmentManager.beginTransaction()
 					.replace( R.id.container, fragment )
@@ -293,6 +268,12 @@ public class ShellActivity extends ActionBarActivity
 		retValue.setBaseAdapter( new NavigationDrawerAdapter( this, R.layout.navigation_drawer_item, menu ));
 
 		return( retValue );
+	}
+
+	private void launchServerActivity() {
+		Intent  intent = new Intent( this, ServerActivity.class );
+
+		startActivity( intent );
 	}
 
 	/**

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.content.IntentCompat;
 import android.support.v7.app.ActionBarActivity;
 
 import com.SecretSquirrel.AndroidNoise.R;
@@ -69,6 +70,10 @@ public class ServerActivity extends ActionBarActivity {
 	@SuppressWarnings( "unused" )
 	public void onEvent( EventServerSelected args ) {
 		Intent  intent = new Intent( this, ShellActivity.class );
+
+		// don't come back here...
+		intent.addFlags( Intent.FLAG_ACTIVITY_NEW_TASK );
+		intent.addFlags( IntentCompat.FLAG_ACTIVITY_CLEAR_TASK );
 
 		startActivity( intent );
 	}
