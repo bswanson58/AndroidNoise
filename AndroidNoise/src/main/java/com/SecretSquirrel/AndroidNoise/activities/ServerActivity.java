@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.content.IntentCompat;
 import android.support.v7.app.ActionBarActivity;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import com.SecretSquirrel.AndroidNoise.R;
 import com.SecretSquirrel.AndroidNoise.events.EventActivityPausing;
@@ -76,6 +78,36 @@ public class ServerActivity extends ActionBarActivity {
 		intent.addFlags( IntentCompat.FLAG_ACTIVITY_CLEAR_TASK );
 
 		startActivity( intent );
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu( Menu menu ) {
+		getMenuInflater().inflate( R.menu.server_activity, menu );
+
+		return( true );
+	}
+
+	@Override
+	public boolean onOptionsItemSelected( MenuItem item ) {
+		boolean retValue = false;
+
+		// Handle action bar item clicks here. The action bar will
+		// automatically handle clicks on the Home/Up button, so long
+		// as you specify a parent activity in AndroidManifest.xml.
+		switch( item.getItemId()) {
+			case R.id.action_settings:
+				Intent intent = new Intent( this, SettingsActivity.class );
+
+				startActivity( intent );
+				retValue = true;
+				break;
+		}
+
+		if(!retValue ) {
+			retValue = super.onOptionsItemSelected( item );
+		}
+
+		return( retValue );
 	}
 
 	/**
