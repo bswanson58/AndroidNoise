@@ -2,6 +2,7 @@ package com.SecretSquirrel.AndroidNoise.activities;
 
 import android.content.Intent;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.IntentCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.FragmentManager;
@@ -272,6 +273,10 @@ public class LibraryActivity extends ActionBarActivity
 
 	private void launchServerActivity() {
 		Intent  intent = new Intent( this, ServerActivity.class );
+
+		// don't come back here...
+		intent.addFlags( Intent.FLAG_ACTIVITY_NEW_TASK );
+		intent.addFlags( IntentCompat.FLAG_ACTIVITY_CLEAR_TASK );
 
 		startActivity( intent );
 	}
