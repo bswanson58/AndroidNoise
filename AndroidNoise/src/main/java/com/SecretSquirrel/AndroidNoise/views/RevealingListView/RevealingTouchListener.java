@@ -139,9 +139,6 @@ public class RevealingTouchListener implements View.OnTouchListener {
 					mTouchDownX = motionEvent.getRawX();
 					mTouchDownListPosition = childPosition;
 
-					mFrontView.setClickable( true ); //!isOpen( mTouchDownListPosition ));
-					mFrontView.setLongClickable( true ); //!isOpen( mTouchDownListPosition ));
-
 					mVelocityTracker = VelocityTracker.obtain();
 					if( mVelocityTracker != null ) {
 						mVelocityTracker.addMovement( motionEvent );
@@ -178,8 +175,6 @@ public class RevealingTouchListener implements View.OnTouchListener {
 				}
 			}
 		}
-
-		view.onTouchEvent( motionEvent );
 
 		return( mTouchDownListPosition != ListView.INVALID_POSITION );
 	}
@@ -387,12 +382,7 @@ public class RevealingTouchListener implements View.OnTouchListener {
 	private void releaseCell( int position, int state ) {
 		setOpenState( position, state );
 
-		if( mFrontView != null ) {
-//			mFrontView.setClickable(!isOpen( position ));
-//			mFrontView.setLongClickable(!isOpen( position ));
-
-			clearFrontView();
-		}
+		clearFrontView();
 
 		if( mBackView != null ) {
 			mBackView.setOnClickListener( null );
@@ -455,19 +445,14 @@ public class RevealingTouchListener implements View.OnTouchListener {
 		clearFrontView();
 
 		mFrontView = frontView;
-		mFrontView.setOnClickListener( new View.OnClickListener() {
-			@Override
-			public void onClick( View view ) {
-				Log.d( TAG, "Front item clicked" );
-			}
-		} );
 		if( mRevealOnLongPress ) {
 			mFrontView.setOnLongClickListener( new View.OnLongClickListener() {
 				@Override
 				public boolean onLongClick( View view ) {
-					if(( mTouchDownListPosition != ListView.INVALID_POSITION ) &&
-					   ( !isOpen( mTouchDownListPosition ))) {
-						animateViewToState( view, OPEN_LEFT, mTouchDownListPosition );
+					if( mTouchDownListPosition != ListView.INVALID_POSITION ) {
+						int openPosition = canRevealLeft() ? OPEN_LEFT : canRevealRight() ? OPEN_RIGHT : OPEN_NEITHER;
+
+						animateViewToState( view, isOpen( mTouchDownListPosition ) ? OPEN_NEITHER : openPosition, mTouchDownListPosition );
 					}
 
 					return( false );
@@ -478,7 +463,6 @@ public class RevealingTouchListener implements View.OnTouchListener {
 
 	private void clearFrontView() {
 		if( mFrontView != null ) {
-			mFrontView.setOnClickListener( null );
 			mFrontView.setOnLongClickListener( null );
 			mFrontView = null;
 		}
@@ -491,13 +475,6 @@ public class RevealingTouchListener implements View.OnTouchListener {
 			mBackView = backView;
 			mBackView.setVisibility( View.VISIBLE );
 			mBackViewWidth = mBackView.getWidth();
-
-			mBackView.setOnClickListener( new View.OnClickListener() {
-				@Override
-				public void onClick( View view ) {
-					Log.d( TAG, "Back item clicked" );
-				}
-			} );
 		}
 	}
 

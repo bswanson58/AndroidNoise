@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.support.v4.view.MotionEventCompat;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.ViewConfiguration;
 import android.widget.ListView;
@@ -129,6 +128,8 @@ public class RevealingListView extends ListView {
 						mTouchState = TOUCH_STATE_REST;
 						break;
 				}
+
+				onTouchEvent( motionEvent );
 			}
 		}
 		else {
