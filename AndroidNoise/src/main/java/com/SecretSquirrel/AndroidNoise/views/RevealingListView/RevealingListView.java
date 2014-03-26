@@ -6,26 +6,33 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.support.v4.view.MotionEventCompat;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
+import android.view.ViewConfiguration;
 import android.widget.ListView;
 
 import com.secretSquirrel.sandbox.R;
 
 @SuppressWarnings( "unused" )
 public class RevealingListView extends ListView {
-	public static final int         REVEAL_MODE_NONE = 0;
-	public static final int         REVEAL_MODE_RIGHT = 1;
-	public static final int         REVEAL_MODE_LEFT = 2;
-	public static final int         REVEAL_MODE_BOTH = 3;
+	public final static int         REVEAL_MODE_NONE = 0;
+	public final static int         REVEAL_MODE_RIGHT = 1;
+	public final static int         REVEAL_MODE_LEFT = 2;
+	public final static int         REVEAL_MODE_BOTH = 3;
+
+	private final static int        TOUCH_STATE_REST = 0;
+	private final static int        TOUCH_STATE_SCROLLING_X = 1;
+	private final static int        TOUCH_STATE_SCROLLING_Y = 2;
 
 	private int                     mFrontView;
 	private int                     mRevealLeftView;
 	private int                     mRevealRightView;
-	private int                     mRevealMode;
 	private boolean                 mRevealOnLongPress;
-	private boolean                 mCloseOnMoveList;
-	private long                    mRevealAnimationTime;
 	private RevealingTouchListener  mTouchListener;
+	private int                     mTouchState = TOUCH_STATE_REST;
+	private float                   mLastMotionX;
+	private float                   mLastMotionY;
+	private int                     mTouchSlop;
 
 	public RevealingListView( Context context ) {
 		super( context );
@@ -44,17 +51,22 @@ public class RevealingListView extends ListView {
 	}
 
 	private void initialize( AttributeSet attributes ) {
-		mRevealMode = REVEAL_MODE_NONE;
-		mCloseOnMoveList = true;
+		int         revealMode = REVEAL_MODE_NONE;
+		long        animationTime =	0;
+
+		if( getContext() != null ) {
+			ViewConfiguration vc = ViewConfiguration.get( getContext());
+
+			mTouchSlop = vc.getScaledTouchSlop();
+		}
 
 		if ( attributes != null ) {
 			TypedArray styleAttributes = getContext().obtainStyledAttributes( attributes, R.styleable.RevealingListView );
 
 			if( styleAttributes != null ) {
-				mRevealMode = styleAttributes.getInt( R.styleable.RevealingListView_revealMode, REVEAL_MODE_NONE );
+				revealMode = styleAttributes.getInt( R.styleable.RevealingListView_revealMode, REVEAL_MODE_NONE );
 				mRevealOnLongPress = styleAttributes.getBoolean( R.styleable.RevealingListView_revealOnLongPress, false );
-				mCloseOnMoveList = styleAttributes.getBoolean( R.styleable.RevealingListView_revealCloseAllItemsWhenMoveList, true );
-				mRevealAnimationTime = styleAttributes.getInteger( R.styleable.RevealingListView_revealAnimationTime, 0 );
+				animationTime = styleAttributes.getInteger( R.styleable.RevealingListView_revealAnimationTime, 0 );
 				mFrontView = styleAttributes.getResourceId( R.styleable.RevealingListView_revealFrontView, 0 );
 				mRevealLeftView = styleAttributes.getResourceId( R.styleable.RevealingListView_revealLeftView, 0 );
 				mRevealRightView = styleAttributes.getResourceId( R.styleable.RevealingListView_revealRightView, 0 );
@@ -68,99 +80,86 @@ public class RevealingListView extends ListView {
 
 		mTouchListener = new RevealingTouchListener( this, mFrontView, mRevealLeftView, mRevealRightView );
 
-		mTouchListener.setRevealMode( mRevealMode );
+		mTouchListener.setRevealMode( revealMode );
 		mTouchListener.setRevealOnLongPress( mRevealOnLongPress );
+		if( animationTime != 0 ) {
+			mTouchListener.setAnimationTime( animationTime );
+		}
 
 		setOnTouchListener( mTouchListener );
 	}
 
-	/**
-	 * Indicates no movement
-	 */
-	private final static int TOUCH_STATE_REST = 0;
-
-	/**
-	 * State scrolling x position
-	 */
-	private final static int TOUCH_STATE_SCROLLING_X = 1;
-
-	/**
-	 * State scrolling y position
-	 */
-	private final static int TOUCH_STATE_SCROLLING_Y = 2;
-
-	private int touchState = TOUCH_STATE_REST;
-	private float lastMotionX;
-	private float lastMotionY;
-	private int touchSlop;
-
+	// see: http://neevek.net/posts/2013/10/13/implementing-onInterceptTouchEvent-and-onTouchEvent-for-ViewGroup.html
 	@Override
 	public boolean onInterceptTouchEvent( MotionEvent motionEvent ) {
-		int action = MotionEventCompat.getActionMasked( motionEvent );
-		final float x = motionEvent.getX();
-		final float y = motionEvent.getY();
+		boolean retValue = false;
+		int     action = MotionEventCompat.getActionMasked( motionEvent );
+		final   float x = motionEvent.getX();
+		final   float y = motionEvent.getY();
 
 		if(( isEnabled()) &&
 		   ( mTouchListener != null ) &&
 		   ( mTouchListener.isRevealEnabled())) {
-
-			if( touchState == TOUCH_STATE_SCROLLING_X ) {
-				return mTouchListener.onTouch( this, motionEvent );
+			if( mTouchState == TOUCH_STATE_SCROLLING_X ) {
+				retValue = mTouchListener.onTouch( this, motionEvent );
 			}
+			else {
+				switch( action ) {
+					case MotionEvent.ACTION_MOVE:
+						determineIfMoving( x, y );
+						retValue = mTouchState == TOUCH_STATE_SCROLLING_Y;
+						break;
 
-			switch( action ) {
-				case MotionEvent.ACTION_MOVE:
-					checkInMoving( x, y );
-					return touchState == TOUCH_STATE_SCROLLING_Y;
+					case MotionEvent.ACTION_DOWN:
+						mTouchListener.onTouch( this, motionEvent );
 
-				case MotionEvent.ACTION_DOWN:
-					super.onInterceptTouchEvent( motionEvent );
-					mTouchListener.onTouch( this, motionEvent );
-					touchState = TOUCH_STATE_REST;
-					lastMotionX = x;
-					lastMotionY = y;
-					return false;
+						mTouchState = TOUCH_STATE_REST;
+						mLastMotionX = x;
+						mLastMotionY = y;
+						break;
 
-				case MotionEvent.ACTION_CANCEL:
-					touchState = TOUCH_STATE_REST;
-					break;
+					case MotionEvent.ACTION_CANCEL:
+						mTouchState = TOUCH_STATE_REST;
+						retValue = super.onInterceptTouchEvent( motionEvent );
+						break;
 
-				case MotionEvent.ACTION_UP:
-					mTouchListener.onTouch( this, motionEvent );
-					return touchState == TOUCH_STATE_SCROLLING_Y;
-
-				default:
-					break;
+					case MotionEvent.ACTION_UP:
+						mTouchListener.onTouch( this, motionEvent );
+						retValue = mTouchState == TOUCH_STATE_SCROLLING_Y;
+						mTouchState = TOUCH_STATE_REST;
+						break;
+				}
 			}
 		}
+		else {
+			retValue = super.onInterceptTouchEvent( motionEvent );
+		}
 
-		return super.onInterceptTouchEvent( motionEvent );
+		return( retValue );
 	}
 
-	/**
-	 * Check if the user is moving the cell
-	 *
-	 * @param x Position X
-	 * @param y Position Y
-	 */
-	private void checkInMoving(float x, float y) {
-		final int xDiff = (int) Math.abs( x - lastMotionX );
-		final int yDiff = (int) Math.abs( y - lastMotionY );
+	public void resetTouchInterceptor() {
+		mTouchState = TOUCH_STATE_REST;
+	}
 
-		final int touchSlop = this.touchSlop;
+	private void determineIfMoving( float x, float y ) {
+		final int xDiff = (int) Math.abs( x - mLastMotionX );
+		final int yDiff = (int) Math.abs( y - mLastMotionY );
+
+		final int touchSlop = this.mTouchSlop;
 		boolean xMoved = xDiff > touchSlop;
 		boolean yMoved = yDiff > touchSlop;
 
 		if( xMoved ) {
-			touchState = TOUCH_STATE_SCROLLING_X;
-			lastMotionX = x;
-			lastMotionY = y;
+			mTouchState = TOUCH_STATE_SCROLLING_X;
+			mLastMotionX = x;
+			mLastMotionY = y;
 		}
 
 		if( yMoved ) {
-			touchState = TOUCH_STATE_SCROLLING_Y;
-			lastMotionX = x;
-			lastMotionY = y;
+			mTouchState = TOUCH_STATE_SCROLLING_Y;
+			mLastMotionX = x;
+			mLastMotionY = y;
 		}
 	}
 }
