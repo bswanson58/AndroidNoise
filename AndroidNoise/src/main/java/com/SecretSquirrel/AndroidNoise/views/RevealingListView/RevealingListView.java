@@ -25,8 +25,6 @@ public class RevealingListView extends ListView {
 	private boolean                 mRevealOnLongPress;
 	private boolean                 mCloseOnMoveList;
 	private long                    mRevealAnimationTime;
-	private float                   mRevealLeft;
-	private float                   mRevealRight;
 	private RevealingTouchListener  mTouchListener;
 
 	public RevealingListView( Context context ) {
@@ -54,8 +52,6 @@ public class RevealingListView extends ListView {
 
 			if( styleAttributes != null ) {
 				mRevealMode = styleAttributes.getInt( R.styleable.RevealingListView_revealMode, REVEAL_MODE_NONE );
-				mRevealLeft = styleAttributes.getDimension( R.styleable.RevealingListView_revealLeft, 0 );
-				mRevealRight = styleAttributes.getDimension( R.styleable.RevealingListView_revealRight, 0 );
 				mRevealOnLongPress = styleAttributes.getBoolean( R.styleable.RevealingListView_revealOnLongPress, false );
 				mCloseOnMoveList = styleAttributes.getBoolean( R.styleable.RevealingListView_revealCloseAllItemsWhenMoveList, true );
 				mRevealAnimationTime = styleAttributes.getInteger( R.styleable.RevealingListView_revealAnimationTime, 0 );

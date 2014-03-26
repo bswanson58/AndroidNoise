@@ -15,6 +15,7 @@ import com.nineoldandroids.animation.AnimatorListenerAdapter;
 import com.nineoldandroids.view.ViewHelper;
 
 import java.util.HashMap;
+import java.util.List;
 
 import static com.nineoldandroids.view.ViewHelper.setTranslationX;
 import static com.nineoldandroids.view.ViewPropertyAnimator.animate;
@@ -31,8 +32,8 @@ public class RevealingTouchListener implements View.OnTouchListener {
 	private final int                   mFrontViewId;
 	private final int                   mRevealLeftViewId;
 	private final int                   mRevealRightViewId;
+	private final long                  mAnimationTime;
 	private int                         mRevealMode;
-	private int                         mViewWidth;
 	private boolean                     mRevealOnLongPress;
 	private VelocityTracker             mVelocityTracker;
 	private View                        mFrontView;
@@ -40,14 +41,13 @@ public class RevealingTouchListener implements View.OnTouchListener {
 	private View                        mBackLeftView;
 	private View                        mBackRightView;
 	private HashMap<Integer, Integer>   mOpenPositions;
-	private long                        mAnimationTime;
+	private int                         mBackViewWidth;
 	private float                       mTouchDownX;
 	private int                         mTouchDownListPosition;
-	private boolean                     mIsSwiping;
+	private boolean                     mIsRevealing;
 	private int                         mMinimumFlingVelocity;
 	private int                         mMaximumFlingVelocity;
 	private int                         mTouchSlop;
-	private int                         mBackViewWidth;
 
 	private int swipeActionLeft;
 	private int swipeActionRight;
@@ -57,18 +57,19 @@ public class RevealingTouchListener implements View.OnTouchListener {
 		mFrontViewId = frontView;
 		mRevealLeftViewId = revealLeftView;
 		mRevealRightViewId = revealRightView;
+		mTouchDownListPosition = ListView.INVALID_POSITION;
 
-		mViewWidth = 1;
 		mOpenPositions = new HashMap<Integer, Integer>();
 
 		if( mListView.getContext() != null ) {
 			ViewConfiguration vc = ViewConfiguration.get( mListView.getContext());
+
 			mTouchSlop = vc.getScaledTouchSlop();
 			mMinimumFlingVelocity = vc.getScaledMinimumFlingVelocity();
 			mMaximumFlingVelocity = vc.getScaledMaximumFlingVelocity();
 		}
 
-		mAnimationTime = mListView.getContext().getResources().getInteger(android.R.integer.config_shortAnimTime );
+		mAnimationTime = mListView.getContext().getResources().getInteger( android.R.integer.config_shortAnimTime );
 	}
 
 	public boolean isRevealEnabled() {
@@ -88,8 +89,6 @@ public class RevealingTouchListener implements View.OnTouchListener {
 		boolean retValue = false;
 
 		if( canReveal()) {
-			mViewWidth = mListView.getWidth();
-
 			switch ( MotionEventCompat.getActionMasked( motionEvent )) {
 				case MotionEvent.ACTION_DOWN:
 					retValue = onTouchDown( view, motionEvent );
@@ -147,21 +146,27 @@ public class RevealingTouchListener implements View.OnTouchListener {
 					if( mRevealLeftViewId > 0 ) {
 						mBackLeftView = child.findViewById( mRevealLeftViewId );
 
-						if( canRevealLeft()) {
-							setBackView( mBackLeftView );
-						}
-						else {
-							mBackLeftView.setVisibility( View.INVISIBLE );
+						if( mBackLeftView != null ) {
+							if( canRevealLeft() && !isOpenRight( mTouchDownListPosition )) {
+								setBackView( mBackLeftView );
+							}
+							else {
+								mBackLeftView.setVisibility( View.INVISIBLE );
+							}
 						}
 					}
 					if( mRevealRightViewId > 0 ) {
 						mBackRightView = child.findViewById( mRevealRightViewId );
 
-						if(!canRevealBoth() && canRevealRight()) {
-							setBackView( mBackRightView );
-						}
-						else {
-							mBackRightView.setVisibility( View.INVISIBLE );
+						if( mBackRightView != null ) {
+							if(!canRevealBoth() && canRevealRight()) {
+								setBackView( mBackRightView );
+							}
+							else {
+								if(!isOpenRight( mTouchDownListPosition )) {
+									mBackRightView.setVisibility( View.INVISIBLE );
+								}
+							}
 						}
 					}
 
@@ -213,9 +218,9 @@ public class RevealingTouchListener implements View.OnTouchListener {
 		}
 
 		if(( Math.abs( deltaX ) > mTouchSlop ) &&
-		   (!mIsSwiping ) &&
+		   (!mIsRevealing) &&
 		   ( velocityX > velocityY )) {
-			mIsSwiping = true;
+			mIsRevealing = true;
 
 //			if( isOpen( mTouchDownListPosition )) {
 //				mListView.onStartClose(downPosition, swipingRight);
@@ -232,7 +237,7 @@ public class RevealingTouchListener implements View.OnTouchListener {
 			}
 		}
 
-		if(( mIsSwiping ) &&
+		if((mIsRevealing) &&
 		   ( canMove )) {
 			if( isOpen( mTouchDownListPosition )) {
 				deltaX += isOpenRight( mTouchDownListPosition ) ? -mBackViewWidth : mBackViewWidth;
@@ -251,63 +256,73 @@ public class RevealingTouchListener implements View.OnTouchListener {
 
 	private boolean onTouchUp( View view, MotionEvent motionEvent ) {
 		if(( mVelocityTracker == null ) ||
-		   (!mIsSwiping ) ||
 		   ( mTouchDownListPosition == ListView.INVALID_POSITION )) {
 			return( false );
 		}
 
-		float deltaX = motionEvent.getRawX() - mTouchDownX;
-		mVelocityTracker.addMovement(motionEvent);
-		mVelocityTracker.computeCurrentVelocity( 300 );
+		if( mIsRevealing ) {
+			float deltaX = motionEvent.getRawX() - mTouchDownX;
+			mVelocityTracker.addMovement(motionEvent);
+			mVelocityTracker.computeCurrentVelocity( 300 );
 
-		float velocityX = Math.abs( mVelocityTracker.getXVelocity());
-		float velocityY = Math.abs( mVelocityTracker.getYVelocity());
+			float velocityX = Math.abs( mVelocityTracker.getXVelocity());
+			float velocityY = Math.abs( mVelocityTracker.getYVelocity());
 
-		if(( velocityX <= mMinimumFlingVelocity ) ||
-		   ( velocityX >= mMaximumFlingVelocity ) ||
-		   ( velocityY * 2 > velocityX )) {
-			velocityX = 0;
-		}
+			if(( velocityX <= mMinimumFlingVelocity ) ||
+			   ( velocityX >= mMaximumFlingVelocity ) ||
+			   ( velocityY * 2 > velocityX )) {
+				velocityX = 0;
+			}
 
-		int moveToState = OPEN_NEITHER;
+			int moveToState = OPEN_NEITHER;
 
-		if( isOpen( mTouchDownListPosition )) {
-			if( velocityX > 0 ) {
-				if( mVelocityTracker.getXVelocity() > 0 ) {
-					moveToState = isOpenRight( mTouchDownListPosition ) ? OPEN_NEITHER : OPEN_RIGHT;
+			if( isOpen( mTouchDownListPosition )) {
+				if( velocityX > 0 ) {
+					if( mVelocityTracker.getXVelocity() > 0 ) {
+						moveToState = isOpenRight( mTouchDownListPosition ) ? OPEN_NEITHER : OPEN_RIGHT;
+					}
+					else {
+						moveToState = isOpenRight( mTouchDownListPosition ) ? OPEN_LEFT : OPEN_NEITHER;
+					}
 				}
 				else {
-					moveToState = isOpenRight( mTouchDownListPosition ) ? OPEN_LEFT : OPEN_NEITHER;
+					if( Math.abs( ViewHelper.getX( mFrontView )) > ( mBackViewWidth / 2 )) {
+						if( deltaX > 0 ) {
+							moveToState = canRevealLeft() ? OPEN_LEFT : OPEN_NEITHER;
+						}
+						else {
+							moveToState = canRevealRight() ? OPEN_RIGHT : OPEN_NEITHER;
+						}
+					}
 				}
 			}
 			else {
-				if( Math.abs( deltaX ) < ( mBackViewWidth / 2 )) {
-					moveToState = canRevealLeft() ? OPEN_LEFT : OPEN_RIGHT;
+				if( velocityX > 0 ) {
+					moveToState = mVelocityTracker.getXVelocity() > 0 ? OPEN_LEFT : OPEN_RIGHT;
+				}
+				else {
+					if( Math.abs( ViewHelper.getX( mFrontView )) > ( mBackViewWidth / 2 )) {
+						if( deltaX > 0 ) {
+							moveToState = canRevealLeft() ? OPEN_LEFT : OPEN_NEITHER;
+						}
+						else {
+							moveToState = canRevealRight() ? OPEN_RIGHT : OPEN_NEITHER;
+						}
+					}
 				}
 			}
+
+			animateViewToState( mFrontView, moveToState, mTouchDownListPosition );
 		}
 		else {
-			if( velocityX > 0 ) {
-				moveToState = mVelocityTracker.getXVelocity() > 0 ? OPEN_LEFT : OPEN_RIGHT;
-			}
-			else {
-				if( Math.abs( deltaX ) > ( mBackViewWidth / 2 )) {
-					moveToState = deltaX > 0 ? OPEN_LEFT : OPEN_RIGHT;
-				}
-			}
+			releaseCell( mTouchDownListPosition, getOpenState( mTouchDownListPosition ));
 		}
-
-		generateRevealAnimate( mFrontView, moveToState, mTouchDownListPosition );
 
 		mVelocityTracker.recycle();
 		mVelocityTracker = null;
+		mIsRevealing = false;
 		mTouchDownX = 0;
-		// change clickable front view
-		//                if (swap) {
-		//                    frontView.setClickable(opened.get(downPosition));
-		//                    frontView.setLongClickable(opened.get(downPosition));
-		//                }
-		mIsSwiping = false;
+		mTouchDownListPosition = ListView.INVALID_POSITION;
 
 		return( true );
 	}
@@ -327,7 +342,7 @@ public class RevealingTouchListener implements View.OnTouchListener {
 		setTranslationX( mFrontView, deltaX );
 	}
 
-	private void generateRevealAnimate( final View view, final int toState, final int position ) {
+	private void animateViewToState( final View view, final int toState, final int position ) {
 		int moveTo = 0;
 
 		switch( toState ) {
@@ -356,19 +371,57 @@ public class RevealingTouchListener implements View.OnTouchListener {
 					public void onAnimationEnd( Animator animation ) {
 						//						mListView.resetScrolling();
 
-						setOpenState( position, toState );
+						releaseCell( position, toState );
 
 						//							if( isOpen( position )) {
 						//								mListView.onOpened( position, swapRight );
 						//							} else {
 						//								mListView.onClosed( position, isOpenRight( position ));
 						//							}
-
-						if( toState == OPEN_NEITHER ) {
-							resetCell();
-						}
 					}
 				} );
+	}
+
+	private void releaseCell( int position, int state ) {
+		setOpenState( position, state );
+
+		if( mFrontView != null ) {
+			mFrontView.setClickable( isOpen( position ));
+			mFrontView.setLongClickable( isOpen( position ));
+
+			clearFrontView();
+		}
+
+		if( mBackView != null ) {
+			mBackView.setOnClickListener( null );
+			mBackView = null;
+		}
+
+		if( mBackLeftView != null ) {
+			if( state != OPEN_LEFT ) {
+				mBackLeftView.setVisibility( View.INVISIBLE );
+			}
+
+			mBackLeftView = null;
+		}
+
+		if( mBackRightView != null ) {
+			if( state != OPEN_RIGHT ) {
+				mBackRightView.setVisibility( View.INVISIBLE );
+			}
+
+			mBackRightView = null;
+		}
+	}
+
+	private int getOpenState( int position ) {
+		int retValue = OPEN_NEITHER;
+
+		if( mOpenPositions.containsKey( position )) {
+			retValue = mOpenPositions.get( position );
+		}
+
+		return( retValue );
 	}
 
 	private void setOpenState( int position, int state ) {
@@ -398,9 +451,9 @@ public class RevealingTouchListener implements View.OnTouchListener {
 		clearFrontView();
 
 		mFrontView = frontView;
-		mFrontView.setOnClickListener(new View.OnClickListener() {
+		mFrontView.setOnClickListener( new View.OnClickListener() {
 			@Override
-			public void onClick(View v) {
+			public void onClick( View v ) {
 //				mListView.onClickFrontView( mTouchDownListPosition );
 			}
 		});
@@ -409,8 +462,9 @@ public class RevealingTouchListener implements View.OnTouchListener {
 			mFrontView.setOnLongClickListener( new View.OnLongClickListener() {
 				@Override
 				public boolean onLongClick( View view ) {
-					if(!isOpen( mTouchDownListPosition )) {
-						generateRevealAnimate( view, OPEN_LEFT, mTouchDownListPosition );
+					if(( mTouchDownListPosition != ListView.INVALID_POSITION ) &&
+					   ( !isOpen( mTouchDownListPosition ))) {
+						animateViewToState( view, OPEN_LEFT, mTouchDownListPosition );
 					}
 
 					return( false );
@@ -449,29 +503,6 @@ public class RevealingTouchListener implements View.OnTouchListener {
 			mBackView.setOnClickListener( null );
 			mBackView.setVisibility( View.INVISIBLE );
 			mBackView = null;
-		}
-	}
-
-	private void resetCell() {
-		if( mTouchDownListPosition != ListView.INVALID_POSITION ) {
-			if( mFrontView != null ) {
-				mFrontView.setClickable( isOpen( mTouchDownListPosition ));
-				mFrontView.setLongClickable( isOpen( mTouchDownListPosition ));
-
-				clearFrontView();
-			}
-
-			if( mBackView != null ) {
-				mBackView.setOnClickListener( null );
-				mBackView = null;
-			}
-
-			mBackLeftView = null;
-			mBackRightView = null;
-
-			mOpenPositions.remove( mTouchDownListPosition );
-
-			mTouchDownListPosition = ListView.INVALID_POSITION;
 		}
 	}
 
