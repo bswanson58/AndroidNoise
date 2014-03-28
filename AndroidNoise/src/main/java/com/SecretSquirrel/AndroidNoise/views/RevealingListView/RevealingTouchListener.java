@@ -16,6 +16,7 @@ import com.nineoldandroids.animation.AnimatorListenerAdapter;
 import com.nineoldandroids.view.ViewHelper;
 
 import java.util.HashMap;
+import java.util.Set;
 
 import static com.nineoldandroids.view.ViewHelper.setTranslationX;
 import static com.nineoldandroids.view.ViewPropertyAnimator.animate;
@@ -35,6 +36,7 @@ public class RevealingTouchListener implements View.OnTouchListener {
 	private long                        mAnimationTime;
 	private int                         mRevealMode;
 	private boolean                     mRevealOnLongPress;
+	private boolean                     mAllowMultipleReveals;
 	private VelocityTracker             mVelocityTracker;
 	private View                        mFrontView;
 	private View                        mBackView;
@@ -78,6 +80,10 @@ public class RevealingTouchListener implements View.OnTouchListener {
 
 	public void setRevealMode( int mode ) {
 		mRevealMode = mode;
+	}
+
+	public void setAllowMultipleReveals( boolean allowMultipleReveals ) {
+		mAllowMultipleReveals = allowMultipleReveals;
 	}
 
 	public void setRevealOnLongPress( boolean revealOnLongPress ) {
@@ -234,6 +240,12 @@ public class RevealingTouchListener implements View.OnTouchListener {
 				cancelEvent.setAction( MotionEvent.ACTION_CANCEL | ( MotionEventCompat.getActionIndex(motionEvent) << MotionEventCompat.ACTION_POINTER_INDEX_SHIFT ));
 				mListView.onTouchEvent( cancelEvent );
 			}
+
+			if(!mAllowMultipleReveals ) {
+				Log.d( TAG, String.format( "Closing all except: %d", mTouchDownListPosition ));
+
+				closeAllExcept( mTouchDownListPosition );
+			}
 		}
 
 		if(( mIsRevealing ) &&
@@ -311,19 +323,54 @@ public class RevealingTouchListener implements View.OnTouchListener {
 				}
 			}
 
-			animateViewToState( mFrontView, moveToState, mTouchDownListPosition );
+			animateViewToState( mFrontView, moveToState, mTouchDownListPosition, mBackView );
+			setOpenState( mTouchDownListPosition, moveToState );
 		}
-		else {
-			releaseCell( mTouchDownListPosition, getOpenState( mTouchDownListPosition ));
-		}
+
+		releaseCell( mTouchDownListPosition );
 
 		mVelocityTracker.recycle();
 		mVelocityTracker = null;
-		mIsRevealing = false;
-		mTouchDownX = 0;
-		mTouchDownListPosition = ListView.INVALID_POSITION;
 
 		return( false );
+	}
+
+	public void closeAll() {
+		closeAllExcept( ListView.INVALID_POSITION );
+	}
+
+	private void closeAllExcept( int exceptPosition ) {
+		Integer[]   keySet = new Integer[mOpenPositions.size()];
+
+		mOpenPositions.keySet().toArray( keySet );
+
+		for( int position : keySet ) {
+			int state = mOpenPositions.get( position );
+
+			if(( position != exceptPosition ) &&
+			   ( state != OPEN_NEITHER )) {
+				View    view = mListView.getChildAt( position - mListView.getFirstVisiblePosition());
+
+				if( view != null ) {
+					View    frontView = view.findViewById( mFrontViewId );
+
+					if( frontView != null ) {
+						animate( frontView )
+								.translationX( 0 )
+								.setDuration( mAnimationTime )
+								.setListener( new AnimatorListenerAdapter() {
+									@Override
+									public void onAnimationEnd( Animator animation ) {
+										Log.d( TAG, String.format( "closeAllExcept" ));
+									}
+								});
+
+					}
+				}
+
+				setOpenState( position, OPEN_NEITHER );
+			}
+		}
 	}
 
 	public void moveFrontView( float deltaX ) {
@@ -341,7 +388,7 @@ public class RevealingTouchListener implements View.OnTouchListener {
 		setTranslationX( mFrontView, deltaX );
 	}
 
-	private void animateViewToState( final View view, final int toState, final int position ) {
+	private void animateViewToState( final View view, final int toState, final int position, final View backView ) {
 		int moveTo = 0;
 
 		switch( toState ) {
@@ -368,7 +415,12 @@ public class RevealingTouchListener implements View.OnTouchListener {
 				.setListener( new AnimatorListenerAdapter() {
 					@Override
 					public void onAnimationEnd( Animator animation ) {
-						releaseCell( position, toState );
+						if(( toState == OPEN_NEITHER ) &&
+						   ( backView != null )) {
+							backView.setVisibility( View.INVISIBLE );
+						}
+
+						Log.d( TAG, String.format( "animateViewToState, position: %d", position ));
 
 						//							if( isOpen( position )) {
 						//								mListView.onOpened( position, swapRight );
@@ -379,9 +431,7 @@ public class RevealingTouchListener implements View.OnTouchListener {
 				} );
 	}
 
-	private void releaseCell( int position, int state ) {
-		setOpenState( position, state );
-
+	private void releaseCell( int position ) {
 		clearFrontView();
 
 		if( mBackView != null ) {
@@ -389,22 +439,12 @@ public class RevealingTouchListener implements View.OnTouchListener {
 			mBackView = null;
 		}
 
-		if( mBackLeftView != null ) {
-			if( state != OPEN_LEFT ) {
-				mBackLeftView.setVisibility( View.INVISIBLE );
-			}
+		mBackLeftView = null;
+		mBackRightView = null;
 
-			mBackLeftView = null;
-		}
-
-		if( mBackRightView != null ) {
-			if( state != OPEN_RIGHT ) {
-				mBackRightView.setVisibility( View.INVISIBLE );
-			}
-
-			mBackRightView = null;
-		}
-
+		mIsRevealing = false;
+		mTouchDownX = 0;
+		mTouchDownListPosition = ListView.INVALID_POSITION;
 		mListView.resetTouchInterceptor();
 	}
 
@@ -449,10 +489,19 @@ public class RevealingTouchListener implements View.OnTouchListener {
 			mFrontView.setOnLongClickListener( new View.OnLongClickListener() {
 				@Override
 				public boolean onLongClick( View view ) {
-					if( mTouchDownListPosition != ListView.INVALID_POSITION ) {
-						int openPosition = canRevealLeft() ? OPEN_LEFT : canRevealRight() ? OPEN_RIGHT : OPEN_NEITHER;
+					if(( mTouchDownListPosition != ListView.INVALID_POSITION ) &&
+					   (!mIsRevealing )) {
+						int     openPosition = OPEN_NEITHER;
 
-						animateViewToState( view, isOpen( mTouchDownListPosition ) ? OPEN_NEITHER : openPosition, mTouchDownListPosition );
+						if(!isOpen( mTouchDownListPosition )) {
+							openPosition = canRevealLeft() ? OPEN_LEFT : canRevealRight() ? OPEN_RIGHT : OPEN_NEITHER;
+						}
+
+						animateViewToState( view, openPosition, mTouchDownListPosition, mBackView );
+
+						closeAllExcept( mTouchDownListPosition );
+						setOpenState( mTouchDownListPosition, openPosition );
+						releaseCell( mTouchDownListPosition );
 					}
 
 					return( false );

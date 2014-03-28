@@ -51,6 +51,7 @@ public class RevealingListView extends ListView {
 
 	private void initialize( AttributeSet attributes ) {
 		int         revealMode = REVEAL_MODE_NONE;
+		boolean     allowMultipleReveals = false;
 		long        animationTime =	0;
 
 		if( getContext() != null ) {
@@ -64,6 +65,7 @@ public class RevealingListView extends ListView {
 
 			if( styleAttributes != null ) {
 				revealMode = styleAttributes.getInt( R.styleable.RevealingListView_revealMode, REVEAL_MODE_NONE );
+				allowMultipleReveals = styleAttributes.getBoolean( R.styleable.RevealingListView_revealAllowMultiple, false );
 				mRevealOnLongPress = styleAttributes.getBoolean( R.styleable.RevealingListView_revealOnLongPress, false );
 				animationTime = styleAttributes.getInteger( R.styleable.RevealingListView_revealAnimationTime, 0 );
 				mFrontView = styleAttributes.getResourceId( R.styleable.RevealingListView_revealFrontView, 0 );
@@ -80,6 +82,7 @@ public class RevealingListView extends ListView {
 		mTouchListener = new RevealingTouchListener( this, mFrontView, mRevealLeftView, mRevealRightView );
 
 		mTouchListener.setRevealMode( revealMode );
+		mTouchListener.setAllowMultipleReveals( allowMultipleReveals );
 		mTouchListener.setRevealOnLongPress( mRevealOnLongPress );
 		if( animationTime != 0 ) {
 			mTouchListener.setAnimationTime( animationTime );
@@ -106,7 +109,11 @@ public class RevealingListView extends ListView {
 				switch( action ) {
 					case MotionEvent.ACTION_MOVE:
 						determineIfMoving( x, y );
-						retValue = mTouchState == TOUCH_STATE_SCROLLING_Y;
+
+						if( mTouchState == TOUCH_STATE_SCROLLING_Y ) {
+							mTouchListener.closeAll();
+							retValue = true;
+						}
 						break;
 
 					case MotionEvent.ACTION_DOWN:
