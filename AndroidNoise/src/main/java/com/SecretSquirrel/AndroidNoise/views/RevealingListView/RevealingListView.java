@@ -14,24 +14,24 @@ import com.secretSquirrel.sandbox.R;
 
 @SuppressWarnings( "unused" )
 public class RevealingListView extends ListView {
-	public final static int         REVEAL_MODE_NONE = 0;
-	public final static int         REVEAL_MODE_RIGHT = 1;
-	public final static int         REVEAL_MODE_LEFT = 2;
-	public final static int         REVEAL_MODE_BOTH = 3;
+	public final static int             REVEAL_MODE_NONE = 0;
+	public final static int             REVEAL_MODE_RIGHT = 1;
+	public final static int             REVEAL_MODE_LEFT = 2;
+	public final static int             REVEAL_MODE_BOTH = 3;
 
-	private final static int        TOUCH_STATE_REST = 0;
-	private final static int        TOUCH_STATE_SCROLLING_X = 1;
-	private final static int        TOUCH_STATE_SCROLLING_Y = 2;
+	private final static int            TOUCH_STATE_REST = 0;
+	private final static int            TOUCH_STATE_SCROLLING_X = 1;
+	private final static int            TOUCH_STATE_SCROLLING_Y = 2;
 
-	private int                     mFrontView;
-	private int                     mRevealLeftView;
-	private int                     mRevealRightView;
-	private boolean                 mRevealOnLongPress;
-	private RevealingTouchListener  mTouchListener;
-	private int                     mTouchState = TOUCH_STATE_REST;
-	private float                   mLastMotionX;
-	private float                   mLastMotionY;
-	private int                     mTouchSlop;
+	private int                         mFrontView;
+	private int                         mRevealLeftView;
+	private int                         mRevealRightView;
+	private boolean                     mRevealOnLongPress;
+	private RevealingTouchListener      mTouchListener;
+	private int                         mTouchState = TOUCH_STATE_REST;
+	private float                       mLastMotionX;
+	private float                       mLastMotionY;
+	private int                         mTouchSlop;
 
 	public RevealingListView( Context context ) {
 		super( context );
@@ -40,19 +40,25 @@ public class RevealingListView extends ListView {
 	public RevealingListView( Context context, AttributeSet attrs ) {
 		super( context, attrs );
 
-		initialize( attrs );
+		if(!isInEditMode()) {
+			initialize( attrs );
+		}
 	}
 
 	public RevealingListView( Context context, AttributeSet attrs, int defStyle ) {
 		super( context, attrs, defStyle );
 
-		initialize( attrs );
+		if(!isInEditMode()) {
+			initialize( attrs );
+		}
 	}
 
 	private void initialize( AttributeSet attributes ) {
 		int         revealMode = REVEAL_MODE_NONE;
 		boolean     allowMultipleReveals = false;
 		long        animationTime =	0;
+		int         rightRevealAction = 1;
+		int         leftRevealAction = 2;
 
 		if( getContext() != null ) {
 			ViewConfiguration vc = ViewConfiguration.get( getContext());
@@ -71,6 +77,8 @@ public class RevealingListView extends ListView {
 				mFrontView = styleAttributes.getResourceId( R.styleable.RevealingListView_revealFrontView, 0 );
 				mRevealLeftView = styleAttributes.getResourceId( R.styleable.RevealingListView_revealLeftView, 0 );
 				mRevealRightView = styleAttributes.getResourceId( R.styleable.RevealingListView_revealRightView, 0 );
+				rightRevealAction = styleAttributes.getInt( R.styleable.RevealingListView_revealRightAction, 1 );
+				leftRevealAction = styleAttributes.getInt( R.styleable.RevealingListView_revealLeftAction, 2 );
 			}
 		}
 
@@ -84,11 +92,17 @@ public class RevealingListView extends ListView {
 		mTouchListener.setRevealMode( revealMode );
 		mTouchListener.setAllowMultipleReveals( allowMultipleReveals );
 		mTouchListener.setRevealOnLongPress( mRevealOnLongPress );
+		mTouchListener.setRevealRightAction( rightRevealAction );
+		mTouchListener.setRevealLeftAction( leftRevealAction );
 		if( animationTime != 0 ) {
 			mTouchListener.setAnimationTime( animationTime );
 		}
 
 		setOnTouchListener( mTouchListener );
+	}
+
+	public void setRevealingListViewListener( RevealingListViewListener listener ) {
+		mTouchListener.setRevealingListViewListener( listener );
 	}
 
 	// see: http://neevek.net/posts/2013/10/13/implementing-onInterceptTouchEvent-and-onTouchEvent-for-ViewGroup.html
@@ -110,10 +124,7 @@ public class RevealingListView extends ListView {
 					case MotionEvent.ACTION_MOVE:
 						determineIfMoving( x, y );
 
-						if( mTouchState == TOUCH_STATE_SCROLLING_Y ) {
-							mTouchListener.closeAll();
-							retValue = true;
-						}
+						retValue = mTouchState == TOUCH_STATE_SCROLLING_Y;
 						break;
 
 					case MotionEvent.ACTION_DOWN:

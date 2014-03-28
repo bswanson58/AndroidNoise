@@ -9,6 +9,7 @@ import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
 import android.view.ViewConfiguration;
+import android.widget.AbsListView;
 import android.widget.ListView;
 
 import com.nineoldandroids.animation.Animator;
@@ -16,7 +17,6 @@ import com.nineoldandroids.animation.AnimatorListenerAdapter;
 import com.nineoldandroids.view.ViewHelper;
 
 import java.util.HashMap;
-import java.util.Set;
 
 import static com.nineoldandroids.view.ViewHelper.setTranslationX;
 import static com.nineoldandroids.view.ViewPropertyAnimator.animate;
@@ -33,6 +33,9 @@ public class RevealingTouchListener implements View.OnTouchListener {
 	private final int                   mFrontViewId;
 	private final int                   mRevealLeftViewId;
 	private final int                   mRevealRightViewId;
+	private int                         mRevealLeftAction;
+	private int                         mRevealRightAction;
+	private RevealingListViewListener   mListener;
 	private long                        mAnimationTime;
 	private int                         mRevealMode;
 	private boolean                     mRevealOnLongPress;
@@ -50,9 +53,7 @@ public class RevealingTouchListener implements View.OnTouchListener {
 	private int                         mMinimumFlingVelocity;
 	private int                         mMaximumFlingVelocity;
 	private int                         mTouchSlop;
-
-	private int swipeActionLeft;
-	private int swipeActionRight;
+	private int                         mLastScroll;
 
 	public RevealingTouchListener( RevealingListView listView, int frontView, int revealLeftView, int revealRightView ) {
 		mListView = listView;
@@ -60,6 +61,8 @@ public class RevealingTouchListener implements View.OnTouchListener {
 		mRevealLeftViewId = revealLeftView;
 		mRevealRightViewId = revealRightView;
 		mTouchDownListPosition = ListView.INVALID_POSITION;
+		mRevealRightAction = OPEN_RIGHT;
+		mRevealLeftAction = OPEN_LEFT;
 
 		mOpenPositions = new HashMap<Integer, Integer>();
 
@@ -72,6 +75,28 @@ public class RevealingTouchListener implements View.OnTouchListener {
 		}
 
 		mAnimationTime = mListView.getContext().getResources().getInteger( android.R.integer.config_shortAnimTime );
+		mListener = new DefaultRevealingListViewListener();
+
+		mListView.setOnScrollListener( new AbsListView.OnScrollListener() {
+			@Override
+			public void onScroll( AbsListView absListView, int i, int i2, int i3 ) {
+				View    firstChild = mListView.getChildAt( 0 );
+
+				if( firstChild != null ) {
+					int position = firstChild.getTop();
+
+					if( mLastScroll != position ) {
+						if( isRevealEnabled()) {
+							closeAll();
+						}
+
+						mLastScroll = position;
+					}
+				}
+			}
+			@Override
+			public void onScrollStateChanged( AbsListView absListView, int i ) { }
+		} );
 	}
 
 	public boolean isRevealEnabled() {
@@ -92,6 +117,20 @@ public class RevealingTouchListener implements View.OnTouchListener {
 
 	public void setAnimationTime( long animationTime ) {
 		mAnimationTime = animationTime;
+	}
+
+	public void setRevealRightAction( int action ) {
+		mRevealRightAction = action;
+	}
+
+	public void setRevealLeftAction( int action ) {
+		mRevealLeftAction = action;
+	}
+
+	public void setRevealingListViewListener( RevealingListViewListener listener ) {
+		if( listener != null ) {
+			mListener = listener;
+		}
 	}
 
 	@Override
@@ -344,7 +383,7 @@ public class RevealingTouchListener implements View.OnTouchListener {
 
 		mOpenPositions.keySet().toArray( keySet );
 
-		for( int position : keySet ) {
+		for( final int position : keySet ) {
 			int state = mOpenPositions.get( position );
 
 			if(( position != exceptPosition ) &&
@@ -361,7 +400,7 @@ public class RevealingTouchListener implements View.OnTouchListener {
 								.setListener( new AnimatorListenerAdapter() {
 									@Override
 									public void onAnimationEnd( Animator animation ) {
-										Log.d( TAG, String.format( "closeAllExcept" ));
+										mListener.onRevealClosed( position );
 									}
 								});
 
@@ -415,18 +454,16 @@ public class RevealingTouchListener implements View.OnTouchListener {
 				.setListener( new AnimatorListenerAdapter() {
 					@Override
 					public void onAnimationEnd( Animator animation ) {
-						if(( toState == OPEN_NEITHER ) &&
-						   ( backView != null )) {
-							backView.setVisibility( View.INVISIBLE );
+						if( toState == OPEN_NEITHER ) {
+						    if( backView != null ) {
+								backView.setVisibility( View.INVISIBLE );
+						    }
+
+							mListener.onRevealClosed( position );
 						}
-
-						Log.d( TAG, String.format( "animateViewToState, position: %d", position ));
-
-						//							if( isOpen( position )) {
-						//								mListView.onOpened( position, swapRight );
-						//							} else {
-						//								mListView.onClosed( position, isOpenRight( position ));
-						//							}
+						else {
+							mListener.onRevealOpened( position, toState == OPEN_RIGHT ? mRevealRightAction : mRevealLeftAction );
+						}
 					}
 				} );
 	}
@@ -485,10 +522,18 @@ public class RevealingTouchListener implements View.OnTouchListener {
 		clearFrontView();
 
 		mFrontView = frontView;
+		mFrontView.setOnClickListener( new View.OnClickListener() {
+			@Override
+			public void onClick( View view ) {
+				mListener.onItemClicked( mListView.getPositionForView( view ));
+			}
+		} );
 		if( mRevealOnLongPress ) {
 			mFrontView.setOnLongClickListener( new View.OnLongClickListener() {
 				@Override
 				public boolean onLongClick( View view ) {
+					mListener.onItemLongClicked( mListView.getPositionForView( view ));
+
 					if(( mTouchDownListPosition != ListView.INVALID_POSITION ) &&
 					   (!mIsRevealing )) {
 						int     openPosition = OPEN_NEITHER;
@@ -512,7 +557,6 @@ public class RevealingTouchListener implements View.OnTouchListener {
 
 	private void clearFrontView() {
 		if( mFrontView != null ) {
-			mFrontView.setOnLongClickListener( null );
 			mFrontView = null;
 		}
 	}
@@ -529,7 +573,6 @@ public class RevealingTouchListener implements View.OnTouchListener {
 
 	private void clearBackView() {
 		if( mBackView != null ) {
-			mBackView.setOnClickListener( null );
 			mBackView.setVisibility( View.INVISIBLE );
 			mBackView = null;
 		}

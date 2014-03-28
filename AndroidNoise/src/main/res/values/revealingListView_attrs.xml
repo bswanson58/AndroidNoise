@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="RevealingListView">
+        <attr name="revealOnLongPress" format="boolean"/>
+        <attr name="revealAllowMultiple" format="boolean"/>
+        <attr name="revealAnimationTime" format="integer"/>
+        <attr name="revealCloseAllItemsWhenMoveList" format="boolean"/>
+        <attr name="revealFrontView" format="reference"/>
+        <attr name="revealLeftView" format="reference"/>
+        <attr name="revealRightView" format="reference"/>
+        <attr name="revealRightAction" format="integer"/>
+        <attr name="revealLeftAction" format="integer"/>
+        <attr name="revealMode" format="enum">
+            <enum name="none" value="0"/>
+            <enum name="right" value="1"/>
+            <enum name="left" value="2"/>
+            <enum name="both" value="3"/>
+        </attr>
+    </declare-styleable>
+
+</resources>
