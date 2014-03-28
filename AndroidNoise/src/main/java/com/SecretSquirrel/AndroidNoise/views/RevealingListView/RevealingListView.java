@@ -4,10 +4,12 @@ package com.secretSquirrel.sandbox.RevealingListView;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.database.DataSetObserver;
 import android.support.v4.view.MotionEventCompat;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.ViewConfiguration;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 
 import com.secretSquirrel.sandbox.R;
@@ -103,6 +105,27 @@ public class RevealingListView extends ListView {
 
 	public void setRevealingListViewListener( RevealingListViewListener listener ) {
 		mTouchListener.setRevealingListViewListener( listener );
+	}
+
+	@Override
+	public void setAdapter( ListAdapter adapter ) {
+		ListAdapter currentAdapter = getAdapter();
+
+		if( currentAdapter != null ) {
+			currentAdapter.registerDataSetObserver( null );
+		}
+
+		super.setAdapter( adapter );
+
+		mTouchListener.resetItems();
+		adapter.registerDataSetObserver( new DataSetObserver() {
+			@Override
+			public void onChanged() {
+				super.onChanged();
+
+				mTouchListener.resetItems();
+			}
+		} );
 	}
 
 	// see: http://neevek.net/posts/2013/10/13/implementing-onInterceptTouchEvent-and-onTouchEvent-for-ViewGroup.html

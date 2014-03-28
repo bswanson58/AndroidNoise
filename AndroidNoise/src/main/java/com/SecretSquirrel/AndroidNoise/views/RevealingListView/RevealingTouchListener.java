@@ -518,6 +518,26 @@ public class RevealingTouchListener implements View.OnTouchListener {
 		return( retValue );
 	}
 
+	public void resetItems() {
+		mOpenPositions.clear();
+
+		for( int position = 0; position < mListView.getAdapter().getCount(); position++ ) {
+			View    view = mListView.getChildAt( position );
+
+			if( view != null ) {
+				View    frontView = view.findViewById( mFrontViewId );
+
+				if( frontView != null ) {
+					if( ViewHelper.getX( frontView ) != 0 ) {
+						setTranslationX( frontView, 0 );
+
+						mListener.onRevealClosed( position );
+					}
+				}
+			}
+		}
+	}
+
 	private void setFrontView( View frontView ) {
 		clearFrontView();
 
@@ -525,14 +545,14 @@ public class RevealingTouchListener implements View.OnTouchListener {
 		mFrontView.setOnClickListener( new View.OnClickListener() {
 			@Override
 			public void onClick( View view ) {
-				mListener.onItemClicked( mListView.getPositionForView( view ));
+				mListener.onItemClicked( mListView.getPositionForView( view ) );
 			}
 		} );
 		if( mRevealOnLongPress ) {
 			mFrontView.setOnLongClickListener( new View.OnLongClickListener() {
 				@Override
 				public boolean onLongClick( View view ) {
-					mListener.onItemLongClicked( mListView.getPositionForView( view ));
+					mListener.onItemLongClicked( mListView.getPositionForView( view ) );
 
 					if(( mTouchDownListPosition != ListView.INVALID_POSITION ) &&
 					   (!mIsRevealing )) {
