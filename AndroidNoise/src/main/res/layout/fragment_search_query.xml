@@ -12,6 +12,8 @@
         android:layout_height="wrap_content"
         android:hint="@string/search_text_hint"
         android:drawableRight="@android:drawable/ic_menu_close_clear_cancel"
+        android:imeActionLabel="@string/soft_keyboard_search"
+        android:inputType="textImeMultiLine"
         android:layout_gravity="center_vertical"/>
 
     <Button

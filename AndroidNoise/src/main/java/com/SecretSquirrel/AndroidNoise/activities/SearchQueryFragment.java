@@ -5,9 +5,11 @@ package com.SecretSquirrel.AndroidNoise.activities;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.SecretSquirrel.AndroidNoise.R;
 import com.SecretSquirrel.AndroidNoise.events.EventSearchRequest;
@@ -56,9 +58,28 @@ public class SearchQueryFragment extends Fragment {
 				}
 			} );
 
+			mSearchText.setOnEditorActionListener( new TextView.OnEditorActionListener() {
+				@Override
+				public boolean onEditorAction( TextView textView, int i, KeyEvent keyEvent ) {
+					boolean retValue = false;
+
+					if(( keyEvent != null ) &&
+					   ( keyEvent.getAction() == KeyEvent.ACTION_DOWN ) &&
+					   ( keyEvent.getKeyCode() == KeyEvent.KEYCODE_ENTER )) {
+						executeSearch();
+
+						retValue = true;
+					}
+
+					return (retValue);
+				}
+			} );
+
 			if( savedInstanceState != null ) {
 				mSearchText.setText( savedInstanceState.getString( SEARCH_TEXT_KEY ));
 			}
+			
+			NoiseUtils.displayKeyboard( getActivity(), mSearchText );
 		}
 
 		return( myView );
@@ -68,8 +89,6 @@ public class SearchQueryFragment extends Fragment {
 	@OnClick( R.id.execute_search_button )
 	public void onClick() {
 		executeSearch();
-
-		NoiseUtils.hideKeyboard( getActivity());
 	}
 
 	private void executeSearch() {
@@ -79,6 +98,8 @@ public class SearchQueryFragment extends Fragment {
 
 			if(!TextUtils.isEmpty( searchText )) {
 				mEventBus.post( new EventSearchRequest( searchText ) );
+
+				NoiseUtils.hideKeyboard( getActivity());
 			}
 		}
 	}

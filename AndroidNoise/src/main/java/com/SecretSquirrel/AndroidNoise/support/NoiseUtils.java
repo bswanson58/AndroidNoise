@@ -3,6 +3,7 @@ package com.SecretSquirrel.AndroidNoise.support;
 import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
+import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
 import com.SecretSquirrel.AndroidNoise.R;
@@ -61,6 +62,15 @@ public class NoiseUtils {
 					Log.e( TAG, e.toString(), e );
 				}
 			}
+		}
+	}
+
+	public static void displayKeyboard( Activity activity, View forView ) {
+		if( forView.requestFocus()) {
+			InputMethodManager inputManager = (InputMethodManager)activity.getSystemService( Context.INPUT_METHOD_SERVICE );
+
+			inputManager.toggleSoftInput( InputMethodManager.SHOW_IMPLICIT, 0 );
+//			inputManager.showSoftInput( forView, InputMethodManager.SHOW_IMPLICIT );
 		}
 	}
 
