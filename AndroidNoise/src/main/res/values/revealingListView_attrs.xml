@@ -5,7 +5,6 @@
         <attr name="revealOnLongPress" format="boolean"/>
         <attr name="revealAllowMultiple" format="boolean"/>
         <attr name="revealAnimationTime" format="integer"/>
-        <attr name="revealCloseAllItemsWhenMoveList" format="boolean"/>
         <attr name="revealFrontView" format="reference"/>
         <attr name="revealLeftView" format="reference"/>
         <attr name="revealRightView" format="reference"/>

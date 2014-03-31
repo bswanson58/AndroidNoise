@@ -1,4 +1,4 @@
-package com.secretSquirrel.sandbox.RevealingListView;
+package com.SecretSquirrel.AndroidNoise.views.RevealingListView;
 
 // Secret Squirrel Software - Created by BSwanson on 3/21/14.
 
@@ -12,7 +12,7 @@ import android.view.ViewConfiguration;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
-import com.secretSquirrel.sandbox.R;
+import com.SecretSquirrel.AndroidNoise.R;
 
 @SuppressWarnings( "unused" )
 public class RevealingListView extends ListView {

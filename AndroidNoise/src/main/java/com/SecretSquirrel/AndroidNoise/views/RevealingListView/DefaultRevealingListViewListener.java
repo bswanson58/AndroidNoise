@@ -1,4 +1,4 @@
-package com.secretSquirrel.sandbox.RevealingListView;
+package com.SecretSquirrel.AndroidNoise.views.RevealingListView;
 
 // Secret Squirrel Software - Created by BSwanson on 3/28/14.
 
