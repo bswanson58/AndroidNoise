@@ -9,14 +9,12 @@ import android.os.Parcelable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.util.Log;
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
@@ -112,8 +110,6 @@ public class QueueListFragment extends Fragment  {
 					}
 				}
 			});
-
-			registerForContextMenu( mQueueListView );
 
 			if( mQueueListState != null ) {
 				mQueueListView.onRestoreInstanceState( mQueueListState );
@@ -223,58 +219,6 @@ public class QueueListFragment extends Fragment  {
 						}
 					}
 				} );
-	}
-
-	@Override
-	public void onCreateContextMenu( ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo ) {
-		super.onCreateContextMenu( menu, v, menuInfo );
-
-		MenuInflater inflater = getActivity().getMenuInflater();
-		inflater.inflate( R.menu.queue_list_item, menu );
-
-		menu.setHeaderTitle( getString( R.string.menu_title_queue_list_item ));
-
-		AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-		if( info != null ) {
-			PlayQueueTrack  track = mQueueListAdapter.getItem( info.position );
-			MenuItem        item = menu.findItem( R.id.action_queue_item_replay );
-
-			if(( item != null ) &&
-			   ( track != null )) {
-				item.setEnabled( track.getHasPlayed());
-			}
-		}
-	}
-
-	@Override
-	public boolean onContextItemSelected( MenuItem item ) {
-		boolean retValue = true;
-		AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-
-		if( info != null ) {
-			PlayQueueTrack track = mQueueListAdapter.getItem( info.position );
-
-			if( track != null ) {
-				switch( item.getItemId()) {
-					case R.id.action_queue_item_remove:
-						executeItemCommand( INoiseQueue.QueueItemCommand.Remove, track );
-						break;
-
-					case R.id.action_queue_item_playNext:
-						executeItemCommand( INoiseQueue.QueueItemCommand.PlayNext, track );
-						break;
-
-					case R.id.action_queue_item_replay:
-						executeItemCommand( INoiseQueue.QueueItemCommand.Replay, track );
-						break;
-					
-					default:
-						retValue = super.onContextItemSelected( item );
-				}
-			}
-		}
-
-		return( retValue );
 	}
 
 	private void executeItemCommand( INoiseQueue.QueueItemCommand command, PlayQueueTrack track ) {
