@@ -1,61 +1,106 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="horizontal"
-              android:layout_width="match_parent"
-              android:layout_height="@dimen/noise_list_item_height"
-              android:layout_marginTop="@dimen/noise_base_padding"
-              android:layout_marginBottom="@dimen/noise_base_padding"
-              android:paddingBottom="@dimen/noise_base_padding">
-
-    <ImageView
-        android:id="@+id/qli_now_playing"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/playing_indicator"
-        android:layout_marginRight="@dimen/noise_base_padding"
-        android:layout_gravity="center_vertical"
-        android:contentDescription="@string/content_description_now_playing"/>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/noise_list_item_height"
+                android:layout_marginTop="@dimen/noise_base_padding"
+                android:layout_marginBottom="@dimen/noise_base_padding"
+                android:paddingBottom="@dimen/noise_base_padding">
 
     <LinearLayout
-        android:layout_height="match_parent"
+        android:id="@+id/qli_left_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_centerVertical="true">
+
+        <Button
+            android:id="@+id/qli_play_continue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=">>"/>
+
+        <Button
+            android:id="@+id/qli_replay_track"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="+"/>
+        </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/qli_right_layout"
         android:layout_width="match_parent"
-        android:orientation="vertical">
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_centerVertical="true">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/noise_base_padding"
+            android:layout_gravity="right"
+            android:textSize="24dp"
+            android:text="Swipe to remove track"/>
+        </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/qli_front_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/background">
+
+        <ImageView
+            android:id="@+id/qli_now_playing"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/playing_indicator"
+            android:layout_marginRight="@dimen/noise_base_padding"
+            android:layout_gravity="center_vertical"
+            android:contentDescription="@string/content_description_now_playing"/>
 
         <LinearLayout
-            android:layout_height="0dp"
+            android:layout_height="match_parent"
             android:layout_width="match_parent"
-            android:layout_weight="5"
-            android:orientation="horizontal">
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_height="0dp"
+                android:layout_width="match_parent"
+                android:layout_weight="5"
+                android:orientation="horizontal">
+
+                <com.SecretSquirrel.AndroidNoise.views.AutoFitTextView
+                    android:id="@+id/qli_item_name"
+                    android:layout_height="match_parent"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:gravity="bottom"
+                    android:text="@string/test_track_name"
+                    style="@style/TitleText"/>
+
+                <TextView
+                    android:id="@+id/qli_play_duration"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/noise_base_padding"
+                    android:gravity="bottom"
+                    android:text="@string/test_duration"
+                    style="@style/TitleText"/>
+
+            </LinearLayout>
 
             <com.SecretSquirrel.AndroidNoise.views.AutoFitTextView
-                android:id="@+id/qli_item_name"
-                android:layout_height="match_parent"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:gravity="bottom"
-                android:text="@string/test_track_name"
-                style="@style/TitleText"/>
-
-            <TextView
-                android:id="@+id/qli_play_duration"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/noise_base_padding"
-                android:gravity="bottom"
-                android:text="@string/test_duration"
-                style="@style/TitleText"/>
+                android:id="@+id/qli_album_name"
+                android:layout_height="0dp"
+                android:layout_width="match_parent"
+                android:layout_marginLeft="@dimen/noise_sub_item_indent"
+                android:layout_weight="3"
+                android:text="@string/test_artist_album_name"
+                style="@style/SubTitleText"/>
 
         </LinearLayout>
 
-        <com.SecretSquirrel.AndroidNoise.views.AutoFitTextView
-            android:id="@+id/qli_album_name"
-            android:layout_height="0dp"
-            android:layout_width="match_parent"
-            android:layout_marginLeft="@dimen/noise_sub_item_indent"
-            android:layout_weight="3"
-            android:text="@string/test_artist_album_name"
-            style="@style/SubTitleText"/>
-
     </LinearLayout>
-</LinearLayout>
+
+</RelativeLayout>

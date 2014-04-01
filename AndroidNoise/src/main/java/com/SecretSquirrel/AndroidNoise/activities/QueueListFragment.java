@@ -18,7 +18,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.SecretSquirrel.AndroidNoise.R;
@@ -29,6 +28,8 @@ import com.SecretSquirrel.AndroidNoise.interfaces.INoiseQueue;
 import com.SecretSquirrel.AndroidNoise.interfaces.IQueueStatus;
 import com.SecretSquirrel.AndroidNoise.services.rto.BaseServerResult;
 import com.SecretSquirrel.AndroidNoise.support.IocUtility;
+import com.SecretSquirrel.AndroidNoise.views.RevealingListView.DefaultRevealingListViewListener;
+import com.SecretSquirrel.AndroidNoise.views.RevealingListView.RevealingListView;
 
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
@@ -37,6 +38,7 @@ import javax.inject.Inject;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
 import rx.android.observables.AndroidObservable;
 import rx.functions.Action1;
@@ -48,13 +50,14 @@ public class QueueListFragment extends Fragment  {
 	private static final String         LIST_STATE  = "queueListState";
 
 	private ArrayList<PlayQueueTrack>   mQueueList;
-	private ListView                    mQueueListView;
 	private QueueAdapter                mQueueListAdapter;
 	private Parcelable                  mQueueListState;
 
 	@Inject EventBus                    mEventBus;
 	@Inject	INoiseQueue                 mNoiseQueue;
 	@Inject	IQueueStatus                mQueueStatus;
+
+	@InjectView( R.id.ql_queue_list )	RevealingListView   mQueueListView;
 
 	public static QueueListFragment newInstance() {
 		return( new QueueListFragment());
@@ -84,18 +87,31 @@ public class QueueListFragment extends Fragment  {
 		View    myView = inflater.inflate( R.layout.fragment_queue_list, container, false );
 
 		if( myView != null ) {
-			mQueueListView = (ListView) myView.findViewById( R.id.QueueListView );
+			ButterKnife.inject( this, myView );
 
 			mQueueListView.setAdapter( mQueueListAdapter );
 			mQueueListView.setEmptyView( myView.findViewById( R.id.ql_empty_view ) );
-			mQueueListView.setOnItemClickListener( new AdapterView.OnItemClickListener() {
+			mQueueListView.setRevealingListViewListener( new DefaultRevealingListViewListener() {
 				@Override
-				public void onItemClick( AdapterView<?> adapterView, View view, int i, long l ) {
-					PlayQueueTrack  track = mQueueList.get( i );
+				public void onItemClicked( int position ) {
+					PlayQueueTrack  track = mQueueList.get( position );
 
-					mEventBus.post( new EventAlbumRequest( track.getArtistId(), track.getAlbumId()));
+					if( track != null ) {
+						mEventBus.post( new EventAlbumRequest( track.getArtistId(), track.getAlbumId()));
+					}
 				}
-			} );
+
+				@Override
+				public void onRevealOpened( int position, int action ) {
+					if( action == 101 ) {
+						PlayQueueTrack  track = mQueueList.get( position );
+
+						if( track != null ) {
+							executeItemCommand( INoiseQueue.QueueItemCommand.Remove, track );
+						}
+					}
+				}
+			});
 
 			registerForContextMenu( mQueueListView );
 
@@ -120,6 +136,7 @@ public class QueueListFragment extends Fragment  {
 		super.onPause();
 
 		mEventBus.unregister( this );
+		ButterKnife.reset( this );
 	}
 
 	@Override
@@ -282,7 +299,7 @@ public class QueueListFragment extends Fragment  {
 		mQueueList.addAll( mQueueStatus.getPlayQueueItems());
 		mQueueListAdapter.notifyDataSetChanged();
 
-		ActivityCompat.invalidateOptionsMenu( getActivity());
+		ActivityCompat.invalidateOptionsMenu( getActivity() );
 	}
 
 	protected class QueueAdapter extends ArrayAdapter<PlayQueueTrack> {
@@ -292,7 +309,10 @@ public class QueueListFragment extends Fragment  {
 		private int                         mWillPlayColor;
 		private int                         mHasPlayedColor;
 
+		@SuppressWarnings( "unused" )
 		protected class ViewHolder {
+			private PlayQueueTrack  mTrack;
+
 			public ViewHolder( View view ) {
 				ButterKnife.inject( this, view );
 			}
@@ -301,6 +321,20 @@ public class QueueListFragment extends Fragment  {
 			@InjectView( R.id.qli_item_name )       TextView     NameTextView;
 			@InjectView( R.id.qli_album_name )      TextView     AlbumTextView;
 			@InjectView( R.id.qli_play_duration )   TextView     PlayDuration;
+
+			public void setTrack( PlayQueueTrack track ) {
+				mTrack = track;
+			}
+
+			@OnClick( R.id.qli_play_continue )
+			public void onContinuePlay( View view ) {
+				executeItemCommand( INoiseQueue.QueueItemCommand.PlayNext, mTrack );
+			}
+
+			@OnClick( R.id.qli_replay_track )
+			public void onReplayTrack( View view ) {
+				executeItemCommand( INoiseQueue.QueueItemCommand.Replay, mTrack );
+			}
 		}
 
 		public QueueAdapter( Context context, ArrayList<PlayQueueTrack> queueList ) {
@@ -336,6 +370,7 @@ public class QueueListFragment extends Fragment  {
 			   ( position < mQueueList.size())) {
 				PlayQueueTrack  track = mQueueList.get( position );
 
+				views.setTrack( track );
 				views.NameTextView.setText( track.getTrackName());
 				views.AlbumTextView.setText( String.format( "(%s/%s)", track.getArtistName(), track.getAlbumName() ));
 

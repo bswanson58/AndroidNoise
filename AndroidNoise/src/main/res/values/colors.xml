@@ -7,4 +7,5 @@
     <color name="HasPlayed">#ff808080</color>
     <color name="control_panel">#d3e2fd</color>
     <color name="control_panel_text">#000</color>
+    <color name="background">#fffafafa</color>
 </resources>
