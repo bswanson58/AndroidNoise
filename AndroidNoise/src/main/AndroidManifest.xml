@@ -46,6 +46,8 @@
 
         <activity android:name=".activities.SettingsActivity"
                   android:label="Noise Settings"/>
+
+        <meta-data android:name="com.crashlytics.ApiKey" android:value="35b3d3242e7b7cf6b9f547f09be1666642aa743d"/>
     </application>
 
 </manifest>

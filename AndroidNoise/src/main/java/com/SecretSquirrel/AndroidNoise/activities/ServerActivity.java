@@ -18,6 +18,7 @@ import com.SecretSquirrel.AndroidNoise.events.EventServerSelected;
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationServices;
 import com.SecretSquirrel.AndroidNoise.support.IocUtility;
 
+import com.crashlytics.android.Crashlytics;
 import javax.inject.Inject;
 
 import de.greenrobot.event.EventBus;
@@ -34,6 +35,8 @@ public class ServerActivity extends ActionBarActivity {
 	@Override
 	protected void onCreate( Bundle savedInstanceState ) {
 		super.onCreate( savedInstanceState );
+
+		Crashlytics.start(this);
 
 		if( isWrongInstance()) {
 			finish();
