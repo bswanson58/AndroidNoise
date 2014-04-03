@@ -52,8 +52,8 @@
             android:layout_height="wrap_content"
             android:layout_marginRight="@dimen/noise_base_padding"
             android:layout_toLeftOf="@id/qli_swipe_left"
-            android:textSize="28dp"
-            android:text="Swipe to remove track"/>
+            android:textSize="28sp"
+            android:text="@string/swipe_to_remove_track"/>
 
     </RelativeLayout>
 
