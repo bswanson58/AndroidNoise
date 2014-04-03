@@ -586,8 +586,11 @@ public class RevealingTouchListener implements View.OnTouchListener {
 			clearBackView();
 
 			mBackView = backView;
-			mBackView.setVisibility( View.VISIBLE );
-			mBackViewWidth = mBackView.getWidth();
+
+			if( mBackView != null ) {
+				mBackView.setVisibility( View.VISIBLE );
+				mBackViewWidth = mBackView.getWidth();
+			}
 		}
 	}
 

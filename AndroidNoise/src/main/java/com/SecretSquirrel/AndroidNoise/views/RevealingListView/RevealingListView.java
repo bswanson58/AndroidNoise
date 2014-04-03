@@ -85,8 +85,10 @@ public class RevealingListView extends ListView {
 		}
 
 		if(( mFrontView == 0 ) ||
-		   ( mRevealLeftView == 0 )) {
-			throw( new RuntimeException( "RevealingListView: Identifiers for the front and back view must be specified." ));
+		  (( revealMode == REVEAL_MODE_LEFT ) && ( mRevealLeftView == 0 )) ||
+		  (( revealMode == REVEAL_MODE_RIGHT ) && ( mRevealRightView == 0 )) ||
+		  (( revealMode == REVEAL_MODE_BOTH )) && (( mRevealLeftView == 0 ) || ( mRevealRightView == 0 ))) {
+			throw( new RuntimeException( "RevealingListView: Identifiers for the front and appropriate back views must be specified." ));
 		}
 
 		mTouchListener = new RevealingTouchListener( this, mFrontView, mRevealLeftView, mRevealRightView );
