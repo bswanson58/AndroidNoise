@@ -94,12 +94,6 @@ public class TransportFragment extends Fragment {
 		ExecuteCommand( INoiseQueue.TransportCommand.PlayPrevious );
 	}
 
-	@SuppressWarnings( "unused" )
-	@OnClick( R.id.repeat_track_button )
-	public void onClickRepeat() {
-		ExecuteCommand( INoiseQueue.TransportCommand.Repeat );
-	}
-
 	@Override
 	public void onResume() {
 		super.onResume();

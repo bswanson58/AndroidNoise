@@ -4,68 +4,65 @@
               android:orientation="horizontal"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              android:padding="5dp"
+              android:padding="2dp"
               android:background="@color/control_panel">
 
     <Button
-        android:id="@+id/play_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/transport_play"
-        style="?android:attr/buttonStyleSmall"
-        />
-
-    <Button
-        android:id="@+id/stop_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/play_button"
-        android:text="@string/transport_stop"
-        style="?android:attr/buttonStyleSmall"
+        android:id="@+id/previous_track_button"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="@dimen/noise_base_padding"
+        android:background="@drawable/ic_transport_previous"
         />
 
     <Button
         android:id="@+id/pause_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/stop_button"
-        android:text="@string/transport_pause"
-        style="?android:attr/buttonStyleSmall"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="4dp"
+        android:layout_toRightOf="@+id/previous_track_button"
+        android:background="@drawable/ic_transport_pause"
+        />
+
+    <Button
+        android:id="@+id/play_button"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_marginLeft="5dp"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@id/pause_button"
+        android:background="@drawable/ic_transport_play"
+        />
+
+    <Button
+        android:id="@+id/stop_button"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginLeft="5dp"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@+id/play_button"
+        android:background="@drawable/ic_transport_stop"
         />
 
     <Button
         android:id="@+id/next_track_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/pause_button"
-        android:text="@string/transport_next_track"
-        style="?android:attr/buttonStyleSmall"
-        />
-
-    <Button
-        android:id="@+id/previous_track_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/next_track_button"
-        android:text="@string/transport_previous_track"
-        style="?android:attr/buttonStyleSmall"
-        />
-
-    <Button
-        android:id="@+id/repeat_track_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/previous_track_button"
-        android:text="@string/transport_repeat"
-        style="?android:attr/buttonStyleSmall"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginLeft="4dp"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@+id/stop_button"
+        android:background="@drawable/ic_transport_next"
         />
 
     <LinearLayout
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
+        android:layout_marginRight="@dimen/noise_base_padding"
         android:layout_alignParentRight="true"
         android:orientation="vertical"
-        android:layout_toRightOf="@+id/repeat_track_button"
+        android:layout_toRightOf="@+id/next_track_button"
         android:layout_centerVertical="true">
 
         <TextView

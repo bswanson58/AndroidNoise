@@ -1,3 +1,61 @@
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Layer_1" x="0px" y="0px" width="100px" height="100px" viewBox="0 0 100 100" enable-background="new 0 0 100 100" xml:space="preserve">
-<polygon points="83.789,50 47.878,0 16.21,0 52.122,50 52.123,50 16.212,100 47.878,100 83.789,50 "/>
-</svg>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.1"
+   id="Layer_1"
+   x="0px"
+   y="0px"
+   width="165.46086"
+   height="100.42373"
+   viewBox="0 0 165.46086 100.42373"
+   enable-background="new 0 0 100 100"
+   xml:space="preserve"
+   inkscape:version="0.48.4 r9939"
+   sodipodi:docname="swipe_left.svg"
+   inkscape:export-filename="D:\Sandbox\AndroidNoise\AndroidNoise\design\swipe_left.png"
+   inkscape:export-xdpi="50.187344"
+   inkscape:export-ydpi="50.187344"><metadata
+   id="metadata4066"><rdf:RDF><cc:Work
+       rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
+         rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title></dc:title></cc:Work></rdf:RDF></metadata><defs
+   id="defs4064" /><sodipodi:namedview
+   pagecolor="#ffffff"
+   bordercolor="#666666"
+   borderopacity="1"
+   objecttolerance="10"
+   gridtolerance="10"
+   guidetolerance="10"
+   inkscape:pageopacity="0"
+   inkscape:pageshadow="2"
+   inkscape:window-width="1525"
+   inkscape:window-height="823"
+   id="namedview4062"
+   showgrid="false"
+   fit-margin-top="0"
+   fit-margin-left="0"
+   fit-margin-right="0"
+   fit-margin-bottom="0"
+   inkscape:zoom="5.3971309"
+   inkscape:cx="82.730431"
+   inkscape:cy="50.211865"
+   inkscape:window-x="1427"
+   inkscape:window-y="161"
+   inkscape:window-maximized="0"
+   inkscape:current-layer="Layer_1" />
+<polygon
+   points="83.789,50 83.789,50 47.878,0 16.21,0 52.122,50 52.123,50 16.212,100 47.878,100 "
+   id="polygon4060"
+   transform="matrix(-1,0,0,1,83.789,0.42372846)" />
+<polygon
+   points="16.212,100 47.878,100 83.789,50 83.789,50 47.878,0 16.21,0 52.122,50 52.123,50 "
+   id="polygon4060-1"
+   transform="matrix(-1,0,0,1,181.67086,0)" /><polygon
+   points="16.212,100 47.878,100 83.789,50 83.789,50 47.878,0 16.21,0 52.122,50 52.123,50 "
+   id="polygon4060-7"
+   transform="matrix(-1,0,0,1,132.94204,0.42372882)" /></svg>
