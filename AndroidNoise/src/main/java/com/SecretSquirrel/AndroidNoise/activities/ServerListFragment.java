@@ -12,9 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.SecretSquirrel.AndroidNoise.R;
@@ -24,6 +22,8 @@ import com.SecretSquirrel.AndroidNoise.events.EventServerSelected;
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
 import com.SecretSquirrel.AndroidNoise.support.Constants;
 import com.SecretSquirrel.AndroidNoise.support.IocUtility;
+import com.SecretSquirrel.AndroidNoise.views.RevealingListView.DefaultRevealingListViewListener;
+import com.SecretSquirrel.AndroidNoise.views.RevealingListView.RevealingListView;
 
 import java.util.ArrayList;
 
@@ -103,20 +103,20 @@ public class ServerListFragment extends Fragment {
 		View    myView = inflater.inflate( R.layout.fragment_server_list, container, false );
 
 		if( myView != null ) {
-			ListView    serverListView = (ListView) myView.findViewById( R.id.sl_server_list_view );
+			RevealingListView serverListView = (RevealingListView) myView.findViewById( R.id.sl_server_list_view );
 
 			serverListView.setEmptyView( myView.findViewById( R.id.sl_empty_view ));
 			serverListView.setAdapter( mServerListAdapter );
-			serverListView.setOnItemClickListener( new AdapterView.OnItemClickListener() {
+			serverListView.setRevealingListViewListener( new DefaultRevealingListViewListener() {
 				@Override
-				public void onItemClick( AdapterView<?> adapterView, View view, int i, long l ) {
-					ServerInformation serverInformation = mServerList.get( i );
+				public void onItemClicked( int position ) {
+					ServerInformation serverInformation = mServerList.get( position );
 
 					if( serverInformation != null ) {
 						selectServer( serverInformation );
 					}
 				}
-			} );
+			});
 
 			try {
 				PackageManager  manager = getActivity().getPackageManager();

@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
               android:orientation="horizontal"
               android:layout_width="match_parent"
-              android:layout_height="match_parent">
+              android:layout_height="match_parent"
+              android:background="@color/background">
 
     <LinearLayout
         android:layout_height="match_parent"
@@ -50,10 +52,14 @@
             android:background="@drawable/server_background"
             android:contentDescription="@string/content_description_server_list"/>
 
-        <ListView
+        <com.SecretSquirrel.AndroidNoise.views.RevealingListView.RevealingListView
             android:id="@+id/sl_server_list_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            app:revealMode="left"
+            app:revealFrontView="@+id/sli_front_panel"
+            app:revealLeftView="@+id/sli_left_panel"
+            app:revealOnLongPress="true"
             style="@style/ShortListStyle"/>
 
         <TextView

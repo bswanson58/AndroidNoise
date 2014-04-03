@@ -1,40 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:paddingTop="@dimen/noise_base_padding"
-              android:paddingBottom="@dimen/noise_base_padding"
-              android:descendantFocusability="blocksDescendants">
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:descendantFocusability="blocksDescendants">
 
-    <Button
-        android:id="@+id/sli_manage"
+    <RelativeLayout
+        android:id="@+id/sli_left_panel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="@dimen/noise_base_padding"
-        android:background="@drawable/configure"
-        />
+        android:layout_centerVertical="true"
+        android:visibility="invisible"
+        >
 
-    <TextView
-        android:id="@+id/sli_name"
-        android:layout_height="wrap_content"
-        android:layout_width="fill_parent"
-        android:layout_marginLeft="@dimen/noise_base_padding"
-        android:layout_toLeftOf="@id/sli_manage"
-        android:text="@string/test_server_name"
-        style="@style/TitleText"/>
+        <Button
+            android:id="@+id/sli_manage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/noise_base_padding"
+            android:layout_centerVertical="true"
+            android:background="@drawable/configure"
+            />
+    </RelativeLayout>
 
-    <TextView
-        android:id="@+id/sli_address"
+    <RelativeLayout
+        android:id="@+id/sli_front_panel"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_width="fill_parent"
-        android:layout_below="@id/sli_name"
-        android:layout_toLeftOf="@id/sli_manage"
-        android:layout_marginLeft="@dimen/noise_base_padding"
-        android:paddingLeft="@dimen/noise_sub_item_indent"
-        android:text="@string/test_server_address"
-        style="@style/SubTitleText" />
+        android:paddingTop="@dimen/noise_base_padding"
+        android:paddingBottom="@dimen/noise_base_padding"
+        android:background="@color/background"
+        >
+
+        <TextView
+            android:id="@+id/sli_name"
+            android:layout_height="wrap_content"
+            android:layout_width="fill_parent"
+            android:layout_marginLeft="@dimen/noise_base_padding"
+            android:text="@string/test_server_name"
+            style="@style/TitleText"/>
+
+        <TextView
+            android:id="@+id/sli_address"
+            android:layout_height="wrap_content"
+            android:layout_width="fill_parent"
+            android:layout_below="@id/sli_name"
+            android:layout_marginLeft="@dimen/noise_base_padding"
+            android:paddingLeft="@dimen/noise_sub_item_indent"
+            android:text="@string/test_server_address"
+            style="@style/SubTitleText"/>
+
+    </RelativeLayout>
 
 </RelativeLayout>
