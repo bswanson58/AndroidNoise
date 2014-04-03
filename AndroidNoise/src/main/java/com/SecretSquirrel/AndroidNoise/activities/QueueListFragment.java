@@ -227,7 +227,19 @@ public class QueueListFragment extends Fragment  {
 					@Override
 					public void call( BaseServerResult serverResult ) {
 						if( !serverResult.Success ) {
-							Log.e( TAG, "The queue command was not executed: " + serverResult.ErrorMessage );
+							Log.e( TAG, "The queue item command was not executed: " + serverResult.ErrorMessage );
+						}
+					}
+				} );
+	}
+
+	private void executeTransportCommand( INoiseQueue.TransportCommand command ) {
+		AndroidObservable.fromFragment( this, mNoiseQueue.ExecuteTransportCommand( command ))
+				.subscribe( new Action1<BaseServerResult>() {
+					@Override
+					public void call( BaseServerResult serverResult ) {
+						if(!serverResult.Success ) {
+							Log.e( TAG, "The transport command was not executed: " + serverResult.ErrorMessage );
 						}
 					}
 				} );
@@ -277,7 +289,12 @@ public class QueueListFragment extends Fragment  {
 
 			@OnClick( R.id.qli_replay_track )
 			public void onReplayTrack( View view ) {
-				executeItemCommand( INoiseQueue.QueueItemCommand.Replay, mTrack );
+				if( mTrack.isPlaying()) {
+					executeTransportCommand( INoiseQueue.TransportCommand.Repeat );
+				}
+				else {
+					executeItemCommand( INoiseQueue.QueueItemCommand.Replay, mTrack );
+				}
 			}
 		}
 
