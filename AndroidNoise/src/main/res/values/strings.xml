@@ -91,6 +91,7 @@
     <string name="content_description_recently_played_list">The list of recently played artists</string>
     <string name="content_description_recently_viewed_list">The list of recently viewed artists</string>
     <string name="content_description_search_list">The list of search results</string>
+    <string name="content_description_server_list">The list of available Noise servers</string>
     <string name="content_description_now_playing">This item is currently playing</string>
     <string name="content_description_toast_item_queued">An item was added to the play queue</string>
 

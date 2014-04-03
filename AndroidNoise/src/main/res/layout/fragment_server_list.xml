@@ -44,6 +44,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <ImageView
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:background="@drawable/server_background"
+            android:contentDescription="@string/content_description_server_list"/>
+
         <ListView
             android:id="@+id/sl_server_list_view"
             android:layout_width="match_parent"
@@ -54,7 +60,8 @@
             android:id="@+id/sl_empty_view"
             android:layout_height="match_parent"
             android:layout_width="match_parent"
-            android:gravity="center"
+            android:gravity="center_horizontal"
+            android:layout_marginTop="40dp"
             android:text="@string/sl_searching_title"
             style="@style/HeaderText"/>
 
