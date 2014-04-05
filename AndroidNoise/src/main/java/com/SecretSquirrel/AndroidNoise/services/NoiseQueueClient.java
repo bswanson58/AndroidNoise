@@ -117,6 +117,36 @@ public class NoiseQueueClient implements INoiseQueue {
 	}
 
 	@Override
+	public Subscription EnqueueTrackList( long[] trackList, Action1<QueuedTrackResult> resultAction ) {
+		return( EnqueueTrackList( trackList )
+				.observeOn( AndroidSchedulers.mainThread())
+				.subscribe( resultAction, new Action1<Throwable>() {
+					@Override
+					public void call( Throwable throwable ) {
+						Timber.e( throwable, "Default EnqueueTrackList( long[] ) exception handler" );
+					}
+				} ));
+	}
+
+	@Override
+	public Observable<QueuedTrackResult> EnqueueTrackList( final long[] trackList ) {
+		return Observable.create( new Observable.OnSubscribe<QueuedTrackResult>() {
+			@Override
+			public void call( Subscriber<? super QueuedTrackResult> subscriber ) {
+				try {
+					subscriber.onNext( new QueuedTrackResult( trackList, getService().EnqueueTrackList( trackList )));
+					subscriber.onCompleted();
+				} catch( Exception e ) {
+					subscriber.onError( e );
+				}
+			}
+		}).subscribeOn( Schedulers.io());
+	}
+
+
+
+
+	@Override
 	public Subscription EnqueueTrack( Track track, Action1<QueuedTrackResult> resultAction ) {
 		return( EnqueueTrack( track )
 				.observeOn( AndroidSchedulers.mainThread())

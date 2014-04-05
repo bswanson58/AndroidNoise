@@ -20,8 +20,10 @@ public class NotificationManager implements INotificationManager {
 	private final Context   mContext;
 	private View            mToastView;
 	private String          mTrackQueuedFormat;
+	private String          mTrackListFormat;
 	private String          mAlbumQueuedFormat;
 	private String          mFailedTrackQueuedFormat;
+	private String          mFailedTrackListFormat;
 	private String          mFailedAlbumQueuedFormat;
 
 	@Inject
@@ -29,9 +31,22 @@ public class NotificationManager implements INotificationManager {
 		mContext = context;
 
 		mTrackQueuedFormat = mContext.getString( R.string.track_queued_toast_format );
+		mTrackListFormat = mContext.getString( R.string.track_list_queued_toast_format );
+
 		mAlbumQueuedFormat = mContext.getString( R.string.album_queued_toast_format );
 		mFailedTrackQueuedFormat = mContext.getString( R.string.track_queued_fail_toast_format );
+		mFailedTrackListFormat =mContext.getString( R.string.track_list_queued_fail_toast_format );
 		mFailedAlbumQueuedFormat = mContext.getString( R.string.album_queued_fail_toast_format );
+	}
+
+	@Override
+	public void NotifyListQueued( int count ) {
+		makeToastWithText( String.format( mTrackListFormat, count )).show();
+	}
+
+	@Override
+	public void NotifyListQueued( String errorMessage ) {
+		makeToastWithText( String.format( mFailedTrackListFormat, errorMessage )).show();
 	}
 
 	@Override

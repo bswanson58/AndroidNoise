@@ -6,12 +6,17 @@ import com.SecretSquirrel.AndroidNoise.services.rto.BaseServerResult;
 import com.SecretSquirrel.AndroidNoise.services.rto.RoPlayQueueListResult;
 import com.SecretSquirrel.AndroidNoise.services.rto.StrategyInformationResult;
 
+import retrofit.http.Body;
 import retrofit.http.GET;
+import retrofit.http.PUT;
 import retrofit.http.Query;
 
 public interface RemoteServerQueueApi {
 	@GET( "/Noise/Queue/enqueueTrack" )
 	public BaseServerResult EnqueueTrack( @Query( "track" )long trackId );
+
+	@PUT( "/Noise/Queue/EnqueueTrackList" )
+	public BaseServerResult EnqueueTrackList( @Body long[] trackList );
 
 	@GET( "/Noise/Queue/enqueueAlbum" )
 	public  BaseServerResult    EnqueueAlbum( @Query( "album" )long albumId );

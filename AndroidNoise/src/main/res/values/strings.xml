@@ -57,6 +57,8 @@
     <string name="track_number_format">Track: %1$d</string>
     <string name="volume_name_format">- %1$s</string>
     <string name="track_queued_toast_format">Track \'%1$s\' was queued!</string>
+    <string name="track_list_queued_toast_format">\'%1$d tracks were queued!</string>
+    <string name="track_list_queued_fail_toast_format">An error occurred while queueing hte track list.</string>
     <string name="album_queued_toast_format">Album \'%1$s\' was queued!</string>
     <string name="track_queued_fail_toast_format">An error occurred while queueing track \'%1$s\'</string>
     <string name="album_queued_fail_toast_format">An error occurred while queueing album \'%1$s\'</string>
@@ -121,6 +123,7 @@
     <string name="action_queue_item_replay">Replay this track</string>
     <string name="action_artist_detail_albums">List Albums</string>
     <string name="action_artist_detail_tracks">List Tracks</string>
+    <string name="action_play_random_search">Play Random</string>
 
     <string name="menu_title_queue_list_item">Select an action for the queued item:</string>
 

@@ -1,6 +1,6 @@
 package com.SecretSquirrel.AndroidNoise.services;
 
-// Secret Squirrel Software - Created by bswanson on 12/23/13.
+// Secret Squirrel Software - Created by BSwanson on 12/23/13.
 
 import android.os.Bundle;
 
@@ -16,6 +16,7 @@ import com.SecretSquirrel.AndroidNoise.events.EventPlayAlbum;
 import com.SecretSquirrel.AndroidNoise.events.EventPlayFavorite;
 import com.SecretSquirrel.AndroidNoise.events.EventPlaySearchItem;
 import com.SecretSquirrel.AndroidNoise.events.EventPlayTrack;
+import com.SecretSquirrel.AndroidNoise.events.EventPlayTrackList;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseData;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseQueue;
 import com.SecretSquirrel.AndroidNoise.interfaces.INotificationManager;
@@ -31,7 +32,7 @@ public class QueueRequestHandler implements IQueueRequestHandler {
 	private final INoiseQueue           mNoiseQueue;
 	private final INoiseData            mNoiseData;
 	private final EventBus              mEventBus;
-	private final INotificationManager mNotificationManager;
+	private final INotificationManager  mNotificationManager;
 
 	@Inject
 	public QueueRequestHandler( EventBus eventBus, INotificationManager notificationManager,
@@ -56,6 +57,11 @@ public class QueueRequestHandler implements IQueueRequestHandler {
 	@SuppressWarnings( "unused" )
 	public void onEvent( EventPlayTrack args ) {
 		playTrack( args.getArtistId(), args.getTrackId(), args.getTrackName());
+	}
+
+	@SuppressWarnings( "unused" )
+	public void onEvent( EventPlayTrackList args ) {
+		playTrackList( args.getTrackList());
 	}
 
 	@SuppressWarnings( "unused" )
@@ -126,6 +132,20 @@ public class QueueRequestHandler implements IQueueRequestHandler {
 		} );
 
 		notifyArtistPlayed( artistId );
+	}
+
+	private void playTrackList( long[] trackList ) {
+		mNoiseQueue.EnqueueTrackList( trackList, new Action1<QueuedTrackResult>() {
+			@Override
+			public void call( QueuedTrackResult result ) {
+				if( result.Success ) {
+					mNotificationManager.NotifyListQueued( result.getTrackCount());
+				}
+				else {
+					mNotificationManager.NotifyListQueued( result.ErrorMessage );
+				}
+			}
+		} );
 	}
 
 	private void PlayFavorite( Favorite favorite ) {

@@ -1,14 +1,18 @@
 package com.SecretSquirrel.AndroidNoise.activities;
 
-// Secret Squirrel Software - Created by bswanson on 12/30/13.
+// Secret Squirrel Software - Created by BSwanson on 12/30/13.
 
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -23,6 +27,7 @@ import com.SecretSquirrel.AndroidNoise.dto.SearchResultItem;
 import com.SecretSquirrel.AndroidNoise.events.EventAlbumRequest;
 import com.SecretSquirrel.AndroidNoise.events.EventArtistRequest;
 import com.SecretSquirrel.AndroidNoise.events.EventPlaySearchItem;
+import com.SecretSquirrel.AndroidNoise.events.EventPlayTrackList;
 import com.SecretSquirrel.AndroidNoise.events.EventSearchRequest;
 import com.SecretSquirrel.AndroidNoise.services.NoiseSearchClient;
 import com.SecretSquirrel.AndroidNoise.support.Constants;
@@ -45,9 +50,11 @@ import rx.functions.Action1;
 public class SearchListFragment extends Fragment {
 	private final String                TAG = SearchListFragment.class.getName();
 	private final String                SEARCH_LIST = "searchList";
+	private final String                TRACK_LIST = "trackList";
 	private final String                LIST_STATE = "searchListState";
 
 	private ArrayList<SearchResultItem> mResultList;
+	private long[]                      mTrackList;
 	private Parcelable                  mListViewState;
 	private SearchResultAdapter         mSearchListAdapter;
 	private Subscription                mSearchSubscription;
@@ -68,12 +75,18 @@ public class SearchListFragment extends Fragment {
 
 		IocUtility.inject( this );
 
+		setHasOptionsMenu( true );
+
 		if( savedInstanceState != null ) {
 			mResultList = savedInstanceState.getParcelableArrayList( SEARCH_LIST );
+			mTrackList = savedInstanceState.getLongArray( TRACK_LIST );
 			mListViewState = savedInstanceState.getParcelable( LIST_STATE );
 		}
 		if( mResultList == null ) {
 			mResultList = new ArrayList<SearchResultItem>();
+		}
+		if( mTrackList == null ) {
+			mTrackList = new long[0];
 		}
 
 		mSearchListAdapter = new SearchResultAdapter( getActivity(), mResultList );
@@ -136,6 +149,46 @@ public class SearchListFragment extends Fragment {
 	}
 
 	@Override
+	public void onCreateOptionsMenu( Menu menu, MenuInflater inflater ) {
+		inflater.inflate( R.menu.search_list, menu );
+
+		super.onCreateOptionsMenu( menu, inflater );
+	}
+
+	@Override
+	public void onPrepareOptionsMenu( Menu menu ) {
+		MenuItem item = menu.findItem( R.id.action_play_random_search );
+
+		if( item != null ) {
+			item.setEnabled( mTrackList.length > 0 );
+		}
+
+		super.onPrepareOptionsMenu( menu );
+	}
+
+	@Override
+	public boolean onOptionsItemSelected( MenuItem item ) {
+		boolean retValue = true;
+
+		switch( item.getItemId()) {
+			case R.id.action_play_random_search:
+				if( mTrackList.length > 0 ) {
+					mEventBus.post( new EventPlayTrackList( mTrackList ));
+
+					mTrackList = new long[0];
+					ActivityCompat.invalidateOptionsMenu( getActivity());
+				}
+				break;
+
+			default:
+				retValue = super.onOptionsItemSelected( item );
+				break;
+		}
+
+		return( retValue );
+	}
+
+	@Override
 	public void onSaveInstanceState( Bundle outState ) {
 		super.onSaveInstanceState( outState );
 
@@ -148,6 +201,8 @@ public class SearchListFragment extends Fragment {
 			if( mListViewState != null ) {
 				outState.putParcelable( LIST_STATE, mListViewState );
 			}
+
+			outState.putLongArray( TRACK_LIST, mTrackList );
 		}
 	}
 
@@ -172,6 +227,7 @@ public class SearchListFragment extends Fragment {
 							@Override
 							public void call( SearchResult searchResult ) {
 								setResultList( searchResult.getResults());
+								setRandomTracks( searchResult.getRandomTracks());
 							}
 						},
 						new Action1<Throwable>() {
@@ -203,6 +259,15 @@ public class SearchListFragment extends Fragment {
 
 		mSearchListAdapter.notifyDataSetChanged();
 		clearSubscription();
+	}
+
+	private void setRandomTracks( ArrayList<Long> trackList ) {
+		mTrackList = new long[trackList.size()];
+		for( int index = 0; index < trackList.size(); index++ ) {
+			mTrackList[index] = trackList.get( index );
+		}
+
+		ActivityCompat.invalidateOptionsMenu( getActivity());
 	}
 
 	protected class SearchResultAdapter extends ArrayAdapter<SearchResultItem> {

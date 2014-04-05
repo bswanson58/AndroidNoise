@@ -30,6 +30,9 @@ public interface INoiseQueue {
 	public  Subscription                    EnqueueTrack( final long trackId, Action1<QueuedTrackResult> result );
 	public  Observable<QueuedTrackResult>   EnqueueTrack( final long trackId );
 
+	public  Subscription                    EnqueueTrackList( final long[] trackList, Action1<QueuedTrackResult> result );
+	public  Observable<QueuedTrackResult>   EnqueueTrackList( final long[] trackList );
+
 	public  Subscription                    EnqueueTrack( Track track, Action1<QueuedTrackResult> result );
 	public  Subscription                    EnqueueTrack( Track track, Action1<QueuedTrackResult> result, Action1<Throwable> errorAction );
 	public  Observable<QueuedTrackResult>   EnqueueTrack( final Track track );
