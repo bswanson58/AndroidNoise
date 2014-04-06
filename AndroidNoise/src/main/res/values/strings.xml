@@ -46,13 +46,16 @@
     <string name="al_artist_filter_hint">Enter artist filter text</string>
     <string name="al_artist_filter_header">Artist Filter:</string>
     <string name="al_album_filter_hint">Enter album filter text</string>
+    <string name="at_track_filter_hint">Enter track filter text</string>
     <string name="al_album_filter_header">Album Filter:</string>
+    <string name="at_track_filter_header">Track Filter:</string>
     <string name="rpl_recently_played_title">Recently Played</string>
     <string name="rvl_recently_viewed_title">Recently Viewed</string>
     <string name="tr_total_time_format">Playing Time: %1$d:%2$02d:%3$02d</string>
     <string name="tr_remaining_time_format">Remaining Time: %1$d:%2$02d:%3$02d</string>
     <string name="artist_count_format">%1$d artists</string>
     <string name="album_count_format">%1$d albums</string>
+    <string name="track_count_format">%1$d tracks</string>
     <string name="software_version_format">Version: %1$s</string>
     <string name="track_number_format">Track: %1$d</string>
     <string name="volume_name_format">- %1$s</string>
@@ -114,7 +117,9 @@
     <string name="action_filter_artist_list">Filter Artists</string>
     <string name="action_filter_artist_list_on">Filter Artists (On)</string>
     <string name="action_filter_album_list">Filter Albums</string>
+    <string name="action_filter_track_list">Filter Tracks</string>
     <string name="action_filter_album_list_on">Filter Albums (On)</string>
+    <string name="action_filter_track_list_on">Filter Tracks (On)</string>
     <string name="action_queue_start_play">Start Playing</string>
     <string name="action_queue_clear">Clear All</string>
     <string name="action_queue_clear_played">Clear Played</string>

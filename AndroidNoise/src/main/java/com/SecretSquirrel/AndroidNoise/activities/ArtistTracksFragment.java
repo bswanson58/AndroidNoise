@@ -1,18 +1,25 @@
 package com.SecretSquirrel.AndroidNoise.activities;
 
-// Secret Squirrel Software - Created by bswanson on 3/4/14.
+// Secret Squirrel Software - Created by BSwanson on 3/4/14.
 
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Filterable;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -30,6 +37,10 @@ import com.SecretSquirrel.AndroidNoise.services.NoiseRemoteApi;
 import com.SecretSquirrel.AndroidNoise.services.ServiceResultReceiver;
 import com.SecretSquirrel.AndroidNoise.support.IocUtility;
 import com.SecretSquirrel.AndroidNoise.support.NoiseUtils;
+import com.SecretSquirrel.AndroidNoise.ui.FilteredArrayAdapter;
+import com.SecretSquirrel.AndroidNoise.ui.ListViewFilter;
+import com.SecretSquirrel.AndroidNoise.ui.ScaledHeightAnimation;
+import com.SecretSquirrel.AndroidNoise.views.ButtonEditText;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -44,23 +55,31 @@ import de.greenrobot.event.EventBus;
 import timber.log.Timber;
 
 public class ArtistTracksFragment extends Fragment
-								  implements ServiceResultReceiver.Receiver {
+								  implements ServiceResultReceiver.Receiver,
+											 FilteredArrayAdapter.FilteredListWatcher{
 	private static final String     ARTIST_KEY  = "artistTracksArtist";
 	private static final String     TRACKS_LIST = "artistTracksList";
 	private static final String     ALBUMS_LIST = "artistAlbumsList";
 	private static final String     LIST_STATE  = "artistTracksListState";
+	private static final String     FILTER_TEXT = "artistTracksFilterText";
+	private static final String     FILTER_DISPLAYED = "artistTracksFilterDisplayed";
 
 	private Artist                  mCurrentArtist;
 	private ArrayList<ArtistTrack>  mTracks;
 	private ArrayList<Album>        mAlbums;
 	private ArtistTracksAdapter     mListAdapter;
 	private Parcelable              mTracksListViewState;
+	private String                  mFilterText;
+	private boolean                 mFilterPanelDisplayed;
 
 	@Inject	EventBus                mEventBus;
 	@Inject	INoiseData              mNoiseData;
 	@Inject	ServiceResultReceiver   mReceiver;
 
-	@InjectView( R.id.at_track_list )	ListView    mTracksListView;
+	@InjectView( R.id.at_track_list )	ListView        mTracksListView;
+	@InjectView( R.id.at_list_count )   TextView        mTrackCount;
+	@InjectView( R.id.at_filter_panel ) View            mFilterPanel;
+	@InjectView( R.id.at_track_filter )	ButtonEditText  mFilterEditText;
 
 	public static ArtistTracksFragment newInstance( Artist artist ) {
 		ArtistTracksFragment    fragment = new ArtistTracksFragment();
@@ -85,6 +104,8 @@ public class ArtistTracksFragment extends Fragment
 			mCurrentArtist = savedInstanceState.getParcelable( ARTIST_KEY );
 			mTracks = savedInstanceState.getParcelableArrayList( TRACKS_LIST );
 			mAlbums = savedInstanceState.getParcelableArrayList( ALBUMS_LIST );
+			mFilterText = savedInstanceState.getString( FILTER_TEXT );
+			mFilterPanelDisplayed = savedInstanceState.getBoolean( FILTER_DISPLAYED );
 		}
 		else {
 			Bundle  args = getArguments();
@@ -128,6 +149,30 @@ public class ArtistTracksFragment extends Fragment
 				}
 			} );
 
+			mFilterEditText.addTextChangedListener( new TextWatcher() {
+				@Override
+				public void onTextChanged( CharSequence charSequence, int i, int i2, int i3 ) {
+					mListAdapter.setFilterText( charSequence );
+				}
+				@Override
+				public void beforeTextChanged( CharSequence charSequence, int i, int i2, int i3 ) {	}
+				@Override
+				public void afterTextChanged( Editable editable ) {	}
+			} );
+			mFilterEditText.setDrawableClickListener( new ButtonEditText.DrawableClickListener() {
+				@Override
+				public void onClick( ButtonEditText.DrawableClickListener.DrawablePosition target ) {
+					// Clear the edit box and the search results.
+					mFilterEditText.setText( "" );
+				}
+			} );
+
+			if(!TextUtils.isEmpty( mFilterText )) {
+				mFilterEditText.setText( mFilterText );
+			}
+
+			displayFilterPanel( mFilterPanelDisplayed, false );
+
 			if(( savedInstanceState != null ) &&
 			   ( mTracksListViewState != null )) {
 				mTracksListView.onRestoreInstanceState( mTracksListViewState );
@@ -140,6 +185,8 @@ public class ArtistTracksFragment extends Fragment
 	@Override
 	public void onResume() {
 		super.onResume();
+
+		mListAdapter.setListWatcher( this );
 
 		if( mTracks.size() == 0 ) {
 			mReceiver.setReceiver( this );
@@ -160,6 +207,7 @@ public class ArtistTracksFragment extends Fragment
 	public void onPause() {
 		super.onPause();
 
+		mListAdapter.setListWatcher( null );
 		mReceiver.clearReceiver();
 	}
 
@@ -184,6 +232,28 @@ public class ArtistTracksFragment extends Fragment
 		if( mTracksListViewState != null ) {
 			outState.putParcelable( LIST_STATE, mTracksListViewState );
 		}
+
+		outState.putString( FILTER_TEXT, mFilterText );
+		outState.putBoolean( FILTER_DISPLAYED, mFilterPanelDisplayed );
+	}
+
+	@Override
+	public void onCreateOptionsMenu( Menu menu, MenuInflater inflater ) {
+		inflater.inflate( R.menu.artist_tracks, menu );
+
+		super.onCreateOptionsMenu( menu, inflater );
+	}
+
+	@Override
+	public void onPrepareOptionsMenu( Menu menu ) {
+		MenuItem filterItem = menu.findItem( R.id.action_filter_track_list );
+
+		if( filterItem != null ) {
+			filterItem.setTitle( mListAdapter.getHaveFilteredItems() ? R.string.action_filter_track_list_on :
+																	   R.string.action_filter_track_list );
+		}
+
+		super.onPrepareOptionsMenu( menu );
 	}
 
 	@Override
@@ -195,12 +265,49 @@ public class ArtistTracksFragment extends Fragment
 				getActivity().onBackPressed();
 				break;
 
+			case R.id.action_filter_track_list:
+				displayFilterPanel( !mFilterPanelDisplayed, true );
+				break;
+
 			default:
 				retValue = super.onOptionsItemSelected( item );
 				break;
 		}
 
 		return( retValue );
+	}
+
+	@Override
+	public void onListChanged( int itemCount ) {
+		if( mTrackCount != null ) {
+			mTrackCount.setText( String.format( getString( R.string.track_count_format ), itemCount ));
+		}
+
+		// update the action menu with the filter state.
+		ActivityCompat.invalidateOptionsMenu( getActivity() );
+	}
+
+	private void displayFilterPanel( boolean display, boolean withAnimation ) {
+		if( mFilterPanel != null ) {
+			Animation animation;
+
+			if( display ) {
+				animation = new ScaledHeightAnimation( mFilterPanel, 0, 1 );
+			}
+			else {
+				animation = new ScaledHeightAnimation( mFilterPanel, 1, 0 );
+
+				NoiseUtils.hideKeyboard( getActivity());
+			}
+
+			if( withAnimation ) {
+				animation.setDuration( 300 );
+			}
+
+			mFilterPanel.startAnimation( animation );
+		}
+
+		mFilterPanelDisplayed = display;
 	}
 
 	@Override
@@ -254,7 +361,8 @@ public class ArtistTracksFragment extends Fragment
 		mListAdapter.notifyDataSetChanged();
 	}
 
-	protected class ArtistTracksAdapter extends ArrayAdapter<ArtistTrack> {
+	protected class ArtistTracksAdapter extends FilteredArrayAdapter<ArtistTrack>
+										implements Filterable, ListViewFilter.FilterClient<ArtistTrack> {
 		private final Context           mContext;
 		private final LayoutInflater    mLayoutInflater;
 		private final String            mMultipleAlbums;
@@ -292,6 +400,18 @@ public class ArtistTracksFragment extends Fragment
 			mPublishedYearFormat = getString( R.string.published_year_format );
 
 			mLayoutInflater = (LayoutInflater)mContext.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+		}
+
+		@Override
+		public boolean shouldItemBeDisplayed( ArtistTrack item, String filterText ) {
+			boolean retValue = false;
+			String  lowerText = filterText.toLowerCase();
+
+			if( item.getTrackName().toLowerCase().contains( lowerText )) {
+				retValue = true;
+			}
+
+			return( retValue );
 		}
 
 		private Album getAlbum( long albumId ) {

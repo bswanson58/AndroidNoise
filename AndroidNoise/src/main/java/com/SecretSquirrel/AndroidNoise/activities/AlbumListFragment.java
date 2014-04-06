@@ -1,6 +1,6 @@
 package com.SecretSquirrel.AndroidNoise.activities;
 
-// Secret Squirrel Software - Created by bswanson on 12/17/13.
+// Secret Squirrel Software - Created by BSwanson on 12/17/13.
 
 import android.content.Context;
 import android.os.Bundle;
@@ -220,6 +220,9 @@ public class AlbumListFragment extends Fragment
 		if( mAlbumListViewState != null ) {
 			outState.putParcelable( LIST_STATE, mAlbumListViewState );
 		}
+
+		outState.putString( FILTER_TEXT, mFilterText );
+		outState.putBoolean( FILTER_DISPLAYED, mFilterPanelDisplayed );
 	}
 
 	@Override
