@@ -1,6 +1,6 @@
 package com.SecretSquirrel.AndroidNoise.activities;
 
-// Secret Squirrel Software - Created by bswanson on 12/23/13.
+// Secret Squirrel Software - Created by BSwanson on 12/23/13.
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;

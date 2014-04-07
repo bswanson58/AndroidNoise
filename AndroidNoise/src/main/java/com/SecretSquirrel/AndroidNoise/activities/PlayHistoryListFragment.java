@@ -204,7 +204,7 @@ public class PlayHistoryListFragment extends Fragment
 
 				views.PlayButton.setTag( history );
 				views.TrackNameView.setText( history.getTrackName());
-				views.AlbumNameView.setText( history.getAlbumName());
+				views.AlbumNameView.setText( String.format( "(%s/%s)", history.getArtistName(), history.getAlbumName()));
 			}
 
 			return( retValue );

@@ -30,6 +30,7 @@ import dagger.Provides;
 				FavoritesListFragment.class,
 				LibraryActivity.class,
 				LibraryConfiguration.class,
+				PlayHistoryListFragment.class,
 				PlaybackAudioFragment.class,
 				PlaybackExhaustedStrategyFragment.class,
 				PlaybackInformationFragment.class,

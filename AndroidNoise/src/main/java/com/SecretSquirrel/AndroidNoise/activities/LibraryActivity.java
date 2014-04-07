@@ -37,7 +37,8 @@ public class LibraryActivity extends ActionBarActivity
 	public static final int     QUEUE_ITEM_ID       = 103;
 	public static final int     SEARCH_ITEM_ID      = 104;
 	public static final int     RECENT_ITEM_ID      = 105;
-	public static final int     SERVERS_ITEM_ID     = 106;
+	public static final int     HISTORY_ITEM_ID     = 106;
+	public static final int     SERVERS_ITEM_ID     = 107;
 
 	// Fragment managing the behaviors, interactions and presentation of the navigation drawer.
 	private NavigationDrawerFragment    mNavigationDrawerFragment;
@@ -182,6 +183,9 @@ public class LibraryActivity extends ActionBarActivity
 			case RECENT_ITEM_ID:
 				fragment = ShellRecentFragment.newInstance( RECENT_ITEM_ID );
 				break;
+			case HISTORY_ITEM_ID:
+				fragment = ShellPlayHistoryFragment.newInstance( HISTORY_ITEM_ID );
+				break;
 			case SERVERS_ITEM_ID:
 				launchServerActivity();
 				break;
@@ -255,6 +259,7 @@ public class LibraryActivity extends ActionBarActivity
 				NavigationMenuItem.create( QUEUE_ITEM_ID, getString( R.string.title_queue_section ), "ic_action_queue", true, this ),
 				NavigationMenuItem.create( SEARCH_ITEM_ID, getString( R.string.title_search_section ), "ic_action_search", true, this ),
 				NavigationMenuItem.create( RECENT_ITEM_ID, getString( R.string.title_recent_section ), "ic_action_recent", true, this ),
+				NavigationMenuItem.create( HISTORY_ITEM_ID, getString( R.string.title_history_section ), "", true, this ),
 				NavigationMenuItem.create( SERVERS_ITEM_ID, getString( R.string.title_server_section ), "ic_action_servers", true, this )};
 
 		retValue.setApplicationNameId( R.string.app_name );
