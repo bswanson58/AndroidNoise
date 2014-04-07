@@ -12,6 +12,7 @@ import com.SecretSquirrel.AndroidNoise.dto.Artist;
 import com.SecretSquirrel.AndroidNoise.dto.ArtistInfo;
 import com.SecretSquirrel.AndroidNoise.dto.ArtistTrackList;
 import com.SecretSquirrel.AndroidNoise.dto.Favorite;
+import com.SecretSquirrel.AndroidNoise.dto.PlayHistory;
 import com.SecretSquirrel.AndroidNoise.dto.Track;
 import com.SecretSquirrel.AndroidNoise.services.noiseApi.RemoteServerDataApi;
 import com.SecretSquirrel.AndroidNoise.services.rto.RoAlbum;
@@ -23,6 +24,8 @@ import com.SecretSquirrel.AndroidNoise.services.rto.RoArtistListResult;
 import com.SecretSquirrel.AndroidNoise.services.rto.RoArtistTracksResult;
 import com.SecretSquirrel.AndroidNoise.services.rto.RoFavorite;
 import com.SecretSquirrel.AndroidNoise.services.rto.RoFavoritesListResult;
+import com.SecretSquirrel.AndroidNoise.services.rto.RoPlayHistory;
+import com.SecretSquirrel.AndroidNoise.services.rto.RoPlayHistoryResult;
 import com.SecretSquirrel.AndroidNoise.services.rto.RoTrack;
 import com.SecretSquirrel.AndroidNoise.services.rto.RoTrackListResult;
 import com.SecretSquirrel.AndroidNoise.support.Constants;
@@ -84,6 +87,10 @@ public class NoiseDataService extends IntentService {
 						forArtist = intent.getLongExtra( NoiseRemoteApi.ArtistId, Constants.NULL_ID );
 
 						getArtistTracks( forArtist, serverAddress, receiver );
+						break;
+
+					case NoiseRemoteApi.GetPlayHistory:
+						getPlayHistory( serverAddress, receiver );
 						break;
 				}
 			}
@@ -224,6 +231,38 @@ public class NoiseDataService extends IntentService {
 		receiver.send( resultCode, resultData );
 	}
 
+	private void getPlayHistory( String serverAddress, ResultReceiver receiver ) {
+		Bundle  resultData = buildResultBundle( NoiseRemoteApi.GetPlayHistory );
+		int     resultCode = NoiseRemoteApi.RemoteResultError;
+
+		try {
+			RemoteServerDataApi     service = buildDataService( serverAddress );
+			RoPlayHistoryResult     result = service.GetPlayHistory();
+
+			if( result.Success ) {
+				ArrayList<PlayHistory> historyList = new ArrayList<PlayHistory>();
+
+				for( RoPlayHistory roPlayHistory : result.PlayHistory ) {
+					historyList.add( new PlayHistory( roPlayHistory ) );
+				}
+
+				resultCode = NoiseRemoteApi.RemoteResultSuccess;
+				resultData.putParcelableArrayList( NoiseRemoteApi.PlayHistoryList, historyList );
+			}
+			else {
+				resultData.putString( NoiseRemoteApi.RemoteResultErrorMessage, result.ErrorMessage );
+			}
+		}
+		catch( Exception ex ) {
+			resultData.putString( NoiseRemoteApi.RemoteResultErrorMessage, ex.getMessage());
+			resultCode = NoiseRemoteApi.RemoteResultException;
+
+			Timber.e( ex, "getPlayHistory" );
+		}
+
+		receiver.send( resultCode, resultData );
+	}
+
 	private void getArtistInfo( long forArtist, String serverAddress, ResultReceiver receiver ) {
 		Bundle  resultData = buildResultBundle( NoiseRemoteApi.GetArtistInfo );
 		int     resultCode = NoiseRemoteApi.RemoteResultError;
@@ -311,7 +350,7 @@ public class NoiseDataService extends IntentService {
 	}
 
 	private RemoteServerDataApi buildDataService( String serverAddress ) {
-		RestAdapter restAdapter = new RestAdapter.Builder().setServer( serverAddress ).build();
+		RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint( serverAddress ).build();
 
 		return( restAdapter.create( RemoteServerDataApi.class ));
 	}

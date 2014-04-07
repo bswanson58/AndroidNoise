@@ -8,6 +8,7 @@ import com.SecretSquirrel.AndroidNoise.services.rto.RoAlbumListResult;
 import com.SecretSquirrel.AndroidNoise.services.rto.RoArtistInfoResult;
 import com.SecretSquirrel.AndroidNoise.services.rto.RoArtistListResult;
 import com.SecretSquirrel.AndroidNoise.services.rto.RoFavoritesListResult;
+import com.SecretSquirrel.AndroidNoise.services.rto.RoPlayHistoryResult;
 import com.SecretSquirrel.AndroidNoise.services.rto.RoTrackListResult;
 
 import retrofit.http.GET;
@@ -34,4 +35,7 @@ public interface RemoteServerDataApi {
 
 	@GET( "/Noise/Data/artistTracks" )
 	RoArtistTracksResult GetArtistTracks( @Query( "artist" ) long artistId );
+
+	@GET( "/Noise/Data/playHistory" )
+	RoPlayHistoryResult GetPlayHistory();
 }

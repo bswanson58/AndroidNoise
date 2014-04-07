@@ -251,6 +251,11 @@ public class NoiseDataCacheClient implements INoiseData {
 		}
 	}
 
+	@Override
+	public void GetPlayHistory( final ResultReceiver receiver ) {
+		mNoiseData.GetPlayHistory( receiver );
+	}
+
 	private void trimCache( Hashtable<Long, DatedBundle> cacheList ) {
 		if( cacheList.size() > cCacheSize ) {
 			long    oldestEntryKey = 0;

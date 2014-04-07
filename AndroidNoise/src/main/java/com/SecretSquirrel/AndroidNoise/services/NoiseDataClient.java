@@ -76,6 +76,11 @@ public class NoiseDataClient implements INoiseData {
 		mContext.startService( setupApi( NoiseRemoteApi.GetFavoritesList, receiver ));
 	}
 
+	@Override
+	public void GetPlayHistory( ResultReceiver receiver ) {
+		mContext.startService( setupApi( NoiseRemoteApi.GetPlayHistory, receiver ));
+	}
+
 	private Intent setupApi( int apiCode, ResultReceiver resultReceiver ) {
 		Intent intent = new Intent( mContext, NoiseDataService.class );
 
