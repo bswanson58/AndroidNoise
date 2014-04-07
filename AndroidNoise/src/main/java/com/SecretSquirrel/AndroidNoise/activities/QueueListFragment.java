@@ -26,6 +26,7 @@ import com.SecretSquirrel.AndroidNoise.interfaces.INoiseQueue;
 import com.SecretSquirrel.AndroidNoise.interfaces.IQueueStatus;
 import com.SecretSquirrel.AndroidNoise.services.rto.BaseServerResult;
 import com.SecretSquirrel.AndroidNoise.support.IocUtility;
+import com.SecretSquirrel.AndroidNoise.support.NoiseUtils;
 import com.SecretSquirrel.AndroidNoise.views.RevealingListView.DefaultRevealingListViewListener;
 import com.SecretSquirrel.AndroidNoise.views.RevealingListView.RevealingListView;
 
@@ -264,6 +265,7 @@ public class QueueListFragment extends Fragment  {
 		private ArrayList<PlayQueueTrack>   mQueueList;
 		private int                         mWillPlayColor;
 		private int                         mHasPlayedColor;
+		private final String                mArtistAlbumFormat;
 
 		@SuppressWarnings( "unused" )
 		protected class ViewHolder {
@@ -305,6 +307,7 @@ public class QueueListFragment extends Fragment  {
 
 			mWillPlayColor = getResources().getColor( R.color.TitleText );
 			mHasPlayedColor = getResources().getColor( R.color.HasPlayed );
+			mArtistAlbumFormat = getString( R.string.artist_album_format );
 
 			mLayoutInflater = (LayoutInflater)mContext.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
 		}
@@ -333,18 +336,13 @@ public class QueueListFragment extends Fragment  {
 
 				views.setTrack( track );
 				views.NameTextView.setText( track.getTrackName());
-				views.AlbumTextView.setText( String.format( "(%s/%s)", track.getArtistName(), track.getAlbumName() ));
+				views.AlbumTextView.setText( String.format( mArtistAlbumFormat, track.getArtistName(), track.getAlbumName()));
 
 				int typeStyle = track.getIsStrategySourced() ? Typeface.ITALIC : Typeface.NORMAL;
 
 				views.NameTextView.setTypeface( null, typeStyle );
 				views.AlbumTextView.setTypeface( null, typeStyle );
-
-				views.PlayDuration.setText(
-						String.format( "%d:%02d",
-								TimeUnit.MILLISECONDS.toMinutes( track.getDurationMilliseconds()),
-								TimeUnit.MILLISECONDS.toSeconds( track.getDurationMilliseconds()) -
-								TimeUnit.MINUTES.toSeconds( TimeUnit.MILLISECONDS.toMinutes( track.getDurationMilliseconds()))));
+				views.PlayDuration.setText( NoiseUtils.formatTrackDuration( track.getDurationMilliseconds()));
 
 				if( track.getHasPlayed()) {
 					views.NameTextView.setTextColor( mHasPlayedColor );

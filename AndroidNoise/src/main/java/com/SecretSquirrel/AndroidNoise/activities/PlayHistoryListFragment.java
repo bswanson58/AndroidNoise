@@ -152,6 +152,7 @@ public class PlayHistoryListFragment extends Fragment
 	protected class HistoryListAdapter extends ArrayAdapter<PlayHistory> {
 		private Context         mContext;
 		private LayoutInflater  mLayoutInflater;
+		private final String    mArtistAlbumFormat;
 
 		protected class ViewHolder {
 			public ViewHolder( View view ) {
@@ -176,6 +177,8 @@ public class PlayHistoryListFragment extends Fragment
 		public HistoryListAdapter( Context context, ArrayList<PlayHistory> favoritesList ) {
 			super( context, R.layout.history_list_item, favoritesList );
 			mContext = context;
+
+			mArtistAlbumFormat = getString( R.string.artist_album_format );
 
 			mLayoutInflater = (LayoutInflater)mContext.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
 		}
@@ -204,7 +207,7 @@ public class PlayHistoryListFragment extends Fragment
 
 				views.PlayButton.setTag( history );
 				views.TrackNameView.setText( history.getTrackName());
-				views.AlbumNameView.setText( String.format( "(%s/%s)", history.getArtistName(), history.getAlbumName()));
+				views.AlbumNameView.setText( String.format( mArtistAlbumFormat, history.getArtistName(), history.getAlbumName()));
 			}
 
 			return( retValue );
