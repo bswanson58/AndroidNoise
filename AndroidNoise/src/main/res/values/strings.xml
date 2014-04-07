@@ -28,6 +28,7 @@
     <string name="noise_ql_queue_list">Now Playing</string>
     <string name="noise_sr_search_list">Search Results</string>
     <string name="noise_fl_favorites_list">Favorites</string>
+    <string name="play_history_list">Play History</string>
     <string name="noise_al_server_list">Available Noise Systems</string>
     <string name="sl_searching_title">Searching for Noise Systems…</string>
     <string name="ql_empty_list">Play Something!</string>
@@ -92,6 +93,7 @@
     <string name="content_description_album_list">The list of albums for an artist</string>
     <string name="content_description_track_list">The list of tracks for an album</string>
     <string name="content_description_favorites_list">The list of favorite items</string>
+    <string name="content_description_history_list">The list of previously played tracks</string>
     <string name="content_description_queue_list">The list of items now playing</string>
     <string name="content_description_recently_played_list">The list of recently played artists</string>
     <string name="content_description_recently_viewed_list">The list of recently viewed artists</string>

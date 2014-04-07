@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="horizontal"
+              android:layout_width="match_parent"
+              android:layout_height="@dimen/noise_list_item_height"
+              android:descendantFocusability="blocksDescendants">
+    <Button
+        android:id="@+id/play_button"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_marginRight="@dimen/noise_base_padding"
+        android:layout_gravity="center_vertical"
+        style="@style/PlayButtonStyle"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="7"
+            android:orientation="horizontal">
+
+            <com.SecretSquirrel.AndroidNoise.views.AutoFitTextView
+                android:id="@+id/ph_track_name"
+                android:layout_height="match_parent"
+                android:layout_width="match_parent"
+                android:gravity="center_vertical"
+                android:text="@string/test_track_name"
+                style="@style/TitleText"/>
+        </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="3"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/ph_album_name"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:minWidth="20dp"
+                android:layout_marginLeft="@dimen/noise_base_padding"
+                android:gravity="right"
+                android:layout_centerVertical="true"
+                android:text="@string/test_track_number"
+                style="@style/SubTitleText"/>
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

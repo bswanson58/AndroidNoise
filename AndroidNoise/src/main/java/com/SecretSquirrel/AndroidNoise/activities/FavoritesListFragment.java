@@ -193,7 +193,7 @@ public class FavoritesListFragment extends Fragment
 		}
 
 		public FavoritesAdapter( Context context, ArrayList<Favorite> favoritesList ) {
-			super( context, R.layout.artist_list_item, favoritesList );
+			super( context, R.layout.favorite_list_item, favoritesList );
 			mContext = context;
 			mFavoritesList = favoritesList;
 
