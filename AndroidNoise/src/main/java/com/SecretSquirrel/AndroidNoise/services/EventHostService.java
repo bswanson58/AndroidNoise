@@ -1,6 +1,6 @@
 package com.SecretSquirrel.AndroidNoise.services;
 
-// Secret Squirrel Software - Created by bswanson on 1/2/14.
+// Secret Squirrel Software - Created by BSwanson on 1/2/14.
 
 import android.app.Service;
 import android.content.Intent;
@@ -11,12 +11,10 @@ import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseServer;
 import com.SecretSquirrel.AndroidNoise.nanoHttpd.NanoHTTPD;
 import com.SecretSquirrel.AndroidNoise.services.rto.BaseServerResult;
-import com.SecretSquirrel.AndroidNoise.support.Constants;
 import com.SecretSquirrel.AndroidNoise.support.IocUtility;
 import com.SecretSquirrel.AndroidNoise.support.NetworkUtility;
 
@@ -27,17 +25,17 @@ import javax.inject.Inject;
 
 import rx.Subscription;
 import rx.functions.Action1;
+import timber.log.Timber;
 
 public class EventHostService extends Service {
-	private static final String TAG                             = EventHostService.class.getName();
+	private static final int            EVENT_PORT                      = 6502;
 
-	private static final int    EVENT_PORT                      = 6502;
+	public static final int             SERVER_EVENT_REGISTER_CLIENT    = 1;
+	public static final int             SERVER_EVENT_UNREGISTER_CLIENT  = 2;
 
-	public static final int     SERVER_EVENT_REGISTER_CLIENT    = 1;
-	public static final int     SERVER_EVENT_UNREGISTER_CLIENT  = 2;
-
-	public static final int     SERVER_EVENT_QUEUE_CHANGED      = 3;
-	public static final int     SERVER_EVENT_TRANSPORT_CHANGED  = 4;
+	public static final int             SERVER_EVENT_QUEUE_CHANGED      = 3;
+	public static final int             SERVER_EVENT_TRANSPORT_CHANGED  = 4;
+	public static final int             SERVER_EVENT_LIBRARY_CHANGED    = 5;
 
 	private ServerEventHost             mEventHost;
 	private final ArrayList<Messenger>  mClients;
@@ -103,11 +101,9 @@ public class EventHostService extends Service {
 
 	@Override
 	public int onStartCommand( Intent intent, int flags, int startId ) {
-		if( Constants.LOG_DEBUG ) {
-			Log.i( "AndroidNoise:EventHostService", "Received start id " + startId + ": " + intent );
-		}
+		Timber.i( "Received start id " + startId + ": " + intent );
 
-		return START_STICKY; // run until explicitly stopped.
+		return START_STICKY;
 	}
 
 	@Override
@@ -116,9 +112,7 @@ public class EventHostService extends Service {
 
 		stopEventHost();
 
-		if( Constants.LOG_DEBUG ) {
-			Log.i( "AndroidNoise:EventHostService", "Service Stopped." );
-		}
+		Timber.i( "Service Stopped." );
 
 		mIsRunning = false;
 	}
@@ -173,17 +167,13 @@ public class EventHostService extends Service {
 					            }, new Action1<Throwable>() {
 						            @Override
 						            public void call( Throwable throwable ) {
-							            if( Constants.LOG_ERROR ) {
-								            Log.e( TAG, "Subscribing to Noise events", throwable );
-							            }
+							            Timber.e( throwable, "Subscribing to Noise events" );
 						            }
 					            }
 					);
 		}
 		catch( Exception ex ) {
-			if( Constants.LOG_ERROR ) {
-				Log.e( TAG, "subscribeToEvents", ex );
-			}
+				Timber.e( ex, "subscribeToEvents" );
 		}
 	}
 
@@ -218,6 +208,20 @@ public class EventHostService extends Service {
 				return( new NanoHTTPD.Response( "OK" ));
 			}
 		} );
+
+		mEventHost.AddResponder( new ServerEventHost.UriResponder() {
+			@Override
+			public boolean shouldServe( NanoHTTPD.IHTTPSession session ) {
+				return( session.getUri().startsWith( "/eventInLibrary" ));
+			}
+
+			@Override
+			public NanoHTTPD.Response serve( NanoHTTPD.IHTTPSession session ) {
+				publishMessage( SERVER_EVENT_LIBRARY_CHANGED, session.getParms());
+
+				return( new NanoHTTPD.Response( "OK" ));
+			}
+		});
 	}
 
 	private void startHost() {
@@ -240,10 +244,8 @@ public class EventHostService extends Service {
 					            }, new Action1<Throwable>() {
 						            @Override
 						            public void call( Throwable throwable ) {
-							            if( Constants.LOG_ERROR ) {
-								            Log.e( TAG, "Subscribing to Noise events", throwable );
-							            }
-						            }
+							            Timber.e( throwable, "Subscribing to Noise events" );
+							        }
 					            } );
 		}
 	}

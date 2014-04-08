@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.SecretSquirrel.AndroidNoise.R;
 import com.SecretSquirrel.AndroidNoise.dto.PlayHistory;
 import com.SecretSquirrel.AndroidNoise.events.EventAlbumRequest;
+import com.SecretSquirrel.AndroidNoise.events.EventLibraryStateChange;
 import com.SecretSquirrel.AndroidNoise.events.EventPlayTrack;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseData;
 import com.SecretSquirrel.AndroidNoise.services.NoiseRemoteApi;
@@ -98,6 +99,8 @@ public class PlayHistoryListFragment extends Fragment
 	public void onResume() {
 		super.onResume();
 
+		mEventBus.register( this );
+
 		if( mHistoryList.size() == 0 ) {
 			mServiceResultReceiver.setReceiver( this );
 
@@ -110,6 +113,7 @@ public class PlayHistoryListFragment extends Fragment
 		super.onPause();
 
 		mServiceResultReceiver.clearReceiver();
+		mEventBus.unregister( this );
 	}
 
 	@Override
@@ -131,6 +135,11 @@ public class PlayHistoryListFragment extends Fragment
 		if( mListViewState != null ) {
 			outState.putParcelable( LIST_STATE, mListViewState );
 		}
+	}
+
+	@SuppressWarnings( "unused" )
+	public void onEvent( EventLibraryStateChange args ) {
+		mNoiseData.GetPlayHistory( mServiceResultReceiver );
 	}
 
 	@Override

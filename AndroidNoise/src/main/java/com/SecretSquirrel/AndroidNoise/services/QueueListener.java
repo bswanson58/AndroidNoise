@@ -1,6 +1,6 @@
 package com.SecretSquirrel.AndroidNoise.services;
 
-// Secret Squirrel Software - Created by bswanson on 2/26/14.
+// Secret Squirrel Software - Created by BSwanson on 2/26/14.
 
 import android.content.ComponentName;
 import android.content.ServiceConnection;
@@ -10,12 +10,12 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
-import android.util.Log;
 
 import com.SecretSquirrel.AndroidNoise.dto.PlayQueueListResult;
 import com.SecretSquirrel.AndroidNoise.dto.PlayQueueTrack;
 import com.SecretSquirrel.AndroidNoise.events.EventActivityPausing;
 import com.SecretSquirrel.AndroidNoise.events.EventActivityResuming;
+import com.SecretSquirrel.AndroidNoise.events.EventLibraryStateChange;
 import com.SecretSquirrel.AndroidNoise.events.EventQueueTimeUpdate;
 import com.SecretSquirrel.AndroidNoise.events.EventQueueUpdated;
 import com.SecretSquirrel.AndroidNoise.events.EventServerSelected;
@@ -23,7 +23,6 @@ import com.SecretSquirrel.AndroidNoise.events.EventTransportUpdate;
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseQueue;
 import com.SecretSquirrel.AndroidNoise.interfaces.IQueueStatus;
-import com.SecretSquirrel.AndroidNoise.support.Constants;
 
 import java.util.ArrayList;
 
@@ -32,10 +31,9 @@ import javax.inject.Inject;
 import de.greenrobot.event.EventBus;
 import rx.Subscription;
 import rx.functions.Action1;
+import timber.log.Timber;
 
 public class QueueListener implements IQueueStatus {
-	private final String                TAG = QueueListener.class.getName();
-
 	private final EventBus              mEventBus;
 	private final INoiseQueue           mNoiseQueue;
 	private final IApplicationState     mApplicationState;
@@ -63,9 +61,7 @@ public class QueueListener implements IQueueStatus {
 					mService.send( message );
 				}
 			} catch( RemoteException ex ) {
-				if( Constants.LOG_ERROR ) {
-					Log.e( TAG, "Sending register client.", ex );
-				}
+				Timber.e( ex, "Sending register client." );
 			}
 		}
 
@@ -85,6 +81,10 @@ public class QueueListener implements IQueueStatus {
 
 				case EventHostService.SERVER_EVENT_TRANSPORT_CHANGED:
 					publishTransportEvent( message.getData());
+					break;
+
+				case EventHostService.SERVER_EVENT_LIBRARY_CHANGED:
+					publishLibraryEvent( message.getData());
 					break;
 
 				default:
@@ -187,9 +187,7 @@ public class QueueListener implements IQueueStatus {
 						mService.send( message );
 					}
 				} catch( RemoteException ex ) {
-					if( Constants.LOG_ERROR ) {
-						Log.e( TAG, "unbindEventService", ex );
-					}
+					Timber.e( ex, "unbindEventService" );
 				}
 			}
 
@@ -216,9 +214,7 @@ public class QueueListener implements IQueueStatus {
 					                     public void call( Throwable throwable ) {
 						                     setQueueList( null );
 
-						                     if( Constants.LOG_ERROR ) {
-							                     Log.e( TAG, "GetQueuedTrackList", throwable );
-						                     }
+						                     Timber.e( throwable, "GetQueuedTrackList" );
 					                     }
 				                     }
 				);
@@ -261,22 +257,23 @@ public class QueueListener implements IQueueStatus {
 
 		if( serverSequence >= mServerSequence ) {
 			EventTransportUpdate    transportUpdate = new EventTransportUpdate( Integer.parseInt( data.getString( "state" )),
-																				Long.parseLong( data.getString( "time" ) ),
-																				Long.parseLong( data.getString( "track" ) ),
-																				Long.parseLong( data.getString( "position" ) ),
+																				Long.parseLong( data.getString( "time" )),
+																				Long.parseLong( data.getString( "track" )),
+																				Long.parseLong( data.getString( "position" )),
 																				Long.parseLong( data.getString( "length" )));
 			mServerSequence = serverSequence;
 			mEventBus.post( transportUpdate );
 
-			if( Constants.LOG_DEBUG ) {
-				Log.i( TAG, String.format( "TransportUpdate - Sequence: %s, State: %s, Position: %s",
-											data.getString( "sequence" ), data.getString( "state" ), data.getString( "position" )));
-			}
+			Timber.i( "TransportUpdate - Sequence: %s, State: %s, Position: %s", data.getString( "sequence" ), data.getString( "state" ), data.getString( "position" ));
 		}
 		else {
-			if( Constants.LOG_DEBUG ) {
-				Log.i( TAG, String.format( "TransportUpdate - out of sequence message received: %d", serverSequence ));
-			}
+			Timber.i( "TransportUpdate - out of sequence message received: %d", serverSequence );
 		}
+	}
+
+	private void publishLibraryEvent( Bundle data ) {
+		EventLibraryStateChange event = new EventLibraryStateChange( data.getString( "changed" ));
+
+		mEventBus.post( event );
 	}
 }

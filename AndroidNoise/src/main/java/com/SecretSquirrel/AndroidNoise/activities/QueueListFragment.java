@@ -31,7 +31,6 @@ import com.SecretSquirrel.AndroidNoise.views.RevealingListView.DefaultRevealingL
 import com.SecretSquirrel.AndroidNoise.views.RevealingListView.RevealingListView;
 
 import java.util.ArrayList;
-import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
