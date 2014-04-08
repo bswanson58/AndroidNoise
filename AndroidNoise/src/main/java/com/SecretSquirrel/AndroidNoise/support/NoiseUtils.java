@@ -8,6 +8,9 @@ import android.view.inputmethod.InputMethodManager;
 
 import com.SecretSquirrel.AndroidNoise.R;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
 // Created by BSwanson on 1/26/14.
@@ -46,6 +49,18 @@ public class NoiseUtils {
 				TimeUnit.MILLISECONDS.toSeconds( duration ) -
 						TimeUnit.MINUTES.toSeconds( TimeUnit.MILLISECONDS.toMinutes( duration ))));
 
+	}
+
+	public static String formatTime( long ticks ) {
+		final long          TICKS_AT_EPOCH = 621355968000000000L;
+		final long          TICKS_PER_MILLISECOND = 10000;
+
+		Date                date = new Date(( ticks - TICKS_AT_EPOCH ) / TICKS_PER_MILLISECOND );
+		SimpleDateFormat    dateFormat = new SimpleDateFormat( "M/dd/yyyy - h:mma" );
+
+		dateFormat.setTimeZone( TimeZone.getTimeZone( "UTC" ));
+
+		return( dateFormat.format( date ));
 	}
 
 	public static void hideKeyboard( Activity activity ) {

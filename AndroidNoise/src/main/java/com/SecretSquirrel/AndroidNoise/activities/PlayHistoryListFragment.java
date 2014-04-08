@@ -24,8 +24,13 @@ import com.SecretSquirrel.AndroidNoise.interfaces.INoiseData;
 import com.SecretSquirrel.AndroidNoise.services.NoiseRemoteApi;
 import com.SecretSquirrel.AndroidNoise.services.ServiceResultReceiver;
 import com.SecretSquirrel.AndroidNoise.support.IocUtility;
+import com.SecretSquirrel.AndroidNoise.support.NoiseUtils;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.TimeZone;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
@@ -171,6 +176,7 @@ public class PlayHistoryListFragment extends Fragment
 			@InjectView( R.id.play_button )	    Button      PlayButton;
 			@InjectView( R.id.ph_track_name )   TextView    TrackNameView;
 			@InjectView( R.id.ph_album_name )   TextView    AlbumNameView;
+			@InjectView( R.id.ph_played_on )    TextView    PlayedOnView;
 
 			@SuppressWarnings( "unused" )
 			@OnClick( R.id.play_button )
@@ -217,6 +223,7 @@ public class PlayHistoryListFragment extends Fragment
 				views.PlayButton.setTag( history );
 				views.TrackNameView.setText( history.getTrackName());
 				views.AlbumNameView.setText( String.format( mArtistAlbumFormat, history.getArtistName(), history.getAlbumName()));
+				views.PlayedOnView.setText( NoiseUtils.formatTime( history.getPlayOnTicks()));
 			}
 
 			return( retValue );
