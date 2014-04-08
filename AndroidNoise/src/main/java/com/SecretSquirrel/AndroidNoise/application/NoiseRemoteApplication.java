@@ -10,6 +10,7 @@ import com.SecretSquirrel.AndroidNoise.models.ModelsModule;
 import com.SecretSquirrel.AndroidNoise.services.ServicesModule;
 import com.SecretSquirrel.AndroidNoise.services.noiseApi.NoiseApiModule;
 import com.SecretSquirrel.AndroidNoise.support.IocUtility;
+import com.crashlytics.android.Crashlytics;
 
 import java.util.Arrays;
 import java.util.List;
@@ -25,12 +26,7 @@ public class NoiseRemoteApplication extends Application
 	public void onCreate() {
 		super.onCreate();
 
-		if( BuildConfig.DEBUG ) {
-			Timber.plant( new Timber.DebugTree());
-		}
-		else {
-			Timber.plant( new Timber.HollowTree());
-		}
+		createLogger();
 
 		mObjectGraph = ObjectGraph.create( getModules().toArray());
 	}
@@ -43,6 +39,29 @@ public class NoiseRemoteApplication extends Application
 				ModelsModule.class,
 				ActivitiesModule.class
 			);
+	}
+
+	private void createLogger() {
+		if( BuildConfig.DEBUG ) {
+			Timber.plant( new Timber.DebugTree() {
+				@Override
+				public void e( Throwable t, String message, Object... args ) {
+					Crashlytics.logException( t );
+
+					super.e( t, message, args );
+				}
+			});
+		}
+		else {
+			Timber.plant( new Timber.HollowTree() {
+				@Override
+				public void e( Throwable t, String message, Object... args ) {
+					Crashlytics.logException( t );
+
+					super.e( t, message, args );
+				}
+			});
+		}
 	}
 
 	@Override
