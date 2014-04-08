@@ -259,7 +259,7 @@ public class LibraryActivity extends ActionBarActivity
 				NavigationMenuItem.create( QUEUE_ITEM_ID, getString( R.string.title_queue_section ), "ic_action_queue", true, this ),
 				NavigationMenuItem.create( SEARCH_ITEM_ID, getString( R.string.title_search_section ), "ic_action_search", true, this ),
 				NavigationMenuItem.create( RECENT_ITEM_ID, getString( R.string.title_recent_section ), "ic_action_recent", true, this ),
-				NavigationMenuItem.create( HISTORY_ITEM_ID, getString( R.string.title_history_section ), "", true, this ),
+				NavigationMenuItem.create( HISTORY_ITEM_ID, getString( R.string.title_history_section ), "ic_action_play_history", true, this ),
 				NavigationMenuItem.create( SERVERS_ITEM_ID, getString( R.string.title_server_section ), "ic_action_servers", true, this )};
 
 		retValue.setApplicationNameId( R.string.app_name );
