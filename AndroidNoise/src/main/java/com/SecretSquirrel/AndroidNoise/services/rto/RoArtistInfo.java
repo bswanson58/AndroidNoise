@@ -9,5 +9,7 @@ public class RoArtistInfo {
 	public String			ArtistImage;
 	public String[]			BandMembers;
 	public String[]			TopAlbums;
+	public String[]         TopTracks;
+	public long[]           TopTrackIds;
 	public String[]			SimilarArtists;
 }

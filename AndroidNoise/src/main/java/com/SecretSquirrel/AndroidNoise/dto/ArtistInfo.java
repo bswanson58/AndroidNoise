@@ -1,6 +1,6 @@
 package com.SecretSquirrel.AndroidNoise.dto;
 
-// Secret Squirrel Software - Created by bswanson on 12/30/13.
+// Secret Squirrel Software - Created by BSwanson on 12/30/13.
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -17,6 +17,8 @@ public class ArtistInfo implements Parcelable {
 	private Bitmap		mArtistImage;
 	private String[]	mBandMembers;
 	private String[]	mTopAlbums;
+	private String[]    mTopTracks;
+	private long[]      mTopTrackIds;
 	private String[]	mSimilarArtists;
 
 	/** Static field used to regenerate object, individually or as arrays */
@@ -35,6 +37,8 @@ public class ArtistInfo implements Parcelable {
 		mWebsite = roArtistInfo.Website;
 		mBandMembers = roArtistInfo.BandMembers;
 		mTopAlbums = roArtistInfo.TopAlbums;
+		mTopTracks = roArtistInfo.TopTracks;
+		mTopTrackIds = roArtistInfo.TopTrackIds;
 		mSimilarArtists = roArtistInfo.SimilarArtists;
 
 		if( roArtistInfo.ArtistImage != null ) {
@@ -50,6 +54,8 @@ public class ArtistInfo implements Parcelable {
 		mBiography = parcel.readString();
 		mBandMembers = parcel.createStringArray();
 		mTopAlbums = parcel.createStringArray();
+		mTopTracks = parcel.createStringArray();
+		mTopTrackIds = parcel.createLongArray();
 		mSimilarArtists = parcel.createStringArray();
 		mArtistImage = parcel.readParcelable( Bitmap.class.getClassLoader());
 	}
@@ -78,6 +84,14 @@ public class ArtistInfo implements Parcelable {
 		return( mTopAlbums );
 	}
 
+	public String[] getTopTracks() {
+		return( mTopTracks );
+	}
+
+	public long[] getTopTrackIds() {
+		return( mTopTrackIds );
+	}
+
 	public String[] getSimilarArtists() {
 		return( mSimilarArtists );
 	}
@@ -93,6 +107,8 @@ public class ArtistInfo implements Parcelable {
 		parcel.writeString( mBiography );
 		parcel.writeStringArray( mBandMembers );
 		parcel.writeStringArray( mTopAlbums );
+		parcel.writeStringArray( mTopTracks );
+		parcel.writeLongArray( mTopTrackIds );
 		parcel.writeStringArray( mSimilarArtists );
 		parcel.writeValue( mArtistImage );
 	}
