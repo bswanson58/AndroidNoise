@@ -12,7 +12,7 @@ public class EventPlayTrack {
 	public EventPlayTrack( Track track ) {
 		mArtistId = track.getArtistId();
 		mTrackId = track.getTrackId();
-		mTrackName = track.getName();
+		mTrackName = track.getTrackName();
 	}
 
 	public EventPlayTrack( long artistId, long trackId, String trackName ) {

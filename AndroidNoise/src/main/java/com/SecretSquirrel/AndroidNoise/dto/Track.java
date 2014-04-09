@@ -11,8 +11,10 @@ public class Track implements Parcelable {
 	private long        mTrackId;
 	private long        mAlbumId;
 	private long        mArtistId;
-	private String      mName;
-	private long        mDurationMilliseconds;
+	private String      mTrackName;
+	private String      mAlbumName;
+	private String      mArtistName;
+	private long        mDuration;
 	private int         mRating;
 	private int         mTrackNumber;
 	private String      mVolumeName;
@@ -29,11 +31,13 @@ public class Track implements Parcelable {
 	};
 
 	public Track( RoTrack fromTrack ) {
-		mTrackId = fromTrack.DbId;
+		mTrackId = fromTrack.TrackId;
 		mAlbumId = fromTrack.AlbumId;
 		mArtistId = fromTrack.ArtistId;
-		mName = fromTrack.Name;
-		mDurationMilliseconds = fromTrack.DurationMilliseconds;
+		mTrackName = fromTrack.TrackName;
+		mAlbumName = fromTrack.AlbumName;
+		mArtistName = fromTrack.ArtistName;
+		mDuration = fromTrack.Duration;
 		mRating = fromTrack.Rating;
 		mTrackNumber = fromTrack.TrackNumber;
 		mVolumeName = fromTrack.VolumeName;
@@ -44,7 +48,9 @@ public class Track implements Parcelable {
 		mTrackId = favorite.getTrackId();
 		mAlbumId = favorite.getAlbumId();
 		mArtistId = favorite.getArtistId();
-		mName = favorite.getTrack();
+		mTrackName = favorite.getTrack();
+		mArtistName = favorite.getArtist();
+		mAlbumName = favorite.getAlbum();
 		mIsFavorite = true;
 	}
 
@@ -52,15 +58,19 @@ public class Track implements Parcelable {
 		mTrackId = searchItem.getTrackId();
 		mAlbumId = searchItem.getAlbumId();
 		mArtistId = searchItem.getArtistId();
-		mName = searchItem.getTrackName();
+		mTrackName = searchItem.getTrackName();
+		mAlbumName = searchItem.getAlbumName();
+		mArtistName = searchItem.getArtistName();
 	}
 
 	public Track( Parcel parcel ) {
 		mTrackId = parcel.readLong();
 		mAlbumId = parcel.readLong();
 		mArtistId = parcel.readLong();
-		mName = parcel.readString();
-		mDurationMilliseconds = parcel.readLong();
+		mTrackName = parcel.readString();
+		mAlbumName = parcel.readString();
+		mArtistName = parcel.readString();
+		mDuration = parcel.readLong();
 		mRating = parcel.readInt();
 		mTrackNumber = parcel.readInt();
 		mVolumeName = parcel.readString();
@@ -79,12 +89,20 @@ public class Track implements Parcelable {
 		return( mArtistId );
 	}
 
-	public String getName() {
-		return( mName );
+	public String getTrackName() {
+		return( mTrackName );
+	}
+
+	public String getAlbumName() {
+		return( mAlbumName );
+	}
+
+	public String getArtistName() {
+		return( mArtistName );
 	}
 
 	public long getDurationMilliseconds() {
-		return( mDurationMilliseconds );
+		return( mDuration );
 	}
 
 	public int getRating() {
@@ -113,8 +131,10 @@ public class Track implements Parcelable {
 		parcel.writeLong( mTrackId );
 		parcel.writeLong( mAlbumId );
 		parcel.writeLong( mArtistId );
-		parcel.writeString( mName );
-		parcel.writeLong( mDurationMilliseconds );
+		parcel.writeString( mTrackName );
+		parcel.writeString( mAlbumName );
+		parcel.writeString( mArtistName );
+		parcel.writeLong( mDuration );
 		parcel.writeInt( mRating );
 		parcel.writeInt( mTrackNumber );
 		parcel.writeString( mVolumeName );

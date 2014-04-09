@@ -267,7 +267,7 @@ public class TrackListFragment extends Fragment
 
 				views.TrackNumberTextView.setText( String.format( mTrackNumberFormat, track.getTrackNumber()));
 				views.PlayButton.setTag( track );
-				views.NameTextView.setText( track.getName());
+				views.NameTextView.setText( track.getTrackName());
 
 				if( TextUtils.isEmpty( track.getVolumeName())) {
 					views.VolumeNameView.setText( "" );
