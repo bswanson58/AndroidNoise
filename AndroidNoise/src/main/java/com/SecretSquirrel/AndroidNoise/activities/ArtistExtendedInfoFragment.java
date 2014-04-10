@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +23,7 @@ import com.SecretSquirrel.AndroidNoise.R;
 import com.SecretSquirrel.AndroidNoise.dto.Artist;
 import com.SecretSquirrel.AndroidNoise.dto.ArtistInfo;
 import com.SecretSquirrel.AndroidNoise.events.EventNavigationUpEnable;
+import com.SecretSquirrel.AndroidNoise.events.EventPlayTrackList;
 import com.SecretSquirrel.AndroidNoise.support.Constants;
 import com.SecretSquirrel.AndroidNoise.support.IocUtility;
 
@@ -28,6 +31,7 @@ import javax.inject.Inject;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import butterknife.Optional;
 import de.greenrobot.event.EventBus;
 
 public class ArtistExtendedInfoFragment extends Fragment {
@@ -48,7 +52,10 @@ public class ArtistExtendedInfoFragment extends Fragment {
 	@InjectView( R.id.aei_artist_image )    ImageView   mArtistImage;
 	@InjectView( R.id.aei_band_members )    ListView    mBandMembersListView;
 	@InjectView( R.id.aei_similar_artists ) ListView    mSimilarArtistsListView;
+	@Optional
 	@InjectView( R.id.aei_top_albums )      ListView    mTopAlbumsListView;
+	@Optional
+	@InjectView( R.id.aei_top_tracks )      ListView    mTopTracksListView;
 
 	public static ArtistExtendedInfoFragment newInstance( Artist artist, ArtistInfo artistInfo ) {
 		ArtistExtendedInfoFragment  fragment = new ArtistExtendedInfoFragment();
@@ -111,7 +118,7 @@ public class ArtistExtendedInfoFragment extends Fragment {
 	public void onResume() {
 		super.onResume();
 
-		mEventBus.post( new EventNavigationUpEnable());
+		mEventBus.post( new EventNavigationUpEnable() );
 	}
 
 	@Override
@@ -130,10 +137,35 @@ public class ArtistExtendedInfoFragment extends Fragment {
 	}
 
 	@Override
+	public void onCreateOptionsMenu( Menu menu, MenuInflater inflater ) {
+		inflater.inflate( R.menu.artist_extended_info, menu );
+
+		super.onCreateOptionsMenu( menu, inflater );
+	}
+
+	@Override
+	public void onPrepareOptionsMenu( Menu menu ) {
+		MenuItem    item = menu.findItem( R.id.action_play_artist_top_tracks );
+
+		if( item != null ) {
+			item.setEnabled(( mArtistInfo != null ) && ( mArtistInfo.getTopTrackIds().length > 0 ));
+		}
+
+		super.onPrepareOptionsMenu( menu );
+	}
+
+	@Override
 	public boolean onOptionsItemSelected( MenuItem item ) {
 		boolean retValue = true;
 
 		switch( item.getItemId()) {
+			case R.id.action_play_artist_top_tracks:
+				if(( mArtistInfo != null ) &&
+				   ( mArtistInfo.getTopTrackIds().length > 0 )) {
+					mEventBus.post( new EventPlayTrackList( mArtistInfo.getTopTrackIds()));
+				}
+				break;
+
 			case android.R.id.home:
 				getActivity().onBackPressed();
 				break;
@@ -160,7 +192,12 @@ public class ArtistExtendedInfoFragment extends Fragment {
 
 			mBandMembersListView.setAdapter( new ArrayAdapter<String>( getActivity(), R.layout.simple_list_item, mArtistInfo.getBandMembers()));
 			mSimilarArtistsListView.setAdapter( new ArrayAdapter<String>( getActivity(), R.layout.simple_list_item, mArtistInfo.getSimilarArtists()));
-			mTopAlbumsListView.setAdapter( new ArrayAdapter<String>( getActivity(), R.layout.simple_list_item, mArtistInfo.getTopAlbums()));
+			if( mTopAlbumsListView != null ) {
+				mTopAlbumsListView.setAdapter( new ArrayAdapter<String>( getActivity(), R.layout.simple_list_item, mArtistInfo.getTopAlbums()));
+			}
+			if( mTopTracksListView != null ) {
+				mTopTracksListView.setAdapter( new ArrayAdapter<String>( getActivity(), R.layout.simple_list_item, mArtistInfo.getTopTracks()));
+			}
 		}
 
 		if( mArtist != null ) {

@@ -111,6 +111,13 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             style="@style/SimpleListStyle"/>
+
+        <ListView
+            android:id="@+id/aei_top_tracks"
+            android:layout_height="@dimen/noise_simple_list_height"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            style="@style/SimpleListStyle"/>
     </LinearLayout>
 
     <LinearLayout
@@ -141,6 +148,13 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:text="@string/list_header_top_albums"
+            style="@style/SimpleListHeaderStyle"/>
+
+        <TextView
+            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:text="@string/list_header_top_tracks"
             style="@style/SimpleListHeaderStyle"/>
     </LinearLayout>
 
