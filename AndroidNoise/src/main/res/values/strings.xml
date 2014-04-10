@@ -133,6 +133,7 @@
     <string name="action_artist_detail_albums">List Albums</string>
     <string name="action_artist_detail_tracks">List Tracks</string>
     <string name="action_play_random_search">Play Random</string>
+    <string name="action_play_artist_top_tracks">Play Top Tracks</string>
 
     <string name="menu_title_queue_list_item">Select an action for the queued item:</string>
 

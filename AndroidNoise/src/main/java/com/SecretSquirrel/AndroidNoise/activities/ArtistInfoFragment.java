@@ -5,10 +5,13 @@ package com.SecretSquirrel.AndroidNoise.activities;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +26,7 @@ import com.SecretSquirrel.AndroidNoise.events.EventArtistInfoRequest;
 import com.SecretSquirrel.AndroidNoise.events.EventArtistListRequest;
 import com.SecretSquirrel.AndroidNoise.events.EventArtistViewed;
 import com.SecretSquirrel.AndroidNoise.events.EventNavigationUpEnable;
+import com.SecretSquirrel.AndroidNoise.events.EventPlayTrackList;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseData;
 import com.SecretSquirrel.AndroidNoise.services.NoiseRemoteApi;
 import com.SecretSquirrel.AndroidNoise.services.ServiceResultReceiver;
@@ -163,10 +167,35 @@ public class ArtistInfoFragment extends Fragment
 	}
 
 	@Override
+	public void onCreateOptionsMenu( Menu menu, MenuInflater inflater ) {
+		inflater.inflate( R.menu.artist_info, menu );
+
+		super.onCreateOptionsMenu( menu, inflater );
+	}
+
+	@Override
+	public void onPrepareOptionsMenu( Menu menu ) {
+		MenuItem    item = menu.findItem( R.id.action_play_artist_top_tracks );
+
+		if( item != null ) {
+			item.setEnabled(( mArtistInfo != null ) && ( mArtistInfo.getTopTrackIds().length > 0 ));
+		}
+
+		super.onPrepareOptionsMenu( menu );
+	}
+
+	@Override
 	public boolean onOptionsItemSelected( MenuItem item ) {
 		boolean retValue = true;
 
 		switch( item.getItemId()) {
+			case R.id.action_play_artist_top_tracks:
+				if(( mArtistInfo != null ) &&
+				   ( mArtistInfo.getTopTrackIds().length > 0 )) {
+					mEventBus.post( new EventPlayTrackList( mArtistInfo.getTopTrackIds()));
+				}
+				break;
+
 			case android.R.id.home:
 				if( mIsExternalRequest ) {
 					mEventBus.post( new EventArtistListRequest());
@@ -197,6 +226,8 @@ public class ArtistInfoFragment extends Fragment
 		}
 
 		updateDisplay( true );
+
+		ActivityCompat.invalidateOptionsMenu( getActivity() );
 	}
 
 	private void updateDisplay( boolean withDefaults ) {
