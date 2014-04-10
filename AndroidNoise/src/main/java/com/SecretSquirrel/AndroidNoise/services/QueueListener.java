@@ -154,11 +154,14 @@ public class QueueListener implements IQueueStatus {
 			mQueueSubscription = null;
 		}
 
+		mQueueList.clear();
 		unbindEventService();
 	}
 
 	@SuppressWarnings( "unused" )
 	public void onEvent( EventServerSelected args ) {
+		mQueueList.clear();
+
 		if( mApplicationState.getIsConnected()) {
 			mServerSequence = 0;
 
@@ -249,7 +252,7 @@ public class QueueListener implements IQueueStatus {
 		}
 
 		mEventBus.post( new EventQueueUpdated());
-		mEventBus.post( new EventQueueTimeUpdate( totalMilliseconds, remainingMilliseconds ) );
+		mEventBus.post( new EventQueueTimeUpdate( totalMilliseconds, remainingMilliseconds ));
 	}
 
 	private void publishTransportEvent( Bundle data ) {

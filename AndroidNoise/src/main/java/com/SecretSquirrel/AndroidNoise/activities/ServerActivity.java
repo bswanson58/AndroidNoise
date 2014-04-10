@@ -12,8 +12,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.SecretSquirrel.AndroidNoise.R;
-import com.SecretSquirrel.AndroidNoise.events.EventActivityPausing;
-import com.SecretSquirrel.AndroidNoise.events.EventActivityResuming;
 import com.SecretSquirrel.AndroidNoise.events.EventServerSelected;
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationServices;
 import com.SecretSquirrel.AndroidNoise.support.IocUtility;
@@ -62,7 +60,6 @@ public class ServerActivity extends ActionBarActivity {
 	protected void onResume() {
 		super.onResume();
 
-		mEventBus.post( new EventActivityResuming());
 		mEventBus.register( this );
 	}
 
@@ -70,7 +67,6 @@ public class ServerActivity extends ActionBarActivity {
 	protected void onPause() {
 		super.onPause();
 
-		mEventBus.post( new EventActivityPausing());
 		mEventBus.unregister( this );
 	}
 

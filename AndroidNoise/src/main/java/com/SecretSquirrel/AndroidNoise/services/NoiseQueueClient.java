@@ -8,8 +8,6 @@ import com.SecretSquirrel.AndroidNoise.dto.QueuedAlbumResult;
 import com.SecretSquirrel.AndroidNoise.dto.QueuedTrackResult;
 import com.SecretSquirrel.AndroidNoise.dto.StrategyInformation;
 import com.SecretSquirrel.AndroidNoise.dto.Track;
-import com.SecretSquirrel.AndroidNoise.events.EventActivityPausing;
-import com.SecretSquirrel.AndroidNoise.events.EventActivityResuming;
 import com.SecretSquirrel.AndroidNoise.events.EventServerSelected;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseQueue;
 import com.SecretSquirrel.AndroidNoise.services.rto.BaseServerResult;
@@ -31,7 +29,6 @@ import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 public class NoiseQueueClient implements INoiseQueue {
-	private final EventBus                              mEventBus;
 	private final Provider<RemoteServerQueueApi>        mServiceProvider;
 	public  final EnumMap<TransportCommand, Integer>    mTransportCommands;
 	public  final EnumMap<QueueCommand, Integer>        mQueueCommands;
@@ -40,7 +37,6 @@ public class NoiseQueueClient implements INoiseQueue {
 
 	@Inject
 	public NoiseQueueClient( EventBus eventBus, Provider<RemoteServerQueueApi> queueApi ) {
-		mEventBus = eventBus;
 		mServiceProvider = queueApi;
 
 		mTransportCommands = new EnumMap<TransportCommand, Integer>( TransportCommand.class );
@@ -61,24 +57,12 @@ public class NoiseQueueClient implements INoiseQueue {
 		mQueueItemCommands.put( QueueItemCommand.PlayNext, 2 );
 		mQueueItemCommands.put( QueueItemCommand.Replay, 3 );
 
-		mEventBus.register( this );
+		eventBus.register( this );
 	}
 
 	@SuppressWarnings( "unused" )
 	public void onEvent( EventServerSelected args ) {
 		mService = null;
-	}
-
-	@SuppressWarnings( "unused" )
-	public void onEvent( EventActivityPausing args ) {
-		mEventBus.unregister( this );
-	}
-
-	@SuppressWarnings( "unused" )
-	public void onEvent( EventActivityResuming args ) {
-		if(!mEventBus.isRegistered( this )) {
-			mEventBus.register( this );
-		}
 	}
 
 	private RemoteServerQueueApi getService() {
@@ -143,9 +127,6 @@ public class NoiseQueueClient implements INoiseQueue {
 		}).subscribeOn( Schedulers.io());
 	}
 
-
-
-
 	@Override
 	public Subscription EnqueueTrack( Track track, Action1<QueuedTrackResult> resultAction ) {
 		return( EnqueueTrack( track )
@@ -205,7 +186,7 @@ public class NoiseQueueClient implements INoiseQueue {
 			@Override
 			public void call( Subscriber<? super QueuedAlbumResult> subscriber ) {
 				try {
-					subscriber.onNext( new QueuedAlbumResult( album, getService().EnqueueAlbum( album.getAlbumId() ) ) );
+					subscriber.onNext( new QueuedAlbumResult( album, getService().EnqueueAlbum( album.getAlbumId())));
 					subscriber.onCompleted();
 				} catch( Exception e ) {
 					subscriber.onError( e );
@@ -227,7 +208,7 @@ public class NoiseQueueClient implements INoiseQueue {
 			@Override
 			public void call( Subscriber<? super PlayQueueListResult> subscriber ) {
 				try {
-					subscriber.onNext( new PlayQueueListResult( getService().GetQueuedTrackList() ) );
+					subscriber.onNext( new PlayQueueListResult( getService().GetQueuedTrackList()));
 					subscriber.onCompleted();
 				}
 				catch( Exception ex ) {
@@ -243,7 +224,7 @@ public class NoiseQueueClient implements INoiseQueue {
 			@Override
 			public void call( Subscriber<? super BaseServerResult> subscriber ) {
 				try {
-					subscriber.onNext( new BaseServerResult( getService().ExecuteTransportCommand( mTransportCommands.get( command ) ) ) );
+					subscriber.onNext( new BaseServerResult( getService().ExecuteTransportCommand( mTransportCommands.get( command ))));
 					subscriber.onCompleted();
 				}
 				catch( Exception ex ) {
@@ -259,7 +240,7 @@ public class NoiseQueueClient implements INoiseQueue {
 			@Override
 			public void call( Subscriber<? super BaseServerResult> subscriber ) {
 				try {
-					subscriber.onNext( new BaseServerResult( getService().ExecuteQueueCommand( mQueueCommands.get( command ) ) ) );
+					subscriber.onNext( new BaseServerResult( getService().ExecuteQueueCommand( mQueueCommands.get( command ))));
 					subscriber.onCompleted();
 				}
 				catch( Exception ex ) {

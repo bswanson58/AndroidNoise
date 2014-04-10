@@ -1,6 +1,6 @@
 package com.SecretSquirrel.AndroidNoise.activities;
 
-// Secret Squirrel Software - Created by bswanson on 12/30/13.
+// Secret Squirrel Software - Created by BSwanson on 12/30/13.
 
 import android.content.Context;
 import android.graphics.Typeface;
@@ -132,14 +132,13 @@ public class QueueListFragment extends Fragment  {
 		super.onPause();
 
 		mEventBus.unregister( this );
-		ButterKnife.reset( this );
 	}
 
 	@Override
 	public void onDestroyView() {
 		super.onDestroyView();
 
-		mQueueListView = null;
+		ButterKnife.reset( this );
 	}
 
 	@Override
