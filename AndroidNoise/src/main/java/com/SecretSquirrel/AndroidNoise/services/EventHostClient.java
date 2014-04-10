@@ -6,7 +6,6 @@ import android.content.ServiceConnection;
 
 import javax.inject.Inject;
 
-
 // Created by BSwanson on 2/9/14.
 
 public class EventHostClient {

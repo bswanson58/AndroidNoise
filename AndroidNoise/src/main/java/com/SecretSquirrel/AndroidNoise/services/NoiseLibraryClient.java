@@ -3,8 +3,6 @@ package com.SecretSquirrel.AndroidNoise.services;
 // Created by BSwanson on 3/6/14.
 
 import com.SecretSquirrel.AndroidNoise.dto.Library;
-import com.SecretSquirrel.AndroidNoise.events.EventActivityPausing;
-import com.SecretSquirrel.AndroidNoise.events.EventActivityResuming;
 import com.SecretSquirrel.AndroidNoise.events.EventServerSelected;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseLibrary;
 import com.SecretSquirrel.AndroidNoise.services.noiseApi.RemoteServerLibraryApi;
@@ -20,33 +18,19 @@ import rx.Subscriber;
 import rx.schedulers.Schedulers;
 
 public class NoiseLibraryClient implements INoiseLibrary {
-	private final EventBus                          mEventBus;
 	private final Provider<RemoteServerLibraryApi>  mServiceProvider;
 	private RemoteServerLibraryApi                  mService;
 
 	@Inject
 	public NoiseLibraryClient( EventBus eventBus, Provider<RemoteServerLibraryApi> serviceProvider ) {
-		mEventBus = eventBus;
 		mServiceProvider = serviceProvider;
 
-		mEventBus.register( this );
+		eventBus.register( this );
 	}
 
 	@SuppressWarnings( "unused" )
 	public void onEvent( EventServerSelected args ) {
 		mService = null;
-	}
-
-	@SuppressWarnings( "unused" )
-	public void onEvent( EventActivityPausing args ) {
-		mEventBus.unregister( this );
-	}
-
-	@SuppressWarnings( "unused" )
-	public void onEvent( EventActivityResuming args ) {
-		if(!mEventBus.isRegistered( this )) {
-			mEventBus.register( this );
-		}
 	}
 
 	private RemoteServerLibraryApi getService() {
@@ -56,6 +40,7 @@ public class NoiseLibraryClient implements INoiseLibrary {
 
 		return( mService );
 	}
+
 	@Override
 	public Observable<Library[]> getLibraries() {
 		return( Observable.create( new Observable.OnSubscribe<Library[]>() {
