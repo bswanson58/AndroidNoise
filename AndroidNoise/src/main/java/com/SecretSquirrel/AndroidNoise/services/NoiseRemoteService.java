@@ -5,21 +5,19 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.ResultReceiver;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.SecretSquirrel.AndroidNoise.dto.ServerInformation;
 import com.SecretSquirrel.AndroidNoise.dto.ServerVersion;
 import com.SecretSquirrel.AndroidNoise.services.noiseApi.RemoteServerRestApi;
 import com.SecretSquirrel.AndroidNoise.services.rto.RoServerInformation;
 import com.SecretSquirrel.AndroidNoise.services.rto.RoServerVersion;
-import com.SecretSquirrel.AndroidNoise.support.Constants;
 
 import retrofit.RestAdapter;
+import timber.log.Timber;
 
 // Secret Squirrel Software - Created by bswanson on 12/6/13.
 
 public class NoiseRemoteService extends IntentService {
-	private static final String     TAG = NoiseRemoteService.class.getName();
 
 	public NoiseRemoteService() {
 		super( "NoiseRemoteService" );
@@ -59,7 +57,7 @@ public class NoiseRemoteService extends IntentService {
 		resultData.putInt( NoiseRemoteApi.RemoteApiParameter, NoiseRemoteApi.GetServerVersion );
 
 		try {
-			RestAdapter         restAdapter = new RestAdapter.Builder().setServer( serverAddress ).build();
+			RestAdapter         restAdapter = new RestAdapter.Builder().setEndpoint( serverAddress ).build();
 			RemoteServerRestApi service = restAdapter.create( RemoteServerRestApi.class );
 			RoServerVersion     roVersion = service.GetServerVersion();
 			ServerVersion       version = new ServerVersion( roVersion );
@@ -72,9 +70,7 @@ public class NoiseRemoteService extends IntentService {
 			resultData.putString( NoiseRemoteApi.RemoteResultErrorMessage, ex.getMessage());
 			resultCode = NoiseRemoteApi.RemoteResultException;
 
-			if( Constants.LOG_ERROR ) {
-				Log.w( TAG, "getServerVersion", ex );
-			}
+			Timber.w( ex, "getServerVersion" );
 		}
 
 		receiver.send( resultCode, resultData );
@@ -87,7 +83,7 @@ public class NoiseRemoteService extends IntentService {
 		resultData.putInt( NoiseRemoteApi.RemoteApiParameter, NoiseRemoteApi.GetServerInformation );
 
 		try {
-			RestAdapter         restAdapter = new RestAdapter.Builder().setServer( serverAddress ).build();
+			RestAdapter         restAdapter = new RestAdapter.Builder().setEndpoint( serverAddress ).build();
 			RemoteServerRestApi service = restAdapter.create( RemoteServerRestApi.class );
 			RoServerInformation information = service.GetServerInformation();
 			ServerInformation   serverInformation = new ServerInformation( serverAddress, information );
@@ -100,9 +96,7 @@ public class NoiseRemoteService extends IntentService {
 			resultData.putString( NoiseRemoteApi.RemoteResultErrorMessage, ex.getMessage());
 			resultCode = NoiseRemoteApi.RemoteResultException;
 
-			if( Constants.LOG_ERROR ) {
-				Log.w( TAG, "getServerInformation", ex );
-			}
+			Timber.w( ex, "getServerInformation" );
 		}
 
 		receiver.send( resultCode, resultData );

@@ -1,10 +1,9 @@
 package com.SecretSquirrel.AndroidNoise.support;
 
-// Secret Squirrel Software - Created by bswanson on 12/31/13.
+// Secret Squirrel Software - Created by BSwanson on 12/31/13.
 
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
-import android.util.Log;
 
 import org.apache.http.conn.util.InetAddressUtils;
 
@@ -16,9 +15,9 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 
-public class NetworkUtility {
-	private static final String     TAG = NetworkUtility.class.getName();
+import timber.log.Timber;
 
+public class NetworkUtility {
 	public static String getLocalAddress() {
 		String  retValue = "";
 
@@ -36,7 +35,7 @@ public class NetworkUtility {
 				}
 			}
 		} catch( SocketException ex ) {
-			Log.d( TAG, ex.toString());
+			Timber.d( ex.toString());
 		}
 
 		return( retValue );
@@ -96,9 +95,7 @@ public class NetworkUtility {
 			byte[] byteaddr = new byte[] { (byte) (intaddr & 0xff), (byte) (intaddr >> 8 & 0xff), (byte) (intaddr >> 16 & 0xff), (byte) (intaddr >> 24 & 0xff) };
 			result = InetAddress.getByAddress(byteaddr);
 		} catch (UnknownHostException ex) {
-			if( Constants.LOG_DEBUG ) {
-				Log.e( TAG, "getWirelessIpAddress Error:", ex );
-			}
+			Timber.e( ex, "getWirelessIpAddress Error:" );
 		}
 
 		return result;

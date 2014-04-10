@@ -1,8 +1,9 @@
 package com.SecretSquirrel.AndroidNoise.support;
 
+// Created by BSwanson on 1/26/14.
+
 import android.app.Activity;
 import android.content.Context;
-import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
@@ -14,11 +15,9 @@ import java.util.Date;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
-// Created by BSwanson on 1/26/14.
+import timber.log.Timber;
 
 public class NoiseUtils {
-	private static final String     TAG = NoiseUtils.class.getName();
-
 	public static String FormatPublishedYear( Context context, long year ) {
 		String retValue = "";
 
@@ -74,9 +73,7 @@ public class NoiseUtils {
 				}
 			}
 			catch( Exception e ) {
-				if( Constants.LOG_ERROR ) {
-					Log.e( TAG, e.toString(), e );
-				}
+				Timber.e( e, "hideKeyboard" );
 			}
 		}
 	}

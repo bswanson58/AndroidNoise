@@ -1,9 +1,8 @@
 package com.SecretSquirrel.AndroidNoise.ui;
 
-// Secret Squirrel Software - Created by bswanson on 12/26/13.
+// Secret Squirrel Software - Created by BSwanson on 12/26/13.
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,11 +11,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.SecretSquirrel.AndroidNoise.R;
-import com.SecretSquirrel.AndroidNoise.support.Constants;
+
+import timber.log.Timber;
 
 public class NavigationDrawerAdapter extends ArrayAdapter<NavigationDrawerItem> {
-	private final String    TAG = NavigationDrawerAdapter.class.getName();
-
 	private LayoutInflater  mInflater;
 
 	public NavigationDrawerAdapter( Context context, int textViewResourceId, NavigationDrawerItem[] objects ) {
@@ -58,9 +56,7 @@ public class NavigationDrawerAdapter extends ArrayAdapter<NavigationDrawerItem> 
 				convertView.setTag(navMenuItemHolder);
 			}
 			else {
-				if( Constants.LOG_ERROR ) {
-					Log.e( TAG, "navigation_drawer_item layout could not be loaded" );
-				}
+				Timber.e( "navigation_drawer_item layout could not be loaded" );
 			}
 		}
 

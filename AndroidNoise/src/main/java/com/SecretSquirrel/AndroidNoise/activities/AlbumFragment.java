@@ -1,10 +1,9 @@
 package com.SecretSquirrel.AndroidNoise.activities;
 
-// Secret Squirrel Software - Created by bswanson on 12/23/13.
+// Secret Squirrel Software - Created by BSwanson on 12/23/13.
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,10 +11,10 @@ import android.view.ViewGroup;
 import com.SecretSquirrel.AndroidNoise.R;
 import com.SecretSquirrel.AndroidNoise.dto.Album;
 import com.SecretSquirrel.AndroidNoise.dto.Artist;
-import com.SecretSquirrel.AndroidNoise.support.Constants;
+
+import timber.log.Timber;
 
 public class AlbumFragment extends Fragment {
-	private static final String     TAG              = AlbumFragment.class.getName();
 	private static final String     ARTIST_KEY       = "AlbumFragment_Artist";
 	private static final String     ALBUM_KEY        = "AlbumFragment_Album";
 	private static final String     EXTERNAL_REQUEST = "AlbumFragment_ExternalRequest";
@@ -66,9 +65,7 @@ public class AlbumFragment extends Fragment {
 			}
 		}
 		else {
-			if( Constants.LOG_ERROR ) {
-				Log.e( TAG, "The current album could not be determined." );
-			}
+			Timber.e( "The current album could not be determined." );
 		}
 
 		return( myView );

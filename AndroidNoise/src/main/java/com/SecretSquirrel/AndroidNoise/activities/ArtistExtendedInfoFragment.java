@@ -1,12 +1,11 @@
 package com.SecretSquirrel.AndroidNoise.activities;
 
-// Secret Squirrel Software - Created by bswanson on 1/31/14.
+// Secret Squirrel Software - Created by BSwanson on 1/31/14.
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -24,7 +23,6 @@ import com.SecretSquirrel.AndroidNoise.dto.Artist;
 import com.SecretSquirrel.AndroidNoise.dto.ArtistInfo;
 import com.SecretSquirrel.AndroidNoise.events.EventNavigationUpEnable;
 import com.SecretSquirrel.AndroidNoise.events.EventPlayTrackList;
-import com.SecretSquirrel.AndroidNoise.support.Constants;
 import com.SecretSquirrel.AndroidNoise.support.IocUtility;
 
 import javax.inject.Inject;
@@ -33,9 +31,9 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.Optional;
 import de.greenrobot.event.EventBus;
+import timber.log.Timber;
 
 public class ArtistExtendedInfoFragment extends Fragment {
-	private static final String     TAG             = ArtistExtendedInfoFragment.class.getName();
 	private static final String     ARTIST_KEY      = "ArtistInfoFragment_Artist";
 	private static final String     ARTIST_INFO_KEY = "ArtistInfoFragment_ArtistInfo";
 
@@ -91,13 +89,11 @@ public class ArtistExtendedInfoFragment extends Fragment {
 
 		mUnknownArtist = BitmapFactory.decodeResource( getResources(), R.drawable.unknown_artist );
 
-		if( Constants.LOG_ERROR ) {
-			if( mArtist == null ) {
-				Log.e( TAG, "Artist is null." );
-			}
-			if( mArtistInfo == null ) {
-				Log.e( TAG, "ArtistInfo is null" );
-			}
+		if( mArtist == null ) {
+			Timber.e( "Artist is null." );
+		}
+		if( mArtistInfo == null ) {
+			Timber.e( "ArtistInfo is null" );
 		}
 	}
 

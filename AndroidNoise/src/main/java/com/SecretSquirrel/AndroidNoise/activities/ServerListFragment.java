@@ -1,6 +1,6 @@
 package com.SecretSquirrel.AndroidNoise.activities;
 
-// Secret Squirrel Software - Created by bswanson on 12/23/13.
+// Secret Squirrel Software - Created by BSwanson on 12/23/13.
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -8,7 +8,6 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +19,6 @@ import com.SecretSquirrel.AndroidNoise.dto.ServerInformation;
 import com.SecretSquirrel.AndroidNoise.events.EventLibraryManagementRequest;
 import com.SecretSquirrel.AndroidNoise.events.EventServerSelected;
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
-import com.SecretSquirrel.AndroidNoise.support.Constants;
 import com.SecretSquirrel.AndroidNoise.support.IocUtility;
 import com.SecretSquirrel.AndroidNoise.views.RevealingListView.DefaultRevealingListViewListener;
 import com.SecretSquirrel.AndroidNoise.views.RevealingListView.RevealingListView;
@@ -36,9 +34,9 @@ import de.greenrobot.event.EventBus;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
+import timber.log.Timber;
 
 public class ServerListFragment extends Fragment {
-	private static final String             TAG = ServerListFragment.class.getName();
 	private static final String             SELECT_LAST_SERVER = "serverListSelectLast";
 
 	private ArrayList<ServerInformation>    mServerList;
@@ -91,9 +89,7 @@ public class ServerListFragment extends Fragment {
 						new Action1<Throwable>() {
 							@Override
 							public void call( Throwable throwable ) {
-								if( Constants.LOG_ERROR ) {
-									Log.e( TAG, "LocateServers returned error", throwable );
-								}
+								Timber.e( throwable, "LocateServers returned error" );
 							}
 						});
 	}
@@ -131,9 +127,7 @@ public class ServerListFragment extends Fragment {
 				}
 			}
 			catch( Exception ex ) {
-				if( Constants.LOG_ERROR ) {
-					Log.e( TAG, "Software version could not be determined." );
-				}
+				Timber.e( ex, "Software version could not be determined." );
 			}
 		}
 

@@ -3,15 +3,14 @@ package com.SecretSquirrel.AndroidNoise.services;
 // Secret Squirrel Software - Created by bswanson on 12/31/13.
 
 import android.os.AsyncTask;
-import android.util.Log;
 
 import com.SecretSquirrel.AndroidNoise.nanoHttpd.NanoHTTPD;
-import com.SecretSquirrel.AndroidNoise.support.Constants;
 
 import java.util.ArrayList;
 
+import timber.log.Timber;
+
 public class ServerEventHost extends NanoHTTPD {
-	private static final String     TAG = ServerEventHost.class.getName();
 
 	public interface UriResponder {
 		boolean     shouldServe( IHTTPSession session );
@@ -49,9 +48,7 @@ public class ServerEventHost extends NanoHTTPD {
 			super.start();
 		}
 		catch( Exception ex ) {
-			if( Constants.LOG_ERROR ) {
-				Log.e( TAG, "Starting ServerEventHost", ex );
-			}
+			Timber.e( ex, "Starting ServerEventHost" );
 		}
 	}
 

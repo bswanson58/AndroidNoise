@@ -8,7 +8,6 @@ import android.os.Parcelable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -30,7 +29,6 @@ import com.SecretSquirrel.AndroidNoise.events.EventPlaySearchItem;
 import com.SecretSquirrel.AndroidNoise.events.EventPlayTrackList;
 import com.SecretSquirrel.AndroidNoise.events.EventSearchRequest;
 import com.SecretSquirrel.AndroidNoise.services.NoiseSearchClient;
-import com.SecretSquirrel.AndroidNoise.support.Constants;
 import com.SecretSquirrel.AndroidNoise.support.IocUtility;
 
 import java.util.ArrayList;
@@ -46,9 +44,9 @@ import de.greenrobot.event.EventBus;
 import rx.Subscription;
 import rx.android.observables.AndroidObservable;
 import rx.functions.Action1;
+import timber.log.Timber;
 
 public class SearchListFragment extends Fragment {
-	private final String                TAG = SearchListFragment.class.getName();
 	private final String                SEARCH_LIST = "searchList";
 	private final String                TRACK_LIST = "trackList";
 	private final String                LIST_STATE = "searchListState";
@@ -233,10 +231,8 @@ public class SearchListFragment extends Fragment {
 						new Action1<Throwable>() {
 							@Override
 							public void call( Throwable throwable ) {
-								if( Constants.LOG_ERROR ) {
-									Log.e( TAG, "SearchListFragment:search failed", throwable );
+								Timber.e( throwable, "SearchListFragment:search failed" );
 								}
-							}
 						});
 		}
 	}

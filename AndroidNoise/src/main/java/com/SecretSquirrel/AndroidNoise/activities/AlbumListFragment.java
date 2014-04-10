@@ -10,7 +10,6 @@ import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -49,11 +48,11 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
+import timber.log.Timber;
 
 public class AlbumListFragment extends Fragment
 							   implements ServiceResultReceiver.Receiver,
 										  FilteredArrayAdapter.FilteredListWatcher {
-	private static final String     TAG = AlbumListFragment.class.getName();
 	private static final String     ARTIST_KEY  = "albumListArtistId";
 	private static final String     ALBUM_LIST  = "albumList";
 	private static final String     LIST_STATE  = "albumListState";
@@ -118,9 +117,7 @@ public class AlbumListFragment extends Fragment
 		}
 
 		if( mCurrentArtist == Constants.NULL_ID ) {
-			if( Constants.LOG_ERROR ) {
-				Log.e( TAG, "The current artist could not be determined." );
-			}
+			Timber.e( "The current artist could not be determined." );
 		}
 
 		mAlbumListAdapter = new AlbumAdapter( getActivity(), mAlbumList );

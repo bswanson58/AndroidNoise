@@ -1,6 +1,6 @@
 package com.SecretSquirrel.AndroidNoise.activities;
 
-// Secret Squirrel Software - Created by bswanson on 12/17/13.
+// Secret Squirrel Software - Created by BSwanson on 12/17/13.
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -30,7 +29,6 @@ import com.SecretSquirrel.AndroidNoise.events.EventPlayTrackList;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseData;
 import com.SecretSquirrel.AndroidNoise.services.NoiseRemoteApi;
 import com.SecretSquirrel.AndroidNoise.services.ServiceResultReceiver;
-import com.SecretSquirrel.AndroidNoise.support.Constants;
 import com.SecretSquirrel.AndroidNoise.support.IocUtility;
 
 import javax.inject.Inject;
@@ -39,10 +37,10 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
+import timber.log.Timber;
 
 public class ArtistInfoFragment extends Fragment
 								implements ServiceResultReceiver.Receiver {
-	private static final String     TAG              = ArtistInfoFragment.class.getName();
 	private static final String     ARTIST_KEY       = "ArtistInfoFragment_Artist";
 	private static final String     ARTIST_INFO_KEY  = "ArtistInfoFragment_ArtistInfo";
 	private static final String     EXTERNAL_REQUEST = "ArtistInfoFragment_ExternalRequest";
@@ -99,9 +97,7 @@ public class ArtistInfoFragment extends Fragment
 		}
 
 		if( mArtist == null ) {
-			if( Constants.LOG_ERROR ) {
-				Log.e( TAG, "Artist is null." );
-			}
+			Timber.e( "Artist is null." );
 		}
 	}
 

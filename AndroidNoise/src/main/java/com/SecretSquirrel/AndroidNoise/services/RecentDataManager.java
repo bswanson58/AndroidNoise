@@ -1,10 +1,9 @@
 package com.SecretSquirrel.AndroidNoise.services;
 
-// Secret Squirrel Software - Created by bswanson on 2/4/14.
+// Secret Squirrel Software - Created by BSwanson on 2/4/14.
 
 import android.content.Context;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.SecretSquirrel.AndroidNoise.dto.Artist;
 import com.SecretSquirrel.AndroidNoise.events.EventArtistPlayed;
@@ -28,9 +27,9 @@ import java.util.List;
 import javax.inject.Inject;
 
 import de.greenrobot.event.EventBus;
+import timber.log.Timber;
 
 public class RecentDataManager implements IRecentData, IRecentDataManager {
-	private final static String     TAG = RecentDataManager.class.getName();
 	private final static String     RECENTLY_VIEWED_FILE_NAME_FORMAT = "recently viewed - %s";
 	private final static String     RECENTLY_PLAYED_FILE_NAME_FORMAT = "recently played - %s";
 
@@ -135,14 +134,10 @@ public class RecentDataManager implements IRecentData, IRecentDataManager {
 
 			retValue = gson.fromJson( recentlyViewed, collectionType );
 		} catch( FileNotFoundException e ) {
-			if( Constants.LOG_ERROR ) {
-				Log.d( TAG, String.format( "The recent artist file (%s) is not present.", fileName ));
-			}
+			Timber.d( String.format( "The recent artist file (%s) is not present.", fileName ));
 		}
 		catch( Exception ex ) {
-			if( Constants.LOG_ERROR ) {
-				Log.e( TAG, String.format( "Could not read recent artist file (%s)", fileName ));
-			}
+			Timber.e( String.format( "Could not read recent artist file (%s)", fileName ));
 		}
 
 		return( retValue );
@@ -157,9 +152,7 @@ public class RecentDataManager implements IRecentData, IRecentDataManager {
 			outputStream.write( recentlyViewed.getBytes());
 		}
 		catch( Exception ex ) {
-			if( Constants.LOG_ERROR ) {
-				Log.e( TAG, "Could not write recently viewed artist file." );
-			}
+			Timber.e( ex, "Could not write recently viewed artist file." );
 		}
 	}
 }

@@ -1,16 +1,13 @@
 package com.SecretSquirrel.AndroidNoise.activities;
 
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.util.Log;
-
-import com.SecretSquirrel.AndroidNoise.support.Constants;
-
 // Created by BSwanson on 1/6/14.
 
-public class BaseShellFragment extends Fragment {
-	private static final String     TAG = BaseShellFragment.class.getName();
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
 
+import timber.log.Timber;
+
+public class BaseShellFragment extends Fragment {
 	protected static final String   SHELL_FRAGMENT_KEY = "ShellFragment_FragmentId";
 
 	private int                     mFragmentId;
@@ -31,9 +28,7 @@ public class BaseShellFragment extends Fragment {
 		}
 
 		if( mFragmentId == 0 ) {
-			if( Constants.LOG_ERROR ) {
-				Log.e( TAG, "LibraryActivity Fragment ID cannot be determined." );
-			}
+			Timber.e( "LibraryActivity Fragment ID cannot be determined." );
 		}
 	}
 
