@@ -50,6 +50,8 @@ public class RevealingTouchListener implements View.OnTouchListener {
 	private float                       mTouchDownX;
 	private int                         mTouchDownListPosition;
 	private boolean                     mIsRevealing;
+	private float                       mClampLeft;
+	private float                       mClampRight;
 	private int                         mMinimumFlingVelocity;
 	private int                         mMaximumFlingVelocity;
 	private int                         mTouchSlop;
@@ -266,6 +268,27 @@ public class RevealingTouchListener implements View.OnTouchListener {
 		   ( velocityX > velocityY )) {
 			mIsRevealing = true;
 
+			if( isOpen( mTouchDownListPosition )) {
+				if( isOpenRight( mTouchDownListPosition )) {
+					mClampLeft = -mFrontView.getWidth();
+					mClampRight = 0;
+				}
+				else {
+					mClampLeft = 0;
+					mClampRight = mFrontView.getRight();
+				}
+			}
+			else {
+				if( deltaX > 0 ) {
+					mClampLeft = 0;
+					mClampRight = mFrontView.getWidth();
+				}
+				else {
+					mClampLeft = -mFrontView.getWidth();
+					mClampRight = 0;
+				}
+			}
+
 //			if( isOpen( mTouchDownListPosition )) {
 //				mListView.onStartClose(downPosition, swipingRight);
 //			} else {
@@ -417,14 +440,17 @@ public class RevealingTouchListener implements View.OnTouchListener {
 
 		float posX = ViewHelper.getX( mFrontView ) + deltaX;
 
-		if( posX > 0 ) {
-			setBackView( mBackLeftView );
-		}
-		if( posX < 0 ) {
-			setBackView( mBackRightView );
-		}
+		if(( posX >= mClampLeft ) &&
+		   ( posX <= mClampRight )) {
+			if( posX > 0 ) {
+				setBackView( mBackLeftView );
+			}
+			if( posX < 0 ) {
+				setBackView( mBackRightView );
+			}
 
-		setTranslationX( mFrontView, deltaX );
+			setTranslationX( mFrontView, deltaX );
+		}
 	}
 
 	private void animateViewToState( final View view, final int toState, final int position, final View backView ) {
