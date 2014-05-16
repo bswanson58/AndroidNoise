@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="15dp"
+                android:background="@drawable/drop_shadow">
+
+    <Button
+        android:id="@+id/le_close"
+        android:layout_width="38dp"
+        android:layout_height="38dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="@dimen/noise_base_padding"
+        android:layout_marginTop="@dimen/noise_base_padding"
+        android:background="@android:drawable/btn_dialog"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_margin="@dimen/noise_base_padding"
+        android:layout_below="@+id/le_close">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/noise_base_padding"
+            android:text="Library Name:"/>
+        <EditText
+            android:id="@+id/le_library_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/noise_base_padding"
+            android:layout_marginLeft="@dimen/noise_base_padding"
+            android:text="Database Name:"/>
+        <EditText
+            android:id="@+id/le_database_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/noise_base_padding"
+            android:layout_marginLeft="@dimen/noise_base_padding"
+            android:text="Media Location:"/>
+        <EditText
+            android:id="@+id/le_media_location"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        </LinearLayout>
+
+    <Button
+        android:id="@+id/le_update"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="@dimen/noise_base_padding"
+        android:text="Update"
+        />
+
+</RelativeLayout>

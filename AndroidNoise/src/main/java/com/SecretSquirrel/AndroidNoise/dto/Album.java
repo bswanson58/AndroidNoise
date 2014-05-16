@@ -15,7 +15,7 @@ public class Album implements Parcelable {
 	private int         mRating;
 	private long        mPublishedYear;
 	private String      mGenre;
-	private boolean mIsFavorite;
+	private boolean     mIsFavorite;
 
 	/** Static field used to regenerate object, individually or as arrays */
 	public static final Parcelable.Creator<Album> CREATOR = new Parcelable.Creator<Album>() {

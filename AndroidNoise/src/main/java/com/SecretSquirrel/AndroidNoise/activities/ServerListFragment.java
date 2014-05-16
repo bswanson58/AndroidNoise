@@ -217,7 +217,7 @@ public class ServerListFragment extends Fragment {
 				ServerInformation   serverInformation = (ServerInformation)view.getTag();
 
 				if( serverInformation != null ) {
-					mEventBus.post( new EventLibraryManagementRequest( serverInformation ) );
+					mEventBus.post( new EventLibraryManagementRequest( serverInformation ));
 				}
 			}
 		}

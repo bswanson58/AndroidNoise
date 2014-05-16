@@ -18,10 +18,12 @@ import android.widget.Toast;
 import com.SecretSquirrel.AndroidNoise.R;
 import com.SecretSquirrel.AndroidNoise.dto.Library;
 import com.SecretSquirrel.AndroidNoise.dto.ServerInformation;
+import com.SecretSquirrel.AndroidNoise.events.EventLibraryEditRequest;
 import com.SecretSquirrel.AndroidNoise.events.EventLibraryManagementRequest;
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseLibrary;
 import com.SecretSquirrel.AndroidNoise.services.rto.BaseServerResult;
+import com.SecretSquirrel.AndroidNoise.support.Constants;
 import com.SecretSquirrel.AndroidNoise.support.IocUtility;
 
 import java.util.ArrayList;
@@ -39,7 +41,7 @@ import rx.functions.Action1;
 import timber.log.Timber;
 
 public class LibraryConfiguration extends Fragment {
-	private static final String SERVER_INFORMATION  = "sererInformation";
+	private static final String SERVER_INFORMATION  = "serverInformation";
 
 	private ServerInformation   mServer;
 	private ArrayList<Library>  mLibraries;
@@ -119,6 +121,38 @@ public class LibraryConfiguration extends Fragment {
 	@OnClick( R.id.lm_sync_library )
 	public void onClickSync() {
 		syncLibrary();
+	}
+
+	@SuppressWarnings( "unused" )
+	@OnClick( R.id.lm_edit_library )
+	public void onClickEditLibrary() {
+		if( mSelectedLibrary != Constants.NULL_ID ) {
+			Library library = getLibrary( mSelectedLibrary );
+
+			if( library != null ) {
+				mEventBus.post( new EventLibraryEditRequest( mServer, library, LibraryEdit.EDIT_LIBRARY ));
+			}
+		}
+	}
+
+	@SuppressWarnings( "unused" )
+	@OnClick( R.id.lm_create_library )
+	public void onClickCreateLibrary() {
+		mEventBus.post( new EventLibraryEditRequest( mServer, new Library(), LibraryEdit.CREATE_LIBRARY ));
+	}
+
+	private Library getLibrary( long libraryId ) {
+		Library retValue = null;
+
+		for( Library library : mLibraries ) {
+			if( library.getLibraryId() == libraryId ) {
+				retValue = library;
+
+				break;
+			}
+		}
+
+		return( retValue );
 	}
 
 	private void setSelectedLibrary( long libraryId ) {

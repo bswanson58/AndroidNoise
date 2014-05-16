@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.SecretSquirrel.AndroidNoise.R;
+import com.SecretSquirrel.AndroidNoise.events.EventLibraryEditRequest;
 import com.SecretSquirrel.AndroidNoise.events.EventLibraryManagementRequest;
 import com.SecretSquirrel.AndroidNoise.support.IocUtility;
 
@@ -97,5 +98,25 @@ public class ShellServerFragment extends Fragment {
 					.replace( R.id.ss_popup, mOverlay )
 					.commit();
 		}
+	}
+
+	public void onEvent( EventLibraryEditRequest args ) {
+		if( mOverlay != null ) {
+			getChildFragmentManager()
+					.beginTransaction()
+					.setCustomAnimations( R.anim.fragment_slide_in, R.anim.fragment_slide_out )
+					.remove( mOverlay )
+					.commit();
+
+			mOverlay = null;
+		}
+
+		mOverlay = LibraryEdit.newInstance( args.getServerInformation(), args.getLibrary(), args.getAction());
+
+		getChildFragmentManager()
+				.beginTransaction()
+				.setCustomAnimations( R.anim.fragment_slide_in, R.anim.fragment_slide_out )
+				.replace( R.id.ss_popup, mOverlay )
+				.commit();
 	}
 }
