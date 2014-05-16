@@ -121,9 +121,15 @@ public class LibraryEdit extends Fragment {
 	}
 
 	private void updateFromUserInterface() {
-		mLibrary.setLibraryName( mLibraryName.getText().toString());
-		mLibrary.setDatabaseName( mDatabaseName.getText().toString());
-		mLibrary.setMediaLocation( mMediaLocation.getText().toString());
+		if( mLibraryName.getText() != null ) {
+			mLibrary.setLibraryName( mLibraryName.getText().toString());
+		}
+		if( mDatabaseName.getText() != null ) {
+			mLibrary.setDatabaseName( mDatabaseName.getText().toString());
+		}
+		if( mMediaLocation.getText() != null ) {
+			mLibrary.setMediaLocation( mMediaLocation.getText().toString());
+		}
 	}
 
 	@SuppressWarnings( "unused" )
