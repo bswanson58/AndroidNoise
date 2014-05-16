@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/noise_base_padding"
         android:layout_marginLeft="@dimen/noise_base_padding"
-        android:text="The currently active library is:"
+        android:text="@string/library_manage_active_library"
         style="@style/SubHeaderText"/>
 
     <Spinner
@@ -30,7 +30,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/lm_library_selector"
         android:layout_margin="@dimen/noise_base_padding"
-        android:text="Update Library"
+        android:text="@string/library_manage_sync_library"
         />
 
     <Button
@@ -40,7 +40,7 @@
         android:layout_alignBottom="@id/lm_sync_library"
         android:layout_toRightOf="@id/lm_sync_library"
         android:layout_marginLeft="@dimen/noise_base_padding"
-        android:text="Edit Library"
+        android:text="@string/library_manage_edit_library"
         />
 
     <Button
@@ -49,7 +49,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_margin="@dimen/noise_base_padding"
-        android:text="Create Library"
+        android:text="@string/library_manage_create_library"
         />
 
     <Button

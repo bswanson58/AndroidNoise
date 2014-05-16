@@ -26,33 +26,45 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/noise_base_padding"
-            android:text="Library Name:"/>
+            android:text="@string/library_edit_library_name"/>
         <EditText
             android:id="@+id/le_library_name"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:inputType="text"
+            android:hint="@string/library_edit_library_name_hint"
+            android:nextFocusDown="@+id/le_database_name"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/noise_base_padding"
             android:layout_marginLeft="@dimen/noise_base_padding"
-            android:text="Database Name:"/>
+            android:text="@string/library_edit_database_name"/>
         <EditText
             android:id="@+id/le_database_name"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:inputType="text"
+            android:hint="@string/library_edit_database_name_hint"
+            android:nextFocusDown="@+id/le_media_location"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/noise_base_padding"
             android:layout_marginLeft="@dimen/noise_base_padding"
-            android:text="Media Location:"/>
+            android:text="@string/library_edit_media_location"/>
         <EditText
             android:id="@+id/le_media_location"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:inputType="text"
+            android:hint="@string/library_edit_media_location_hint"
+            android:nextFocusDown="@id/le_library_name"/>
 
         </LinearLayout>
 
@@ -63,7 +75,7 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
         android:layout_margin="@dimen/noise_base_padding"
-        android:text="Update"
+        android:text="@string/library_edit_save"
         />
 
 </RelativeLayout>

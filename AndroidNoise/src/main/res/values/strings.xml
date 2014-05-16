@@ -79,6 +79,17 @@
     <string name="soft_keyboard_search">Search</string>
     <string name="swipe_to_remove_track">Swipe to remove track</string>
     <string name="artist_album_format">(%1$s/%2$s)</string>
+    <string name="library_manage_active_library">The currently active library is:</string>
+    <string name="library_manage_sync_library">Update Library</string>
+    <string name="library_manage_edit_library">Edit Library</string>
+    <string name="library_manage_create_library">Create Library</string>
+    <string name="library_edit_library_name">Library Name:</string>
+    <string name="library_edit_library_name_hint">enter a name for the library</string>
+    <string name="library_edit_database_name">Database Name:</string>
+    <string name="library_edit_database_name_hint">enter a name for the database</string>
+    <string name="library_edit_media_location">Music Location:</string>
+    <string name="library_edit_media_location_hint">enter the location for your music, i.e: C:\\My Music</string>
+    <string name="library_edit_save">Save Changes</string>
 
     <string name="transport_play">Play</string>
     <string name="transport_stop">Stop</string>

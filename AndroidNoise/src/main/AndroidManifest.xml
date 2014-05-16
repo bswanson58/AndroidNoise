@@ -29,7 +29,7 @@
             android:name="com.SecretSquirrel.AndroidNoise.services.EventHostService"
             android:label="AndroidNoise:EventHostService"/>
 
-        <activity
+        <activity android:windowSoftInputMode="adjustPan"
             android:name="com.SecretSquirrel.AndroidNoise.activities.ServerActivity"
             android:label="@string/title_activity_shell"
             android:launchMode="singleTop">
