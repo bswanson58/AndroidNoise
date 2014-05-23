@@ -6,9 +6,13 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -63,6 +67,8 @@ public class ServerListFragment extends Fragment {
 
 		IocUtility.inject( this );
 
+		setHasOptionsMenu( true );
+
 		mServerList = new ArrayList<ServerInformation>();
 		mServerListAdapter = new ServerAdapter( getActivity(), mServerList );
 
@@ -78,20 +84,7 @@ public class ServerListFragment extends Fragment {
 			}
 		}
 
-		mLocatorSubscription = mApplicationState.locateServers()
-			.observeOn( AndroidSchedulers.mainThread() )
-			.subscribe( new Action1<ServerInformation>() {
-							@Override
-							public void call( ServerInformation s ) {
-								onServerInformation( s );
-							}
-						},
-						new Action1<Throwable>() {
-							@Override
-							public void call( Throwable throwable ) {
-								Timber.e( throwable, "LocateServers returned error" );
-							}
-						});
+		startServerSubscription();
 	}
 
 	@Override
@@ -142,6 +135,65 @@ public class ServerListFragment extends Fragment {
 		}
 
 		super.onPause();
+	}
+
+	@Override
+	public void onCreateOptionsMenu( Menu menu, MenuInflater inflater ) {
+		inflater.inflate( R.menu.server_list, menu );
+
+		super.onCreateOptionsMenu( menu, inflater );
+	}
+
+	@Override
+	public boolean onOptionsItemSelected( MenuItem item ) {
+		boolean retValue = true;
+
+		switch( item.getItemId()) {
+			case R.id.action_refresh_server_list:
+				resetServerSubscription();
+				break;
+
+			default:
+				retValue = super.onOptionsItemSelected( item );
+				break;
+		}
+
+		return( retValue );
+	}
+
+	private void resetServerSubscription() {
+		if( mLocatorSubscription != null ) {
+			mLocatorSubscription.unsubscribe();
+
+			mLocatorSubscription = null;
+		}
+
+		mServerList.clear();
+		mServerListAdapter.notifyDataSetChanged();
+
+		Handler handler = new Handler();
+		handler.postDelayed( new Runnable() {
+			public void run() {
+				startServerSubscription();
+			}
+		}, 2000 );
+	}
+
+	private void startServerSubscription() {
+		mLocatorSubscription = mApplicationState.locateServers()
+				.observeOn( AndroidSchedulers.mainThread() )
+				.subscribe( new Action1<ServerInformation>() {
+					            @Override
+					            public void call( ServerInformation s ) {
+						            onServerInformation( s );
+					            }
+				            },
+						new Action1<Throwable>() {
+							@Override
+							public void call( Throwable throwable ) {
+								Timber.e( throwable, "LocateServers returned error" );
+							}
+						});
 	}
 
 	private void onServerInformation( ServerInformation serverInformation ) {
