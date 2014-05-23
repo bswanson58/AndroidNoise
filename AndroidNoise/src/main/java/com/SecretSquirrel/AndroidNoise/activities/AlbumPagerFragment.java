@@ -93,10 +93,6 @@ public class AlbumPagerFragment extends Fragment
 		else {
 			Timber.e( "Current Album could not be determined." );
 		}
-
-		if( mAlbumList == null ) {
-			retrieveAlbums();
-		}
 	}
 
 	@Override
@@ -110,10 +106,13 @@ public class AlbumPagerFragment extends Fragment
 		return( myView );
 	}
 
-	private void retrieveAlbums() {
-		mReceiver.setReceiver( this );
+	@Override
+	public void onResume() {
+		super.onResume();
 
-		mNoiseData.GetAlbumList( mCurrentArtist.getArtistId(), mReceiver );
+		if( mAlbumList == null ) {
+			retrieveAlbums();
+		}
 	}
 
 	@Override
@@ -123,6 +122,12 @@ public class AlbumPagerFragment extends Fragment
 		outState.putBoolean( EXTERNAL_REQUEST, mIsExternalRequest );
 		outState.putParcelable( ARTIST, mCurrentArtist );
 		outState.putParcelable( ALBUM, mCurrentAlbum );
+	}
+
+	private void retrieveAlbums() {
+		mReceiver.setReceiver( this );
+
+		mNoiseData.GetAlbumList( mCurrentArtist.getArtistId(), mReceiver );
 	}
 
 	@Override
