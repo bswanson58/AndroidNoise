@@ -9,7 +9,7 @@
     <FrameLayout
         android:id="@+id/transport_playback_status"
         android:layout_width="match_parent"
-        android:layout_height="34dp"
+        android:layout_height="wrap_content"
         android:clickable="true"/>
 
     <FrameLayout
