@@ -79,6 +79,8 @@
 
     <style name="PlayButtonStyle" parent="@android:style/Widget.Button.Small">
         <item name="android:background">@drawable/play_button_selector</item>
+        <item name="android:layout_height">65dp</item>
+        <item name="android:layout_width">55dp</item>
     </style>
 
     <style name="separatorViewHorizontal">

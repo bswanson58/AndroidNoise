@@ -10,9 +10,6 @@
 
     <Button
         android:id="@+id/play_button"
-        android:layout_width="35dp"
-        android:layout_height="35dp"
-        android:layout_marginRight="@dimen/noise_base_padding"
         android:layout_gravity="center_vertical"
         style="@style/PlayButtonStyle"/>
 
