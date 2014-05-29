@@ -147,6 +147,17 @@ public class PlaybackPlayStrategyFragment extends Fragment {
 
 					mPlayParameterAdapter.notifyDataSetChanged();
 
+					position = -1;
+					for( StrategyParameter parameter : mPlaybackStrategy.getPlayParameters()) {
+						position++;
+
+						if( parameter.getParameterId() == mPlaybackStrategy.getCurrentPlayParameter()) {
+							mPlayParameterSelector.setSelection( position );
+
+							break;
+						}
+					}
+
 					mPlayParameterTitle.setVisibility( View.VISIBLE );
 					mPlayParameterSelector.setVisibility( View.VISIBLE );
 				}

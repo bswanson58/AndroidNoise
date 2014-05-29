@@ -68,8 +68,8 @@ public class PlaybackExhaustedStrategyFragment extends Fragment {
 					Strategy strategy = mPlaybackStrategy.getExhaustedStrategies().get( i );
 
 					if(( strategy != null ) &&
-					   ( strategy.getStrategyId() != mPlaybackStrategy.getCurrentPlayStrategy())) {
-						mPlaybackStrategy.setCurrentExhaustedStrategy( strategy.getStrategyId() );
+					   ( strategy.getStrategyId() != mPlaybackStrategy.getCurrentExhaustedStrategy())) {
+						mPlaybackStrategy.setCurrentExhaustedStrategy( strategy.getStrategyId());
 					}
 				}
 
@@ -83,8 +83,8 @@ public class PlaybackExhaustedStrategyFragment extends Fragment {
 				public void onItemSelected( AdapterView<?> adapterView, View view, int i, long l ) {
 					StrategyParameter parameter = mPlaybackStrategy.getExhaustedParameters().get( i );
 
-					if(( parameter != null ) & 
-					   ( parameter.getParameterId() != mPlaybackStrategy.getCurrentPlayParameter())) {
+					if(( parameter != null ) &
+					   ( parameter.getParameterId() != mPlaybackStrategy.getCurrentExhaustedParameter())) {
 						mPlaybackStrategy.setCurrentExhaustedParameter( parameter.getParameterId());
 					}
 				}
@@ -146,6 +146,17 @@ public class PlaybackExhaustedStrategyFragment extends Fragment {
 					mExhaustedParameterTitle.setText( strategy.getParameterTitle());
 
 					mExhaustedParameterAdapter.notifyDataSetChanged();
+
+					position = -1;
+					for( StrategyParameter parameter : mPlaybackStrategy.getExhaustedParameters()) {
+						position++;
+
+						if( parameter.getParameterId() == mPlaybackStrategy.getCurrentExhaustedParameter()) {
+							mExhaustedParameterSelector.setSelection( position );
+
+							break;
+						}
+					}
 
 					mExhaustedParameterTitle.setVisibility( View.VISIBLE );
 					mExhaustedParameterSelector.setVisibility( View.VISIBLE );
