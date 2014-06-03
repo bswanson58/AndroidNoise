@@ -10,9 +10,10 @@ import com.SecretSquirrel.AndroidNoise.services.rto.BaseServerResult;
 import rx.Observable;
 
 public interface INoiseServer {
-	public void getServerVersion( ResultReceiver receiver );
-	public void getServerInformation( ResultReceiver receiver );
+	public void                             getServerVersion( ResultReceiver receiver );
+	public void                             getServerInformation( ResultReceiver receiver );
 
+	public Observable<BaseServerResult>     setAudioDevice( int deviceId );
 	public Observable<BaseServerResult>     requestEvents( String address );
 	public Observable<BaseServerResult>     revokeEvents( String address );
 }

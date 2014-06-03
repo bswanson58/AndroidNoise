@@ -46,8 +46,10 @@ public class ServerInformation implements Parcelable {
 		mLibraryCount = serverInformation.LibraryCount;
 
 		mAudioDevices = new ArrayList<AudioDevice>();
-		for( RoAudioDevice roDevice : serverInformation.AudioDevices ) {
-			mAudioDevices.add( new AudioDevice( roDevice ));
+		if( serverInformation.AudioDevices != null ) {
+			for( RoAudioDevice roDevice : serverInformation.AudioDevices ) {
+				mAudioDevices.add( new AudioDevice( roDevice ));
+			}
 		}
 		mCurrentAudioDevice = serverInformation.CurrentAudioDevice;
 
@@ -139,5 +141,9 @@ public class ServerInformation implements Parcelable {
 	public void updateLibrary( long libraryId, String libraryName ) {
 		mLibraryId = libraryId;
 		mLibraryName = libraryName;
+	}
+
+	public void updateAudioDevice( int deviceId ) {
+		mCurrentAudioDevice = deviceId;
 	}
 }

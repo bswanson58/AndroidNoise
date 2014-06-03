@@ -16,12 +16,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.SecretSquirrel.AndroidNoise.R;
+import com.SecretSquirrel.AndroidNoise.dto.AudioDevice;
 import com.SecretSquirrel.AndroidNoise.dto.Library;
 import com.SecretSquirrel.AndroidNoise.dto.ServerInformation;
 import com.SecretSquirrel.AndroidNoise.events.EventLibraryEditRequest;
 import com.SecretSquirrel.AndroidNoise.events.EventLibraryManagementRequest;
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
 import com.SecretSquirrel.AndroidNoise.interfaces.INoiseLibrary;
+import com.SecretSquirrel.AndroidNoise.interfaces.INoiseServer;
 import com.SecretSquirrel.AndroidNoise.services.rto.BaseServerResult;
 import com.SecretSquirrel.AndroidNoise.support.Constants;
 import com.SecretSquirrel.AndroidNoise.support.IocUtility;
@@ -46,13 +48,16 @@ public class LibraryConfiguration extends Fragment {
 	private ServerInformation   mServer;
 	private ArrayList<Library>  mLibraries;
 	private LibraryAdapter      mLibraryAdapter;
+	private AudioDeviceAdapter  mDeviceAdapter;
 	private long                mSelectedLibrary;
 
 	@Inject	EventBus            mEventBus;
+	@Inject	INoiseServer        mNoiseServer;
 	@Inject	INoiseLibrary       mNoiseLibrary;
 	@Inject	IApplicationState   mApplicationState;
 
 	@InjectView( R.id.lm_library_selector )	Spinner mLibrarySelector;
+	@InjectView( R.id.lm_device_selector )  Spinner mDeviceSelector;
 
 	public static LibraryConfiguration newInstance( ServerInformation serverInformation ) {
 		LibraryConfiguration    fragment = new LibraryConfiguration();
@@ -83,6 +88,7 @@ public class LibraryConfiguration extends Fragment {
 
 		if( mServer != null ) {
 			mSelectedLibrary = mServer.getLibraryId();
+			mDeviceAdapter = new AudioDeviceAdapter( getActivity(), mServer.getAudioDevices());
 		}
 		else {
 			Timber.e( "ServerInformation was not set." );
@@ -112,6 +118,21 @@ public class LibraryConfiguration extends Fragment {
 				@Override
 				public void onNothingSelected( AdapterView<?> adapterView ) { }
 			} );
+
+			if( mDeviceAdapter != null ) {
+				mDeviceSelector.setAdapter( mDeviceAdapter );
+				mDeviceSelector.setOnItemSelectedListener( new AdapterView.OnItemSelectedListener() {
+					@Override
+					public void onItemSelected( AdapterView<?> adapterView, View view, int i, long l ) {
+						selectAudioDevice( mServer.getAudioDevices().get( i ));
+					}
+
+					@Override
+					public void onNothingSelected( AdapterView<?> adapterView ) { }
+				} );
+
+				setSelectedDevice( mServer.getCurrentAudioDevice());
+			}
 		}
 
 		return( myView );
@@ -171,6 +192,20 @@ public class LibraryConfiguration extends Fragment {
 		mLibrarySelector.setSelection( position );
 	}
 
+	private void setSelectedDevice( int deviceId ) {
+		int position = -1;
+
+		for( AudioDevice d : mServer.getAudioDevices()) {
+			position++;
+
+			if( d.getDeviceId() == deviceId ) {
+				break;
+			}
+		}
+
+		mDeviceSelector.setSelection( position );
+	}
+
 	@Override
 	public void onResume() {
 		super.onResume();
@@ -224,6 +259,33 @@ public class LibraryConfiguration extends Fragment {
 						            @Override
 						            public void call( Throwable throwable ) {
 							            Timber.e( throwable, "selectLibrary" );
+						            }
+					            }
+					);
+		}
+	}
+
+	private void selectAudioDevice( final AudioDevice device ) {
+		if(( device != null ) &&
+		   ( device.getDeviceId() != mServer.getCurrentAudioDevice())) {
+			AndroidObservable.fromFragment( this, mNoiseServer.setAudioDevice( device.getDeviceId()))
+					.subscribe( new Action1<BaseServerResult>() {
+						            @Override
+						            public void call( BaseServerResult result ) {
+							            if( result.Success ) {
+								            setSelectedDevice( device.getDeviceId() );
+								            mServer.updateAudioDevice( device.getDeviceId());
+
+								            Toast.makeText( getActivity(), "Audio device has been changed.", Toast.LENGTH_LONG ).show();
+							            }
+							            else {
+								            Toast.makeText( getActivity(), "Could not select audio device", Toast.LENGTH_LONG ).show();
+							            }
+						            }
+					            }, new Action1<Throwable>() {
+						            @Override
+						            public void call( Throwable throwable ) {
+							            Timber.e( throwable, "setAudioDevice" );
 						            }
 					            }
 					);
@@ -318,6 +380,72 @@ public class LibraryConfiguration extends Fragment {
 
 				if( library != null ) {
 					views.LibraryName.setText( library.getLibraryName());
+				}
+			}
+
+			return( retValue );
+		}
+	}
+
+	protected class AudioDeviceAdapter extends BaseAdapter implements SpinnerAdapter {
+		private final Context           mContext;
+		private final LayoutInflater    mLayoutInflater;
+		private final List<AudioDevice> mDeviceList;
+
+		protected class ViewHolder {
+			public ViewHolder( View view ) {
+				ButterKnife.inject( this, view );
+			}
+
+			@InjectView( R.id.si_text )    TextView    DeviceName;
+		}
+
+		public AudioDeviceAdapter( Context context, List<AudioDevice> deviceList ) {
+			mContext = context;
+			mDeviceList = deviceList;
+
+			mLayoutInflater = (LayoutInflater)mContext.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+		}
+
+		@Override
+		public int getCount() {
+			return( mDeviceList.size());
+		}
+
+		@Override
+		public Object getItem( int i ) {
+			return( mDeviceList.get( i ));
+		}
+
+		@Override
+		public long getItemId( int i ) {
+			return( i );
+		}
+
+		@Override
+		public View getView( int position, View convertView, ViewGroup parent ) {
+			View        retValue = convertView;
+			ViewHolder  views = null;
+
+			if( convertView == null ) {
+				retValue = mLayoutInflater.inflate( R.layout.simple_spinner_item, parent, false );
+
+				if( retValue != null ) {
+					views = new ViewHolder( retValue );
+
+					retValue.setTag( views );
+				}
+			}
+			else {
+				views = (ViewHolder)retValue.getTag();
+			}
+
+			if(( views != null ) &&
+			   ( position < mDeviceList.size())) {
+				AudioDevice device = (AudioDevice)getItem( position );
+
+				if( device != null ) {
+					views.DeviceName.setText( device.getDeviceName() );
 				}
 			}
 

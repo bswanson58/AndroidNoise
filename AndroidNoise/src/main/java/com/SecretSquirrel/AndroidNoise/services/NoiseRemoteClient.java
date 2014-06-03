@@ -29,7 +29,12 @@ public class NoiseRemoteClient implements INoiseServer {
 	@Inject
 	public NoiseRemoteClient( EventBus eventBus, Provider<RemoteServerRestApi> provider,
 	                          IApplicationState applicationState, Context context ) {
-		mServerAddress = applicationState.getCurrentServer().getServerAddress();
+		if( applicationState.getIsConnected()) {
+			mServerAddress = applicationState.getCurrentServer().getServerAddress();
+		}
+		else {
+			mServerAddress = "";
+		}
 		mServiceProvider = provider;
 		mContext = context;
 
@@ -77,6 +82,22 @@ public class NoiseRemoteClient implements INoiseServer {
 		intent.putExtra( NoiseRemoteApi.RemoteCallReceiver, receiver );
 
 		mContext.startService( intent );
+	}
+
+	@Override
+	public Observable<BaseServerResult> setAudioDevice( final int deviceId ) {
+		return( Observable.create( new Observable.OnSubscribe<BaseServerResult>() {
+			@Override
+			public void call( Subscriber<? super BaseServerResult> subscriber ) {
+				try {
+					subscriber.onNext( getService().SetAudioDevice( deviceId ));
+					subscriber.onCompleted();
+				}
+				catch( Exception ex ) {
+					subscriber.onError( ex );
+				}
+			}
+		} ).subscribeOn( Schedulers.io()));
 	}
 
 	@Override

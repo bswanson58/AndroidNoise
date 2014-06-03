@@ -8,7 +8,7 @@ import com.SecretSquirrel.AndroidNoise.services.rto.BaseServerResult;
 import rx.Observable;
 
 public interface INoiseLibrary {
-	public Observable<Library[]> getLibraries();
+	public  Observable<Library[]>           getLibraries();
 
 	public  Observable<BaseServerResult>    syncLibrary();
 	public  Observable<BaseServerResult>    selectLibrary( final Library library );

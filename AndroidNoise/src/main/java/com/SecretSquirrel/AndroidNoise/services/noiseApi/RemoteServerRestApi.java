@@ -16,6 +16,9 @@ public interface RemoteServerRestApi {
 	@GET( "/Noise/serverInformation" )
 	RoServerInformation GetServerInformation();
 
+	@GET( "/Noise/setOutputDevice" )
+	BaseServerResult    SetAudioDevice( @Query( "device" ) int deviceId );
+
 	@GET( "/Noise/requestEvents" )
 	BaseServerResult    RequestEvents( @Query( "address" ) String address );
 
