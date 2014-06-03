@@ -5,8 +5,11 @@ package com.SecretSquirrel.AndroidNoise.dto;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.SecretSquirrel.AndroidNoise.services.rto.RoAudioDevice;
 import com.SecretSquirrel.AndroidNoise.services.rto.RoServerInformation;
 import com.SecretSquirrel.AndroidNoise.services.rto.ServiceInformation;
+
+import java.util.ArrayList;
 
 public class ServerInformation implements Parcelable {
 	private ServiceInformation.ServiceState mServiceState;
@@ -18,6 +21,8 @@ public class ServerInformation implements Parcelable {
 	private String                          mLibraryName;
 	private long                            mLibraryId;
 	private int                             mLibraryCount;
+	private ArrayList<AudioDevice>          mAudioDevices;
+	private int                             mCurrentAudioDevice;
 
 	/** Static field used to regenerate object, individually or as arrays */
 	public static final Parcelable.Creator<ServerInformation> CREATOR = new Parcelable.Creator<ServerInformation>() {
@@ -40,6 +45,12 @@ public class ServerInformation implements Parcelable {
 		mLibraryId = serverInformation.LibraryId;
 		mLibraryCount = serverInformation.LibraryCount;
 
+		mAudioDevices = new ArrayList<AudioDevice>();
+		for( RoAudioDevice roDevice : serverInformation.AudioDevices ) {
+			mAudioDevices.add( new AudioDevice( roDevice ));
+		}
+		mCurrentAudioDevice = serverInformation.CurrentAudioDevice;
+
 		mHostName = "";
 	}
 
@@ -52,8 +63,10 @@ public class ServerInformation implements Parcelable {
 		mLibraryName = parcel.readString();
 		mLibraryId = parcel.readLong();
 		mLibraryCount = parcel.readInt();
+		mCurrentAudioDevice = parcel.readInt();
 
 		mServerVersion = parcel.readParcelable( ServerVersion.class.getClassLoader());
+		mAudioDevices = parcel.readArrayList( AudioDevice.class.getClassLoader());
 	}
 
 	@Override
@@ -66,8 +79,10 @@ public class ServerInformation implements Parcelable {
 		parcel.writeString( mLibraryName );
 		parcel.writeLong( mLibraryId );
 		parcel.writeInt( mLibraryCount );
+		parcel.writeInt( mCurrentAudioDevice );
 
 		mServerVersion.writeToParcel( parcel, i );
+		parcel.writeList( mAudioDevices );
 	}
 
 	@Override
@@ -111,6 +126,14 @@ public class ServerInformation implements Parcelable {
 
 	public String getLibraryName() {
 		return( mLibraryName );
+	}
+
+	public ArrayList<AudioDevice> getAudioDevices() {
+		return( mAudioDevices );
+	}
+
+	public int getCurrentAudioDevice() {
+		return( mCurrentAudioDevice );
 	}
 
 	public void updateLibrary( long libraryId, String libraryName ) {

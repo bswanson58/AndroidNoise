@@ -11,4 +11,6 @@ public class RoServerInformation {
 	public long             LibraryId;
 	public String           LibraryName;
 	public int              LibraryCount;
+	public RoAudioDevice[]  AudioDevices;
+	public int              CurrentAudioDevice;
 }
