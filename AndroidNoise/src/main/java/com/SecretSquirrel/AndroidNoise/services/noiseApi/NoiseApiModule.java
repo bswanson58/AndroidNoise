@@ -83,7 +83,7 @@ public class NoiseApiModule {
 
 	private RestAdapter createAdapter( ServerInformation serverInformation ) {
 		return( new RestAdapter.Builder()
-				.setServer( serverInformation.getServerAddress())
+				.setEndpoint( serverInformation.getServerAddress())
 				.build());
 	}
 }
