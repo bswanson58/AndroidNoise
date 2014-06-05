@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -40,10 +39,9 @@ import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
 import rx.android.observables.AndroidObservable;
 import rx.functions.Action1;
+import timber.log.Timber;
 
 public class QueueListFragment extends Fragment  {
-	private static final String         TAG = QueueListFragment.class.getName();
-
 	private static final String         QUEUE_LIST  = "queueList";
 	private static final String         LIST_STATE  = "queueListState";
 
@@ -214,7 +212,7 @@ public class QueueListFragment extends Fragment  {
 					@Override
 					public void call( BaseServerResult serverResult ) {
 						if( !serverResult.Success ) {
-							Log.e( TAG, "The queue command was not executed: " + serverResult.ErrorMessage );
+							Timber.e( "The queue command was not executed: " + serverResult.ErrorMessage );
 						}
 					}
 				} );
@@ -226,7 +224,7 @@ public class QueueListFragment extends Fragment  {
 					@Override
 					public void call( BaseServerResult serverResult ) {
 						if( !serverResult.Success ) {
-							Log.e( TAG, "The queue item command was not executed: " + serverResult.ErrorMessage );
+							Timber.e( "The queue item command was not executed: " + serverResult.ErrorMessage );
 						}
 					}
 				} );
@@ -238,14 +236,14 @@ public class QueueListFragment extends Fragment  {
 					@Override
 					public void call( BaseServerResult serverResult ) {
 						if(!serverResult.Success ) {
-							Log.e( TAG, "The transport command was not executed: " + serverResult.ErrorMessage );
+							Timber.e( "The transport command was not executed: " + serverResult.ErrorMessage );
 						}
 					}
 				} );
 	}
 
 	@SuppressWarnings( "unused" )
-	public void onEvent( EventQueueUpdated args ) {
+	public void onEventMainThread( EventQueueUpdated args ) {
 		updateQueueList();
 	}
 
@@ -254,7 +252,7 @@ public class QueueListFragment extends Fragment  {
 		mQueueList.addAll( mQueueStatus.getPlayQueueItems());
 		mQueueListAdapter.notifyDataSetChanged();
 
-		ActivityCompat.invalidateOptionsMenu( getActivity() );
+		ActivityCompat.invalidateOptionsMenu( getActivity());
 	}
 
 	protected class QueueAdapter extends ArrayAdapter<PlayQueueTrack> {

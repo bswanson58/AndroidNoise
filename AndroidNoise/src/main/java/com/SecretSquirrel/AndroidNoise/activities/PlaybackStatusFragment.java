@@ -145,12 +145,12 @@ public class PlaybackStatusFragment extends Fragment {
 	}
 
 	@SuppressWarnings( "unused" )
-	public void onEvent( EventQueueUpdated args ) {
+	public void onEventMainThread( EventQueueUpdated args ) {
 		updateStatusInfo();
 	}
 
 	@SuppressWarnings( "unused" )
-	public void onEvent( EventTransportUpdate args ) {
+	public void onEventMainThread( EventTransportUpdate args ) {
 		mPlayState = args.getPlayState();
 		mLastPosition = args.getCurrentPosition();
 		mTrackLength = args.getTrackLength();
