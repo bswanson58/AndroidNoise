@@ -3,17 +3,13 @@ package com.SecretSquirrel.AndroidNoise.application;
 // Secret Squirrel Software - Created by BSwanson on 12/9/13.
 
 import android.content.Context;
-import android.content.Intent;
-import android.content.ServiceConnection;
 
 import com.SecretSquirrel.AndroidNoise.dto.ServerInformation;
 import com.SecretSquirrel.AndroidNoise.interfaces.IApplicationState;
-import com.SecretSquirrel.AndroidNoise.services.EventHostService;
-import com.SecretSquirrel.AndroidNoise.services.ServiceLocator;
+import com.SecretSquirrel.AndroidNoise.services.discovery.ServiceLocator;
 
 import javax.inject.Inject;
 
-import de.greenrobot.event.EventBus;
 import rx.Observable;
 
 public class ApplicationState implements IApplicationState {

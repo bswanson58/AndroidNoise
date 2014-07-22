@@ -1,4 +1,4 @@
-package com.SecretSquirrel.AndroidNoise.services;
+package com.SecretSquirrel.AndroidNoise.services.discovery;
 
 // Secret Squirrel Software - Created by BSwanson on 1/3/14.
 
@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.os.ResultReceiver;
 
 import com.SecretSquirrel.AndroidNoise.dto.ServerInformation;
+import com.SecretSquirrel.AndroidNoise.services.NoiseRemoteApi;
+import com.SecretSquirrel.AndroidNoise.services.NoiseRemoteClient;
 import com.SecretSquirrel.AndroidNoise.services.noiseApi.RemoteServerRestApi;
 import com.SecretSquirrel.AndroidNoise.services.rto.ServiceInformation;
 
@@ -20,9 +22,6 @@ import rx.subscriptions.Subscriptions;
 import timber.log.Timber;
 
 public class ServiceLocator {
-	private final static String     NOISE_TYPE = "_Noise._Tcp.local.";
-	private final static String     HOSTNAME = "NoiseRemote";
-
 	public static Observable<ServerInformation> createServiceLocator( final Context context ) {
 		ServiceLocator  locator = new ServiceLocator();
 
@@ -36,8 +35,8 @@ public class ServiceLocator {
 				.create( new Observable.OnSubscribe<ServerInformation>() {
 					@Override
 					public void call( final Subscriber<? super ServerInformation> subscriber ) {
-						final Subscription locatorSubscription = ServiceLocatorObservable
-								.createServiceLocator( context, NOISE_TYPE, HOSTNAME )
+						final Subscription locatorSubscription = MulticastLocatorObservable
+								.createServiceLocator( context )
 								.subscribe( new Action1<ServiceInformation>() {
 									            @Override
 									            public void call( ServiceInformation s ) {
@@ -71,7 +70,7 @@ public class ServiceLocator {
 	                                          final Context context ) {
 		Timber.d( "Retrieving server information for %s", serviceInformation.getHostAddress());
 
-		NoiseRemoteClient   remoteClient = new NoiseRemoteClient( createAdapter( serviceInformation.getHostAddress()),
+		NoiseRemoteClient remoteClient = new NoiseRemoteClient( createAdapter( serviceInformation.getHostAddress()),
 																  serviceInformation.getHostAddress(), context );
 
 		remoteClient.getServerInformation( new ResultReceiver( null ) {
@@ -81,8 +80,6 @@ public class ServiceLocator {
 					ServerInformation   serverInformation = resultData.getParcelable( NoiseRemoteApi.ServerInformation );
 
 					if( serverInformation != null ) {
-						serverInformation.setServiceInformation( serviceInformation );
-
 						if(!subscriber.isUnsubscribed()) {
 							subscriber.onNext( serverInformation );
 						}

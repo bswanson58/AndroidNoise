@@ -1,8 +1,6 @@
 package com.SecretSquirrel.AndroidNoise.services.rto;
 
-// Secret Squirrel Software - Created by bswanson on 1/3/14.
-
-import javax.jmdns.ServiceInfo;
+// Secret Squirrel Software - Created by BSwanson on 1/3/14.
 
 public class ServiceInformation {
 	public enum ServiceState {
@@ -11,12 +9,14 @@ public class ServiceInformation {
 		ServiceDeleted
 	}
 
-	private ServiceInfo     mServiceInfo;
 	private ServiceState    mServiceState;
+	private String          mServiceName;
+	private String          mServiceAddress;
 
-	public ServiceInformation( ServiceState state, ServiceInfo serviceInfo ) {
+	public ServiceInformation( ServiceState state, String serviceName, String serviceAddress ) {
 		mServiceState = state;
-		mServiceInfo = serviceInfo;
+		mServiceName = serviceName;
+		mServiceAddress = serviceAddress;
 	}
 
 	public ServiceState getServiceState() {
@@ -24,44 +24,10 @@ public class ServiceInformation {
 	}
 
 	public String getName() {
-		String  retValue = "";
-
-		if( mServiceInfo !=  null ) {
-			retValue = mServiceInfo.getName();
-		}
-
-		return( retValue );
-	}
-
-	public String getHostName() {
-		String  retValue = "";
-
-		if( mServiceInfo != null ) {
-			String  server = mServiceInfo.getServer();
-			String  domain = mServiceInfo.getDomain();
-
-			if( server.contains( domain )) {
-				server = server.replace( domain, "" );
-			}
-			if( server.startsWith( "." )) {
-				server = server.substring( 1 );
-			}
-			while( server.endsWith( "." )) {
-				server = server.substring( 0, server.length() - 1 );
-			}
-
-			retValue = server;
-		}
-		return( retValue );
+		return( mServiceName );
 	}
 
 	public String getHostAddress() {
-		String  retValue = "";
-
-		if( mServiceInfo != null ) {
-			retValue = mServiceInfo.getURLs()[0];
-		}
-
-		return( retValue );
+		return( mServiceAddress );
 	}
 }

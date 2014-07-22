@@ -212,7 +212,7 @@ public class ServerListFragment extends Fragment {
 				if(!exists ) {
 					mServerList.add( serverInformation );
 
-					if( serverInformation.getHostName().equals( mLastServer )) {
+					if( serverInformation.getServerName().equals( mLastServer )) {
 						selectServer( serverInformation );
 					}
 
@@ -240,7 +240,7 @@ public class ServerListFragment extends Fragment {
 			SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences( getActivity());
 			SharedPreferences.Editor editor = settings.edit();
 
-			editor.putString( getString( R.string.setting_last_server_used ), server.getHostName());
+			editor.putString( getString( R.string.setting_last_server_used ), server.getServerName());
 			editor.commit();
 
 			mEventBus.post( new EventServerSelected( server ));
@@ -307,7 +307,7 @@ public class ServerListFragment extends Fragment {
 			   ( position < mServerList.size())) {
 				ServerInformation   serverInfo = mServerList.get( position );
 
-				views.NameTextView.setText( String.format( mTitleFormat, serverInfo.getHostName(), serverInfo.getLibraryName()));
+				views.NameTextView.setText( String.format( mTitleFormat, serverInfo.getServerName(), serverInfo.getLibraryName()));
 				views.AddressTextView.setText( String.format( mSubtitleFormat, serverInfo.getServerName(), serverInfo.getServerAddress()));
 
 				views.ManageView.setTag( serverInfo );

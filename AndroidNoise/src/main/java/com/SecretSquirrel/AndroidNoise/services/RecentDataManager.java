@@ -61,7 +61,7 @@ public class RecentDataManager implements IRecentData, IRecentDataManager {
 		mRecentlyPlayedList.clear();
 
 		if( mApplicationState.getIsConnected()) {
-			mCurrentHostName = mApplicationState.getCurrentServer().getHostName();
+			mCurrentHostName = mApplicationState.getCurrentServer().getServerName();
 
 			loadArtistList( mRecentlyViewedList, String.format( RECENTLY_VIEWED_FILE_NAME_FORMAT, mCurrentHostName ));
 			loadArtistList( mRecentlyPlayedList, String.format( RECENTLY_PLAYED_FILE_NAME_FORMAT, mCurrentHostName ));

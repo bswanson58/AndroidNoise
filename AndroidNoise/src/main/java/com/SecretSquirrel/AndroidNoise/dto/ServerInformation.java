@@ -14,7 +14,6 @@ import java.util.ArrayList;
 public class ServerInformation implements Parcelable {
 	private ServiceInformation.ServiceState mServiceState;
 	private String                          mServerAddress;
-	private String                          mHostName;
 	private String                          mServerName;
 	private ServerVersion                   mServerVersion;
 	private int                             mServerApiVersion;
@@ -52,14 +51,11 @@ public class ServerInformation implements Parcelable {
 			}
 		}
 		mCurrentAudioDevice = serverInformation.CurrentAudioDevice;
-
-		mHostName = "";
 	}
 
 	public ServerInformation( Parcel parcel ) {
 		mServiceState = (ServiceInformation.ServiceState)parcel.readSerializable();
 		mServerAddress = parcel.readString();
-		mHostName = parcel.readString();
 		mServerName = parcel.readString();
 		mServerApiVersion = parcel.readInt();
 		mLibraryName = parcel.readString();
@@ -75,7 +71,6 @@ public class ServerInformation implements Parcelable {
 	public void writeToParcel( Parcel parcel, int i ) {
 		parcel.writeSerializable( mServiceState );
 		parcel.writeString( mServerAddress );
-		parcel.writeString( mHostName );
 		parcel.writeString( mServerName );
 		parcel.writeInt( mServerApiVersion );
 		parcel.writeString( mLibraryName );
@@ -92,18 +87,8 @@ public class ServerInformation implements Parcelable {
 		return 0;
 	}
 
-	public void setServiceInformation( ServiceInformation serviceInformation ) {
-		mServiceState = serviceInformation.getServiceState();
-		mServerAddress = serviceInformation.getHostAddress();
-		mHostName = serviceInformation.getHostName();
-	}
-
 	public ServiceInformation.ServiceState getServiceState() {
 		return( mServiceState );
-	}
-
-	public String getHostName() {
-		return( mHostName );
 	}
 
 	public String getServerAddress() {
